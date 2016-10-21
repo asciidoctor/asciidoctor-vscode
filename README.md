@@ -1,4 +1,5 @@
-# AsciiDoc Previewer
+# AsciiDoc Support
+A vscode support extension that provides live preview and syntax highlighting for the AsciiDoc format.
 
 An extension to preview AsciiDoc text using the _AsciiDoctor_ publishing tool.
 
@@ -7,7 +8,12 @@ The extension can be activate in two ways
 * Toggle Preview - `ctrl+shift+r`
 * Open Preview to the Side - `ctrl+k r`
 
+## How to install
+Open vscode. Press `F1`, search "`ext install`" followed by extension name, in this case: "`ext install asciidoctor-vscode`" without the ">".
+Or if you prefer ">**ext install**", hit enter, search "**asciidoctor-vscode**".
+
 ![alt](images/simple.png)
+
 
 
 ## Prerequisites
@@ -25,4 +31,5 @@ code --install-extension *.vsix
 ```
 
 ## Credits:
-This extension code was based on https://github.com/tht13/RST-vscode/
+This extension preview code was based on https://github.com/tht13/RST-vscode/
+The AsciiDoc syntax rules are based on https://github.com/asciidoctor/sublimetext-asciidoc/

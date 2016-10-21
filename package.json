@@ -1,8 +1,8 @@
 {
     "name": "asciidoctor-vscode",
-    "displayName": "AsciiDoc Live Previewer",
-    "description": "An extension to preview AsciiDoc files while typing them",
-    "version": "0.1.6",
+    "displayName": "AsciiDoc",
+    "description": "Live preview (with AsciiDoctor) and syntax highlighting.",
+    "version": "0.1.7",
     "publisher": "joaompinto",
     "author": "João Pinto",
     "license": "MIT",
@@ -43,6 +43,11 @@
                 ]
             }
         ],
+        "grammars": [{
+            "language": "asciidoc",
+            "scopeName": "text.asciidoc",
+            "path": "./syntaxes/Asciidoctor.tmLanguage"
+        }],
         "configuration": {
             "type": "object",
             "title": "AsciiDoc Option Configuration",
@@ -91,7 +96,6 @@
     "devDependencies": {
         "typescript": "^1.7.5",
         "vscode": "^0.11.1",
-        "file-url": "^1.0.1",
-        "tmp": "^0.0.29"        
+        "file-url": "^1.0.1"
     }
 }

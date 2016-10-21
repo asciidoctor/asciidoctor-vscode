@@ -1,0 +1,2489 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<!--
+ |	This file is auto-generated from Asciidoctor.YAML-tmLanguage, do not edit it by hand!
+-->
+<dict>
+	<key>fileTypes</key>
+	<array>
+		<string>adoc</string>
+		<string>ad</string>
+		<string>asciidoc</string>
+	</array>
+	<key>name</key>
+	<string>AsciiDoc (Asciidoctor)</string>
+	<key>patterns</key>
+	<array>
+		<dict>
+			<key>include</key>
+			<string>#lists</string>
+		</dict>
+		<dict>
+			<key>include</key>
+			<string>#blocks</string>
+		</dict>
+		<dict>
+			<key>include</key>
+			<string>#section_titles</string>
+		</dict>
+		<dict>
+			<key>include</key>
+			<string>#lines</string>
+		</dict>
+		<dict>
+			<key>include</key>
+			<string>#inline</string>
+		</dict>
+		<dict>
+			<key>include</key>
+			<string>#characters</string>
+		</dict>
+	</array>
+	<key>repository</key>
+	<dict>
+		<key>attribute_entry</key>
+		<dict>
+			<key>begin</key>
+			<string>(?x)
+^(:)                          # opening delimiter
+(!)?                          # bang symbol (unset attribute)
+([A-Za-z0-9_][A-Za-z0-9_-]*)  # attribute name
+(!)?                          # bang symbol (unset attribute)
+(:)                           # closing delimiter
+(?:\s+|(?=$))</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.attributeentry.attrname.begin.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.attributeentry.unset.asciidoc</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>support.variable.attribute.asciidoc</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.attributeentry.unset.asciidoc</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.attributeentry.attrname.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>An attribute entry.
+
+Examples:
+  :my-attribute: value
+  :sectnums!:
+  :!sectnums:
+</string>
+			<key>contentName</key>
+			<string>meta.attributeentry.value.asciidoc</string>
+			<key>end</key>
+			<string>$\n?</string>
+			<key>name</key>
+			<string>meta.attributeentry.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>attribute_list_line</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.attributelistline.begin.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.attributelistline.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Attribute list as paragraph: single brackets. No need for special treatment of escape; follows literal block, section template as being a more general regex.
+</string>
+			<key>match</key>
+			<string>^(\[)[^\[\]]*(\])\s*$\n?</string>
+			<key>name</key>
+			<string>support.variable.attributelist.asciidoc</string>
+		</dict>
+		<key>attribute_reference</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.attributes.reference.begin.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>support.variable.attribute.asciidoc</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.attributes.reference.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Examples:
+  {my-attribute}
+</string>
+			<key>match</key>
+			<string>({)([A-Za-z0-9_][A-Za-z0-9_-]*)(})</string>
+			<key>name</key>
+			<string>variable.other</string>
+		</dict>
+		<key>biblio_anchor</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.biblioanchor.begin.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.biblioanchor.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Bibliography anchor
+
+Examples:
+  [[[Lorem ipsum]]]
+</string>
+			<key>match</key>
+			<string>(?&lt;!\[)(\[\[\[).*?(\]\]\])(?!\])</string>
+			<key>name</key>
+			<string>storage.type.reference.biblioanchor.asciidoc</string>
+		</dict>
+		<key>block_admonition_label</key>
+		<dict>
+			<key>comment</key>
+			<string>Label of an admonition block.
+
+Examples:
+  NOTE: This is a admonition block.
+  WARNING:  Be aware of them!
+</string>
+			<key>match</key>
+			<string>^(NOTE|TIP|IMPORTANT|WARNING|CAUTION):(?=\s+)</string>
+			<key>name</key>
+			<string>support.constant.admonitionword.asciidoc</string>
+		</dict>
+		<key>block_comment</key>
+		<dict>
+			<key>begin</key>
+			<string>^(/{4,})\s*$\n?</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.comment.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Examples:
+  ////
+  A multi-line comment.
+  Notice it's a delimited block.
+  ////
+</string>
+			<key>contentName</key>
+			<string>meta.block.comment.content.asciidoc</string>
+			<key>end</key>
+			<string>^\1\s*$\n?</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.comment.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>comment.block.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#macro</string>
+				</dict>
+			</array>
+		</dict>
+		<key>block_example</key>
+		<dict>
+			<key>begin</key>
+			<string>^(={4,})\s*$\n?</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.example.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Examples:
+  ====
+  Lorem ipsum.
+  ====
+
+Note: Might need to add more includes, but these are the ones that arise in
+practice for me.
+</string>
+			<key>contentName</key>
+			<string>meta.block.example.content.asciidoc</string>
+			<key>end</key>
+			<string>^\1\s*$\n?</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.example.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>string.unquoted.block.example.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#lists</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_listing</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#lines</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#inline</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>block_id</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.blockid.begin.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>markup.underline.blockid.id.asciidoc</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.blockid.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>A block id (i.e. anchor).
+
+Examples:
+  [[myid]]
+  Lorem ipsum dolor.
+</string>
+			<key>match</key>
+			<string>^(\[\[)([^\[].*)(\]\])\s*$\n?</string>
+			<key>name</key>
+			<string>meta.tag.blockid.asciidoc</string>
+		</dict>
+		<key>block_listing</key>
+		<dict>
+			<key>begin</key>
+			<string>^(\-{4,})\s*$\n?</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.listing.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Examples:
+  ----
+  Lorem ipsum.
+  ----
+</string>
+			<key>contentName</key>
+			<string>source.block.listing.content.asciidoc</string>
+			<key>end</key>
+			<string>^\1\s*$\n?</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.listing.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>meta.embedded.block.listing.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#inline_callout</string>
+				</dict>
+			</array>
+		</dict>
+		<key>block_literal</key>
+		<dict>
+			<key>begin</key>
+			<string>^(\.{4,})\s*$\n?</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.block.literal.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Examples:
+  ....
+  Lorem ipsum.
+  ....
+</string>
+			<key>contentName</key>
+			<string>meta.block.literal.content.asciidoc</string>
+			<key>end</key>
+			<string>^\1\s*$\n?</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.block.literal.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>string.literal.block.delimited.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#inline_callout</string>
+				</dict>
+			</array>
+		</dict>
+		<key>block_open</key>
+		<dict>
+			<key>begin</key>
+			<string>^\-\-\s*$\n?</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.block.open.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Examples:
+  --
+  Lorem ipsum
+  --
+Note: Might need to check on these includes.
+</string>
+			<key>contentName</key>
+			<string>meta.block.open.content.asciidoc</string>
+			<key>end</key>
+			<string>^\-\-\s*$\n?</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.block.open.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>meta.block.open.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#lists</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_comment</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_listing</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_pass</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#lines</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#inline</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>block_page_break</key>
+		<dict>
+			<key>comment</key>
+			<string>A page break.
+
+Examples:
+  &lt;&lt;&lt;
+  &lt;&lt;&lt;&lt;&lt;
+</string>
+			<key>match</key>
+			<string>^&lt;{3,}$\n?</string>
+			<key>name</key>
+			<string>meta.separator.pagebreak.asciidoc</string>
+		</dict>
+		<key>block_pass</key>
+		<dict>
+			<key>begin</key>
+			<string>^(\+{4,})\s*$\n?</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.block.passthrough.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>contentName</key>
+			<string>text.xml.block.passthrough.content.asciidoc</string>
+			<key>end</key>
+			<string>^\1\s*$\n?</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.block.passthrough.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>meta.embedded.block.passthrough.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>text.xml</string>
+				</dict>
+			</array>
+		</dict>
+		<key>block_quote</key>
+		<dict>
+			<key>begin</key>
+			<string>^(_{4,})\s*$\n?</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.block.quote.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Examples:
+  ____
+  Lorem ipsum
+  ____
+
+Note: Might need to add more includes, but these are the ones that arise for me in practice.
+</string>
+			<key>contentName</key>
+			<string>meta.block.quote.content.asciidoc</string>
+			<key>end</key>
+			<string>^\1\s*$\n?</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.block.quote.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>markup.quote.block.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#lines</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#inline</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>block_sidebar</key>
+		<dict>
+			<key>begin</key>
+			<string>^(\*{4,})\s*$\n?</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.block.sidebar.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Examples:
+  ****
+  Lorem ipsum
+  ****
+
+Note: Might need to add more includes, but these are the ones that arise
+for me in practice.
+</string>
+			<key>contentName</key>
+			<string>meta.block.sidebar.content.asciidoc</string>
+			<key>end</key>
+			<string>^\1\s*$\n?</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.block.sidebar.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>string.quoted.block.sidebar.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#lists</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_comment</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_listing</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#lines</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#inline</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>block_source_fenced</key>
+		<dict>
+			<key>begin</key>
+			<string>^(```)(\w+)?\s*$\n?</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.listing.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Fenced code block (ala Markdown)
+
+Examples:
+  ```rb
+  puts 'Hello world!'
+  ```
+</string>
+			<key>contentName</key>
+			<string>source.block.listing.content.asciidoc</string>
+			<key>end</key>
+			<string>^\1\s*$\n?</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.delimiter.listing.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>meta.embedded.block.listing.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#inline_callout</string>
+				</dict>
+			</array>
+		</dict>
+		<key>block_thematic_break</key>
+		<dict>
+			<key>comment</key>
+			<string>A thematic break (aka horizontal rule).
+
+Examples:
+  '''
+  ''''''
+</string>
+			<key>match</key>
+			<string>^'{3,}$\n?</string>
+			<key>name</key>
+			<string>meta.separator.ruler.asciidoc</string>
+		</dict>
+		<key>block_title</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.blockheading.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Title of a block.
+
+Examples:
+  .My title
+  Lorem ipsum dolor.
+</string>
+			<key>match</key>
+			<string>^(\.)\w.*$\n?</string>
+			<key>name</key>
+			<string>markup.heading.block.asciidoc</string>
+		</dict>
+		<key>blocks</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#block_literal</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_comment</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_listing</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_source_fenced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_sidebar</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_pass</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_quote</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_example</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_open</string>
+				</dict>
+			</array>
+		</dict>
+		<key>characters</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#attribute_reference</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#entity_number</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#entity_name</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#escape</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#replacement</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#macro_pass</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#macro</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#xref</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#biblio_anchor</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#indexterm_triple</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#indexterm_double</string>
+				</dict>
+			</array>
+		</dict>
+		<key>colist_item_marker</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>string.unquoted.list.callout.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>constant.numeric.callout.asciidoc</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.calloutlistnumber.begin.asciidoc</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.calloutlistnumber.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Marker of a callout list item.
+
+Examples:
+  &lt;1&gt; a callout
+  &lt;42&gt; another callout
+</string>
+			<key>match</key>
+			<string>^(\s*((&lt;)\d+?(&gt;)))\s+(?=\S)</string>
+			<key>name</key>
+			<string>markup.list.numbered.callout.asciidoc</string>
+		</dict>
+		<key>dlist_item_label</key>
+		<dict>
+			<key>begin</key>
+			<string>^\s*(?=.*:{2,4}(?:\s|$))</string>
+			<key>comment</key>
+			<string>Label of a definition (labeled) list item.
+
+Examples:
+  Label level 1:: lorem ipsum
+  Label level 2::: dolor sit amet
+  Label level 3:::: consectetur
+  Label level 1::
+    lorem ipsum
+  Another label :: lorem ipsum
+  Last::label:: dolor sit amet
+
+Note: This rule is not strictly correct, because Asciidoctor allows
+double colon followed by a space inside a label, i.e. it matches the
+*last* double colon, not the first. I don't know how to do that
+*effectively.
+</string>
+			<key>contentName</key>
+			<string>meta.list.label.asciidoc</string>
+			<key>end</key>
+			<string>(:{2,4})(?:\s|$\n?)</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>constant.labeledlist.separator.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>markup.list.labeled.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#inline</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>emphasis</key>
+		<dict>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?      # might be preceded by an attributes list
+(?&lt;=^|\W)(?&lt;!\\|})  # must be preceded by nonword character, and not by escape or } (attribute)
+(_)(?=\S)           # delimiter underscore that must be followed by a nonspace character</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.variable.attributelist.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.italic.single.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Emphasized (italic) text (constrained variant).
+
+Examples:
+  _Lorem ipsum_ dolor
+  [red]_Lorem ipsum_ dolor
+</string>
+			<key>contentName</key>
+			<string>meta.italicinner.single.asciidoc</string>
+			<key>end</key>
+			<string>(?x)
+(?&lt;=\S)(_)        # delimiter underscore that must be preceded by a nonspace character
+(?!\w)            # ...and followed by a nonword character</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.italic.single.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>markup.italic.single.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>emphasis_double</key>
+		<dict>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?  # might start with attribute list
+(?&lt;!\\)         # must not be preceded by escape
+(__)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.variable.attributelist.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.italic.double.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Emphasized (italic) text (unconstrained variant).
+
+Examples:
+  Lo__re__m __ipsum dolor__.
+  Lo[red]__re__m
+</string>
+			<key>contentName</key>
+			<string>meta.italicinner.double.asciidoc</string>
+			<key>end</key>
+			<string>__</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.italic.double.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>markup.italic.double.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>entity_name</key>
+		<dict>
+			<key>comment</key>
+			<string>Character entity reference
+
+Examples:
+  &amp;nbsp;
+  &amp;sup2;
+</string>
+			<key>match</key>
+			<string>(?&lt;!\\)&amp;([a-zA-Z][a-zA-Z0-9]*);</string>
+			<key>name</key>
+			<string>constant.character.entity.xml.asciidoc</string>
+		</dict>
+		<key>entity_number</key>
+		<dict>
+			<key>comment</key>
+			<string>Numeric character reference
+
+Examples:
+  &amp;#x278a;
+  &amp;#182;
+</string>
+			<key>match</key>
+			<string>(?&lt;!\\)&amp;#(x?[0-9a-fA-f]{2,4});</string>
+			<key>name</key>
+			<string>constant.character.entity.asciidoc</string>
+		</dict>
+		<key>escape</key>
+		<dict>
+			<key>comment</key>
+			<string>List of special characters that may be escaped.
+
+Note: I do not really know if this is a good list, adopted wholesale from
+original bundle.
+</string>
+			<key>match</key>
+			<string>\\(?=[-`*_#+.!(){}\[\]\\&gt;:])</string>
+			<key>name</key>
+			<string>constant.character.escape.asciidoc</string>
+		</dict>
+		<key>indexterm_double</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.indexterm.double.begin.asciidoc</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.indexterm.double.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Double parenthesis indexterm.
+
+Examples:
+  ((Arthur))
+</string>
+			<key>match</key>
+			<string>(?&lt;!\()(\({2})([^\(\s].*?)(\){2})(?!\))</string>
+			<key>name</key>
+			<string>variable.other.indexterm.double.asciidoc</string>
+		</dict>
+		<key>indexterm_triple</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.indexterm.triple.begin.asciidoc</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.indexterm.triple.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Triple parenthesis indexterm.
+
+Examples:
+  (((Sword, Broadsword, Excalibur)))
+</string>
+			<key>match</key>
+			<string>(?&lt;!\()(\({3})([^\(].*?)(\){3})(?!\))</string>
+			<key>name</key>
+			<string>variable.other.indexterm.triple.asciidoc</string>
+		</dict>
+		<key>inline</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#passthrough</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+			</array>
+		</dict>
+		<key>inline_break</key>
+		<dict>
+			<key>comment</key>
+			<string>Line hard break with a plus sign (+).
+
+Examples:
+  Rubies are red, +
+  Topazes are blue.
+</string>
+			<key>match</key>
+			<string>(?&lt;=\s)\+$\n?</string>
+			<key>name</key>
+			<string>constant.linebreak.asciidoc</string>
+		</dict>
+		<key>inline_callout</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.callout.begin.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.callout.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Callout label
+
+Examples:
+  &lt;1&gt;
+  &lt;42&gt;
+</string>
+			<key>match</key>
+			<string>(?&lt;!\\)(&lt;)\d+(&gt;)</string>
+			<key>name</key>
+			<string>constant.other.callout.asciidoc</string>
+		</dict>
+		<key>inline_comment</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.comment.line.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>meta.line.comment.content.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Inline comment.
+
+Examples:
+  // This is just a comment!
+</string>
+			<key>match</key>
+			<string>^(//)([^/\n].*|)$\n?</string>
+			<key>name</key>
+			<string>comment.line.double-slash.asciidoc</string>
+		</dict>
+		<key>lines</key>
+		<dict>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#inline_comment</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#list_continuation</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#inline_break</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_page_break</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_thematic_break</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_title</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_id</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#section_template</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#attribute_list_line</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#attribute_entry</string>
+				</dict>
+			</array>
+		</dict>
+		<key>list_continuation</key>
+		<dict>
+			<key>match</key>
+			<string>^\+\s*$\n?</string>
+			<key>name</key>
+			<string>constant.listcontinuation.asciidoc</string>
+		</dict>
+		<key>lists</key>
+		<dict>
+			<key>comment</key>
+			<string>My strategy for lists (and similar) is not to try to treat entire paragraphs as lists, but only call out the opening.
+</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#block_admonition_label</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#ulist_item_marker</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#olist_item_marker</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#dlist_item_label</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#colist_item_marker</string>
+				</dict>
+			</array>
+		</dict>
+		<key>macro</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>markup.underline.link.macro.asciidoc</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.control.name.macro.asciidoc</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.separator.macro.asciidoc</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>markup.underline.target.macro.asciidoc</string>
+				</dict>
+				<key>6</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.attributes.macro.begin.asciidoc</string>
+				</dict>
+				<key>7</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter.attributes.macro.asciidoc</string>
+				</dict>
+				<key>8</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.attributes.macro.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Note: There are other macro notations, but I match only those that end in
+square brackets.
+</string>
+			<key>match</key>
+			<string>(?x)
+(?:
+  ((?:https?|mailto|ftp|file)  # specify separately so we can mark them as links that TextMate opens
+  ?:{1}  # inline only
+  \S*)   # (others such as image are partial URLs and/or TextMate cannot handle them)
+|
+  (([a-zA-Z0-9][a-zA-Z0-9_]*)
+  (:{1,2})
+  (\S*))
+)
+(?:(\[)([^\]]*)(\]))</string>
+			<key>name</key>
+			<string>meta.macro.asciidoc</string>
+		</dict>
+		<key>macro_pass</key>
+		<dict>
+			<key>begin</key>
+			<string>(?x)
+(pass)
+(:{1,2})
+(\S*)
+(\[)(?=[^\]]*\])</string>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>keyword.control.name.macro.pass.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.separator.macro.asciidoc</string>
+				</dict>
+				<key>3</key>
+				<dict>
+					<key>name</key>
+					<string>markup.underline.target.macro.asciidoc</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.attributes.macro.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Passthrough macro
+
+Examples:
+  pass:[Lorem ipsum]
+  pass::[Lorem ipsum]
+</string>
+			<key>contentName</key>
+			<string>variable.parameter.attributes.macro.pass.asciidoc</string>
+			<key>end</key>
+			<string>\]</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.attributes.macro.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>meta.macro.pass.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>text.xml</string>
+				</dict>
+			</array>
+		</dict>
+		<key>mark</key>
+		<dict>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?      # might start with attribute list (darned well better or why are we here)
+(?&lt;=^|\W)(?&lt;!\\|})  # must be preceded by nonword character, and not by escape or } (attribute)
+(\#)(?=\S)          # delimiter hash that must be followed by a nonspace character</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.variable.attributelist.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.unquoted.single.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Marked text (constrained variant).
+
+Examples:
+  #Lorem ipsum# dolor
+  [red]#Lorem ipsum# dolor
+</string>
+			<key>contentName</key>
+			<string>string.unquoted.unquotedinner.single.asciidoc</string>
+			<key>end</key>
+			<string>(?x)
+(?&lt;=\S)(\#)       # delimiter hash that must be preceded by a nonspace character
+(?!\w)            # ...and followed by a nonword character</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.unquoted.single.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>string.other.unquoted.single.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>mark_double</key>
+		<dict>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?  # might start with an attribute list (indeed, that is its purpose)
+(?&lt;!\\)         # must not be preceded by escape
+(\#\#)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.variable.attributelist.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.unquoted.double.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Marked text (unconstrained variant).
+
+Examples:
+  Lo##re##m ##ipsum dolor##.
+  Lo[red]##re##m
+</string>
+			<key>contentName</key>
+			<string>string.unquoted.unquotedinner.double.asciidoc</string>
+			<key>end</key>
+			<string>\#\#</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.unquoted.double.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>string.other.unquoted.double.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>monospaced</key>
+		<dict>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?      # might start with attributes list
+(?&lt;=^|\W)(?&lt;!\\|})  # must be preceded by nonword character, and not by escape or } (attribute)
+(`)(?=\S)           # delimiter backtick that must be followed by a nonspace character</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.variable.attributelist.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.literal.single.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Monospaced text (constrained variant).
+
+Examples:
+  `Lorem ipsum` dolor
+  [red]`Lorem ipsum` dolor
+</string>
+			<key>contentName</key>
+			<string>meta.literalinner.single.asciidoc</string>
+			<key>end</key>
+			<string>(?x)
+(?&lt;=\S)(`)        # delimiter backtick that must be preceded by a nonspace character
+(?!\w)            # ...and followed by a nonword character</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.literal.single.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>string.other.literal.single.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>monospaced_double</key>
+		<dict>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?  # might start with attribute list
+(?&lt;!\\)         # must not be preceded by escape
+(``)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.variable.attributelist.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.literal.double.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Monospaced text (unconstrained variant).
+
+Examples:
+  Lo``re``m ``ipsum dolor``.
+  Lo[red]``re``m
+</string>
+			<key>contentName</key>
+			<string>meta.literalinner.double.asciidoc</string>
+			<key>end</key>
+			<string>``</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.literal.double.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>string.other.literal.double.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>olist_item_marker</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>string.unquoted.list.dotted.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>constant.numeric.list.dot.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Marker of an ordered (numbered) list item.
+
+Examples:
+  . level 1
+  .. level 2
+  ... level 3
+  .... level 4
+  ..... level 5
+
+Note: The space distinguishes it from a block title.
+</string>
+			<key>match</key>
+			<string>^(\s*(\.{1,5}))\s+(?=\S)</string>
+			<key>name</key>
+			<string>markup.list.numbered.dotted.asciidoc</string>
+		</dict>
+		<key>passthrough</key>
+		<dict>
+			<key>begin</key>
+			<string>(\+\+\+|\$\$)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.passthru.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Inline triple-plus and double dolar passthrough.
+
+Examples:
+  Lo+++re++++m +++ipsum dolor+++.
+  Lo$$re$$m $$ipsum dolor$$.
+
+Note: Must be dead first among the inlines, so as to take priority.
+</string>
+			<key>contentName</key>
+			<string>variable.parameter.passthruinner.asciidoc</string>
+			<key>end</key>
+			<string>\1</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.passthru.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>meta.passthru.inline.asciidoc</string>
+		</dict>
+		<key>replacement</key>
+		<dict>
+			<key>match</key>
+			<string>(?x)
+(?&lt;!\\)  # must not be escaped
+(
+  \(C\)
+  | \(TM\)
+  | \(R\)
+  | ((?&lt;!\-)\-\-(?!\-))    # exactly two, and even this may not rule out all that I want to
+  | ((?&lt;!\.)\.\.\.(?!\.))  # exactly three
+  | \-&gt;
+  | &lt;\-
+  | =&gt;
+  | &lt;=
+)</string>
+			<key>name</key>
+			<string>constant.character.replacement.asciidoc</string>
+		</dict>
+		<key>section_template</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.sectiontemplate.begin.asciidoc</string>
+				</dict>
+				<key>4</key>
+				<dict>
+					<key>name</key>
+					<string>meta.tag.sectiontemplate.asciidoc</string>
+				</dict>
+				<key>6</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.sectiontemplate.end.asciidoc</string>
+				</dict>
+				<key>7</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.sectiontemplate.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>fixed list of known template names</string>
+			<key>match</key>
+			<string>(?x)^
+(\[)  # in square brackets
+(template\s*=\s*)?(")?  # might start with template-equals and might have template name in quotes
+(
+sect\d|abstract|preface|colophon|dedication|glossary|bibliography|synopsis|appendix|index # fixed list of known templates
+)
+(".*(\])|(\]))  # either close the quote (and perhaps go on) and close the bracket, or close the bracket immediately
+\s*$\n?</string>
+			<key>name</key>
+			<string>variable.parameter.sectiontemplate.asciidoc</string>
+		</dict>
+		<key>section_titles</key>
+		<dict>
+			<key>comment</key>
+			<string>Examples:
+
+  = Document Title (Level 0)
+
+  == Level 1 Section
+
+  === Level 2 Section
+</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#title_level_5</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#title_level_4</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#title_level_3</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#title_level_2</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#title_level_1</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#title_level_0</string>
+				</dict>
+			</array>
+		</dict>
+		<key>strong</key>
+		<dict>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?      # might start with an attributes list
+(?&lt;=^|\W)(?&lt;!\\|})  # must be preceded by nonword character, and not by escape or } (attribute)
+(\*)(?=\S)          # delimiter star that must be followed by a nonspace character</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.variable.attributelist.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.bold.single.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Strong (bold) text (constrained variant).
+
+Examples:
+  *Lorem ipsum* dolor
+  [red]*Lorem ipsum* dolor
+</string>
+			<key>contentName</key>
+			<string>meta.boldinner.single.asciidoc</string>
+			<key>end</key>
+			<string>(?x)
+(?&lt;=\S)(\*)       # delimiter star that must be preceded by a nonspace character
+(?!\w)            # ...and followed by a nonword character</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.bold.single.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>markup.bold.single.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>strong_double</key>
+		<dict>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?  # might start with an attribute list
+(?&lt;!\\)         # must not be preceded by escape
+(\*\*)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.variable.attributelist.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.bold.double.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Strong (bold) text (unconstrained variant).
+
+Examples:
+  Lo**re**m **ipsum dolor**.
+  Lo[red]**re**m
+</string>
+			<key>contentName</key>
+			<string>meta.boldinner.double.asciidoc</string>
+			<key>end</key>
+			<string>\*\*</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.bold.double.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>markup.bold.double.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>subscript</key>
+		<dict>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?  # might start with attribute list
+(?&lt;!\\)         # must not be preceded by escape
+(~)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.variable.attributelist.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.subscript.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Subscript text.
+
+Examples:
+  E=mc^2^
+  E=mc[red]^2^
+</string>
+			<key>contentName</key>
+			<string>meta.subscriptinner.asciidoc</string>
+			<key>end</key>
+			<string>~</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.subscript.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>string.other.subscript.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>superscript</key>
+		<dict>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?  # might start with attribute list
+(?&lt;!\\)         # no preceding escape
+(\^)</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.variable.attributelist.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.superscript.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Superscript text.
+
+Examples:
+  H~2~O
+  H[red]~2~O
+</string>
+			<key>contentName</key>
+			<string>meta.superscriptinner.asciidoc</string>
+			<key>end</key>
+			<string>^</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.superscript.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>string.other.superscript.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
+		</dict>
+		<key>title_level_0</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.heading.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.section.asciidoc</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>^(=) (\w.*)$\n?</string>
+			<key>name</key>
+			<string>markup.heading.level.0.asciidoc</string>
+		</dict>
+		<key>title_level_1</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.heading.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.section.asciidoc</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>^(==) (\w.*)$\n?</string>
+			<key>name</key>
+			<string>markup.heading.level.1.asciidoc</string>
+		</dict>
+		<key>title_level_2</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.heading.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.section.asciidoc</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>^(===) (\w.*)$\n?</string>
+			<key>name</key>
+			<string>markup.heading.level.2.asciidoc</string>
+		</dict>
+		<key>title_level_3</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.heading.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.section.asciidoc</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>^(====) (\w.*)$\n?</string>
+			<key>name</key>
+			<string>markup.heading.level.3.asciidoc</string>
+		</dict>
+		<key>title_level_4</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.heading.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.section.asciidoc</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>^(=====) (\w.*)$\n?</string>
+			<key>name</key>
+			<string>markup.heading.level.4.asciidoc</string>
+		</dict>
+		<key>title_level_5</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.heading.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.section.asciidoc</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>^(======) (\w.*)$\n?</string>
+			<key>name</key>
+			<string>markup.heading.level.5.asciidoc</string>
+		</dict>
+		<key>ulist_item_marker</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>string.unquoted.list.bullet.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>constant.numeric.list.bullet.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Marker of an unordered (bullet) list item.
+
+Examples:
+  * level 1
+  ** level 2
+  *** level 3
+  **** level 4
+  ***** level 5
+  - level 1
+  -- level 2
+  --- level 3
+  ---- level 4
+  ----- level 5
+</string>
+			<key>match</key>
+			<string>^(\s*(\-|\*{1,5}))\s+(?=\S)</string>
+			<key>name</key>
+			<string>markup.list.bulleted.asciidoc</string>
+		</dict>
+		<key>xref</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.xref.begin.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>markup.underline.term.xref.asciidoc</string>
+				</dict>
+				<key>5</key>
+				<dict>
+					<key>name</key>
+					<string>variable.parameter.xref.asciidoc</string>
+				</dict>
+				<key>6</key>
+				<dict>
+					<key>name</key>
+					<string>constant.character.xref.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Internal cross-reference
+
+Examples:
+  &lt;&lt;lorem&gt;&gt;
+  &lt;&lt;lorem, see here&gt;&gt;
+</string>
+			<key>match</key>
+			<string>(?&lt;!&lt;)(&lt;&lt;)([^,]*?)((,\s*)(.*?))?(&gt;&gt;)(?!&lt;)</string>
+			<key>name</key>
+			<string>meta.xref.asciidoc</string>
+		</dict>
+	</dict>
+	<key>scopeName</key>
+	<string>text.asciidoc</string>
+	<key>uuid</key>
+	<string>A2AE6D21-3F08-4978-ADF3-55B5AD580921</string>
+</dict>
+</plist>
