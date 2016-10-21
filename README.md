@@ -16,7 +16,7 @@ You need to [**install AsciiDoctor**](http://asciidoctor.org/docs/install-toolch
 
 ## How to build and install from source (Linux)
 ```
-git clone https://github.com/joaompinto/vscode-instant-asciidoc
+git clone https://github.com/joaompinto/asciidoctor-vscode
 cd vscode-instant-asciidoc
 npm install
 sudo npm install vsce

@@ -1,22 +1,22 @@
 {
     "name": "asciidoctor-vscode",
-    "displayName": "AsciiDoc Text Previewer",
+    "displayName": "AsciiDoc Live Previewer",
     "description": "An extension to preview AsciiDoc files while typing them",
-    "version": "0.1.5",
+    "version": "0.1.6",
     "publisher": "joaompinto",
     "author": "João Pinto",
     "license": "MIT",
     "readme": "README.md",
     "repository": {
         "type": "git",
-        "url": "https://github.com/joaompinto//vscode-instant-asciidoc"
+        "url": "https://github.com/joaompinto/asciidoctor-vscode"
     },
     "galleryBanner": {
         "color": "#78d6f0",
         "theme": "light"
     },
-    "bugs": "https://github.com/joaompinto//vscode-instant-asciidoc/issues",
-    "homepage": "https://github.com/joaompinto//vscode-instant-asciidoc/blob/master/README.md",
+    "bugs": "https://github.com/joaompinto/asciidoctor-vscode/issues",
+    "homepage": "https://github.com/joaompinto/asciidoctor-vscode/blob/master/README.md",
     "icon": "images/icon.png",
     "main": "./out/src/extension",
     "engines": {
