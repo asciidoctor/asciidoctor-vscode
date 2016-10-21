@@ -1,0 +1,218 @@
+/*
+ * default.css_t
+ * ~~~~~~~~~~~~~
+ *
+ * Sphinx stylesheet -- default theme.
+ *
+ * :copyright: Copyright 2007-2016 by the Sphinx team, see AUTHORS.
+ * :license: BSD, see LICENSE for details.
+ *
+ */
+
+/* -- page layout ----------------------------------------------------------- */
+
+* {
+    font-size: initial;
+    background-color: #ddd;
+    color: #333;
+}
+
+body {
+    margin: 20px;
+    padding: 0;
+}
+
+div.documentwrapper {
+    float: left;
+    width: 100%;
+}
+
+div.bodywrapper {
+    margin: 0 0 0 0px;
+}
+
+div.body {
+    background-color: #ddd;
+    color: #333;
+    padding: 0 20px 30px 20px;
+}
+
+div.footer {
+    color: #333;
+    width: 100%;
+    padding: 9px 0 9px 0;
+    text-align: center;
+    font-size: 75%;
+}
+
+div.footer a {
+    color: #333;
+    text-decoration: underline;
+}
+
+div.related {
+    background-color: #bbb;
+    line-height: 30px;
+    color: #333;
+}
+
+div.related a {
+    color: #666;
+}
+/* -- hyperlink styles ------------------------------------------------------ */
+
+a {
+    color: #33d;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #33d;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a.external {
+   text-decoration: none;
+   border-bottom: 1px dashed #33d;
+}
+
+a.external:hover {
+   text-decoration: none;
+   border-bottom: none;
+}
+
+a.external:visited {
+    text-decoration: none;
+    border-bottom: 1px dashed #33d;
+}
+
+/* -- body styles ----------------------------------------------------------- */
+
+div.body h1,
+div.body h2,
+div.body h3,
+div.body h4,
+div.body h5,
+div.body h6 {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #ddd;
+    font-weight: normal;
+    color: #555;
+    border-bottom: 1px solid #ccc;
+    margin: 20px -20px 10px -20px;
+    padding: 3px 0 3px 10px;
+}
+
+div.body h1 { margin-top: 0; font-size: 200%; }
+div.body h2 { font-size: 160%; }
+div.body h3 { font-size: 140%; }
+div.body h4 { font-size: 120%; }
+div.body h5 { font-size: 110%; }
+div.body h6 { font-size: 100%; }
+
+a.headerlink {
+    color: #55d;
+    font-size: 0.8em;
+    padding: 0 4px 0 4px;
+    text-decoration: none;
+}
+
+a.headerlink:hover {
+    background-color: #55d;
+    color: white;
+}
+
+div.body p, div.body dd, div.body li, div.body blockquote {
+    text-align: justify;
+    line-height: 130%;
+}
+
+div.admonition p.admonition-title + p {
+    display: inline;
+}
+
+div.admonition p {
+    margin-bottom: 5px;
+}
+
+div.admonition pre {
+    margin-bottom: 5px;
+}
+
+div.admonition ul, div.admonition ol {
+    margin-bottom: 5px;
+}
+
+div.note {
+    background-color: #eee;
+    border: 1px solid #ccc;
+}
+
+div.seealso {
+    background-color: #ffc;
+    border: 1px solid #ff6;
+}
+
+div.topic {
+    background-color: #eee;
+}
+
+div.warning {
+    background-color: #ffe4e4;
+    border: 1px solid #f66;
+}
+
+p.admonition-title {
+    display: inline;
+}
+
+p.admonition-title:after {
+    content: ":";
+}
+
+pre {
+    padding: 5px;
+    background-color: #050;
+    color: #bb0;
+    line-height: 120%;
+    border: 1px solid #ac9;
+    border-left: none;
+    border-right: none;
+}
+
+code {
+    background-color: #ecf0f3;
+    padding: 0 1px 0 1px;
+    font-size: 0.95em;
+}
+
+th {
+    background-color: #ede;
+}
+
+.warning code {
+    background: #efc2c2;
+}
+
+.note code {
+    background: #d6d6d6;
+}
+
+.viewcode-back {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+div.viewcode-block:target {
+    background-color: #f4debf;
+    border-top: 1px solid #ac9;
+    border-bottom: 1px solid #ac9;
+}
+
+div.code-block-caption {
+    color: #efefef;
+    background-color: #1c4e63;
+}

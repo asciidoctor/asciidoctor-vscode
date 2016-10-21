@@ -1,0 +1,97 @@
+{
+    "name": "asciidoctor-vscode",
+    "displayName": "AsciiDoc Text Previewer",
+    "description": "An extension to preview AsciiDoc files while typing them",
+    "version": "0.1.5",
+    "publisher": "joaompinto",
+    "author": "João Pinto",
+    "license": "MIT",
+    "readme": "README.md",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/joaompinto//vscode-instant-asciidoc"
+    },
+    "galleryBanner": {
+        "color": "#78d6f0",
+        "theme": "light"
+    },
+    "bugs": "https://github.com/joaompinto//vscode-instant-asciidoc/issues",
+    "homepage": "https://github.com/joaompinto//vscode-instant-asciidoc/blob/master/README.md",
+    "icon": "images/icon.png",
+    "main": "./out/src/extension",
+    "engines": {
+        "vscode": "^0.10.8"
+    },
+    "categories": [
+        "Languages"
+    ],
+    "activationEvents": [
+        "onCommand:adoc.preview",
+        "onCommand:adoc.previewToSide"
+    ],
+    "contributes": {
+        "languages": [
+            {
+                "id": "asciidoc",
+                "aliases": [
+                    "AsciiDoc",
+                    "AsciiDoc(tor)"
+                ],
+                "extensions": [
+                    ".adoc",
+                    ".asciidoc"
+                ]
+            }
+        ],
+        "configuration": {
+            "type": "object",
+            "title": "AsciiDoc Option Configuration",
+            "properties": {
+                "AsciiDoc.html_generator": {
+                    "type": "string",
+                    "default": "asciidoctor -o-",
+                    "description": "command to be used for the HTML generation"
+                }
+            }
+        },
+        "keybindings": [
+            {
+                "command": "adoc.preview",
+                "key": "ctrl+shift+r",
+                "when": "editorTextFocus"
+            },
+            {
+                "command": "adoc.previewToSide",
+                "key": "ctrl+k r",
+                "when": "editorTextFocus"
+            }
+        ],
+        "commands": [
+            {
+                "command": "adoc.preview",
+                "title": "Toggle Preview",
+                "category": "AsciiDoc"
+            },
+            {
+                "command": "adoc.previewToSide",
+                "title": "Open Preview to the Side",
+                "category": "AsciiDoc"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
+        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install"
+    },
+    "dependencies": {
+        "file-url": "^1.0.1",
+        "tmp": "^0.0.29"
+    },
+    "devDependencies": {
+        "typescript": "^1.7.5",
+        "vscode": "^0.11.1",
+        "file-url": "^1.0.1",
+        "tmp": "^0.0.29"        
+    }
+}
