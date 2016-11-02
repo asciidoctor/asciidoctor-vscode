@@ -12,8 +12,7 @@ The extension can be activate in two ways
 Open vscode. Press `F1`, search "`ext install`" followed by extension name, in this case: "`ext install asciidoctor-vscode`" without the ">".
 Or if you prefer ">**ext install**", hit enter, search "**asciidoctor-vscode**".
 
-![alt](images/simple.png)
-
+![alt](images/simple.gif)
 
 
 ## Prerequisites

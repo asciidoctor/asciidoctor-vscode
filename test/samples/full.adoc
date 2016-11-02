@@ -6,6 +6,7 @@ Optional Author Name <optional@author.email>
 :toc:
 :toclevels: 1
 
+
 ----
 // Comments will be used to note differences from default Asciidoc behaviour,
 // some may be bugs, others may be specifics of GitHub or AsciiDoctor.

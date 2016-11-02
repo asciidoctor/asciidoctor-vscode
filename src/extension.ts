@@ -149,7 +149,11 @@ class ADocDocumentContentProvider implements TextDocumentContentProvider {
                         stderr.toString()
                     ].join("\n");
                     console.error(errorMessage);
-                    reject(errorMessage);
+                    errorMessage = errorMessage.replace("\n", '<br><br>');
+                    errorMessage += "<br><br>"
+                    errorMessage += "<b>If the asciidoctor binary is not your your PATH, you can set the full path name<br>"
+                    errorMessage += "Go to File -> Preverences -> User settingsm and adjust the AsciiDoc.html_generator config option</b>"
+                    resolve(this.errorSnippet(errorMessage));
                 } else {
                     let result = this.fixLinks(stdout.toString(), editor.document.fileName);
                     resolve(this.buildPage(result));
