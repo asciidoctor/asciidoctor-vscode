@@ -31,4 +31,5 @@ code --install-extension *.vsix
 
 ## Credits:
 This extension preview code was based on https://github.com/tht13/RST-vscode/
+
 The AsciiDoc syntax rules are based on https://github.com/asciidoctor/sublimetext-asciidoc/
