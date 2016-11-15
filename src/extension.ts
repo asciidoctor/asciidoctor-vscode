@@ -136,7 +136,8 @@ class ADocDocumentContentProvider implements TextDocumentContentProvider {
             let text = doc.getText();
             let documentPath = path.dirname(editor.document.fileName);
             let tmpobj = tmp.fileSync({postfix: '.adoc', dir: documentPath});
-            let cmd = workspace.getConfiguration('AsciiDoc').get('html_generator') +" " +tmpobj.name;
+            let html_gerenator = workspace.getConfiguration('AsciiDoc').get('html_generator')
+            let cmd = `${html_gerenator} "${tmpobj.name}"`
             fs.write(tmpobj.fd, text, 0); 
             exec(cmd, (error: Error, stdout: Buffer, stderr: Buffer) => {
                 tmpobj.removeCallback();
