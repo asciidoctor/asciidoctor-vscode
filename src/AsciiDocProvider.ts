@@ -69,13 +69,6 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
         return document;
     }
 
-    private refreshPreview(editor, previewUri: Uri) {
-        var currentTime = new Date();
-        var timeDiff = currentTime.valueOf() - this.lastPreviewTime.valueOf() / 1000;
-        this.lastPreviewHTML = this.createAsciiDocHTML();
-        this.update(previewUri);
-    }
-
     private createStylesheet(file: string) {
         let href = fileUrl(
             path.join(
