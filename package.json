@@ -2,9 +2,9 @@
     "name": "asciidoctor-vscode",
     "displayName": "AsciiDoc",
     "description": "Live preview (with AsciiDoctor) and syntax highlighting.",
-    "version": "0.2.1",
+    "version": "0.3.0",
     "publisher": "joaompinto",
-    "author": "João Pinto",
+    "author": "João Pinto <lamego.pinto@gmail.com>",
     "license": "MIT",
     "readme": "README.md",
     "repository": {
@@ -20,7 +20,7 @@
     "icon": "images/icon.png",
     "main": "./out/src/extension",
     "engines": {
-        "vscode": "^0.10.8"
+        "vscode": "^1.5.0"
     },
     "categories": [
         "Languages"
@@ -43,11 +43,13 @@
                 ]
             }
         ],
-        "grammars": [{
-            "language": "asciidoc",
-            "scopeName": "text.asciidoc",
-            "path": "./syntaxes/Asciidoctor.tmLanguage"
-        }],
+        "grammars": [
+            {
+                "language": "asciidoc",
+                "scopeName": "text.asciidoc",
+                "path": "./syntaxes/Asciidoctor.tmLanguage"
+            }
+        ],
         "configuration": {
             "type": "object",
             "title": "AsciiDoc Option Configuration",
@@ -81,21 +83,28 @@
                 "command": "adoc.previewToSide",
                 "title": "Open Preview to the Side",
                 "category": "AsciiDoc"
+            },
+            {
+                "command": "adoc.updateTimer",
+                "title": "Start adoc updateTimer",
+                "category": "AsciiDoc"
             }
         ]
     },
     "scripts": {
-        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
-        "compile": "node ./node_modules/vscode/bin/compile -watch -p ./",
+        "vscode:prepublish": "./node_modules/.bin/tsc -p ./",
+        "compile": "./node_modules/.bin/tsc -watch -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install"
     },
+    "devDependencies": {
+        "typescript": "^2.0.3",
+        "file-url": "^1.0.1",
+        "@types/node": "^6.0.40",
+        "@types/mocha": "^2.2.32"
+    },
     "dependencies": {
+        "vscode": "^1.0.0",
         "file-url": "^1.0.1",
         "tmp": "^0.0.29"
-    },
-    "devDependencies": {
-        "typescript": "^1.7.5",
-        "vscode": "^0.11.1",
-        "file-url": "^1.0.1"
     }
 }

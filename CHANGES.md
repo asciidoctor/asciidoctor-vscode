@@ -1,3 +1,7 @@
+0.3.0
+    Use time based preview refresh instead of on document change, this closes #9
+    Major code reorgnization and documentation
+
 0.2.1
     Quote filename when invoking asciidoctor, this closes #4
 

@@ -22,9 +22,9 @@ You need to [**install AsciiDoctor**](http://asciidoctor.org/docs/install-toolch
 ## How to build and install from source (Linux)
 ```
 git clone https://github.com/joaompinto/asciidoctor-vscode
-cd vscode-instant-asciidoc
+cd asciidoctor-vscode
 npm install
-sudo npm install vsce
+sudo npm install -g vsce
 vsce package
 code --install-extension *.vsix
 ```
