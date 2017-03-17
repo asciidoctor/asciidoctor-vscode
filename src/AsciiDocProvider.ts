@@ -84,7 +84,20 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
     }
 
     private fixLinks(document: string, documentPath: string): string {
-        return document;
+        let result = document.replace(
+            new RegExp("((?:src|href)=[\'\"])(?!(?:http:|https:|ftp:))(.*?)([\'\"])", "gmi"), (subString: string, p1: string, p2: string, p3: string): string => {
+                 return [
+                     p1,
+                     fileUrl(path.join(
+                         path.dirname(documentPath),
+                         p2
+                     )),
+                     p3
+                 ].join("");
+             }
+         );
+        console.log(result);
+        return result;
     }
 
     public set_needs_rebuilds(value: Boolean) {
