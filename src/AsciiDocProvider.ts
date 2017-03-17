@@ -96,7 +96,6 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
                  ].join("");
              }
          );
-        console.log(result);
         return result;
     }
 
