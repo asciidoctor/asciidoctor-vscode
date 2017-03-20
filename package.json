@@ -2,7 +2,7 @@
     "name": "asciidoctor-vscode",
     "displayName": "AsciiDoc",
     "description": "Live preview (with AsciiDoctor) and syntax highlighting.",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "publisher": "joaompinto",
     "author": "João Pinto <lamego.pinto@gmail.com>",
     "license": "MIT",

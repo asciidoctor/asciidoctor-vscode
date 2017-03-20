@@ -1,3 +1,6 @@
+0.3.3
+    Do not prefix links for local #sections
+
 0.3.2
     Apply fixLinks to local links, closes #12
 
