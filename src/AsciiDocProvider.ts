@@ -127,8 +127,8 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
                     console.error(errorMessage);
                     errorMessage = errorMessage.replace("\n", '<br><br>');
                     errorMessage += "<br><br>"
-                    errorMessage += "<b>If the asciidoctor binary is not your your PATH, you can set the full path name<br>"
-                    errorMessage += "Go to File -> Preverences -> User settingsm and adjust the AsciiDoc.html_generator config option</b>"
+                    errorMessage += "<b>If the asciidoctor binary is not in your PATH, you can set the full path.<br>"
+                    errorMessage += "Go to `File -> Preferences -> User settings` and adjust the AsciiDoc.html_generator config option.</b>"
                     resolve(this.errorSnippet(errorMessage));
                 } else {
                     let result = this.fixLinks(stdout.toString(), editor.document.fileName);
