@@ -31,11 +31,24 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
     private resultText = "";
     private lastPreviewHTML = null;
     private lastPreviewTime = new Date();
-    private needs_rebuild = true;
+    private needsRebuild : boolean = true;
+    private editorDocument: TextDocument = null;
 
+
+    private resolveDocument(uri: Uri): TextDocument {
+        const matches = workspace.textDocuments.filter(d => {
+            return MakePreviewUri(d).toString() == uri.toString(); 
+        });
+        if (matches.length > 0) {
+            return matches[0];
+        } else {
+            return null;
+        }
+    }
 
     public provideTextDocumentContent(uri: Uri): string | Thenable<string> {
-        return this.createAsciiDocHTML();
+        const doc = this.resolveDocument(uri);
+        return this.createAsciiDocHTML(doc);
     }
 
     get onDidChange(): Event<Uri> {
@@ -46,16 +59,15 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
         this._onDidChange.fire(uri);
     }
 
-    private createAsciiDocHTML(): string | Thenable<string> {
+    private createAsciiDocHTML(doc: TextDocument): string | Thenable<string> {
         let editor = window.activeTextEditor;
         
-        if ( !editor || !editor.document ||
-            !(editor.document.languageId === "asciidoc")) {
+        if ( !doc || !(doc.languageId === "asciidoc")) {
             return this.errorSnippet("Active editor doesn't show an AsciiDoc document - no properties to preview.");
         }
-        if (this.needs_rebuild) {
-            this.lastPreviewHTML = this.preview(editor);
-            this.needs_rebuild = false
+        if (this.needsRebuild) {
+            this.lastPreviewHTML = this.preview(doc);
+            this.needsRebuild = false
         }
         return this.lastPreviewHTML
     }
@@ -103,15 +115,14 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
         return result;
     }
 
-    public set_needs_rebuilds(value: Boolean) {
-        this.needs_rebuild = true;
+    public setNeedsRebuild(value: Boolean) {
+        this.needsRebuild = true;
     }
 
-    public preview(editor: TextEditor): Thenable<string> {
-        let doc = editor.document;
+    public preview(doc: TextDocument): Thenable<string> {
         return new Promise<string>((resolve, reject) => {
             let text = doc.getText();
-            let documentPath = path.dirname(editor.document.fileName);
+            let documentPath = path.dirname(doc.fileName);
             let tmpobj = tmp.fileSync({ postfix: '.adoc', dir: documentPath });
             let html_gerenator = workspace.getConfiguration('AsciiDoc').get('html_generator')
             let cmd = `${html_gerenator} "${tmpobj.name}"`
@@ -133,7 +144,7 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
                     errorMessage += "Go to `File -> Preferences -> User settings` and adjust the AsciiDoc.html_generator config option.</b>"
                     resolve(this.errorSnippet(errorMessage));
                 } else {
-                    let result = this.fixLinks(stdout.toString(), editor.document.fileName);
+                    let result = this.fixLinks(stdout.toString(), doc.fileName);
                     resolve(this.buildPage(result));
                 }
             });
@@ -142,26 +153,11 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
 
 }
 
-export function CreateHTMLWindow(provider, displayColumn: ViewColumn): PromiseLike<void> {
-    let previewTitle = `Preview: '${path.basename(window.activeTextEditor.document.fileName)}'`;
-    let previewUri = Uri.parse(`adoc-preview://preview/${previewTitle}`);
-    
-
-    return commands.executeCommand("vscode.previewHtml", previewUri, displayColumn).then((success) => {
-    }, (reason) => {
-        console.warn(reason);
-        window.showErrorMessage(reason);
-    })
-}
-
-
 function TimerCallback(timer, provider, editor, previewUri) {
-
     provider._onDidChange.fire(previewUri);
 }
 
 export function CreateRefreshTimer(provider, editor, previewUri) {
-
     var timer = setInterval(
         () => {
             // This function gets called when the timer goes off.
@@ -169,6 +165,21 @@ export function CreateRefreshTimer(provider, editor, previewUri) {
         },
         // The peroidicity of the timer.
         timerPeriod
-    )
+    );
 }
 
+export function MakePreviewUri(doc: TextDocument): Uri {
+    return Uri.parse(`adoc-preview://preview/${doc.fileName}`);
+}
+
+export function CreateHTMLWindow(provider: AsciiDocProvider, displayColumn: ViewColumn): PromiseLike<void> {
+    let previewTitle = `Preview: '${path.basename(window.activeTextEditor.document.fileName)}'`;
+    let previewUri = MakePreviewUri(window.activeTextEditor.document);
+    
+    CreateRefreshTimer(provider, window.activeTextEditor, previewUri);
+    return commands.executeCommand("vscode.previewHtml", previewUri, displayColumn).then((success) => {
+    }, (reason) => {
+        console.warn(reason);
+        window.showErrorMessage(reason);
+    })
+}

@@ -83,11 +83,6 @@
                 "command": "adoc.previewToSide",
                 "title": "Open Preview to the Side",
                 "category": "AsciiDoc"
-            },
-            {
-                "command": "adoc.updateTimer",
-                "title": "Start adoc updateTimer",
-                "category": "AsciiDoc"
             }
         ],
         "menus": {

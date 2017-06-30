@@ -31,7 +31,7 @@ import {
 
 import AsciiDocProvider, {
     CreateHTMLWindow,
-    CreateRefreshTimer
+    MakePreviewUri
 } from './AsciiDocProvider';
 
 import * as path from "path";
@@ -43,14 +43,12 @@ export function activate(context: ExtensionContext) {
         workspace.registerTextDocumentContentProvider(AsciiDocProvider.scheme, provider)
     )
 
-    let previewTitle = `Preview: '${path.basename(window.activeTextEditor.document.fileName)}'`;
-    let previewUri = Uri.parse(`adoc-preview://preview/${previewTitle}`)
-
     // When the active document is changed set the provider for rebuild
     //this only occurs after an edit in a document
     workspace.onDidChangeTextDocument((e: TextDocumentChangeEvent) => {
         if (e.document === window.activeTextEditor.document) {
-            provider.set_needs_rebuilds(true);
+            provider.setNeedsRebuild(true);
+           //provider.update(MakePreviewUri(e.document));
         }
     })
 
@@ -58,17 +56,17 @@ export function activate(context: ExtensionContext) {
     // This occurs whenever the selected document changes, its useful to keep the
     window.onDidChangeTextEditorSelection((e: TextEditorSelectionChangeEvent) => {
         if (!!e && !!e.textEditor && (e.textEditor === window.activeTextEditor)) {
-            provider.set_needs_rebuilds(true);
+            provider.setNeedsRebuild(true);
+          //  provider.update(MakePreviewUri(e.textEditor.document));
         }
     })
     
     workspace.onDidSaveTextDocument((e: TextDocument) => {
         if (e === window.activeTextEditor.document) {
-            provider.update(previewUri);
+            provider.update(MakePreviewUri(e));
         }
     })
 
-    CreateRefreshTimer(provider, window.activeTextEditor, previewUri)
     let previewToSide = commands.registerCommand("adoc.previewToSide", () => {
         let displayColumn: ViewColumn;
         switch (window.activeTextEditor.viewColumn) {
