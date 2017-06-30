@@ -89,7 +89,15 @@
                 "title": "Start adoc updateTimer",
                 "category": "AsciiDoc"
             }
-        ]
+        ],
+        "menus": {
+            "editor/title": [
+                {
+                    "command": "adoc.previewToSide",
+                    "when": "resourceLangId == asciidoc"
+                }
+            ]
+        }
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
