@@ -48,7 +48,9 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
 
     private createAsciiDocHTML(): string | Thenable<string> {
         let editor = window.activeTextEditor;
-        if (!(editor.document.languageId === "asciidoc")) {
+        
+        if ( !editor || !editor.document ||
+            !(editor.document.languageId === "asciidoc")) {
             return this.errorSnippet("Active editor doesn't show an AsciiDoc document - no properties to preview.");
         }
         if (this.needs_rebuild) {
@@ -143,19 +145,7 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
 export function CreateHTMLWindow(provider, displayColumn: ViewColumn): PromiseLike<void> {
     let previewTitle = `Preview: '${path.basename(window.activeTextEditor.document.fileName)}'`;
     let previewUri = Uri.parse(`adoc-preview://preview/${previewTitle}`);
-
-    // When the active document is changed set the provider for rebuild
-    workspace.onDidChangeTextDocument((e: TextDocumentChangeEvent) => {
-        if (e.document === window.activeTextEditor.document) {
-            provider.set_needs_rebuilds(true);
-        }
-    })
-
-    workspace.onDidSaveTextDocument((e: TextDocument) => {
-        if (e === window.activeTextEditor.document) {
-            provider.update(previewUri);
-        }
-    })
+    
 
     return commands.executeCommand("vscode.previewHtml", previewUri, displayColumn).then((success) => {
     }, (reason) => {
