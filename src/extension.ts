@@ -23,16 +23,18 @@ import {
     Disposable,
     ExtensionContext,
     ViewColumn,
+    TextDocumentChangeEvent,
+    TextEditorSelectionChangeEvent,
+    TextDocument,
     Uri
 } from 'vscode';
 
 import AsciiDocProvider, {
     CreateHTMLWindow,
-    CreateRefreshTimer
+    MakePreviewUri
 } from './AsciiDocProvider';
 
 import * as path from "path";
-
 
 export function activate(context: ExtensionContext) {
 
@@ -41,10 +43,30 @@ export function activate(context: ExtensionContext) {
         workspace.registerTextDocumentContentProvider(AsciiDocProvider.scheme, provider)
     )
 
-    let previewTitle = `Preview: '${path.basename(window.activeTextEditor.document.fileName)}'`;
-    let previewUri = Uri.parse(`adoc-preview://preview/${previewTitle}`)
+    // When the active document is changed set the provider for rebuild
+    //this only occurs after an edit in a document
+    workspace.onDidChangeTextDocument((e: TextDocumentChangeEvent) => {
+        if (e.document === window.activeTextEditor.document) {
+            provider.setNeedsRebuild(true);
+           //provider.update(MakePreviewUri(e.document));
+        }
+    })
 
-    CreateRefreshTimer(provider, window.activeTextEditor, previewUri)
+
+    // This occurs whenever the selected document changes, its useful to keep the
+    window.onDidChangeTextEditorSelection((e: TextEditorSelectionChangeEvent) => {
+        if (!!e && !!e.textEditor && (e.textEditor === window.activeTextEditor)) {
+            provider.setNeedsRebuild(true);
+          //  provider.update(MakePreviewUri(e.textEditor.document));
+        }
+    })
+    
+    workspace.onDidSaveTextDocument((e: TextDocument) => {
+        if (e === window.activeTextEditor.document) {
+            provider.update(MakePreviewUri(e));
+        }
+    })
+
     let previewToSide = commands.registerCommand("adoc.previewToSide", () => {
         let displayColumn: ViewColumn;
         switch (window.activeTextEditor.viewColumn) {
