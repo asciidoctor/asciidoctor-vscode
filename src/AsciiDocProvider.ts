@@ -21,8 +21,6 @@ import * as path from "path";
 let fileUrl = require("file-url");
 let tmp = require("tmp");
 
-const timerPeriod = 1000;  // Time between preview updates
-
 
 export default class AsciiDocProvider implements TextDocumentContentProvider {
     static scheme = 'adoc-preview';
@@ -33,6 +31,7 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
     private lastPreviewTime = new Date();
     private needsRebuild : boolean = true;
     private editorDocument: TextDocument = null;
+    private refreshInterval = 1000;
 
 
     private resolveDocument(uri: Uri): TextDocument {
@@ -61,7 +60,7 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
 
     private createAsciiDocHTML(doc: TextDocument): string | Thenable<string> {
         let editor = window.activeTextEditor;
-        
+
         if ( !doc || !(doc.languageId === "asciidoc")) {
             return this.errorSnippet("Active editor doesn't show an AsciiDoc document - no properties to preview.");
         }
@@ -164,7 +163,7 @@ export function CreateRefreshTimer(provider, editor, previewUri) {
             TimerCallback(timer, provider, editor, previewUri);
         },
         // The peroidicity of the timer.
-        timerPeriod
+        provider.refreshInterval
     );
 }
 
@@ -175,7 +174,7 @@ export function MakePreviewUri(doc: TextDocument): Uri {
 export function CreateHTMLWindow(provider: AsciiDocProvider, displayColumn: ViewColumn): PromiseLike<void> {
     let previewTitle = `Preview: '${path.basename(window.activeTextEditor.document.fileName)}'`;
     let previewUri = MakePreviewUri(window.activeTextEditor.document);
-    
+
     CreateRefreshTimer(provider, window.activeTextEditor, previewUri);
     return commands.executeCommand("vscode.previewHtml", previewUri, displayColumn).then((success) => {
     }, (reason) => {

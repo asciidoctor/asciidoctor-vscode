@@ -58,6 +58,11 @@
                     "type": "string",
                     "default": "asciidoctor -o-",
                     "description": "command to be used for the HTML generation"
+                },
+                "AsciiDoc.runInterval": {
+                    "type": "number",
+                    "default": 1000,
+                    "description": "Control how often we will be checking for file changes"
                 }
             }
         },
