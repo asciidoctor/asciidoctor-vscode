@@ -7,7 +7,7 @@ A vscode support extension that provides live preview and syntax highlighting fo
 
 An extension to preview AsciiDoc text using the _AsciiDoctor_ publishing tool.
 
-The extension can be activate in two ways
+The extension can be activated in two ways
 
 * Toggle Preview - `ctrl+shift+r`
 * Open Preview to the Side - `ctrl+k r`
