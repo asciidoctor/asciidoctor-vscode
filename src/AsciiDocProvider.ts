@@ -128,7 +128,8 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
             let html_generator = workspace.getConfiguration('AsciiDoc').get('html_generator')
             let cmd = `${html_generator} "${tmpobj.name}"`
             fs.write(tmpobj.fd, text, 0);
-            exec(cmd, (error, stdout, stderr) => {
+            let maxBuff = parseInt(workspace.getConfiguration('AsciiDoc').get('buffer_size_kB'))
+            exec(cmd, {maxBuffer: 1024 * maxBuff}, (error, stdout, stderr) => {
                 tmpobj.removeCallback();
                 if (error) {
                     let errorMessage = [
@@ -143,6 +144,7 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
                     errorMessage += "<br><br>"
                     errorMessage += "<b>If the asciidoctor binary is not in your PATH, you can set the full path.<br>"
                     errorMessage += "Go to `File -> Preferences -> User settings` and adjust the AsciiDoc.html_generator config option.</b>"
+                    errorMessage += "<br><br><b>Alternatively if you get a stdout maxBuffer exceeded error, Go to `File -> Preferences -> User settings and adjust the AsciiDoc.buffer_size_kB to a larger number (default is 200 kB).</b>"
                     resolve(this.errorSnippet(errorMessage));
                 } else {
                     let result = this.fixLinks(stdout.toString(), doc.fileName);
