@@ -11,7 +11,7 @@ import {
 
 export default function registerDocumentSymbolProvider(): Disposable {
     
-        const _atxPattern = /^(=){1,6}\s+.+/;
+        const _atxPattern = /^(=|#){1,6}\s+.+/;
 
         return languages.registerDocumentSymbolProvider('asciidoc', {
     
