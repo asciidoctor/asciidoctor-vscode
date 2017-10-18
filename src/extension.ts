@@ -34,6 +34,8 @@ import AsciiDocProvider, {
     MakePreviewUri
 } from './AsciiDocProvider';
 
+import registerDocumentSymbolProvider from './AsciiDocSymbolProvider';
+
 import * as path from "path";
 
 export function activate(context: ExtensionContext) {
@@ -85,7 +87,9 @@ export function activate(context: ExtensionContext) {
         return CreateHTMLWindow(provider, window.activeTextEditor.viewColumn);
     })
 
-    context.subscriptions.push(previewToSide, preview, providerRegistrations);
+    const registration = registerDocumentSymbolProvider();
+
+    context.subscriptions.push(previewToSide, preview, providerRegistrations, registration);
 }
 
 // this method is called when your extension is deactivated

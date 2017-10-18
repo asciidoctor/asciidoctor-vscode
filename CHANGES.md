@@ -1,3 +1,9 @@
+0.3.6
+    Added symbol view, closes #3
+
+0.3.5
+    ?
+
 0.3.3
     Do not prefix links for local #sections
 

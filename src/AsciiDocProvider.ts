@@ -1,3 +1,4 @@
+
 import {
     workspace,
     window,
@@ -14,6 +15,7 @@ import {
     TextDocument,
     TextEditor
 } from 'vscode';
+
 
 import { exec } from "child_process";
 import * as fs from "fs";
@@ -162,7 +164,7 @@ export function CreateRefreshTimer(provider, editor, previewUri) {
             // This function gets called when the timer goes off.
             TimerCallback(timer, provider, editor, previewUri);
         },
-        // The peroidicity of the timer.
+        // The periodicity of the timer.
         provider.refreshInterval
     );
 }
