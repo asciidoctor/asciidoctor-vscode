@@ -126,7 +126,7 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
             let html_gerenator = workspace.getConfiguration('AsciiDoc').get('html_generator')
             let cmd = `${html_gerenator} "${tmpobj.name}"`
             fs.write(tmpobj.fd, text, 0);
-            exec(cmd, (error: Error, stdout: Buffer, stderr: Buffer) => {
+            exec(cmd, (error, stdout, stderr) => {
                 tmpobj.removeCallback();
                 if (error) {
                     let errorMessage = [
