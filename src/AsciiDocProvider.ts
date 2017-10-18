@@ -123,8 +123,8 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
             let text = doc.getText();
             let documentPath = path.dirname(doc.fileName);
             let tmpobj = tmp.fileSync({ postfix: '.adoc', dir: documentPath });
-            let html_gerenator = workspace.getConfiguration('AsciiDoc').get('html_generator')
-            let cmd = `${html_gerenator} "${tmpobj.name}"`
+            let html_generator = workspace.getConfiguration('AsciiDoc').get('html_generator')
+            let cmd = `${html_generator} "${tmpobj.name}"`
             fs.write(tmpobj.fd, text, 0);
             exec(cmd, (error, stdout, stderr) => {
                 tmpobj.removeCallback();
