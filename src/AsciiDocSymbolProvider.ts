@@ -11,9 +11,8 @@ import {
 
 export default function registerDocumentSymbolProvider(): Disposable {
     
-        const _atxPattern = /^(#){1,6}\s+.+/;
-        const _settext = /^\s*[-~^+]+\s*$/;
-    
+        const _atxPattern = /^(=){1,6}\s+.+/;
+
         return languages.registerDocumentSymbolProvider('asciidoc', {
     
             provideDocumentSymbols(document: TextDocument, token: CancellationToken): SymbolInformation[] {
@@ -24,14 +23,9 @@ export default function registerDocumentSymbolProvider(): Disposable {
                     const {text} = document.lineAt(line);
     
                     if (_atxPattern.test(text)) {
-                        // atx-style, 1-6 hash characters
+                        // atx-style, 1-6 = characters
                         result.push(new SymbolInformation(text, SymbolKind.File, '',
                             new Location(document.uri, new Position(line, 0))));
-    
-                    } else if (line > 0 && _settext.test(text) && document.lineAt(line - 1).text) {
-                        // Settext-style - 'underline'
-                        result.push(new SymbolInformation(document.lineAt(line - 1).text, SymbolKind.File, '',
-                            new Location(document.uri, new Position(line - 1, 0))));
                     }
                 }
     
