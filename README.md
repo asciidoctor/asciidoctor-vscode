@@ -3,7 +3,7 @@
 [![Ratings](https://vsmarketplacebadge.apphb.com/rating/joaompinto.asciidoctor-vscode.svg)](https://vsmarketplacebadge.apphb.com/rating/joaompinto.asciidoctor-vscode.svg)
 
 # AsciiDoc Support
-A vscode support extension that provides live preview and syntax highlighting for the AsciiDoc format.
+A vscode support extension that provides live preview, syntax highlighting and symbols for the AsciiDoc format.
 
 An extension to preview AsciiDoc text using the _AsciiDoctor_ publishing tool.
 
@@ -11,6 +11,7 @@ The extension can be activate in two ways
 
 * Toggle Preview - `ctrl+shift+r`
 * Open Preview to the Side - `ctrl+k r`
+* View symbols - go to symbol action - `ctrl+shift+o`, select a heading.
 
 ## How to install
 Open vscode. Press `F1`, search "`ext install`" followed by extension name, in this case: "`ext install asciidoctor-vscode`" without the ">".
@@ -28,7 +29,7 @@ You need to [**install AsciiDoctor**](http://asciidoctor.org/docs/install-toolch
 git clone https://github.com/joaompinto/asciidoctor-vscode
 cd asciidoctor-vscode
 npm install
-sudo npm install -g vsce
+sudo npm install -g vsce typescript
 vsce package
 code --install-extension *.vsix
 ```
@@ -37,3 +38,5 @@ code --install-extension *.vsix
 This extension preview code was based on https://github.com/tht13/RST-vscode/
 
 The AsciiDoc syntax rules are based on https://github.com/asciidoctor/sublimetext-asciidoc/
+
+The symbol view is based on https://github.com/jrieken/md-navigate

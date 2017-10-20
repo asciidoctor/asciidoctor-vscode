@@ -1,3 +1,4 @@
+
 import {
     workspace,
     window,
@@ -14,6 +15,7 @@ import {
     TextDocument,
     TextEditor
 } from 'vscode';
+
 
 import { exec } from "child_process";
 import * as fs from "fs";
@@ -123,10 +125,11 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
             let text = doc.getText();
             let documentPath = path.dirname(doc.fileName);
             let tmpobj = tmp.fileSync({ postfix: '.adoc', dir: documentPath });
-            let html_gerenator = workspace.getConfiguration('AsciiDoc').get('html_generator')
-            let cmd = `${html_gerenator} "${tmpobj.name}"`
+            let html_generator = workspace.getConfiguration('AsciiDoc').get('html_generator')
+            let cmd = `${html_generator} "${tmpobj.name}"`
             fs.write(tmpobj.fd, text, 0);
-            exec(cmd, (error: Error, stdout: Buffer, stderr: Buffer) => {
+            let maxBuff = parseInt(workspace.getConfiguration('AsciiDoc').get('buffer_size_kB'))
+            exec(cmd, {maxBuffer: 1024 * maxBuff}, (error, stdout, stderr) => {
                 tmpobj.removeCallback();
                 if (error) {
                     let errorMessage = [
@@ -141,6 +144,7 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
                     errorMessage += "<br><br>"
                     errorMessage += "<b>If the asciidoctor binary is not in your PATH, you can set the full path.<br>"
                     errorMessage += "Go to `File -> Preferences -> User settings` and adjust the AsciiDoc.html_generator config option.</b>"
+                    errorMessage += "<br><br><b>Alternatively if you get a stdout maxBuffer exceeded error, Go to `File -> Preferences -> User settings and adjust the AsciiDoc.buffer_size_kB to a larger number (default is 200 kB).</b>"
                     resolve(this.errorSnippet(errorMessage));
                 } else {
                     let result = this.fixLinks(stdout.toString(), doc.fileName);
@@ -162,7 +166,7 @@ export function CreateRefreshTimer(provider, editor, previewUri) {
             // This function gets called when the timer goes off.
             TimerCallback(timer, provider, editor, previewUri);
         },
-        // The peroidicity of the timer.
+        // The periodicity of the timer.
         provider.refreshInterval
     );
 }
