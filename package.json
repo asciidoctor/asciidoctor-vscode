@@ -75,12 +75,14 @@
             {
                 "command": "adoc.preview",
                 "key": "ctrl+shift+r",
-                "when": "editorTextFocus"
+                "mac": "shift+cmd+r",
+                "when": "editorTextFocus && editorLangId == asciidoc"
             },
             {
                 "command": "adoc.previewToSide",
-                "key": "ctrl+k r",
-                "when": "editorTextFocus"
+                "key": "ctrl+k shift+r",
+                "mac": "cmd+k shift+r",
+                "when": "editorTextFocus && editorLangId == asciidoc"
             }
         ],
         "commands": [
