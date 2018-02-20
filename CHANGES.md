@@ -1,8 +1,12 @@
-0.3.6
+0.3.8
     Added symbol view, closes #3
+    Keyboard binding changed to `ctrl+shift+r` (Mac: `cmd+shift+r`)
+    Add auto closing brackets
+    Fix syntax highlighter breaking
+    Added buffer size parameter for larger Asciidoc rendering capability
+    Support # symbol as section header
 
-0.3.5
-    ?
+0.3.5 - 0.3.7
 
 0.3.3
     Do not prefix links for local #sections
