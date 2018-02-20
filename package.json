@@ -80,7 +80,7 @@
             },
             {
                 "command": "adoc.previewToSide",
-                "key": "ctrl+k shift+r",
+                "key": "ctrl+k r",
                 "mac": "cmd+k shift+r",
                 "when": "editorTextFocus && editorLangId == asciidoc"
             }

@@ -10,7 +10,7 @@ An extension to preview AsciiDoc text using the _AsciiDoctor_ publishing tool.
 The extension can be activated in two ways
 
 * Toggle Preview - `ctrl+shift+r` (Mac: `cmd+shift+r`)
-* Open Preview to the Side - `ctrl+k shift+r` (Mac: `cmd+k shift+r`)
+* Open Preview to the Side - `ctrl+k r` (Mac: `cmd+k shift+r`)
 * View symbols - go to symbol action - `ctrl+shift+o`, select a heading.
 
 ## How to install
