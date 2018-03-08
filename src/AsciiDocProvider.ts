@@ -124,7 +124,7 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
         return new Promise<string>((resolve, reject) => {
             let text = doc.getText();
             let documentPath = path.dirname(doc.fileName);
-            let tmpobj = tmp.fileSync({ postfix: '.adoc', dir: documentPath });
+            let tmpobj = doc.isUntitled ? tmp.fileSync({ postfix: '.adoc' }) : tmp.fileSync({ postfix: '.adoc', dir: documentPath });
             let html_generator = workspace.getConfiguration('AsciiDoc').get('html_generator')
             let cmd = `${html_generator} "${tmpobj.name}"`
             fs.write(tmpobj.fd, text, 0);
