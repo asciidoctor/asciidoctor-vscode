@@ -50,7 +50,6 @@ export function activate(context: ExtensionContext) {
     workspace.onDidChangeTextDocument((e: TextDocumentChangeEvent) => {
         if (e.document === window.activeTextEditor.document) {
             provider.setNeedsRebuild(true);
-           //provider.update(MakePreviewUri(e.document));
         }
     })
 
@@ -59,10 +58,9 @@ export function activate(context: ExtensionContext) {
     window.onDidChangeTextEditorSelection((e: TextEditorSelectionChangeEvent) => {
         if (!!e && !!e.textEditor && (e.textEditor === window.activeTextEditor)) {
             provider.setNeedsRebuild(true);
-          //  provider.update(MakePreviewUri(e.textEditor.document));
         }
     })
-    
+
     workspace.onDidSaveTextDocument((e: TextDocument) => {
         if (e === window.activeTextEditor.document) {
             provider.update(MakePreviewUri(e));

@@ -30,7 +30,6 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
     private _onDidChange = new EventEmitter<Uri>();
     private resultText = "";
     private lastPreviewHTML = null;
-    private lastPreviewTime = new Date();
     private needsRebuild : boolean = true;
     private editorDocument: TextDocument = null;
     private refreshInterval = 1000;
@@ -38,7 +37,7 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
 
     private resolveDocument(uri: Uri): TextDocument {
         const matches = workspace.textDocuments.filter(d => {
-            return MakePreviewUri(d).toString() == uri.toString(); 
+            return MakePreviewUri(d).toString() == uri.toString();
         });
         if (matches.length > 0) {
             return matches[0];
