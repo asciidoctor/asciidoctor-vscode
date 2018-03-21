@@ -5,7 +5,7 @@
 # AsciiDoc Support
 A vscode support extension that provides live preview, syntax highlighting and symbols for the AsciiDoc format.
 
-An extension to preview AsciiDoc text using the _AsciiDoctor_ publishing tool.
+An extension to preview AsciiDoc text using the [Asciidoctor](https://asciidoctor.org/docs/asciidoctor.js/) publishing tool.
 
 The extension can be activated in two ways
 
@@ -14,15 +14,16 @@ The extension can be activated in two ways
 * View symbols - go to symbol action - `ctrl+shift+o`, select a heading.
 
 ## How to install
-Open vscode. Press `F1`, search "`ext install`" followed by extension name, in this case: "`ext install asciidoctor-vscode`" without the ">".
-Or if you prefer ">**ext install**", hit enter, search "**asciidoctor-vscode**".
+Launch VS Code Quick Open (Ctrl+P), paste the following command, and press enter:
 
+    ext install joaompinto.asciidoctor-vscode
+
+## Demo
 ![alt](images/simple.gif)
 
 
-## Prerequisites
-
-You need to [**install AsciiDoctor**](http://asciidoctor.org/docs/install-toolchain/ ) - A fast text processor & publishing toolchain for converting AsciiDoc to HTML5, DocBook & more.
+## Optional
+If you want to use the Ruby version of [**Asciidoctor**](http://asciidoctor.org/docs/install-toolchain/ ) you need to change the AsciiDoc.use_asciidoctor_js setting to _false_.
 
 ## How to build and install from source (Linux)
 ```
@@ -35,7 +36,7 @@ code --install-extension *.vsix
 ```
 
 ## Credits:
-This extension preview code was based on https://github.com/tht13/RST-vscode/
+The extension preview code is based on https://github.com/tht13/RST-vscode/
 
 The AsciiDoc syntax rules are based on https://github.com/asciidoctor/sublimetext-asciidoc/
 

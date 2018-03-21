@@ -1,6 +1,10 @@
 CHANGES
 =======
 
+0.4.1
+
+    Fixed the "how to install" instructions
+
 0.4.0
 
     Use Asciidoctor.js by default (setting AsciiDoc.use_asciidoctor_js = true), closes #29
