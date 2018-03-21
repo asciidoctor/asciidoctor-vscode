@@ -29,14 +29,14 @@ toc::[]
 
 == Attributes
 
-++++
++++
 <table class=cheatsheet>
-++++
++++
 
 
-++++
++++
 <tr><td class=cheatsheet-source>
-++++
++++
 
 ....
 Author is "{author}" with email <{email}>,
@@ -49,9 +49,9 @@ Line with attribute like {nosuchattribute}.
 Escaped: \{author} and +++{author}+++
 ....
 
-++++
++++
 </td><td class=cheatsheet-render>
-++++
++++
 
 Author is "{author}" with email <{email}>,
 some attribute's value is {someattribute}.
@@ -254,9 +254,9 @@ paragraph.
 Second paragraph.
 
 
-++++
++++
 </td></tr><tr><td></td><td></td></tr>
-++++
++++
 
 ++++
 <tr><td class=cheatsheet-source>

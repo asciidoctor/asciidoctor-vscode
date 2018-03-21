@@ -37,6 +37,7 @@ import AsciiDocProvider, {
 import registerDocumentSymbolProvider from './AsciiDocSymbolProvider';
 
 import * as path from "path";
+import * as AsciiDoc from "asciidoctor.js";
 
 export function activate(context: ExtensionContext) {
 

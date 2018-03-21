@@ -2,7 +2,7 @@
     "name": "asciidoctor-vscode",
     "displayName": "AsciiDoc",
     "description": "Live preview (with AsciiDoctor), syntax highlighting and symbols (outline view)",
-    "version": "0.3.8",
+    "version": "0.4.0",
     "publisher": "joaompinto",
     "author": "João Pinto <lamego.pinto@gmail.com>",
     "license": "MIT",
@@ -54,6 +54,11 @@
             "type": "object",
             "title": "AsciiDoc Option Configuration",
             "properties": {
+                "AsciiDoc.buffer_size_kB": {
+                    "type": "number",
+                    "default": 200,
+                    "description": "Maximum size of output buffer from preview command in kB. Increase if you receive a stdout maxBuffer exceeded error"
+                },
                 "AsciiDoc.html_generator": {
                     "type": "string",
                     "default": "asciidoctor -o-",
@@ -64,10 +69,10 @@
                     "default": 1000,
                     "description": "Control how often we will be checking for file changes"
                 },
-                "AsciiDoc.buffer_size_kB": {
-                    "type": "number",
-                    "default": 200,
-                    "description": "Maximum size of output buffer from preview command in kB. Increase if you receive a stdout maxBuffer exceeded error"
+                "AsciiDoc.use_asciidoctor_js": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Use asciidoctor js instead of the 'html_generator'"
                 }
             }
         },
@@ -121,6 +126,7 @@
     },
     "dependencies": {
         "file-url": "^1.0.1",
-        "tmp": "^0.0.29"
+        "tmp": "^0.0.29",
+        "asciidoctor.js": "1.5.6-preview.5"
     }
 }
