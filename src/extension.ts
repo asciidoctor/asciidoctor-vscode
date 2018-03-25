@@ -47,13 +47,12 @@ export function activate(context: ExtensionContext) {
     )
 
     // When the active document is changed set the provider for rebuild
-    //this only occurs after an edit in a document
+    // this only occurs after an edit in a document
     workspace.onDidChangeTextDocument((e: TextDocumentChangeEvent) => {
         if (e.document === window.activeTextEditor.document) {
             provider.setNeedsRebuild(true);
         }
     })
-
 
     // This occurs whenever the selected document changes, its useful to keep the
     window.onDidChangeTextEditorSelection((e: TextEditorSelectionChangeEvent) => {

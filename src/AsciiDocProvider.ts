@@ -1,4 +1,3 @@
-
 import {
     workspace,
     window,
@@ -23,19 +22,17 @@ import * as path from "path";
 let fileUrl = require("file-url");
 let tmp = require("tmp");
 
-const config = {
-  };
-
 export default class AsciiDocProvider implements TextDocumentContentProvider {
     static scheme = 'adoc-preview';
 
     private _onDidChange = new EventEmitter<Uri>();
     private resultText = "";
     private lastPreviewHTML = null;
+    private lastURI = null;
     private needsRebuild : boolean = true;
     private editorDocument: TextDocument = null;
     private refreshInterval = 1000;
-    private asciidoctor = Asciidoctor(config);
+    private asciidoctor = Asciidoctor();
 
     private resolveDocument(uri: Uri): TextDocument {
         const matches = workspace.textDocuments.filter(d => {
@@ -67,8 +64,12 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
         if ( !doc || !(doc.languageId === "asciidoc")) {
             return this.errorSnippet("Active editor doesn't show an AsciiDoc document - no properties to preview.");
         }
-        if (this.needsRebuild) {
+
+        // Rebuild if there were changes to the file, or if the content is beeing request
+        // for a different uri.
+        if (this.needsRebuild || doc.uri != this.lastURI) {
             this.lastPreviewHTML = this.preview(doc);
+            this.lastURI = doc.uri;
             this.needsRebuild = false
         }
         return this.lastPreviewHTML
@@ -100,9 +101,9 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
     }
 
     private fixLinks(document: string, documentPath: string): string {
-        //console.log(document);
         let result = document.replace(
-            new RegExp("((?:src|href)=[\'\"])(?!(?:http:|https:|ftp:|#))(.*?)([\'\"])", "gmi"), (subString: string, p1: string, p2: string, p3: string): string => {
+            new RegExp("((?:src|href)=[\'\"])(?!(?:http:|https:|ftp:|#))(.*?)([\'\"])", "gmi"),
+                (subString: string, p1: string, p2: string, p3: string): string => {
                  return [
                      p1,
                      fileUrl(path.join(
@@ -113,7 +114,6 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
                  ].join("");
              }
          );
-        //console.log(result)
         return result;
     }
 
