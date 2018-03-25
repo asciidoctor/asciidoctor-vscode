@@ -2,7 +2,7 @@
     "name": "asciidoctor-vscode",
     "displayName": "AsciiDoc",
     "description": "Live preview (with AsciiDoctor), syntax highlighting and symbols (outline view)",
-    "version": "0.4.1",
+    "version": "0.4.2",
     "publisher": "joaompinto",
     "author": "João Pinto <lamego.pinto@gmail.com>",
     "license": "MIT",
@@ -125,8 +125,8 @@
         "@types/mocha": "^2.2.32"
     },
     "dependencies": {
+        "asciidoctor.js": "^1.5.6-preview.5",
         "file-url": "^1.0.1",
-        "tmp": "^0.0.29",
-        "asciidoctor.js": "1.5.6-preview.5"
+        "tmp": "^0.0.29"
     }
 }

@@ -24,11 +24,6 @@ let fileUrl = require("file-url");
 let tmp = require("tmp");
 
 const config = {
-    runtime: {
-      platform: 'node',
-      engine: 'v8',
-      framework: 'framework'
-     }
   };
 
 export default class AsciiDocProvider implements TextDocumentContentProvider {
@@ -129,23 +124,25 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
     public preview(doc: TextDocument): Thenable<string> {
         let use_asciidoctor_js = workspace.getConfiguration('AsciiDoc').get('use_asciidoctor_js');
         let text = doc.getText();
+        let documentPath = path.dirname(doc.fileName);
+        let tmpobj = doc.isUntitled ? tmp.fileSync({ postfix: '.adoc' }) : tmp.fileSync({ postfix: '.adoc', dir: documentPath });
+        fs.write(tmpobj.fd, text, 0);
 
         if(use_asciidoctor_js)
         {
-            const options = {safe: 'unsafe', doctype: 'article', header_footer: true, attributes: ['copycss']};
+            const options = {safe: 'unsafe', doctype: 'article', header_footer: true, attributes: ['copycss'], to_file: false};
 
             return new Promise<string>((resolve, reject) => {
-                let resultHTML = this.asciidoctor.convert(text, options);
+                let resultHTML = this.asciidoctor.convertFile(tmpobj.name, options);
+
+                tmpobj.removeCallback();
                 let result = this.fixLinks(resultHTML, doc.fileName);
                 resolve(this.buildPage(result));
             })
         } else
             return new Promise<string>((resolve, reject) => {
-                let documentPath = path.dirname(doc.fileName);
-                let tmpobj = doc.isUntitled ? tmp.fileSync({ postfix: '.adoc' }) : tmp.fileSync({ postfix: '.adoc', dir: documentPath });
                 let html_generator = workspace.getConfiguration('AsciiDoc').get('html_generator')
                 let cmd = `${html_generator} "${tmpobj.name}"`
-                fs.write(tmpobj.fd, text, 0);
                 let maxBuff = parseInt(workspace.getConfiguration('AsciiDoc').get('buffer_size_kB'))
                 exec(cmd, {maxBuffer: 1024 * maxBuff}, (error, stdout, stderr) => {
                     tmpobj.removeCallback();
