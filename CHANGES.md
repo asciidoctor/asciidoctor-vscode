@@ -1,5 +1,8 @@
 # Changes
 
+## 0.4.3
+* Allways rebuild preview when preview uri changes, closes #43
+
 ## 0.4.2
 * Use `convertFile()` instead off `Convert()`, closes #50
 
