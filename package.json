@@ -59,10 +59,10 @@
                     "default": 200,
                     "description": "Maximum size of output buffer from preview command in kB. Increase if you receive a stdout maxBuffer exceeded error"
                 },
-                "AsciiDoc.html_generator": {
+                "AsciiDoc.asciidoctor_binary_path": {
                     "type": "string",
-                    "default": "asciidoctor -o-",
-                    "description": "command to be used for the HTML generation"
+                    "default": "asciidoctor",
+                    "description": "Full path for the asciidoctor binary/executable"
                 },
                 "AsciiDoc.runInterval": {
                     "type": "number",
@@ -127,7 +127,6 @@
     "dependencies": {
         "vscode": "^1.0.0",
         "asciidoctor.js": "^1.5.6-preview.5",
-        "file-url": "^1.0.1",
-        "tmp": "^0.0.29"
+        "file-url": "^1.0.1"
     }
 }

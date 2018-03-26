@@ -16,11 +16,17 @@ import {
 } from 'vscode';
 import * as Asciidoctor from "asciidoctor.js";
 
-import { exec } from "child_process";
+import { spawn } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 let fileUrl = require("file-url");
-let tmp = require("tmp");
+
+const asciidoctor_config =  {
+    runtime: {
+        platform: 'node',
+        engine: 'v8'
+    }
+}
 
 export default class AsciiDocProvider implements TextDocumentContentProvider {
     static scheme = 'adoc-preview';
@@ -32,7 +38,9 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
     private needsRebuild : boolean = true;
     private editorDocument: TextDocument = null;
     private refreshInterval = 1000;
-    private asciidoctor = Asciidoctor();
+
+
+    private asciidoctor = Asciidoctor(asciidoctor_config);
 
     private resolveDocument(uri: Uri): TextDocument {
         const matches = workspace.textDocuments.filter(d => {
@@ -125,46 +133,43 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
         let use_asciidoctor_js = workspace.getConfiguration('AsciiDoc').get('use_asciidoctor_js');
         let text = doc.getText();
         let documentPath = path.dirname(doc.fileName);
-        let tmpobj = doc.isUntitled ? tmp.fileSync({ postfix: '.adoc' }) : tmp.fileSync({ postfix: '.adoc', dir: documentPath });
-        fs.write(tmpobj.fd, text, 0);
+
 
         if(use_asciidoctor_js)
         {
-            const options = {safe: 'unsafe', doctype: 'article', header_footer: true, attributes: ['copycss'], to_file: false};
+            const options = {
+                safe: 'unsafe',
+                doctype: 'article',
+                header_footer: true,
+                attributes: ['copycss'],
+                to_file: false,
+                base_dir: path.dirname(doc.fileName),
+                sourcemap: true
+            };
 
             return new Promise<string>((resolve, reject) => {
-                let resultHTML = this.asciidoctor.convertFile(tmpobj.name, options);
-
-                tmpobj.removeCallback();
-                let result = this.fixLinks(resultHTML, doc.fileName);
-                resolve(this.buildPage(result));
+                let resultHTML = this.asciidoctor.convert(text, options);
+                //let result = this.fixLinks(resultHTML, doc.fileName);
+                resolve(this.buildPage(resultHTML));
             })
         } else
             return new Promise<string>((resolve, reject) => {
-                let html_generator = workspace.getConfiguration('AsciiDoc').get('html_generator')
-                let cmd = `${html_generator} "${tmpobj.name}"`
-                let maxBuff = parseInt(workspace.getConfiguration('AsciiDoc').get('buffer_size_kB'))
-                exec(cmd, {maxBuffer: 1024 * maxBuff}, (error, stdout, stderr) => {
-                    tmpobj.removeCallback();
-                    if (error) {
-                        let errorMessage = [
-                            error.name,
-                            error.message,
-                            error.stack,
-                            "",
-                            stderr.toString()
-                        ].join("\n");
-                        console.error(errorMessage);
-                        errorMessage = errorMessage.replace("\n", '<br><br>');
-                        errorMessage += "<br><br>"
-                        errorMessage += "<b>If the asciidoctor binary is not in your PATH, you can set the full path.<br>"
-                        errorMessage += "Go to `File -> Preferences -> User settings` and adjust the AsciiDoc.html_generator config option.</b>"
-                        errorMessage += "<br><br><b>Alternatively if you get a stdout maxBuffer exceeded error, Go to `File -> Preferences -> User settings and adjust the AsciiDoc.buffer_size_kB to a larger number (default is 200 kB).</b>"
-                        resolve(this.errorSnippet(errorMessage));
-                    } else {
-                        let result = this.fixLinks(stdout.toString(), doc.fileName);
-                        resolve(this.buildPage(result));
-                    }
+                let asciidoctor_binary_path = workspace.getConfiguration('AsciiDoc').get('asciidoctor_binary_path');
+                const asciidoctor = spawn('asciidoctor', ['-o-', '-', '-B', path.dirname(doc.fileName)]);
+                asciidoctor.stdin.write(text);
+                asciidoctor.stdin.end();
+                asciidoctor.stderr.on('data', (data) => {
+                    let errorMessage = data.toString();
+                    console.error(errorMessage);
+                    errorMessage += errorMessage.replace("\n", '<br><br>');
+                    errorMessage += "<br><br>"
+                    errorMessage += "<b>If the asciidoctor binary is not in your PATH, you can set the full path.<br>"
+                    errorMessage += "Go to `File -> Preferences -> User settings` and adjust the AsciiDoc.asciidoctor_binary_path/b>"
+                    resolve(this.errorSnippet(errorMessage));
+                })
+                asciidoctor.stdout.on('data', (data) => {
+                    let result = this.fixLinks(data.toString(), doc.fileName);
+                    resolve(this.buildPage(result));
                 });
             });
     }
