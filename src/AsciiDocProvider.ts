@@ -140,7 +140,7 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
         {
             const options = {
                 safe: 'unsafe',
-                doctype: 'article',
+                doctype: 'inline',
                 header_footer: true,
                 attributes: ['copycss'],
                 to_file: false,
