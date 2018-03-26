@@ -79,15 +79,15 @@
         "keybindings": [
             {
                 "command": "adoc.preview",
-                "key": "ctrl+shift+r",
-                "mac": "shift+cmd+r",
-                "when": "editorTextFocus && editorLangId == asciidoc"
+                "key": "shift+ctrl+v",
+                "mac": "shift+cmd+v",
+                "when": "editorLangId == asciidoc"
             },
             {
                 "command": "adoc.previewToSide",
-                "key": "ctrl+k r",
-                "mac": "cmd+k shift+r",
-                "when": "editorTextFocus && editorLangId == asciidoc"
+                "key": "ctrl+k v",
+                "mac": "cmd+k v",
+                "when": "editorLangId == asciidoc"
             }
         ],
         "commands": [

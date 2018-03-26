@@ -9,8 +9,8 @@ An extension to preview AsciiDoc text using the [Asciidoctor](https://asciidocto
 
 The extension can be activated in two ways
 
-* Toggle Preview - `ctrl+shift+r` (Mac: `cmd+shift+r`)
-* Open Preview to the Side - `ctrl+k r` (Mac: `cmd+k shift+r`)
+* Toggle Preview - `ctrl+shift+v` (Mac: `cmd+shift+v`)
+* Open Preview to the Side - `ctrl+k v` (Mac: `cmd+k v`)
 * View symbols - go to symbol action - `ctrl+shift+o`, select a heading.
 
 ## How to install
