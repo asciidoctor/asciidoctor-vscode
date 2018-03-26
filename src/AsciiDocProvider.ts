@@ -148,9 +148,15 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
             };
 
             return new Promise<string>((resolve, reject) => {
-                let resultHTML = this.asciidoctor.convert(text, options);
-                //let result = this.fixLinks(resultHTML, doc.fileName);
-                resolve(this.buildPage(resultHTML));
+                let ascii_doc = this.asciidoctor.loadFile(doc.fileName, options);
+                const blocksWithLineNumber = ascii_doc.findBy(function (b) { return typeof b.getLineNumber() !== 'undefined'; });
+                blocksWithLineNumber.forEach(function(block, key, myArray) {
+                        block.addRole("data-line-" + block.getLineNumber());
+                    });
+                let resultHTML = ascii_doc.convert(options);
+                let result = this.fixLinks(resultHTML, doc.fileName);
+                //console.log(result);
+                resolve(this.buildPage(result));
             })
         } else
             return new Promise<string>((resolve, reject) => {
