@@ -131,6 +131,7 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
 
     public preview(doc: TextDocument): Thenable<string> {
         let use_asciidoctor_js = workspace.getConfiguration('AsciiDoc').get('use_asciidoctor_js');
+
         let text = doc.getText();
         let documentPath = path.dirname(doc.fileName);
 
@@ -160,8 +161,8 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
             })
         } else
             return new Promise<string>((resolve, reject) => {
-                let asciidoctor_binary_path = workspace.getConfiguration('AsciiDoc').get('asciidoctor_binary_path');
-                const asciidoctor = spawn('asciidoctor', ['-o-', '-', '-B', path.dirname(doc.fileName)]);
+                let asciidoctor_binary_path = workspace.getConfiguration('AsciiDoc').get('asciidoctor_binary_path', 'asciidoctor');
+                var asciidoctor = spawn(asciidoctor_binary_path, ['-o-', '-', '-B', path.dirname(doc.fileName)], { shell: true} );
                 asciidoctor.stdin.write(text);
                 asciidoctor.stdin.end();
                 asciidoctor.stderr.on('data', (data) => {

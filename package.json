@@ -54,11 +54,6 @@
             "type": "object",
             "title": "AsciiDoc Option Configuration",
             "properties": {
-                "AsciiDoc.buffer_size_kB": {
-                    "type": "number",
-                    "default": 200,
-                    "description": "Maximum size of output buffer from preview command in kB. Increase if you receive a stdout maxBuffer exceeded error"
-                },
                 "AsciiDoc.asciidoctor_binary_path": {
                     "type": "string",
                     "default": "asciidoctor",
