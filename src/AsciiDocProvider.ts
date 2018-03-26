@@ -163,7 +163,7 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
             return new Promise<string>((resolve, reject) => {
                 let asciidoctor_binary_path = workspace.getConfiguration('AsciiDoc').get('asciidoctor_binary_path', 'asciidoctor');
                 var options = { shell: true, cwd: path.dirname(doc.fileName) }
-                var asciidoctor = spawn(asciidoctor_binary_path, ['-o-', '-', '-B', path.dirname(doc.fileName)], options );
+                var asciidoctor = spawn(asciidoctor_binary_path, ['-q', '-o-', '-', '-B', path.dirname(doc.fileName)], options );
                 asciidoctor.stdin.write(text);
                 asciidoctor.stdin.end();
                 asciidoctor.stderr.on('data', (data) => {
