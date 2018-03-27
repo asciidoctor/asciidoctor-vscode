@@ -173,9 +173,22 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
                     errorMessage += "Go to `File -> Preferences -> User settings` and adjust the AsciiDoc.asciidoctor_command</b>"
                     resolve(this.errorSnippet(errorMessage));
                 })
+
+                var result_data = ''
                 asciidoctor.stdout.on('data', (data) => {
-                    let result = this.fixLinks(data.toString(), doc.fileName);
-                    resolve(this.buildPage(result));
+                    const string_data =  data.toString();
+                    const received_len =  Buffer.byteLength(string_data);
+                    /* This seems to work for large outputs, but several questions remains:
+                    Is there a 64k limit from nodejs in the data received ?
+                    Or is it depend on the ascidoctor output buffering/flush mechanism ?
+                    Will the concatenation work across multiple async stdout.on calls ?
+                    */
+                    if(received_len < 65536)
+                    {
+                        resolve(this.buildPage(this.fixLinks(result_data + string_data, doc.fileName)));
+                    }
+                    else
+                        result_data += string_data
                 });
                 asciidoctor.stdin.write(text);
                 asciidoctor.stdin.end();
