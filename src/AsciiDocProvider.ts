@@ -164,8 +164,6 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
                 let asciidoctor_binary_path = workspace.getConfiguration('AsciiDoc').get('asciidoctor_binary_path', 'asciidoctor');
                 var options = { shell: true, cwd: path.dirname(doc.fileName) }
                 var asciidoctor = spawn(asciidoctor_binary_path, ['-q', '-o-', '-', '-B', path.dirname(doc.fileName)], options );
-                asciidoctor.stdin.write(text);
-                asciidoctor.stdin.end();
                 asciidoctor.stderr.on('data', (data) => {
                     let errorMessage = data.toString();
                     console.error(errorMessage);
@@ -179,6 +177,8 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
                     let result = this.fixLinks(data.toString(), doc.fileName);
                     resolve(this.buildPage(result));
                 });
+                asciidoctor.stdin.write(text);
+                asciidoctor.stdin.end();
             });
     }
 
