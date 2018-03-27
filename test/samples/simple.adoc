@@ -6,7 +6,7 @@ Preview as you type, including formatting like *this*, or _this_.
 == You can also add your custom CSS style
 It will automatically refresh, just as you type
 
-== Heading level 2
+== Heading level 2kv
 Diferrente heading levels are easly procuded with the # symbol .
 You can also do _italic_ or *bold* like in the more common mark down.
 

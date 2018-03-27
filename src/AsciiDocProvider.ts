@@ -133,23 +133,23 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
         let use_asciidoctor_js = workspace.getConfiguration('AsciiDoc').get('use_asciidoctor_js');
 
         let text = doc.getText();
-        let documentPath = path.dirname(doc.fileName);
+        let documentPath = doc.isUntitled ? '""' : path.dirname(doc.fileName);
 
 
         if(use_asciidoctor_js)
         {
             const options = {
                 safe: 'unsafe',
-                doctype: 'inline',
+                doctype: 'article',
                 header_footer: true,
                 attributes: ['copycss'],
                 to_file: false,
-                base_dir: path.dirname(doc.fileName),
+                base_dir: documentPath,
                 sourcemap: true
             };
 
             return new Promise<string>((resolve, reject) => {
-                let ascii_doc = this.asciidoctor.loadFile(doc.fileName, options);
+                let ascii_doc = this.asciidoctor.load(text, options);
                 const blocksWithLineNumber = ascii_doc.findBy(function (b) { return typeof b.getLineNumber() !== 'undefined'; });
                 blocksWithLineNumber.forEach(function(block, key, myArray) {
                         block.addRole("data-line-" + block.getLineNumber());
@@ -163,7 +163,7 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
             return new Promise<string>((resolve, reject) => {
                 let asciidoctor_command = workspace.getConfiguration('AsciiDoc').get('asciidoctor_command', 'asciidoctor');
                 var options = { shell: true, cwd: path.dirname(doc.fileName) }
-                var asciidoctor = spawn(asciidoctor_command, ['-q', '-o-', '-', '-B', path.dirname(doc.fileName)], options );
+                var asciidoctor = spawn(asciidoctor_command, ['-q', '-o-', '-', '-B', documentPath], options );
                 asciidoctor.stdin.write(text);
                 asciidoctor.stdin.end();
                 asciidoctor.stderr.on('data', (data) => {
