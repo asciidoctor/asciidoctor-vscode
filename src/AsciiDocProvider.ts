@@ -161,9 +161,9 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
             })
         } else
             return new Promise<string>((resolve, reject) => {
-                let asciidoctor_binary_path = workspace.getConfiguration('AsciiDoc').get('asciidoctor_binary_path', 'asciidoctor');
+                let asciidoctor_command = workspace.getConfiguration('AsciiDoc').get('asciidoctor_command', 'asciidoctor');
                 var options = { shell: true, cwd: path.dirname(doc.fileName) }
-                var asciidoctor = spawn(asciidoctor_binary_path, ['-q', '-o-', '-', '-B', path.dirname(doc.fileName)], options );
+                var asciidoctor = spawn(asciidoctor_command, ['-q', '-o-', '-', '-B', path.dirname(doc.fileName)], options );
                 asciidoctor.stdin.write(text);
                 asciidoctor.stdin.end();
                 asciidoctor.stderr.on('data', (data) => {
@@ -172,7 +172,7 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
                     errorMessage += errorMessage.replace("\n", '<br><br>');
                     errorMessage += "<br><br>"
                     errorMessage += "<b>If the asciidoctor binary is not in your PATH, you can set the full path.<br>"
-                    errorMessage += "Go to `File -> Preferences -> User settings` and adjust the AsciiDoc.asciidoctor_binary_path/b>"
+                    errorMessage += "Go to `File -> Preferences -> User settings` and adjust the AsciiDoc.asciidoctor_command</b>"
                     resolve(this.errorSnippet(errorMessage));
                 })
                 asciidoctor.stdout.on('data', (data) => {

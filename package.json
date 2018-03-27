@@ -54,7 +54,7 @@
             "type": "object",
             "title": "AsciiDoc Option Configuration",
             "properties": {
-                "AsciiDoc.asciidoctor_binary_path": {
+                "AsciiDoc.asciidoctor_command": {
                     "type": "string",
                     "default": "asciidoctor",
                     "description": "Full path for the asciidoctor binary/executable"
