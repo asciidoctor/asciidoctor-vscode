@@ -133,23 +133,23 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
         let use_asciidoctor_js = workspace.getConfiguration('AsciiDoc').get('use_asciidoctor_js');
 
         let text = doc.getText();
-        let documentPath = path.dirname(doc.fileName);
+        let documentPath = doc.isUntitled ? '""' : path.dirname(doc.fileName);
 
 
         if(use_asciidoctor_js)
         {
             const options = {
                 safe: 'unsafe',
-                doctype: 'inline',
+                doctype: 'article',
                 header_footer: true,
                 attributes: ['copycss'],
                 to_file: false,
-                base_dir: path.dirname(doc.fileName),
+                base_dir: documentPath,
                 sourcemap: true
             };
 
             return new Promise<string>((resolve, reject) => {
-                let ascii_doc = this.asciidoctor.loadFile(doc.fileName, options);
+                let ascii_doc = this.asciidoctor.load(text, options);
                 const blocksWithLineNumber = ascii_doc.findBy(function (b) { return typeof b.getLineNumber() !== 'undefined'; });
                 blocksWithLineNumber.forEach(function(block, key, myArray) {
                         block.addRole("data-line-" + block.getLineNumber());
@@ -161,16 +161,16 @@ export default class AsciiDocProvider implements TextDocumentContentProvider {
             })
         } else
             return new Promise<string>((resolve, reject) => {
-                let asciidoctor_binary_path = workspace.getConfiguration('AsciiDoc').get('asciidoctor_binary_path', 'asciidoctor');
+                let asciidoctor_command = workspace.getConfiguration('AsciiDoc').get('asciidoctor_command', 'asciidoctor');
                 var options = { shell: true, cwd: path.dirname(doc.fileName) }
-                var asciidoctor = spawn(asciidoctor_binary_path, ['-q', '-o-', '-', '-B', path.dirname(doc.fileName)], options );
+                var asciidoctor = spawn(asciidoctor_command, ['-q', '-o-', '-', '-B', documentPath], options );
                 asciidoctor.stderr.on('data', (data) => {
                     let errorMessage = data.toString();
                     console.error(errorMessage);
                     errorMessage += errorMessage.replace("\n", '<br><br>');
                     errorMessage += "<br><br>"
                     errorMessage += "<b>If the asciidoctor binary is not in your PATH, you can set the full path.<br>"
-                    errorMessage += "Go to `File -> Preferences -> User settings` and adjust the AsciiDoc.asciidoctor_binary_path/b>"
+                    errorMessage += "Go to `File -> Preferences -> User settings` and adjust the AsciiDoc.asciidoctor_command</b>"
                     resolve(this.errorSnippet(errorMessage));
                 })
                 asciidoctor.stdout.on('data', (data) => {
