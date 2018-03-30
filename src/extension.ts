@@ -16,79 +16,67 @@ On adoc.previewToSide execution:
 // https://code.visualstudio.com/Docs/extensionAPI/vscode-api
 
 'use strict';
-import {
-    workspace,
-    window,
-    commands,
-    Disposable,
-    ExtensionContext,
-    ViewColumn,
-    TextDocumentChangeEvent,
-    TextEditorSelectionChangeEvent,
-    TextDocument,
-    Uri
-} from 'vscode';
+import * as vscode from 'vscode';
 
-import AsciiDocProvider, {
-    CreateHTMLWindow,
-    MakePreviewUri
-} from './AsciiDocProvider';
+import TextDocumentContentProvider from './TextDocumentContentProvider';
 
+
+import WebSocketServer from './WebSocketServer';
 import registerDocumentSymbolProvider from './AsciiDocSymbolProvider';
 
 import * as path from "path";
 import * as AsciiDoc from "asciidoctor.js";
 
-export function activate(context: ExtensionContext) {
+let websocket: WebSocketServer;
+let provider: TextDocumentContentProvider;
 
-    const provider = new AsciiDocProvider();
-    const providerRegistrations = Disposable.from(
-        workspace.registerTextDocumentContentProvider(AsciiDocProvider.scheme, provider)
-    )
 
-    // When the active document is changed set the provider for rebuild
-    // this only occurs after an edit in a document
-    workspace.onDidChangeTextDocument((e: TextDocumentChangeEvent) => {
-        if (e.document === window.activeTextEditor.document) {
+export function activate(context: vscode.ExtensionContext): void {
+    const previewUri = vscode.Uri.parse('asciidoc://authority/asciidoc');
+
+    websocket = new WebSocketServer(webSocketServerUrl => {
+        provider = new TextDocumentContentProvider(webSocketServerUrl, previewUri);
+        vscode.workspace.registerTextDocumentContentProvider('asciidoc', provider);
+
+        vscode.workspace.onDidSaveTextDocument(e => {
+            const text = vscode.window.activeTextEditor.document.getText();
+            provider.update(previewUri);
+        });
+
+        vscode.workspace.onDidChangeTextDocument(e => {
             provider.setNeedsRebuild(true);
-        }
+        });
+    });
+
+    let displayColumn: vscode.ViewColumn;
+    switch (vscode.window.activeTextEditor.viewColumn) {
+        case vscode.ViewColumn.One:
+            displayColumn = vscode.ViewColumn.Two;
+            break;
+        case vscode.ViewColumn.Two:
+        case vscode.ViewColumn.Three:
+            displayColumn = vscode.ViewColumn.Three;
+            break;
+    }
+
+    const previewToSide = vscode.commands.registerCommand("adoc.previewToSide", () => {
+        vscode.commands
+            .executeCommand('vscode.previewHtml', previewUri, displayColumn, 'asciidoc')
+            .then(() => { }, vscode.window.showErrorMessage);
     })
 
-    // This occurs whenever the selected document changes, its useful to keep the
-    window.onDidChangeTextEditorSelection((e: TextEditorSelectionChangeEvent) => {
-        if (!!e && !!e.textEditor && (e.textEditor === window.activeTextEditor)) {
-            provider.setNeedsRebuild(true);
-        }
+    const preview = vscode.commands.registerCommand("adoc.preview", () => {
+        vscode.commands
+            .executeCommand('vscode.previewHtml', previewUri, vscode.window.activeTextEditor.viewColumn, 'asciidoc')
+            .then(() => { }, vscode.window.showErrorMessage);
     })
+    const symbolProvider = registerDocumentSymbolProvider();
 
-    workspace.onDidSaveTextDocument((e: TextDocument) => {
-        if (e === window.activeTextEditor.document) {
-            provider.update(MakePreviewUri(e));
-        }
-    })
+    context.subscriptions.push(previewToSide, preview, symbolProvider);
 
-    let previewToSide = commands.registerCommand("adoc.previewToSide", () => {
-        let displayColumn: ViewColumn;
-        switch (window.activeTextEditor.viewColumn) {
-            case ViewColumn.One:
-                displayColumn = ViewColumn.Two;
-                break;
-            case ViewColumn.Two:
-            case ViewColumn.Three:
-                displayColumn = ViewColumn.Three;
-                break;
-        }
-        return CreateHTMLWindow(provider, displayColumn);
-    })
-
-    let preview = commands.registerCommand("adoc.preview", () => {
-        return CreateHTMLWindow(provider, window.activeTextEditor.viewColumn);
-    })
-
-    const registration = registerDocumentSymbolProvider();
-
-    context.subscriptions.push(previewToSide, preview, providerRegistrations, registration);
 }
 
 // this method is called when your extension is deactivated
-export function deactivate() { }
+export function deactivate(): void {
+    websocket.dispose();
+}

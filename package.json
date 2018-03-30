@@ -114,7 +114,6 @@
     },
     "devDependencies": {
         "typescript": "^2.0.3",
-        "vscode": "^1.0.0",
         "mocha": "^2.3.3",
         "@types/node": "^6.0.40",
         "@types/mocha": "^2.2.32"
@@ -122,6 +121,7 @@
     "dependencies": {
         "vscode": "^1.0.0",
         "asciidoctor.js": "^1.5.6-preview.5",
-        "file-url": "^1.0.1"
+        "file-url": "^1.0.1",
+        "ws": "^3.2.0"
     }
 }
