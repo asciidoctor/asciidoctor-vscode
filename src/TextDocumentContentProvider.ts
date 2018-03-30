@@ -6,25 +6,25 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
   private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
   private lastPreviewHTML = "";
   private lastPreviewUri = "";
-  private needsRebuild = true;
+  public needsRebuild = true;
+  public current_line = 0;
 
-  constructor(private readonly webSocketServer: string, private readonly previewUri) {
+  constructor(private readonly previewUri) {
     const refreshInterval = vscode.workspace.getConfiguration('AsciiDoc').get('refresh_interval', 1000);;
     var timer = setInterval(
       () => {
-          this._onDidChange.fire(previewUri);
+          if(this.needsRebuild)
+            {
+              this.update(previewUri)
+            }
       },
       // The periodicity of the timer.
       refreshInterval
     )
   }
 
-  public setNeedsRebuild(value: boolean) {
-    this.needsRebuild = value;
-  }
-
   public provideTextDocumentContent(uri: vscode.Uri): string | Thenable<string> {
-    return this.needsRebuild ? this.createHtml(): this.lastPreviewHTML;
+    return this.createHtml();
   }
 
   get onDidChange(): vscode.Event<vscode.Uri> {
@@ -39,11 +39,11 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
     const editor = vscode.window.activeTextEditor;
     const text = editor.document.getText();
     const path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
-
     var p = new Promise<string>(async resolve => {
-      var html = this.lastPreviewHTML;
+      var line = this.current_line;
+      var html;
       var error_msg = null;
-      var body = await parser.parseText(editor.document.fileName, text).catch((err) => { 
+      var body = await parser.parseText(editor.document.fileName, text).catch((err) => {
         console.error(err);
         return this.errorHtml(err)
       })
@@ -52,14 +52,15 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
       if (editor.document && (editor.document.languageId === "asciidoc"))
         html = `<!DOCTYPE html>
         <html>
-            <script src="${path + "/assets/websocket-setup.js"}"></script>
-            <script>setupWebsocket("${this.webSocketServer}");</script>
+            <script src="${path + "/assets/scroll-to-element.js"}"></script>
             <style>body { padding: 0; margin: 0; }</style>
           </head>
-          <body>
+          <body onload="ScrollToLine(${line})">
+          <div class="data-line-1"></div>
           ${body}
           </body>
         </html>`;
+      this.needsRebuild = false;
       resolve(html)
     })
     return p;

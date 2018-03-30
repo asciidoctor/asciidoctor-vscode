@@ -2,8 +2,7 @@ import * as vscode from 'vscode';
 import * as path from "path";
 import * as Asciidoctor from "asciidoctor.js";
 import { spawn } from "child_process";
-import {fileUrl} from "file-url";
-
+const fileUrl = require('file-url');
 
 let previousHtml = null;
 let use_asciidoctor_js = vscode.workspace.getConfiguration('AsciiDoc').get('use_asciidoctor_js');
