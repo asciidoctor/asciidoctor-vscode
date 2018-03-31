@@ -11,30 +11,35 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
 
   constructor(private readonly previewUri) {
     const refreshInterval = vscode.workspace.getConfiguration('AsciiDoc').get('refresh_interval', 1000);;
+    /* Setup a timer to check if the preview should be rebuilt */
     var timer = setInterval(
       () => {
           if(this.needsRebuild)
-            {
               this.update(previewUri)
-            }
       },
       // The periodicity of the timer.
       refreshInterval
     )
   }
 
+  /*
+    Called by vscode when the content needs to be rendered
+  */
   public provideTextDocumentContent(uri: vscode.Uri): string | Thenable<string> {
     return this.createHtml();
   }
 
+  /* Called when the content changes r*/
   get onDidChange(): vscode.Event<vscode.Uri> {
     return this._onDidChange.event;
   }
 
+  /* Trigget content update */
   public update(uri: vscode.Uri) {
     this._onDidChange.fire(uri);
   }
 
+  /* Builds the content from the active text editor window */
   private async createHtml() {
     const editor = vscode.window.activeTextEditor;
     const text = editor.document.getText();
@@ -51,7 +56,9 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
         html = error_msg;
       if (editor.document && (editor.document.languageId === "asciidoc"))
         html = `<!DOCTYPE html>
-        <html>
+        <html
+          <head>
+            <link rel="stylesheet" type="text/css" href="${path + "/assets/preview.css"}">
             <script src="${path + "/assets/scroll-to-element.js"}"></script>
             <style>body { padding: 0; margin: 0; }</style>
           </head>

@@ -7,6 +7,8 @@ function ScrollToLine(line) {
   var top_element = null;
   for (i = 0; i < data_lines.length; ++i) {
     var element = data_lines[i]
+    if (typeof element.className === "undefined")
+      continue;
     var num = element.className.split(' ').pop().match(/data-line-(\d+)/)[1];
     var iNum = parseInt(num);
     if(line == iNum) {
@@ -18,7 +20,9 @@ function ScrollToLine(line) {
       break;
     }
     last_element = element;
-  }  
-  if(top_element)
+  }
+  if(top_element) {
     top_element.scrollIntoView(true);
+    top_element.classList.add("active-line");
+  }
 }
