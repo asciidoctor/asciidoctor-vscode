@@ -1,5 +1,10 @@
 # Changes
 
+## 0.6.0
+
+* Synchronize preview with the selected/edited source line
+* The preview window is now shared accross documents
+
 ## 0.5.0
 
 * Use asciidoctor with -q since we now rely on stderr for error detection
