@@ -17,12 +17,14 @@ On adoc.previewToSide execution:
 
 'use strict';
 import * as vscode from 'vscode';
+import * as Format from 'string-format';
+
+var tmp = require('tmp');
+var fs = require("fs");
 
 import TextDocumentContentProvider from './TextDocumentContentProvider';
-
-
-
 import registerDocumentSymbolProvider from './AsciiDocSymbolProvider';
+import ExportAsPDF from './ExportAsPDF';
 
 import * as path from "path";
 import * as AsciiDoc from "asciidoctor.js";
@@ -31,6 +33,7 @@ let provider: TextDocumentContentProvider;
 
 
 export function activate(context: vscode.ExtensionContext): void {
+
     const previewUri = vscode.Uri.parse('asciidoc://authority/asciidoc');
 
     provider = new TextDocumentContentProvider(previewUri);
@@ -42,15 +45,13 @@ export function activate(context: vscode.ExtensionContext): void {
     })
 
     vscode.workspace.onDidChangeTextDocument(e => {
-        if(e.document.languageId == "asciidoc" && e.contentChanges.length > 0) {
-            var range = e.contentChanges[0].range
-            var line = range.start.line
-            provider.current_line = line;
-            //console.log("On line", line)
-        }
-        //console.log("line", e.contentChanges[0].range[0].line);
-        if(e.document.uri.scheme == 'file') {
+        if(isAsciiDocFile(e.document)) {
             provider.needsRebuild = true;
+            if(e.contentChanges.length > 0) {
+                var range = e.contentChanges[0].range
+                var line = range.start.line
+                provider.current_line = line;
+            }
         }
     })
 
@@ -64,18 +65,18 @@ export function activate(context: vscode.ExtensionContext): void {
         provider.needsRebuild = true;
     })
 
-    let displayColumn: vscode.ViewColumn;
-    switch (vscode.window.activeTextEditor.viewColumn) {
-        case vscode.ViewColumn.One:
-            displayColumn = vscode.ViewColumn.Two;
-            break;
-        case vscode.ViewColumn.Two:
-        case vscode.ViewColumn.Three:
-            displayColumn = vscode.ViewColumn.Three;
-            break;
-    }
 
     const previewToSide = vscode.commands.registerCommand("adoc.previewToSide", () => {
+        let displayColumn: vscode.ViewColumn;
+        switch (vscode.window.activeTextEditor.viewColumn) {
+            case vscode.ViewColumn.One:
+                displayColumn = vscode.ViewColumn.Two;
+                break;
+            case vscode.ViewColumn.Two:
+            case vscode.ViewColumn.Three:
+                displayColumn = vscode.ViewColumn.Three;
+                break;
+        }
         vscode.commands
             .executeCommand('vscode.previewHtml', previewUri, displayColumn, 'asciidoc')
             .then(() => { }, vscode.window.showErrorMessage);
@@ -88,9 +89,19 @@ export function activate(context: vscode.ExtensionContext): void {
     })
     const symbolProvider = registerDocumentSymbolProvider();
 
-    context.subscriptions.push(previewToSide, preview, symbolProvider);
+    const ExportAsPDFDisposable = vscode.commands.registerCommand("adoc.ExportAsPDF", ExportAsPDF);
+
+    context.subscriptions.push(previewToSide, preview, symbolProvider, ExportAsPDFDisposable);
+
+
 }
 
 // this method is called when your extension is deactivated
 export function deactivate(): void {
 }
+
+export function isAsciiDocFile(document: vscode.TextDocument) {
+    return document.languageId === 'asciidoc'
+        && document.uri.scheme !== 'asciidoc' // prevent processing of own documents
+}
+

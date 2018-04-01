@@ -40,7 +40,7 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
   }
 
   /* Builds the content from the active text editor window */
-  private async createHtml() {
+  public async createHtml() {
     const editor = vscode.window.activeTextEditor;
     const text = editor.document.getText();
     const path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
@@ -76,6 +76,5 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
   private errorHtml(error: string): string {
     return `<body>${error}</body>`;
   }
-
 
 }
