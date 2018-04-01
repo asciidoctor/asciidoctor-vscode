@@ -17,7 +17,6 @@ On adoc.previewToSide execution:
 
 'use strict';
 import * as vscode from 'vscode';
-import * as Format from 'string-format';
 
 var tmp = require('tmp');
 var fs = require("fs");

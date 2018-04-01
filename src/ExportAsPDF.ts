@@ -10,7 +10,6 @@ export default async function ExportAsPDF(provider) {
     const doc = editor.document;
     const text = doc.getText();
     //RebuildPhantomJS(); // Rebuild Phantom JS if required
-    var pdf = require('html-pdf');
     var options = { format: 'Letter' };
     var destination;
     if (!doc.isUntitled)
@@ -26,28 +25,33 @@ export default async function ExportAsPDF(provider) {
         var label = await vscode.window.showInformationMessage("This feature requires wkhtmltopdf\ndo you want to download", "Download")
         if (label != "Download")
             return
-        vscode.window.withProgress({
+        var error_msg = null
+        await vscode.window.withProgress({
             location: vscode.ProgressLocation.Window,
             title: "Downloading wkhtmltopdf",
             // cancellable: true
-            }, async (progress) => {
-                progress.report({ message: 'Downloading wkhtmltopdf...'});
-                await new Promise((resolve, reject) =>  {
-                    const platform = process.platform;
-                    const arch = process.arch;
-                    const download_url = `https://github.com/joaompinto/asciidoctor-vscode/raw/master/wkhtmltopdf-bin/wkhtmltopdf-${platform}-${arch}.xz`
-                    request(download_url, (error, response, body) => {
-                        if(error)
-                            return vscode.window.showErrorMessage(error);
-                        console.log('error:', error); // Print the error if one occurred
-                        //console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-                        //console.log('body:', body); // Print the HTML for the Google homepage.
-                        resolve()
-                    })
+        }, async (progress) => {
+            progress.report({ message: 'Downloading wkhtmltopdf...'});
+            return new Promise(async (resolve, reject) =>  {
+                const platform = process.platform;
+                const arch = process.arch;
+                const download_url = `xhttps://github.com/joaompinto/asciidoctor-vscode/raw/master/wkhtmltopdf-bin/wkhtmltopdf-${platform}-${arch}.xz`
+                await request
+                    .get(download_url)
+                    .on('error', (err) => { return reject(err.toString()) }).pipe(fs.createWriteStream(binary_path))
+                    .then( () => {}, (err) => { return reject(err) })
+                console.log("Dowload ok")
+                /*
+                request(download_url, (error, response, body) => {
+                    if(error)
+                        return reject("Error downloading:\n" +error.toString());
+                    console.log('error:', response.statusCode); // Print the error if one occurred
+                    //console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
+                    //console.log('body:', body); // Print the HTML for the Google homepage.
+                    resolve() */
                 })
-                progress.report({ message: 'Extracting.'});
-            }
-        )
+        }).then( () => {}, (reason) => { console.log(); vscode.window.showErrorMessage(reason) })
+        //await vscode.window.showErrorMessage(error_msg)
     }
 }
 
