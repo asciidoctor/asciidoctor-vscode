@@ -1,9 +1,11 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
-import { parseText } from './text-parser';
 import { exec, spawnSync } from "child_process";
 import * as request from 'request';
+import * as zlib from 'zlib';
+import { parseText } from './text-parser';
+
 
 export default async function ExportAsPDF(provider) {
     const editor = vscode.window.activeTextEditor;
@@ -18,7 +20,6 @@ export default async function ExportAsPDF(provider) {
         destination = 'temp.pdf'
     var html = await parseText('', text)
     var binary_path = path.join(__dirname, 'wkhtmltopdf_'+process.platform+'_'+process.arch);
-    console.log("bin_path:", binary_path)
     if(fs.existsSync(binary_path) )
         convert(destination);
     else {
@@ -26,33 +27,49 @@ export default async function ExportAsPDF(provider) {
         if (label != "Download")
             return
         var error_msg = null
+
+
         await vscode.window.withProgress({
             location: vscode.ProgressLocation.Window,
             title: "Downloading wkhtmltopdf",
             // cancellable: true
-        }, async (progress) => {
-            progress.report({ message: 'Downloading wkhtmltopdf...'});
-            return new Promise(async (resolve, reject) =>  {
+        }, async(progress) => {
+                progress.report({ message: 'Downloading wkhtmltopdf...'});
                 const platform = process.platform;
                 const arch = process.arch;
-                const download_url = `xhttps://github.com/joaompinto/asciidoctor-vscode/raw/master/wkhtmltopdf-bin/wkhtmltopdf-${platform}-${arch}.xz`
-                await request
-                    .get(download_url)
-                    .on('error', (err) => { return reject(err.toString()) }).pipe(fs.createWriteStream(binary_path))
-                    .then( () => {}, (err) => { return reject(err) })
-                console.log("Dowload ok")
-                /*
-                request(download_url, (error, response, body) => {
-                    if(error)
-                        return reject("Error downloading:\n" +error.toString());
-                    console.log('error:', response.statusCode); // Print the error if one occurred
-                    //console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
-                    //console.log('body:', body); // Print the HTML for the Google homepage.
-                    resolve() */
-                })
-        }).then( () => {}, (reason) => { console.log(); vscode.window.showErrorMessage(reason) })
-        //await vscode.window.showErrorMessage(error_msg)
+                const download_url = `https://github.com/joaompinto/asciidoctor-vscode/raw/master/wkhtmltopdf-bin/wkhtmltopdf-${platform}-${arch}.gz`
+                await download_file(download_url, binary_path+".gz")
+                progress.report({ message: 'Unzipping wkhtmltopdf...'});
+                const ungzip = zlib.createGunzip();
+                const inp = fs.createReadStream(binary_path+".gz");
+                const out = fs.createWriteStream(binary_path);
+                inp.pipe(ungzip).pipe(out);
+                progress.report({ message: 'Downloading wkhtmltopdf...'});
+                //resolve()
+        }).then( () => {console.log("done")} , (reason) => {vscode.window.showErrorMessage("Error installing wkhtmltopdf, "+reason.toString())})
     }
+}
+
+async function download_file(url: string, filename: string) {
+
+    // axios image download with response type "stream"
+    return new Promise( (resolve, reject) => {
+        request
+            .get(url)
+            .on('response', function(response) {
+                console.log(response.statusCode) // 200
+                if(response.statusCode != 200)
+                    reject("http error "+ response.statusCode)
+                else {
+                    console.log(response.headers['content-type']) // 'image/png'
+                    resolve()
+                }
+            })
+            .on('error', function(err) {
+                throw(err)
+            })
+            .pipe(fs.createWriteStream(filename));
+    })
 }
 
 function convert(destination){
