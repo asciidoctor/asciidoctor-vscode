@@ -1,11 +1,11 @@
-import * as vscode from 'vscode';
-import * as fs from 'fs';
-import * as path from 'path';
-import { exec, spawnSync } from "child_process";
-import * as request from 'request';
+import * as vscode from 'vscode'
+import * as fs from 'fs'
+import * as path from 'path'
+import { exec, spawnSync } from "child_process"
 import * as zlib from 'zlib';
-import { parseText } from './text-parser';
-import { isNullOrUndefined } from 'util';
+import { https } from 'follow-redirects'
+import { parseText } from './text-parser'
+import { isNullOrUndefined } from 'util'
 
 
 export default async function ExportAsPDF(provider) {
@@ -20,7 +20,13 @@ export default async function ExportAsPDF(provider) {
     else
         destination = 'temp.pdf'
     var html = await parseText('', text)
-    var binary_path = path.resolve(path.join(__dirname, 'wkhtmltopdf-'+process.platform+'-'+process.arch))
+    const platform = process.platform;
+    const ext = platform == "win32" ? '.exe': ''
+    const arch = process.arch;
+    var binary_path = path.resolve(path.join(__dirname, 'wkhtmltopdf-'+platform+'-'+arch+ext))
+    const source_name = path.parse(path.resolve(doc.fileName))
+    const pdf_filename = vscode.Uri.file(path.join(source_name.root, source_name.dir, source_name.name+'.pdf'))
+    console.log("checking", binary_path)
     if(!fs.existsSync(binary_path) ) {
         var label = await vscode.window.showInformationMessage("This feature requires wkhtmltopdf\ndo you want to download", "Download")
         if (label != "Download")
@@ -32,27 +38,30 @@ export default async function ExportAsPDF(provider) {
             title: "Downloading wkhtmltopdf",
             // cancellable: true
         }, async(progress) => {
-                progress.report({ message: 'Downloading wkhtmltopdf...'});
-                const platform = process.platform;
-                const arch = process.arch;
-                const download_url = `https://github.com/joaompinto/asciidoctor-vscode/raw/master/wkhtmltopdf-bin/wkhtmltopdf-${platform}-${arch}.gz`
-                await download_file(download_url, binary_path+".gz")
-                progress.report({ message: 'Unzipping wkhtmltopdf...'});
-                const ungzip = zlib.createGunzip();
-                const inp = fs.createReadStream(binary_path+".gz");
-                const out = fs.createWriteStream(binary_path);
-                inp.pipe(ungzip).pipe(out);
-                progress.report({ message: 'Downloading wkhtmltopdf...'});
-                //resolve()
-        }).then( () => {console.log("done")} , reason => {vscode.window.showErrorMessage("Error installing wkhtmltopdf, "+reason.toString()); return})
+            progress.report({ message: 'Downloading wkhtmltopdf...'});
+            const download_url = `https://github.com/joaompinto/asciidoctor-vscode/raw/master/wkhtmltopdf-bin/wkhtmltopdf-${platform}-${arch}${ext}.gz`
+            await download_file(download_url, binary_path+".gz", progress).then( () => {
+                progress.report({ message: 'Unzipping wkhtmltopdf...'})
+                const ungzip = zlib.createGunzip()
+                const inp = fs.createReadStream(binary_path+".gz")
+                const out = fs.createWriteStream(binary_path)
+                inp.pipe(ungzip).pipe(out)
+                console.log("Unzipped")
+            }).catch( async(reason) => {
+                binary_path = null;
+                console.error("Error downloading", download_url)
+                await vscode.window.showErrorMessage("Error installing wkhtmltopdf, "+reason.toString())
+            })
+        })
+        if(isNullOrUndefined(binary_path))
+            return;
     }
-    const source_name = path.parse(path.resolve(doc.fileName))
-    const pdf_filename = vscode.Uri.file(path.join(source_name.root, source_name.dir, source_name.name+'.pdf'))
     var save_filename = await vscode.window.showSaveDialog({ defaultUri: pdf_filename})
     if(! isNullOrUndefined(save_filename))
         convert(path.resolve(doc.fileName), save_filename.path)
             .then(offer_open),
             reason => {vscode.window.showErrorMessage("Error converting file, "+reason.toString()); return}
+
 }
 
 async function convert(source_filename, destination_filename) {
@@ -61,25 +70,38 @@ async function convert(source_filename, destination_filename) {
     })
 }
 
-async function download_file(url: string, filename: string) {
+async function download_file(url: string, filename: string, progress) {
 
-    // axios image download with response type "stream"
     return new Promise( (resolve, reject) => {
-        request
-            .get(url)
-            .on('response', function(response) {
-                console.log(response.statusCode) // 200
-                if(response.statusCode != 200)
-                    reject("http error "+ response.statusCode)
-                else {
-                    resolve()
-                }
-            })
-            .on('error', function(err) {
-                throw(err)
-            })
-            .pipe(fs.createWriteStream(filename));
-    })
+        var wstream = fs.createWriteStream(filename)
+        var totalDownloaded = 0;
+        https.get(url, (resp) => {
+            const contentSize = resp.headers['content-length'];
+            if(resp.statusCode != 200)
+            {
+                wstream.end()
+                fs.unlink(filename)
+                return reject("http error"+resp.statusCode)
+            }
+
+            // A chunk of data has been recieved.
+            resp.on('data', (chunk) => {
+                totalDownloaded += chunk.length
+                progress.report( { message: "Downloading wkhtmltopdf ... "+ ((totalDownloaded/contentSize)*100.).toFixed(0)+"%"})
+                wstream.write(chunk)
+            });
+
+            // The whole response has been received. Print out the result.
+            resp.on('end', () => {
+                wstream.end()
+                resolve()
+            });
+
+            }).on("error", (err) => {
+                console.log("Error: " + err.message);
+                reject(err.message)
+            });
+        })
 }
 
 function offer_open(destination){
