@@ -6,6 +6,7 @@ import * as zlib from 'zlib';
 import { https } from 'follow-redirects'
 import { parseText } from './text-parser'
 import { isNullOrUndefined } from 'util'
+import { spawn } from "child_process";
 
 
 export default async function ExportAsPDF(provider) {
@@ -26,7 +27,6 @@ export default async function ExportAsPDF(provider) {
     var binary_path = path.resolve(path.join(__dirname, 'wkhtmltopdf-'+platform+'-'+arch+ext))
     const source_name = path.parse(path.resolve(doc.fileName))
     const pdf_filename = vscode.Uri.file(path.join(source_name.root, source_name.dir, source_name.name+'.pdf'))
-    console.log("checking", binary_path)
     if(!fs.existsSync(binary_path) ) {
         var label = await vscode.window.showInformationMessage("This feature requires wkhtmltopdf\ndo you want to download", "Download")
         if (label != "Download")
@@ -46,7 +46,6 @@ export default async function ExportAsPDF(provider) {
                 const inp = fs.createReadStream(binary_path+".gz")
                 const out = fs.createWriteStream(binary_path)
                 inp.pipe(ungzip).pipe(out)
-                console.log("Unzipped")
             }).catch( async(reason) => {
                 binary_path = null;
                 console.error("Error downloading", download_url)
@@ -57,17 +56,14 @@ export default async function ExportAsPDF(provider) {
             return;
     }
     var save_filename = await vscode.window.showSaveDialog({ defaultUri: pdf_filename})
-    if(! isNullOrUndefined(save_filename))
-        convert(path.resolve(doc.fileName), save_filename.path)
-            .then(offer_open),
-            reason => {vscode.window.showErrorMessage("Error converting file, "+reason.toString()); return}
-
-}
-
-async function convert(source_filename, destination_filename) {
-    return new Promise( (resolve, reject) => {
-        resolve(path.resolve(destination_filename))
-    })
+    if(!isNullOrUndefined(save_filename)) {
+        html2pdf(html, binary_path,  save_filename.fsPath)
+        .then((result) => { offer_open(result) })
+        .catch(reason => {
+            console.error("Got error", reason)
+            vscode.window.showErrorMessage("Error converting to PDF, "+reason.toString());
+        })
+    }
 }
 
 async function download_file(url: string, filename: string, progress) {
@@ -98,7 +94,7 @@ async function download_file(url: string, filename: string, progress) {
             });
 
             }).on("error", (err) => {
-                console.log("Error: " + err.message);
+                console.error("Error: " + err.message);
                 reject(err.message)
             });
         })
@@ -107,7 +103,7 @@ async function download_file(url: string, filename: string, progress) {
 function offer_open(destination){
 
     // Saving the JSON that represents the document to a temporary JSON-file.
-    vscode.window.showInformationMessage(("Successfully converted to "+destination), "Open File").then((label: string) => {
+    vscode.window.showInformationMessage(("Successfully converted to "+path.basename(destination)), "Open File").then((label: string) => {
         if (label == "Open File") {
             switch (process.platform)
             {
@@ -126,4 +122,25 @@ function offer_open(destination){
             }
         }
     })
+}
+
+export async function html2pdf(html: string, binary_path: string, filename :string) {
+    let documentPath = path.dirname(filename);
+
+    return new Promise((resolve, reject) => {
+        var options = { cwdir: documentPath, stdio: ['pipe', 'ignore', "pipe"] }
+        var command = spawn(binary_path, ['-', filename], options )
+        var error_data = '';
+        command.stdin.write(html);
+        command.stdin.end();
+        command.stderr.on('data', (data) => {
+            error_data += data;
+        })
+        command.on('close', (code) => {
+            if(code == 0)
+                resolve(filename)
+            else
+                reject(error_data)
+        })
+    });
 }
