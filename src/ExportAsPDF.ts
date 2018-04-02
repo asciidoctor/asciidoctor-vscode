@@ -5,6 +5,7 @@ import { exec, spawnSync } from "child_process";
 import * as request from 'request';
 import * as zlib from 'zlib';
 import { parseText } from './text-parser';
+import { isNullOrUndefined } from 'util';
 
 
 export default async function ExportAsPDF(provider) {
@@ -15,19 +16,16 @@ export default async function ExportAsPDF(provider) {
     var options = { format: 'Letter' };
     var destination;
     if (!doc.isUntitled)
-        destination = doc.fileName+".pdf";
+        destination = doc.fileName+".pdf"
     else
         destination = 'temp.pdf'
     var html = await parseText('', text)
-    var binary_path = path.join(__dirname, 'wkhtmltopdf_'+process.platform+'_'+process.arch);
-    if(fs.existsSync(binary_path) )
-        convert(destination);
-    else {
+    var binary_path = path.resolve(path.join(__dirname, 'wkhtmltopdf-'+process.platform+'-'+process.arch))
+    if(!fs.existsSync(binary_path) ) {
         var label = await vscode.window.showInformationMessage("This feature requires wkhtmltopdf\ndo you want to download", "Download")
         if (label != "Download")
             return
         var error_msg = null
-
 
         await vscode.window.withProgress({
             location: vscode.ProgressLocation.Window,
@@ -46,8 +44,21 @@ export default async function ExportAsPDF(provider) {
                 inp.pipe(ungzip).pipe(out);
                 progress.report({ message: 'Downloading wkhtmltopdf...'});
                 //resolve()
-        }).then( () => {console.log("done")} , (reason) => {vscode.window.showErrorMessage("Error installing wkhtmltopdf, "+reason.toString())})
+        }).then( () => {console.log("done")} , reason => {vscode.window.showErrorMessage("Error installing wkhtmltopdf, "+reason.toString()); return})
     }
+    const source_name = path.parse(path.resolve(doc.fileName))
+    const pdf_filename = vscode.Uri.file(path.join(source_name.root, source_name.dir, source_name.name+'.pdf'))
+    var save_filename = await vscode.window.showSaveDialog({ defaultUri: pdf_filename})
+    if(! isNullOrUndefined(save_filename))
+        convert(path.resolve(doc.fileName), save_filename.path)
+            .then(offer_open),
+            reason => {vscode.window.showErrorMessage("Error converting file, "+reason.toString()); return}
+}
+
+async function convert(source_filename, destination_filename) {
+    return new Promise( (resolve, reject) => {
+        resolve(path.resolve(destination_filename))
+    })
 }
 
 async function download_file(url: string, filename: string) {
@@ -61,7 +72,6 @@ async function download_file(url: string, filename: string) {
                 if(response.statusCode != 200)
                     reject("http error "+ response.statusCode)
                 else {
-                    console.log(response.headers['content-type']) // 'image/png'
                     resolve()
                 }
             })
@@ -72,12 +82,11 @@ async function download_file(url: string, filename: string) {
     })
 }
 
-function convert(destination){
-    console.log(__dirname);
+function offer_open(destination){
+
     // Saving the JSON that represents the document to a temporary JSON-file.
     vscode.window.showInformationMessage(("Successfully converted to "+destination), "Open File").then((label: string) => {
         if (label == "Open File") {
-            console.log("Opening file", process.platform);
             switch (process.platform)
             {
                 case 'win32':
