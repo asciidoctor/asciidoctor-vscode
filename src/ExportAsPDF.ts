@@ -46,6 +46,7 @@ export default async function ExportAsPDF(provider) {
                 const inp = fs.createReadStream(binary_path+".gz")
                 const out = fs.createWriteStream(binary_path)
                 inp.pipe(ungzip).pipe(out)
+                fs.chmodSync(binary_path, 0x755);
             }).catch( async(reason) => {
                 binary_path = null;
                 console.error("Error downloading", download_url)
@@ -111,10 +112,10 @@ function offer_open(destination){
                     exec(`"${destination}"`);
                     break;
                 case 'darwin':
-                    exec(`"bash -c 'open "${destination}"'`);
+                    exec(`bash -c 'open "${destination}"'`);
                     break;
                 case 'linux':
-                    exec(`"bash -c 'xdg-oopen "${destination}"'`);
+                    exec(`bash -c 'xdg-open "${destination}"'`);
                     break;
                 default:
                     vscode. window.showWarningMessage("Output type is not supported");
