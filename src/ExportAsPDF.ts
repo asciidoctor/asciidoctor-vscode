@@ -7,14 +7,14 @@ import { https } from 'follow-redirects'
 import { parseText } from './text-parser'
 import { isNullOrUndefined } from 'util'
 import { spawn } from "child_process";
-
+var HttpsProxyAgent = require('https-proxy-agent');
+var url = require('url');
 
 export default async function ExportAsPDF(provider) {
     const editor = vscode.window.activeTextEditor;
     const doc = editor.document;
     const text = doc.getText();
     //RebuildPhantomJS(); // Rebuild Phantom JS if required
-    var options = { format: 'Letter' };
     var destination;
     if (!doc.isUntitled)
         destination = doc.fileName+".pdf"
@@ -49,8 +49,9 @@ export default async function ExportAsPDF(provider) {
                 fs.chmodSync(binary_path, 0x755);
             }).catch( async(reason) => {
                 binary_path = null;
-                console.error("Error downloading", download_url)
+                console.error("Error downloading", download_url, " ", reason)
                 await vscode.window.showErrorMessage("Error installing wkhtmltopdf, "+reason.toString())
+                return
             })
         })
         if(isNullOrUndefined(binary_path))
@@ -67,12 +68,19 @@ export default async function ExportAsPDF(provider) {
     }
 }
 
-async function download_file(url: string, filename: string, progress) {
+async function download_file(download_url: string, filename: string, progress) {
 
     return new Promise( (resolve, reject) => {
+        var download_options = url.parse(download_url);
         var wstream = fs.createWriteStream(filename)
         var totalDownloaded = 0;
-        https.get(url, (resp) => {
+        var proxy = process.env.http_proxy || vscode.workspace.getConfiguration("http")["proxy"].trim();
+        if( proxy != '') {
+            var agent = new HttpsProxyAgent(proxy);
+            download_options.agent = agent
+            download_options.rejectUnauthorized = false
+        }
+        https.get(download_options, (resp) => {
             const contentSize = resp.headers['content-length'];
             if(resp.statusCode != 200)
             {
