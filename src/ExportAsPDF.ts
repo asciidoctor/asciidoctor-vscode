@@ -11,17 +11,16 @@ var HttpsProxyAgent = require('https-proxy-agent');
 var url = require('url');
 
 export default async function ExportAsPDF(provider) {
-    const editor = vscode.window.activeTextEditor;
-    const doc = editor.document;
-    const text = doc.getText();
-    //RebuildPhantomJS(); // Rebuild Phantom JS if required
-    var destination;
+    const editor = vscode.window.activeTextEditor
+    const doc = editor.document
+    const text = doc.getText()
+    var destination
     if (!doc.isUntitled)
         destination = doc.fileName+".pdf"
     else
         destination = 'temp.pdf'
-    var html = await parseText('', text)
-    const platform = process.platform;
+    var html = await parseText(path.resolve(doc.fileName), text)
+    const platform = process.platform
     const ext = platform == "win32" ? '.exe': ''
     const arch = process.arch;
     var binary_path = path.resolve(path.join(__dirname, 'wkhtmltopdf-'+platform+'-'+arch+ext))

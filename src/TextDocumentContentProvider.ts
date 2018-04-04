@@ -1,10 +1,12 @@
 import * as vscode from 'vscode';
 import * as parser from './text-parser';
 import fileUrl from 'file-url';
+import { isNullOrUndefined } from 'util'
+
 
 export default class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
   private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
-  private lastPreviewHTML = "";
+  public lastPreviewHTML = "";
   private lastPreviewUri = "";
   public needsRebuild = true;
   public current_line = 0;
@@ -42,8 +44,14 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
   /* Builds the content from the active text editor window */
   public async createHtml() {
     const editor = vscode.window.activeTextEditor;
+    if(isNullOrUndefined(editor.document)) {
+        vscode.window.showErrorMessage("createHTML called with undefined document")
+        return ""
+    }
+
     const text = editor.document.getText();
     const path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
+
     var p = new Promise<string>(async resolve => {
       var line = this.current_line;
       var html;

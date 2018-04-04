@@ -1,5 +1,9 @@
 # Changes
 
+## 0.7.0
+
+* Added Export to PDF command (using wkhtmltopdf)
+
 ## 0.6.0
 
 * Synchronize preview with the selected/edited source line
