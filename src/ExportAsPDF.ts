@@ -7,14 +7,19 @@ import { https } from 'follow-redirects'
 import { parseText } from './text-parser'
 import { isNullOrUndefined } from 'util'
 import { spawn } from "child_process";
+
 var HttpsProxyAgent = require('https-proxy-agent');
 var url = require('url');
 
-export default async function ExportAsPDF(provider) {
+export default async function ExportAsPDF() {
     const editor = vscode.window.activeTextEditor
+    if(isNullOrUndefined(editor))
+        return
+
     const doc = editor.document
     const text = doc.getText()
     var destination
+
     if (!doc.isUntitled)
         destination = doc.fileName+".pdf"
     else

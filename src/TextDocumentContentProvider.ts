@@ -44,24 +44,21 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
   /* Builds the content from the active text editor window */
   public async createHtml() {
     const editor = vscode.window.activeTextEditor;
-    if(isNullOrUndefined(editor.document)) {
-        vscode.window.showErrorMessage("createHTML called with undefined document")
-        return ""
-    }
+
 
     const text = editor.document.getText();
     const path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
 
     var p = new Promise<string>(async resolve => {
-      var line = this.current_line;
-      var html;
-      var error_msg = null;
+      var line = this.current_line
+      var html = ''
+      var error_msg = null
       var body = await parser.parseText(editor.document.fileName, text).catch((err) => {
-        console.error(err);
+        console.error(err)
         return this.errorHtml(err)
       })
       if(error_msg != null)
-        html = error_msg;
+        html = error_msg
       if (editor.document && (editor.document.languageId === "asciidoc"))
         html = `<!DOCTYPE html>
         <html
