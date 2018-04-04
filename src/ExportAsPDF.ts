@@ -46,7 +46,7 @@ export default async function ExportAsPDF(provider) {
                 const inp = fs.createReadStream(binary_path+".gz")
                 const out = fs.createWriteStream(binary_path)
                 inp.pipe(ungzip).pipe(out)
-                fs.chmodSync(binary_path, 0x755);
+                fs.chmodSync(binary_path, 0x755)
             }).catch( async(reason) => {
                 binary_path = null;
                 console.error("Error downloading", download_url, " ", reason)
