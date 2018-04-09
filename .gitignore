@@ -1,5 +1,5 @@
-out
-node_modules
+out/
+node_modules/
 *.vsix
 .asciidoctor/
 test/samples/*.pdf

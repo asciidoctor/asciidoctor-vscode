@@ -1,9 +1,0 @@
-.vscode/**
-typings/**
-out/test/**
-test/**
-**/*.map
-.gitignore
-tsconfig.json
-*.vsix
-wkhtmltopdf-bin/**
