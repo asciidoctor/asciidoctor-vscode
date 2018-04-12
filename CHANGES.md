@@ -1,5 +1,9 @@
 # Changes
 
+## 0.7.1
+
+* Fix links when using external asciidoctor (closes #67)
+
 ## 0.7.0
 
 * Added Export to PDF command (using wkhtmltopdf)
