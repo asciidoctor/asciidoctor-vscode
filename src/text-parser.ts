@@ -53,7 +53,8 @@ export async function convert_using_application(filename :string , text: string)
             result_data += data.toString();
         });
         asciidoctor.on('close', (code) => {
-            resolve(result_data);
+            var result = fixLinks(result_data, filename);
+            resolve(result);
         })
         asciidoctor.stdin.write(text);
         asciidoctor.stdin.end();
