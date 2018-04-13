@@ -1,5 +1,9 @@
 # Changes
 
+## 0.7.2
+
+* runInterval is now respected during document changes (closes #68)
+
 ## 0.7.1
 
 * Fix links when using external asciidoctor (closes #67)
