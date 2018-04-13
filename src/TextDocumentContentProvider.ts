@@ -12,12 +12,14 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
   public current_line = 0;
 
   constructor(private readonly previewUri) {
-    const refreshInterval = vscode.workspace.getConfiguration('AsciiDoc').get('refresh_interval', 1000);;
+    const refreshInterval = vscode.workspace.getConfiguration('AsciiDoc').get('runInterval', 1000)
+
     /* Setup a timer to check if the preview should be rebuilt */
     var timer = setInterval(
       () => {
-          if(this.needsRebuild)
+          if(this.needsRebuild) {
               this.update(previewUri)
+          }
       },
       // The periodicity of the timer.
       refreshInterval
@@ -28,23 +30,27 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
     Called by vscode when the content needs to be rendered
   */
   public provideTextDocumentContent(uri: vscode.Uri): string | Thenable<string> {
-    return this.createHtml();
+    if(!this.needsRebuild)
+      return this.lastPreviewHTML
+    else {
+      this.needsRebuild = false
+      return this.createHtml()
+    }
   }
 
-  /* Called when the content changes r*/
+  /* Called when the content changes */
   get onDidChange(): vscode.Event<vscode.Uri> {
-    return this._onDidChange.event;
+    return this._onDidChange.event
   }
 
-  /* Trigget content update */
+  /* Trigger content update */
   public update(uri: vscode.Uri) {
-    this._onDidChange.fire(uri);
+    this._onDidChange.fire(uri)
   }
 
   /* Builds the content from the active text editor window */
   public async createHtml() {
     const editor = vscode.window.activeTextEditor;
-
 
     const text = editor.document.getText();
     const path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
@@ -72,7 +78,6 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
           ${body}
           </body>
         </html>`;
-      this.needsRebuild = false;
       resolve(html)
     })
     return p;

@@ -56,12 +56,13 @@ export function activate(context: vscode.ExtensionContext): void {
 
     vscode.window.onDidChangeTextEditorSelection(e => {
         provider.current_line = e.selections[0].anchor.line;
-        provider.update(previewUri);
+        provider.needsRebuild = true;
     })
 
 
     vscode.window.onDidChangeActiveTextEditor(e => {
-        provider.needsRebuild = true;
+        provider.needsRebuild = true
+        provider.update(previewUri)
     })
 
 
