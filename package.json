@@ -26,7 +26,10 @@
         "Languages"
     ],
     "activationEvents": [
-        "onLanguage:asciidoc"
+        "onLanguage:asciidoc",
+        "onCommand:adoc.preview",
+        "onCommand:adoc.previewToSide",
+        "onCommand:adoc.ExportAsPDF"
     ],
     "contributes": {
         "languages": [

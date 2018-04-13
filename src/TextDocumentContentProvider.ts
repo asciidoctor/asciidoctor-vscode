@@ -3,7 +3,6 @@ import * as parser from './text-parser';
 import fileUrl from 'file-url';
 import { isNullOrUndefined } from 'util'
 
-
 export default class TextDocumentContentProvider implements vscode.TextDocumentContentProvider {
   private _onDidChange = new vscode.EventEmitter<vscode.Uri>();
   public lastPreviewHTML = "";
@@ -30,7 +29,7 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
     Called by vscode when the content needs to be rendered
   */
   public provideTextDocumentContent(uri: vscode.Uri): string | Thenable<string> {
-    if(!this.needsRebuild)
+    if(!vscode.window.activeTextEditor || !this.needsRebuild)
       return this.lastPreviewHTML
     else {
       this.needsRebuild = false
@@ -48,11 +47,14 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
     this._onDidChange.fire(uri)
   }
 
+  public active_update(uri: vscode.Uri) {
+    this.createHtml()
+  }
+
   /* Builds the content from the active text editor window */
   public async createHtml() {
-    const editor = vscode.window.activeTextEditor;
-
-    const text = editor.document.getText();
+    const editor = vscode.window.activeTextEditor
+    const text = editor.document.getText()
     const path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
 
     var p = new Promise<string>(async resolve => {
@@ -78,6 +80,7 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
           ${body}
           </body>
         </html>`;
+      this.lastPreviewHTML = html
       resolve(html)
     })
     return p;

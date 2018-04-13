@@ -3,6 +3,7 @@
 ## 0.8.x
 
 * wordwrap if the file type is .adoc (closes #65)
+* activate on "asciidoc" related commands (closes #64)
 
 ## 0.7.2
 
