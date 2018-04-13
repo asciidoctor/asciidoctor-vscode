@@ -71,6 +71,12 @@
                 }
             }
         },
+		"configurationDefaults": {
+			"[asciidoc]": {
+				"editor.wordWrap": "on",
+				"editor.quickSuggestions": false
+			}
+		},
         "keybindings": [
             {
                 "command": "adoc.preview",

@@ -1,5 +1,9 @@
 # Changes
 
+## 0.8.x
+
+* wordwrap if the file type is .adoc (closes #65)
+
 ## 0.7.2
 
 * runInterval is now respected during document changes (closes #68)
