@@ -41,6 +41,7 @@
                 ],
                 "extensions": [
                     ".adoc",
+                    ".ad",
                     ".asciidoc"
                 ],
                 "configuration": "./asciidoc-language-configuration.json"
