@@ -1,6 +1,6 @@
 # Changes
 
-## 0.8.x
+## 0.8.0
 
 * wordwrap if the file type is .adoc (closes #65)
 * activate on "asciidoc" related commands (closes #64)

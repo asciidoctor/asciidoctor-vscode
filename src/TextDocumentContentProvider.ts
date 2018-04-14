@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import * as parser from './text-parser';
+import * as text_parser from './text-parser';
 import fileUrl from 'file-url';
 import { isNullOrUndefined } from 'util'
 
@@ -61,7 +61,8 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
       var line = this.current_line
       var html = ''
       var error_msg = null
-      var body = await parser.parseText(editor.document.fileName, text).catch((err) => {
+      let parser = new text_parser.AsciiDocParser(editor.document.fileName, text)
+      var body = await parser.parseText().catch((err) => {
         console.error(err)
         return this.errorHtml(err)
       })

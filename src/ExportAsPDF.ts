@@ -4,7 +4,7 @@ import * as path from 'path'
 import { exec, spawnSync } from "child_process"
 import * as zlib from 'zlib';
 import { https } from 'follow-redirects'
-import { parseText } from './text-parser'
+import * as text_parser from './text-parser'
 import { isNullOrUndefined } from 'util'
 import { spawn } from "child_process";
 
@@ -24,7 +24,8 @@ export default async function ExportAsPDF() {
         destination = doc.fileName+".pdf"
     else
         destination = 'temp.pdf'
-    var html = await parseText(path.resolve(doc.fileName), text)
+    let parser = new text_parser.AsciiDocParser(path.resolve(doc.fileName), text)
+    var html =  await parser.parseText()
     const platform = process.platform
     const ext = platform == "win32" ? '.exe': ''
     const arch = process.arch;

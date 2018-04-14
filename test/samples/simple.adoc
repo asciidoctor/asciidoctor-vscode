@@ -1,4 +1,5 @@
 = Heading level 1
+:showtitle:
 
 This is a short presentation on AsciiDoc's core capabilities.
 Preview as you type, including formatting like *this*, or _this_.
