@@ -1,5 +1,18 @@
 # Changes
 
+## 0.8.0
+
+* wordwrap if the file type is .adoc (closes #65)
+* activate on "asciidoc" related commands (closes #64)
+
+## 0.7.2
+
+* runInterval is now respected during document changes (closes #68)
+
+## 0.7.1
+
+* Fix links when using external asciidoctor (closes #67)
+
 ## 0.7.0
 
 * Added Export to PDF command (using wkhtmltopdf)

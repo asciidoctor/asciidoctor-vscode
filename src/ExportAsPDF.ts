@@ -4,9 +4,11 @@ import * as path from 'path'
 import { exec, spawnSync } from "child_process"
 import * as zlib from 'zlib';
 import { https } from 'follow-redirects'
-import { parseText } from './text-parser'
+import * as text_parser from './text-parser'
 import { isNullOrUndefined } from 'util'
 import { spawn } from "child_process";
+import * as tmp from "tmp";
+
 
 var HttpsProxyAgent = require('https-proxy-agent');
 var url = require('url');
@@ -24,7 +26,37 @@ export default async function ExportAsPDF() {
         destination = doc.fileName+".pdf"
     else
         destination = 'temp.pdf'
-    var html = await parseText(path.resolve(doc.fileName), text)
+    let parser = new text_parser.AsciiDocParser(path.resolve(doc.fileName), text)
+    var html =  await parser.parseText()
+    const showtitlepage = parser.getAttribute("showtitlepage")
+    const author = parser.getAttribute("author")
+    const doctitle : string | undefined = parser.getAttribute("doctitle");
+    const ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
+    let cover: string | undefined = undefined;
+    if(!isNullOrUndefined(showtitlepage) && !isNullOrUndefined(doctitle)) {
+        var tmpobj = tmp.fileSync({postfix: '.html'});
+        let html =  `\
+        <!DOCTYPE html>
+        <html>
+            <head>
+            <meta charset="UTF-8">
+            <link rel="stylesheet" type="text/css" href="${ext_path + "/assets/all-centered.css"}">
+            </head>
+            <body>
+            <div class="outer">
+                <div class="middle">
+                    <div class="inner">
+                        <h1>${doctitle}</h1>
+                        <p>${author}</p>
+                    </div>
+                </div>
+            </div>
+            </body>
+        </html>
+        `;
+        fs.writeFileSync(tmpobj.name, html, 'utf-8')
+        cover = `cover ${tmpobj.name}`;
+    }
     const platform = process.platform
     const ext = platform == "win32" ? '.exe': ''
     const arch = process.arch;
@@ -63,7 +95,7 @@ export default async function ExportAsPDF() {
     }
     var save_filename = await vscode.window.showSaveDialog({ defaultUri: pdf_filename})
     if(!isNullOrUndefined(save_filename)) {
-        html2pdf(html, binary_path,  save_filename.fsPath)
+        html2pdf(html, binary_path, cover,  save_filename.fsPath)
         .then((result) => { offer_open(result) })
         .catch(reason => {
             console.error("Got error", reason)
@@ -138,12 +170,16 @@ function offer_open(destination){
     })
 }
 
-export async function html2pdf(html: string, binary_path: string, filename :string) {
+export async function html2pdf(html: string, binary_path: string, cover: string, filename :string) {
     let documentPath = path.dirname(filename);
 
     return new Promise((resolve, reject) => {
         var options = { cwdir: documentPath, stdio: ['pipe', 'ignore', "pipe"] }
-        var command = spawn(binary_path, ['-', filename], options )
+        let cmd_arguments =  [ '--encoding', ' utf-8'];
+        if(!isNullOrUndefined(cover))
+            cmd_arguments = cover.split(" ")
+        cmd_arguments = cmd_arguments.concat(['-', filename])
+        var command = spawn(binary_path, cmd_arguments, options )
         var error_data = '';
         command.stdin.write(html);
         command.stdin.end();
