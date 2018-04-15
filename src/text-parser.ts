@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import * as path from "path";
 import * as Asciidoctor from "asciidoctor.js";
 import { spawn } from "child_process";
+import { isNullOrUndefined } from 'util';
 const fileUrl = require('file-url');
 
 let previousHtml = null;
@@ -10,7 +11,12 @@ const asciidoctor = Asciidoctor();
 
 export class AsciiDocParser {
     public html: string = '';
+    public document = null;
     constructor(private readonly filename: string, private readonly text: string) {
+    }
+
+    public getAttribute(name: string) {
+        return isNullOrUndefined(this.document) ? null : this.document.getAttribute(name);
     }
 
     private async convert_using_javascript() {
@@ -26,6 +32,7 @@ export class AsciiDocParser {
                 sourcemap: true
             }
             let ascii_doc = asciidoctor.load(this.text, options);
+            this.document = ascii_doc;
             const blocksWithLineNumber = ascii_doc.findBy(function (b) { return typeof b.getLineNumber() !== 'undefined'; });
             blocksWithLineNumber.forEach(function(block, key, myArray) {
                     block.addRole("data-line-" + block.getLineNumber());
@@ -38,6 +45,7 @@ export class AsciiDocParser {
 
     private async convert_using_application() {
         let documentPath = path.dirname(this.filename);
+        this.document =  null;
 
         return new Promise<string>(resolve => {
             let asciidoctor_command = vscode.workspace.getConfiguration('AsciiDoc').get('asciidoctor_command', 'asciidoctor');

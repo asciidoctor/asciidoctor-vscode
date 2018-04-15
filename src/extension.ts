@@ -79,9 +79,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
     const preview = vscode.commands.registerCommand("adoc.preview", () => {
         provider.needsRebuild = true
-        console.log("updating doc", vscode.window.activeTextEditor.document)
         provider.active_update(previewUri)
-        console.log("previewing doc", vscode.window.activeTextEditor.document)
         vscode.commands
             .executeCommand('vscode.previewHtml', previewUri, vscode.window.activeTextEditor.viewColumn, 'asciidoc')
             .then(() => { }, vscode.window.showErrorMessage)
