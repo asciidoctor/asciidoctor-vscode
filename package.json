@@ -53,6 +53,12 @@
                 "path": "./syntaxes/Asciidoctor.tmLanguage"
             }
         ],
+        "snippets": [
+            {
+                "language": "asciidoc",
+                "path": "./snippets/snippets.json"
+            }
+        ],
         "configuration": {
             "type": "object",
             "title": "AsciiDoc Option Configuration",

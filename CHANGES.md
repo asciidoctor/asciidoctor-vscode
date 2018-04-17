@@ -1,5 +1,10 @@
 # Changes
 
+## 0.9.0
+
+* Added title page with auther info (closes #71)
+* Added Tenhical Document snippet, based on <http://web.mit.edu/course/21/21.guide/elemtech.htm>
+
 ## 0.8.0
 
 * wordwrap if the file type is .adoc (closes #65)
