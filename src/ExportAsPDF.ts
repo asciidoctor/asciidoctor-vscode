@@ -30,6 +30,7 @@ export default async function ExportAsPDF() {
     var html =  await parser.parseText()
     const showtitlepage = parser.getAttribute("showtitlepage")
     const author = parser.getAttribute("author")
+    const email = parser.getAttribute("email")
     const doctitle : string | undefined = parser.getAttribute("doctitle");
     const ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
     let cover: string | undefined = undefined;
@@ -47,7 +48,7 @@ export default async function ExportAsPDF() {
                 <div class="middle">
                     <div class="inner">
                         <h1>${doctitle}</h1>
-                        <p>${author}</p>
+                        <p>${author} &lt;${email}&gt;</p>
                     </div>
                 </div>
             </div>

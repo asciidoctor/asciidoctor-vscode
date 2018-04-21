@@ -5,7 +5,6 @@ João Pinto <lamego.pinto@gmail.com>
 :notitle:
 :noheader:
 
-
 To get diagram support you must install http://asciidoctor.org/docs/asciidoctor-diagram/[ascidoctor diagram] and
 setup the html_generator for the extension: 
 ```json
