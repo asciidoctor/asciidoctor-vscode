@@ -1,5 +1,9 @@
 # Changes
 
+## 0.9.1
+
+* Rename CHANGES.md CHANGELOG.md to have it shown in the extension info
+
 ## 0.9.0
 
 * Quote filename on asciidoctor call (closes #73)
