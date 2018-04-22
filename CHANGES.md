@@ -2,8 +2,9 @@
 
 ## 0.9.0
 
-* Added title page with auther info (closes #71)
-* Added Tenhical Document snippet, based on <http://web.mit.edu/course/21/21.guide/elemtech.htm>
+* Quote filename on asciidoctor call (closes #73)
+* Added title page with author info (closes #71)
+* Added Technical Document snippet, based on <http://web.mit.edu/course/21/21.guide/elemtech.htm>
 
 ## 0.8.0
 
@@ -39,7 +40,7 @@
 
 ## 0.4.3
 
-* Allways rebuild preview when preview uri changes, closes #43
+* Always rebuild preview when preview uri changes, closes #43
 
 ## 0.4.2
 
@@ -79,7 +80,7 @@
 ## 0.3.0
 
 * Use time based preview refresh instead of on document change, this closes #9
-* Major code reorgnization and documentation
+* Major code reorganization and documentation
 
 ## 0.2.1
 

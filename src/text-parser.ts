@@ -50,7 +50,7 @@ export class AsciiDocParser {
         return new Promise<string>(resolve => {
             let asciidoctor_command = vscode.workspace.getConfiguration('AsciiDoc').get('asciidoctor_command', 'asciidoctor');
             var options = { shell: true, cwd: path.dirname(this.filename) }
-            var asciidoctor = spawn(asciidoctor_command, ['-q', '-o-', '-', '-B', documentPath], options );
+            var asciidoctor = spawn(asciidoctor_command, ['-q', '-o-', '-', '-B', '\'' + documentPath + '\''], options );
             asciidoctor.stderr.on('data', (data) => {
                 let errorMessage = data.toString();
                 console.error(errorMessage);
