@@ -1,5 +1,9 @@
 # Changes
 
+## 0.10.0
+
+* Support logo on title page (Closes #74 )
+
 ## 0.9.1
 
 * Rename CHANGES.md CHANGELOG.md to have it shown in the extension info

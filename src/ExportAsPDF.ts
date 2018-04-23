@@ -32,8 +32,11 @@ export default async function ExportAsPDF() {
     const author = parser.getAttribute("author")
     const email = parser.getAttribute("email")
     const doctitle : string | undefined = parser.getAttribute("doctitle");
+    const titlepagelogo : string | undefined = parser.getAttribute("titlepagelogo");
     const ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
+    const source_name = path.parse(path.resolve(doc.fileName))
     let cover: string | undefined = undefined;
+    const img_html = isNullOrUndefined(titlepagelogo) ? "" : `<img src="${source_name.dir}/${titlepagelogo}" alt="IBM">`
     if(!isNullOrUndefined(showtitlepage) && !isNullOrUndefined(doctitle)) {
         var tmpobj = tmp.fileSync({postfix: '.html'});
         let html =  `\
@@ -47,6 +50,7 @@ export default async function ExportAsPDF() {
             <div class="outer">
                 <div class="middle">
                     <div class="inner">
+                        ${img_html}
                         <h1>${doctitle}</h1>
                         <p>${author} &lt;${email}&gt;</p>
                     </div>
@@ -62,7 +66,6 @@ export default async function ExportAsPDF() {
     const ext = platform == "win32" ? '.exe': ''
     const arch = process.arch;
     var binary_path = path.resolve(path.join(__dirname, 'wkhtmltopdf-'+platform+'-'+arch+ext))
-    const source_name = path.parse(path.resolve(doc.fileName))
     const pdf_filename = vscode.Uri.file(path.join(source_name.root, source_name.dir, source_name.name+'.pdf'))
     if(!fs.existsSync(binary_path) ) {
         var label = await vscode.window.showInformationMessage("This feature requires wkhtmltopdf\ndo you want to download", "Download")
