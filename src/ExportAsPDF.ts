@@ -33,6 +33,7 @@ export default async function ExportAsPDF() {
     const email = parser.getAttribute("email")
     const doctitle : string | undefined = parser.getAttribute("doctitle");
     const titlepagelogo : string | undefined = parser.getAttribute("titlepagelogo");
+    const footer_center: string | undefined = parser.getAttribute("footer-center");
     const ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
     const source_name = path.parse(path.resolve(doc.fileName))
     let cover: string | undefined = undefined;
@@ -99,7 +100,7 @@ export default async function ExportAsPDF() {
     }
     var save_filename = await vscode.window.showSaveDialog({ defaultUri: pdf_filename})
     if(!isNullOrUndefined(save_filename)) {
-        html2pdf(html, binary_path, cover,  save_filename.fsPath)
+        html2pdf(html, binary_path, cover, footer_center, save_filename.fsPath)
         .then((result) => { offer_open(result) })
         .catch(reason => {
             console.error("Got error", reason)
@@ -174,16 +175,21 @@ function offer_open(destination){
     })
 }
 
-export async function html2pdf(html: string, binary_path: string, cover: string, filename :string) {
+export async function html2pdf(html: string, binary_path: string, cover: string, footer_center: string, filename: string) {
     let documentPath = path.dirname(filename);
 
     return new Promise((resolve, reject) => {
         var options = { cwdir: documentPath, stdio: ['pipe', 'ignore', "pipe"] }
         let cmd_arguments =  [ '--encoding', ' utf-8'];
-        if(!isNullOrUndefined(cover))
-            cmd_arguments = cover.split(" ")
-        cmd_arguments = cmd_arguments.concat(['-', filename])
-        var command = spawn(binary_path, cmd_arguments, options )
+        if(!isNullOrUndefined(cover)) {
+            cmd_arguments = cmd_arguments.concat(cover.split(" "))
+        }
+        if(!isNullOrUndefined(footer_center)) {
+            cmd_arguments = cmd_arguments.concat(['--footer-center', footer_center])
+        }
+        cmd_arguments = cmd_arguments.concat(['-', filename]);
+        console.log(cmd_arguments);
+        var command = spawn(binary_path, cmd_arguments, options)
         var error_data = '';
         command.stdin.write(html);
         command.stdin.end();

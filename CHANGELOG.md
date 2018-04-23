@@ -2,7 +2,7 @@
 
 ## 0.10.0
 
-* Support logo on title page (Closes #74 )
+* Support logo on title page (closes #74)
 
 ## 0.9.1
 
