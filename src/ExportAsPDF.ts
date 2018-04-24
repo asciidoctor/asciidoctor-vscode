@@ -37,8 +37,12 @@ export default async function ExportAsPDF() {
     const ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
     const source_name = path.parse(path.resolve(doc.fileName))
     let cover: string | undefined = undefined;
-    const img_html = isNullOrUndefined(titlepagelogo) ? "" : `<img src="${source_name.dir}/${titlepagelogo}" alt="IBM">`
-    if(!isNullOrUndefined(showtitlepage) && !isNullOrUndefined(doctitle)) {
+    let img_html: string = '';
+    if(!isNullOrUndefined(showtitlepage)) {
+        if(!isNullOrUndefined(titlepagelogo)) {
+            const image_url = titlepagelogo.startsWith('http') ? titlepagelogo : path.join(source_name.dir, titlepagelogo)
+            img_html = isNullOrUndefined(titlepagelogo) ? "" : `<img src="${image_url}">`
+        }
         var tmpobj = tmp.fileSync({postfix: '.html'});
         let html =  `\
         <!DOCTYPE html>
@@ -188,7 +192,6 @@ export async function html2pdf(html: string, binary_path: string, cover: string,
             cmd_arguments = cmd_arguments.concat(['--footer-center', footer_center])
         }
         cmd_arguments = cmd_arguments.concat(['-', filename]);
-        console.log(cmd_arguments);
         var command = spawn(binary_path, cmd_arguments, options)
         var error_data = '';
         command.stdin.write(html);
