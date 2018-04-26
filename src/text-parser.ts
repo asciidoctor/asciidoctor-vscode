@@ -12,6 +12,7 @@ const asciidoctor = Asciidoctor();
 export class AsciiDocParser {
     public html: string = '';
     public document = null;
+
     constructor(private readonly filename: string, private readonly text: string) {
     }
 
@@ -21,14 +22,20 @@ export class AsciiDocParser {
 
     private async convert_using_javascript() {
         return new Promise<string>(resolve => {
+            const contains_stylesheet = !isNullOrUndefined(this.text.match(new RegExp("^\\s*:stylesheet:", "img")));
             const documentPath = path.dirname(this.filename);
             const ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
             const stylesdir = path.join(ext_path, 'assets')
+            var attributes = {};
+            if(contains_stylesheet)
+                attributes = {'copycss': true }
+            else
+                attributes = {'copycss': true, 'stylesdir': stylesdir,'stylesheet': 'asciidoctor.css'}
             const options = {
                 safe: 'unsafe',
                 doctype: 'article',
+                attributes: attributes,
                 header_footer: true,
-                attributes: {'copycss': true, 'stylesdir': stylesdir,'stylesheet': 'asciidoctor.css'},
                 to_file: false,
                 base_dir: documentPath,
                 sourcemap: true,

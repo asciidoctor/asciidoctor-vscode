@@ -1,5 +1,10 @@
 # Changes
 
+## 0.11.0
+
+* Improve the default CSS (closes #76)
+* Add page break support for PDF export  (closes #75)
+
 ## 0.10.0
 
 * Support logo on title page (closes #74)
