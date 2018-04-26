@@ -21,15 +21,17 @@ export class AsciiDocParser {
 
     private async convert_using_javascript() {
         return new Promise<string>(resolve => {
-            let documentPath = path.dirname(this.filename);
+            const documentPath = path.dirname(this.filename);
+            const ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
+            const stylesdir = path.join(ext_path, 'assets')
             const options = {
                 safe: 'unsafe',
                 doctype: 'article',
                 header_footer: true,
-                attributes: ['copycss'],
+                attributes: {'copycss': true, 'stylesdir': stylesdir,'stylesheet': 'asciidoctor.css'},
                 to_file: false,
                 base_dir: documentPath,
-                sourcemap: true
+                sourcemap: true,
             }
             let ascii_doc = asciidoctor.load(this.text, options);
             this.document = ascii_doc;
