@@ -1,5 +1,9 @@
 # Changes
 
+## 0.11.1
+
+* Removed unnecessary binary files from the extension package
+
 ## 0.11.0
 
 * Improve the default CSS (closes #76)
