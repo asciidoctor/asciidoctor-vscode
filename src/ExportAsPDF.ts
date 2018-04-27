@@ -185,11 +185,11 @@ export async function html2pdf(html: string, binary_path: string, cover: string,
     return new Promise((resolve, reject) => {
         var options = { cwdir: documentPath, stdio: ['pipe', 'ignore', "pipe"] }
         let cmd_arguments =  [ '--encoding', ' utf-8'];
-        if(!isNullOrUndefined(cover)) {
-            cmd_arguments = cmd_arguments.concat(cover.split(" "))
-        }
         if(!isNullOrUndefined(footer_center)) {
             cmd_arguments = cmd_arguments.concat(['--footer-center', footer_center])
+        }
+        if(!isNullOrUndefined(cover)) {
+            cmd_arguments = cmd_arguments.concat(cover.split(" "))
         }
         cmd_arguments = cmd_arguments.concat(['-', filename]);
         var command = spawn(binary_path, cmd_arguments, options)

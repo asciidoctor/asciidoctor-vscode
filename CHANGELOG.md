@@ -1,5 +1,9 @@
 # Changes
 
+## 0.11.2
+
+* Support :footer-center: to place a footer center on exported PDF (closes #77)
+
 ## 0.11.1
 
 * Removed unnecessary binary files from the extension package
