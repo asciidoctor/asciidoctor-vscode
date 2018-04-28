@@ -144,6 +144,7 @@
         "file-url": "^1.0.1",
         "tmp": "0.0.33",
         "follow-redirects": "^1.4.1",
-        "https-proxy-agent": "^2.2.1"
+        "https-proxy-agent": "^2.2.1",
+        "viz.js": "^1.8.1"
     }
 }

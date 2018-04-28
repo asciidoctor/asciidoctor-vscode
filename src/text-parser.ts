@@ -4,10 +4,23 @@ import * as Asciidoctor from "asciidoctor.js";
 import { spawn } from "child_process";
 import { isNullOrUndefined } from 'util';
 const fileUrl = require('file-url');
+const Viz = require("viz.js");
 
 let previousHtml = null;
 let use_asciidoctor_js = vscode.workspace.getConfiguration('AsciiDoc').get('use_asciidoctor_js');
 const asciidoctor = Asciidoctor();
+
+asciidoctor.Extensions.register(function () {
+    this.block(function () {
+        const self = this;
+        self.named('graphviz');
+        self.onContext('literal');
+        self.process(function (parent, reader, attrs) {
+            var svg = Viz(reader.getString());
+            return self.createBlock(parent, 'pass', svg);
+        });
+    });
+});
 
 export class AsciiDocParser {
     public html: string = '';
