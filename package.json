@@ -145,6 +145,8 @@
         "tmp": "0.0.33",
         "follow-redirects": "^1.4.1",
         "https-proxy-agent": "^2.2.1",
-        "viz.js": "^1.8.1"
+        "viz.js": "^1.8.1",
+        "mermaid.cli": "^0.4.6",
+        "npm-which": "^3.0.1"
     }
 }

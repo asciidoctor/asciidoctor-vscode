@@ -27,14 +27,26 @@ export default async function ExportAsPDF() {
     else
         destination = 'temp.pdf'
     let parser = new text_parser.AsciiDocParser(path.resolve(doc.fileName), text)
-    var html =  await parser.parseText()
+    const body =  await parser.parseText()
+    const ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
+    const html = `<!DOCTYPE html>
+    <html
+        <head>
+            <script src="${ext_path + "/assets/mermaid.min.js"}"></script>
+            <script>mermaid.initialize({startOnLoad:true});</script>
+            <style>body { padding: 0; margin: 0; }</style>
+        </head>
+        <body>
+        ${body}
+        </body>
+    </html>`;
+    console.log(html);
     const showtitlepage = parser.getAttribute("showtitlepage")
     const author = parser.getAttribute("author")
     const email = parser.getAttribute("email")
     const doctitle : string | undefined = parser.getAttribute("doctitle");
     const titlepagelogo : string | undefined = parser.getAttribute("titlepagelogo");
     const footer_center: string | undefined = parser.getAttribute("footer-center");
-    const ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
     const source_name = path.parse(path.resolve(doc.fileName))
     let cover: string | undefined = undefined;
     let img_html: string = '';
@@ -184,7 +196,7 @@ export async function html2pdf(html: string, binary_path: string, cover: string,
 
     return new Promise((resolve, reject) => {
         var options = { cwdir: documentPath, stdio: ['pipe', 'ignore', "pipe"] }
-        let cmd_arguments =  [ '--encoding', ' utf-8'];
+        let cmd_arguments =  [ '--encoding', ' utf-8', '--javascript-delay', '1000'];
         if(!isNullOrUndefined(footer_center)) {
             cmd_arguments = cmd_arguments.concat(['--footer-center', footer_center])
         }

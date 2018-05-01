@@ -1,5 +1,13 @@
 # Changes
 
+## 0.13.0
+
+* Added upport for Mermaid Diagrams (unprintable)
+
+## 0.12.0
+
+* Add graphviz support using Viz.js (closes #78)
+
 ## 0.11.2
 
 * Support :footer-center: to place a footer center on exported PDF (closes #77)

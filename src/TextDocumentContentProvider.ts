@@ -55,7 +55,7 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
   public async createHtml() {
     const editor = vscode.window.activeTextEditor
     const text = editor.document.getText()
-    const path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
+    const ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
 
     var p = new Promise<string>(async resolve => {
       var line = this.current_line
@@ -72,8 +72,10 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
         html = `<!DOCTYPE html>
         <html
           <head>
-            <link rel="stylesheet" type="text/css" href="${path + "/assets/preview.css"}">
-            <script src="${path + "/assets/scroll-to-element.js"}"></script>
+            <link rel="stylesheet" type="text/css" href="${ext_path + "/assets/preview.css"}">
+            <script src="${ext_path + "/assets/scroll-to-element.js"}"></script>
+            <script src="${ext_path + "/assets/mermaid.min.js"}"></script>
+            <script>mermaid.initialize({startOnLoad:true});</script>
             <style>body { padding: 0; margin: 0; }</style>
           </head>
           <body onload="ScrollToLine(${line})">
