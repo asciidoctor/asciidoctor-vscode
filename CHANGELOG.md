@@ -2,7 +2,7 @@
 
 ## 0.13.0
 
-* Added upport for Mermaid Diagrams (unprintable)
+* Add support for Mermaid Diagrams (unprintable)
 
 ## 0.12.0
 
