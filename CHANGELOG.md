@@ -1,5 +1,9 @@
 # Changes
 
+## 0.14.0
+
+* Style/Disable Preview Highlighting (closes #85)
+
 ## 0.13.0
 
 * Add support for Mermaid Diagrams (unprintable)

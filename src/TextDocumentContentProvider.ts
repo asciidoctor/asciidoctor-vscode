@@ -62,6 +62,8 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
       var html = ''
       var error_msg = null
       let parser = new text_parser.AsciiDocParser(editor.document.fileName, text)
+      const active_line_color = vscode.workspace.getConfiguration('AsciiDoc').get('active_line_color', 'LightBlue');
+
       var body = await parser.parseText().catch((err) => {
         console.error(err)
         return this.errorHtml(err)
@@ -72,11 +74,15 @@ export default class TextDocumentContentProvider implements vscode.TextDocumentC
         html = `<!DOCTYPE html>
         <html
           <head>
-            <link rel="stylesheet" type="text/css" href="${ext_path + "/assets/preview.css"}">
             <script src="${ext_path + "/assets/scroll-to-element.js"}"></script>
             <script src="${ext_path + "/assets/mermaid.min.js"}"></script>
             <script>mermaid.initialize({startOnLoad:true});</script>
-            <style>body { padding: 0; margin: 0; }</style>
+            <style>
+            body { padding: 0; margin: 0; }
+            .active-line {
+              background-color:${active_line_color};
+            }
+            </style>
           </head>
           <body onload="ScrollToLine(${line})">
           <div class="data-line-1"></div>

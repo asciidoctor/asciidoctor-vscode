@@ -7,7 +7,6 @@ import * as npm_which from "npm-which";
 const fileUrl = require('file-url');
 const Viz = require("viz.js");
 var which = npm_which(__dirname) // __dirname often good enough
-var mmdc_path = which.sync('mmdc')
 
 let previousHtml = null;
 let use_asciidoctor_js = vscode.workspace.getConfiguration('AsciiDoc').get('use_asciidoctor_js');
@@ -32,7 +31,6 @@ asciidoctor.Extensions.register(function () {
         self.named('mermaid');
         self.onContext('literal');
         self.process(function (parent, reader, attrs) {
-            mmdc_path
             const txt = reader.getString();
             const html = `<div class="mermaid">${txt}</div>`
             return self.createBlock(parent, 'pass', html);
