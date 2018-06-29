@@ -56,10 +56,10 @@ export class AsciiDocParser {
             const ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
             const stylesdir = path.join(ext_path, 'assets')
             var attributes = {};
-            if(contains_stylesheet)
-                attributes = {'copycss': true }
+            if (contains_stylesheet)
+                attributes = { 'copycss': true }
             else
-                attributes = {'copycss': true, 'stylesdir': stylesdir,'stylesheet': 'asciidoctor.css'}
+                attributes = { 'copycss': true, 'stylesdir': stylesdir, 'stylesheet': 'asciidoctor.css' }
             const options = {
                 safe: 'unsafe',
                 doctype: 'article',
@@ -72,8 +72,8 @@ export class AsciiDocParser {
             let ascii_doc = asciidoctor.load(this.text, options);
             this.document = ascii_doc;
             const blocksWithLineNumber = ascii_doc.findBy(function (b) { return typeof b.getLineNumber() !== 'undefined'; });
-            blocksWithLineNumber.forEach(function(block, key, myArray) {
-                    block.addRole("data-line-" + block.getLineNumber());
+            blocksWithLineNumber.forEach(function (block, key, myArray) {
+                block.addRole("data-line-" + block.getLineNumber());
             })
             let resultHTML = ascii_doc.convert(options);
             let result = this.fixLinks(resultHTML);
@@ -83,12 +83,12 @@ export class AsciiDocParser {
 
     private async convert_using_application() {
         let documentPath = path.dirname(this.filename);
-        this.document =  null;
+        this.document = null;
 
         return new Promise<string>(resolve => {
             let asciidoctor_command = vscode.workspace.getConfiguration('AsciiDoc').get('asciidoctor_command', 'asciidoctor');
             var options = { shell: true, cwd: path.dirname(this.filename) }
-            var asciidoctor = spawn(asciidoctor_command, ['-q', '-o-', '-', '-B', '\'' + documentPath + '\''], options );
+            var asciidoctor = spawn(asciidoctor_command, ['-q', '-o-', '-', '-B', '\'' + documentPath + '\''], options);
             asciidoctor.stderr.on('data', (data) => {
                 let errorMessage = data.toString();
                 console.error(errorMessage);
@@ -115,22 +115,22 @@ export class AsciiDocParser {
     private fixLinks(html: string): string {
         let result = html.replace(
             new RegExp("((?:src|href)=[\'\"])(?!(?:http:|https:|ftp:|#))(.*?)([\'\"])", "gmi"),
-                (subString: string, p1: string, p2: string, p3: string): string => {
+            (subString: string, p1: string, p2: string, p3: string): string => {
                 return [
                     p1,
-                        fileUrl(path.join(
-                            path.dirname(this.filename),
-                            p2
-                        )),
-                        p3
-                    ].join("");
-                }
-            );
+                    fileUrl(path.join(
+                        path.dirname(this.filename),
+                        p2
+                    )),
+                    p3
+                ].join("");
+            }
+        );
         return result;
     }
 
     public async parseText(): Promise<string> {
-        if(use_asciidoctor_js)
+        if (use_asciidoctor_js)
             return this.convert_using_javascript()
         else
             return this.convert_using_application()

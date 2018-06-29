@@ -22,6 +22,11 @@ body {
     padding: 0;
 }
 
+.admonitionBlock td.content {
+    background-color:blueviolet;
+    border-radius: 0.3em;
+}
+
 div.documentwrapper {
     float: left;
     width: 100%;

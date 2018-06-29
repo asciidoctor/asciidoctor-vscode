@@ -20,9 +20,10 @@ import ExportAsPDF from './ExportAsPDF';
 
 import * as path from "path";
 import * as AsciiDoc from "asciidoctor.js";
+import { Logger, Paster } from './image-paste';
+
 
 let provider: TextDocumentContentProvider;
-
 
 export function activate(context: vscode.ExtensionContext): void {
 
@@ -35,6 +36,14 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.workspace.onDidSaveTextDocument(e => {
         provider.update(previewUri);
     })
+
+    let pasteImage = vscode.commands.registerCommand('adoc.pasteImage', () => {
+        try {
+            Paster.paste();
+        } catch (e) {
+            Logger.showErrorMessage(e)
+        }
+    });
 
     vscode.workspace.onDidChangeTextDocument(e => {
         if(isAsciiDocFile(e.document)) {
@@ -90,7 +99,7 @@ export function activate(context: vscode.ExtensionContext): void {
 
     const ExportAsPDFDisposable = vscode.commands.registerCommand("adoc.ExportAsPDF", ExportAsPDF);
 
-    context.subscriptions.push(previewToSide, preview, symbolProvider, ExportAsPDFDisposable);
+    context.subscriptions.push(pasteImage, previewToSide, preview, symbolProvider, ExportAsPDFDisposable);
 
 }
 
