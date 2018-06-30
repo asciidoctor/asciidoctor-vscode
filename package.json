@@ -214,15 +214,16 @@
     },
     "dependencies": {
         "asciidoctor.js": "^1.5.6-preview.5",
-        "file-url": "^1.0.1",
-        "tmp": "0.0.33",
-        "follow-redirects": "^1.4.1",
-        "https-proxy-agent": "^2.2.1",
-        "viz.js": "^1.8.1",
-        "npm-which": "^3.0.1",
-        "fs-extra": "^3.0.1",
-        "upath": "^1.0.0",
         "copy-paste": "^1.2.0",
-        "moment": "^2.14.1"
+        "file-url": "^1.0.1",
+        "follow-redirects": "^1.4.1",
+        "fs-extra": "^3.0.1",
+        "https-proxy-agent": "^2.2.1",
+        "moment": "^2.14.1",
+        "npm-which": "^3.0.1",
+        "tmp": "0.0.33",
+        "upath": "^1.0.0",
+        "viz.js": "^1.8.1",
+        "vsce": "^1.43.0"
     }
 }
