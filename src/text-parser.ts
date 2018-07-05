@@ -4,6 +4,7 @@ import * as Asciidoctor from "asciidoctor.js";
 import { spawn } from "child_process";
 import { isNullOrUndefined } from 'util';
 import * as npm_which from "npm-which";
+
 const fileUrl = require('file-url');
 const Viz = require("viz.js");
 var which = npm_which(__dirname) // __dirname often good enough
@@ -47,6 +48,11 @@ export class AsciiDocParser {
 
     public getAttribute(name: string) {
         return isNullOrUndefined(this.document) ? null : this.document.getAttribute(name);
+    }
+
+    public async getMediaDir() {
+        const match = this.text.match(new RegExp("^\\s*:mediadir:"));
+        return match;
     }
 
     private async convert_using_javascript() {

@@ -1,0 +1,8 @@
+{
+    "AsciiDoc.active_line_color": "Transparent",
+    "AsciiDoc.path": "${currentFileDir}",
+    "javascript.format.placeOpenBraceOnNewLineForFunctions": true,
+    "javascript.format.placeOpenBraceOnNewLineForControlBlocks": true,
+    "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
+    "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true
+}
