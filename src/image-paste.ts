@@ -1,4 +1,5 @@
 // Copyright (c) 2018 mushanshitiancai
+// Copyright (c) 2019 jacksoncougar
 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,14 +19,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
-// Author: https://github.com/mushanshitiancai/vscode-paste-image
+// Original Source: https://github.com/mushanshitiancai/vscode-paste-image
 
 'use strict';
 import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
-import { spawn } from 'child_process';
+import { spawn } from 'child_process';  
 import * as moment from 'moment';
 import * as upath from 'upath';
 
