@@ -28,8 +28,6 @@ import * as fse from 'fs-extra';
 import { spawn } from 'child_process';
 import * as moment from 'moment';
 import * as upath from 'upath';
-import { isNullOrUndefined } from 'util';
-import { AsciiDocParser } from './text-parser';
 
 export class Logger
 {
@@ -57,34 +55,15 @@ export class Logger
     }
 }
 
-export function activate(context: vscode.ExtensionContext)
+export class Config
 {
-    Logger.channel = vscode.window.createOutputChannel("asciidoc")
-    context.subscriptions.push(Logger.channel);
 
-    Logger.log('Congratulations, your extension "vscode-paste-image" is now active!');
-
-    let disposable = vscode.commands.registerCommand('AsciiDoc.pasteImage', () =>
-    {
-        try
-        {
-            Paster.paste();
-        } catch (e)
-        {
-            Logger.showErrorMessage(e)
-        }
-    });
-
-    context.subscriptions.push(disposable);
-}
-
-export function deactivate()
-{
 }
 
 export class Paster
 {
-    static PATH_VARIABLE_CURRNET_FILE_DIR = /\$\{currentFileDir\}/g;
+
+    static PATH_VARIABLE_CURRENT_FILE_DIR = /\$\{currentFileDir\}/g;
     static PATH_VARIABLE_PROJECT_ROOT = /\$\{projectRoot\}/g;
     static PATH_VARIABLE_CURRNET_FILE_NAME = /\$\{currentFileName\}/g;
     static PATH_VARIABLE_CURRNET_FILE_NAME_WITHOUT_EXT = /\$\{currentFileNameWithoutExt\}/g;
@@ -106,91 +85,23 @@ export class Paster
     static namePrefixConfig: string;
     static nameSuffixConfig: string;
     static insertPatternConfig: string;
+    static inlineImage: boolean;
 
-    public static paste()
+
+    /**
+     * Reads the current `:imagesdir:` [attribute](https://asciidoctor.org/docs/user-manual/#setting-the-location-of-images) from the document.
+     * 
+     * **Caution**: Only reads from the _active_ document (_not_ `included` documents).
+     * 
+     * Reads the _nearest_ `:imagesdir:` attribute that appears _before_ the current selection 
+     * or cursor location
+     */
+    static get_current_imagesdir()
     {
-        // get current edit file path
-        let editor = vscode.window.activeTextEditor;
-        if (!editor) return;
-
-        let fileUri = editor.document.uri;
-        if (!fileUri) return;
-        if (fileUri.scheme === 'untitled')
-        {
-            Logger.showInformationMessage('Before paste image, you need to save current edit file first.');
-            return;
-        }
-
-        let filePath = fileUri.fsPath;
-        let folderPath = path.dirname(filePath);
-        let projectPath = vscode.workspace.rootPath;
-
-        // get selection as image file name, need check
-        var selection = editor.selection;
-        var selectText = editor.document.getText(selection);
-        if (selectText && /[\\:*?<>|]/.test(selectText))
-        {
-            Logger.showInformationMessage('Your selection is not a valid file name!');
-            return;
-        }
-
-        // load config AsciiDoc.defaultName
-        this.defaultNameConfig = vscode.workspace.getConfiguration('AsciiDoc')['defaultName'];
-        if (!this.defaultNameConfig)
-        {
-            this.defaultNameConfig = "Y-MM-DD-HH-mm-ss"
-        }
-
-        // load config AsciiDoc.path
-        this.folderPathConfig = vscode.workspace.getConfiguration('AsciiDoc')['path'];
-        if (!this.folderPathConfig)
-        {
-            this.folderPathConfig = "${currentFileDir}";
-        }
-        if (this.folderPathConfig.length !== this.folderPathConfig.trim().length)
-        {
-            Logger.showErrorMessage(`The config AsciiDoc.path = '${this.folderPathConfig}' is invalid. please check your config.`);
-            return;
-        }
-        // load config AsciiDoc.basePath
-        this.basePathConfig = vscode.workspace.getConfiguration('AsciiDoc')['basePath'];
-        if (!this.basePathConfig)
-        {
-            this.basePathConfig = "";
-        }
-        if (this.basePathConfig.length !== this.basePathConfig.trim().length)
-        {
-            Logger.showErrorMessage(`The config AsciiDoc.path = '${this.basePathConfig}' is invalid. please check your config.`);
-            return;
-        }
-        // load other config
-        this.prefixConfig = vscode.workspace.getConfiguration('AsciiDoc')['prefix'];
-        this.suffixConfig = vscode.workspace.getConfiguration('AsciiDoc')['suffix'];
-        this.forceUnixStyleSeparatorConfig = vscode.workspace.getConfiguration('AsciiDoc')['forceUnixStyleSeparator'];
-        this.forceUnixStyleSeparatorConfig = !!this.forceUnixStyleSeparatorConfig;
-        this.encodePathConfig = vscode.workspace.getConfiguration('AsciiDoc')['encodePath'];
-        this.namePrefixConfig = vscode.workspace.getConfiguration('AsciiDoc')['namePrefix'];
-        this.nameSuffixConfig = vscode.workspace.getConfiguration('AsciiDoc')['nameSuffix'];
-        this.insertPatternConfig = vscode.workspace.getConfiguration('AsciiDoc')['insertPattern'];
-
-        // replace variable in config
-        this.defaultNameConfig = this.replacePathVariable(this.defaultNameConfig, projectPath, filePath, (x) => `[${x}]`);
-        this.folderPathConfig = this.replacePathVariable(this.folderPathConfig, projectPath, filePath);
-        this.basePathConfig = this.replacePathVariable(this.basePathConfig, projectPath, filePath);
-        this.namePrefixConfig = this.replacePathVariable(this.namePrefixConfig, projectPath, filePath);
-        this.nameSuffixConfig = this.replacePathVariable(this.nameSuffixConfig, projectPath, filePath);
-        this.insertPatternConfig = this.replacePathVariable(this.insertPatternConfig, projectPath, filePath);
-
-
-
-        /*
-        Get the first :imagedir: value from the current location backwards.
-        */
-
         const text = vscode.window.activeTextEditor.document.getText();
 
-        const imagedirregex = /^[\t\f]*?:imagesdir:\s*?([\w-/.]+?)\s*?$/gmi;
-        let matches = imagedirregex.exec(text);
+        const imagesdir = /^[\t\f]*?:imagesdir:\s*?([\w-/.]+?)\s*?$/gmi
+        let matches = imagesdir.exec(text);
 
         const index = vscode.window.activeTextEditor.selection.start;
         const offset = vscode.window.activeTextEditor.document.offsetAt(index);
@@ -198,27 +109,150 @@ export class Paster
         let dir = "";
         while (matches && matches.index < offset)
         {
-            dir = matches ? matches[1] : "";
-            matches = imagedirregex.exec(text);
+            dir = matches[1] || "";
+            matches = imagesdir.exec(text);
         }
+
+        return dir;
+    }
+
+    /**
+     * Checks if the given editor is a valid condidate _file_ for pasting images into.
+     * @param editor vscode editor to check.
+     */
+    public static is_candidate_file(document: vscode.TextDocument): boolean
+    {
+        return document.uri.scheme === 'file';
+    }
+
+    /**
+     * Checks if the given selected text is a valid _filename_ for an image.
+     * @param selection Selected text to check.
+     */
+    public static is_candidate_selection(selection: string): boolean
+    {
+        return !/[\\:*?<>|]/.test(selection);
+    }
+
+    /**
+     * Checks if the selected text is inline.
+     * @param selected Selected text to check.
+     * @param document Document where selected text occurs.
+     * @param selection Selection
+     */
+    public static is_inline_context(
+        selected: string, 
+        document: vscode.TextDocument, 
+        selection: vscode.Selection): boolean
+    {
+        const line = document.lineAt(selection.start).text;
+        const is_block = new RegExp(`^${selected}\\w*$`);
+
+        return selected && !is_block.test(line);
+    }
+    
+    static validate(
+        required: {
+            editor: vscode.TextEditor, 
+            selection: string
+        }) :boolean
+    {
+        if (!this.is_candidate_file(required.editor.document))
+        {
+            Logger.showInformationMessage('Save document before pasting image');
+            return false;
+        }
+
+        if (!this.is_candidate_selection(required.selection))
+        {
+            Logger.showInformationMessage('Selection does not contain a valid file name!');
+            return false;
+        }
+        return true;
+    }
+
+    public static paste()
+    {
+        const editor = vscode.window.activeTextEditor;
+        const selection = editor.document.getText(editor.selection);
+        const config = vscode.workspace.getConfiguration('AsciiDoc');
+
+        if(!this.validate({editor, selection})) return;
+
+        this.inlineImage = this.is_inline_context(selection, editor.document, editor.selection);
+
+        // load config
+        this.defaultNameConfig = config['defaultName'] || 'Y-MM-DD-HH-mm-ss'
+        this.folderPathConfig = config['path'] || '${currentFileDir}';
+        this.basePathConfig = config['basePath'] || '';
+        this.prefixConfig = config['prefix'];
+        this.suffixConfig = config['suffix'];
+        this.forceUnixStyleSeparatorConfig = config['forceUnixStyleSeparator'];
+        this.forceUnixStyleSeparatorConfig = !!this.forceUnixStyleSeparatorConfig;
+        this.encodePathConfig = config['encodePath'];
+        this.namePrefixConfig = config['namePrefix'];
+        this.nameSuffixConfig = config['nameSuffix'];
+        this.insertPatternConfig = config['insertPattern'];
+
+        const validate = (path: string) :boolean => 
+        {
+            return (path.length === path.trim().length);
+        }
+
+        if(!validate(this.folderPathConfig)) 
+        {
+            Logger.showErrorMessage(
+                `The config AsciiDoc.path = '${this.folderPathConfig}' is invalid. Please check your config.`);
+            return;
+        }
+
+        if(!validate(this.basePathConfig))
+        {
+            Logger.showErrorMessage(
+                `The config AsciiDoc.path = '${this.basePathConfig}' is invalid. Please check your config.`);
+            return;
+        }
+
+        // replace variable in config
+        
+        const filePath = editor.document.uri.fsPath;
+        const projectPath = vscode.workspace.rootPath;
+
+        this.defaultNameConfig = this.replacePathVariable(
+            this.defaultNameConfig, projectPath, filePath, (x) => `[${x}]`);
+        this.folderPathConfig = this.replacePathVariable(this.folderPathConfig, projectPath, filePath);
+        this.basePathConfig = this.replacePathVariable(this.basePathConfig, projectPath, filePath);
+        this.namePrefixConfig = this.replacePathVariable(this.namePrefixConfig, projectPath, filePath);
+        this.nameSuffixConfig = this.replacePathVariable(this.nameSuffixConfig, projectPath, filePath);
+        this.insertPatternConfig = this.replacePathVariable(this.insertPatternConfig, projectPath, filePath);
+
+        /*
+        Get the first :imagedir: value from the current location backwards.
+        */
+
+        let dir = this.get_current_imagesdir();
 
         this.basePathConfig = path.join(this.folderPathConfig, dir);
         this.folderPathConfig = path.join(this.folderPathConfig, dir);
 
-        let imagePath = this.getImagePath(filePath, selectText,this.folderPathConfig);
+        let imagePath = this.getImagePath(filePath, selection, this.folderPathConfig);
 
         try
         {
-            // is the file existed?
             let existed = fs.existsSync(imagePath);
             if (existed)
             {
-                Logger.showInformationMessage(`File ${imagePath} existed.Would you want to replace?`, 'Replace', 'Cancel').then(choose =>
-                {
-                    if (choose != 'Replace') return;
-
-                    this.saveAndPaste(editor, imagePath);
-                });
+                Logger.showInformationMessage(
+                    `File ${imagePath} exists. Would you want to replace?`,
+                    'Replace',
+                    'Cancel').then(choice =>
+                    {
+                        if (choice == 'Cancel') return;
+                        else
+                        {
+                            this.saveAndPaste(editor, imagePath);
+                        }
+                    });
             } else
             {
                 this.saveAndPaste(editor, imagePath);
@@ -244,7 +278,14 @@ export class Paster
                     return;
                 }
 
-                imagePath = this.renderFilePath(editor.document.languageId, this.basePathConfig, imagePath, this.forceUnixStyleSeparatorConfig, this.prefixConfig, this.suffixConfig);
+                imagePath = this.renderFilePath(
+                    editor.document.languageId, 
+                    this.basePathConfig, 
+                    imagePath, 
+                    this.forceUnixStyleSeparatorConfig, 
+                    this.prefixConfig, 
+                    this.suffixConfig
+                );
 
                 editor.edit(edit =>
                 {
@@ -469,12 +510,12 @@ export class Paster
         switch (languageId)
         {
             case "markdown":
-                imageSyntaxPrefix = `![](`
-                imageSyntaxSuffix = `)`
+                imageSyntaxPrefix = '![]('
+                imageSyntaxSuffix = ')'
                 break;
             case "asciidoc":
-                imageSyntaxPrefix = `image::`
-                imageSyntaxSuffix = `[]`
+                imageSyntaxPrefix = this.inlineImage ? 'image:' : 'image::'
+                imageSyntaxSuffix = '[]'
                 break;
         }
 
@@ -490,7 +531,12 @@ export class Paster
         return result;
     }
 
-    public static replacePathVariable(pathStr: string, projectRoot: string, curFilePath: string, postFunction: (string) => string = (x) => x): string
+    public static replacePathVariable(
+        pathStr: string, 
+        projectRoot: string, 
+        curFilePath: string, 
+        postFunction: (string) => string = (x) => x
+    ): string
     {
         let currentFileDir = path.dirname(curFilePath);
         let ext = path.extname(curFilePath);
@@ -498,7 +544,7 @@ export class Paster
         let fileNameWithoutExt = path.basename(curFilePath, ext);
 
         pathStr = pathStr.replace(this.PATH_VARIABLE_PROJECT_ROOT, postFunction(projectRoot));
-        pathStr = pathStr.replace(this.PATH_VARIABLE_CURRNET_FILE_DIR, postFunction(currentFileDir));
+        pathStr = pathStr.replace(this.PATH_VARIABLE_CURRENT_FILE_DIR, postFunction(currentFileDir));
         pathStr = pathStr.replace(this.PATH_VARIABLE_CURRNET_FILE_NAME, postFunction(fileName));
         pathStr = pathStr.replace(this.PATH_VARIABLE_CURRNET_FILE_NAME_WITHOUT_EXT, postFunction(fileNameWithoutExt));
         return pathStr;

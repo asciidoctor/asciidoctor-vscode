@@ -25,7 +25,8 @@ import { Logger, Paster } from './image-paste';
 
 let provider: TextDocumentContentProvider;
 
-export function activate(context: vscode.ExtensionContext): void {
+export function activate(context: vscode.ExtensionContext): void
+{
 
     const previewUri = vscode.Uri.parse('asciidoc://authority/asciidoc');
     let document: vscode.TextDocument = null
@@ -33,22 +34,18 @@ export function activate(context: vscode.ExtensionContext): void {
     provider = new TextDocumentContentProvider(previewUri);
     vscode.workspace.registerTextDocumentContentProvider('asciidoc', provider);
 
-    vscode.workspace.onDidSaveTextDocument(e => {
+    vscode.workspace.onDidSaveTextDocument(e =>
+    {
         provider.update(previewUri);
     })
 
-    let pasteImage = vscode.commands.registerCommand('adoc.pasteImage', () => {
-        try {
-            Paster.paste();
-        } catch (e) {
-            Logger.showErrorMessage(e)
-        }
-    });
-
-    vscode.workspace.onDidChangeTextDocument(e => {
-        if(isAsciiDocFile(e.document)) {
+    vscode.workspace.onDidChangeTextDocument(e =>
+    {
+        if (isAsciiDocFile(e.document))
+        {
             provider.needsRebuild = true
-            if(e.contentChanges.length > 0) {
+            if (e.contentChanges.length > 0)
+            {
                 var range = e.contentChanges[0].range
                 var line = range.start.line
                 provider.current_line = line;
@@ -56,21 +53,25 @@ export function activate(context: vscode.ExtensionContext): void {
         }
     })
 
-    vscode.window.onDidChangeTextEditorSelection(e => {
+    vscode.window.onDidChangeTextEditorSelection(e =>
+    {
         provider.current_line = e.selections[0].anchor.line;
         provider.needsRebuild = true;
     })
 
 
-    vscode.window.onDidChangeActiveTextEditor(e => {
-        if(isAsciiDocFile(e.document)) {
+    vscode.window.onDidChangeActiveTextEditor(e =>
+    {
+        if (isAsciiDocFile(e.document))
+        {
             provider.needsRebuild = true
             provider.update(previewUri)
         }
     })
 
     let displayColumn: vscode.ViewColumn;
-    switch (vscode.window.activeTextEditor.viewColumn) {
+    switch (vscode.window.activeTextEditor.viewColumn)
+    {
         case vscode.ViewColumn.One:
             displayColumn = vscode.ViewColumn.Two;
             break;
@@ -80,13 +81,38 @@ export function activate(context: vscode.ExtensionContext): void {
             break;
     }
 
-    const previewToSide = vscode.commands.registerCommand("adoc.previewToSide", () => {
+    const pasteImage = vscode.commands.registerCommand('adoc.pasteImage', () =>
+    {
+        try
+        {
+            Paster.paste();
+        } catch (e)
+        {
+            Logger.showErrorMessage(e)
+        }
+    });
+
+    
+    const boldText = vscode.commands.registerCommand('adoc.boldText', () =>
+    {
+        try
+        {
+            vscode.window.activeTextEditor.selection
+        } catch (e)
+        {
+            Logger.showErrorMessage(e)
+        }
+    });
+
+    const previewToSide = vscode.commands.registerCommand("adoc.previewToSide", () =>
+    {
         vscode.commands
             .executeCommand('vscode.previewHtml', previewUri, displayColumn, 'asciidoc')
             .then(() => { }, vscode.window.showErrorMessage);
     })
 
-    const preview = vscode.commands.registerCommand("adoc.preview", () => {
+    const preview = vscode.commands.registerCommand("adoc.preview", () =>
+    {
         provider.needsRebuild = true
         provider.active_update(previewUri)
         vscode.commands
@@ -99,15 +125,23 @@ export function activate(context: vscode.ExtensionContext): void {
 
     const ExportAsPDFDisposable = vscode.commands.registerCommand("adoc.ExportAsPDF", ExportAsPDF);
 
-    context.subscriptions.push(pasteImage, previewToSide, preview, symbolProvider, ExportAsPDFDisposable);
+    context.subscriptions.push(
+        pasteImage,
+        previewToSide,
+        preview,
+        symbolProvider,
+        ExportAsPDFDisposable
+    );
 
 }
 
 // this method is called when your extension is deactivated
-export function deactivate(): void {
+export function deactivate(): void
+{
 }
 
-export function isAsciiDocFile(document: vscode.TextDocument) {
+export function isAsciiDocFile(document: vscode.TextDocument)
+{
     return document.languageId === 'asciidoc'
         && document.uri.scheme !== 'asciidoc' // prevent processing of own documents
 }

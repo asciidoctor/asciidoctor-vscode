@@ -1,0 +1,9 @@
+{
+    "@metadata":{},
+    "en":
+    {
+        "asciidoctor-vscode-title": "Asciidoctor vscode",
+        "asciidoctor-vscode-replace": "replace",
+        "asciidoctor-vscode-cancel": "cancel"
+    }
+}
