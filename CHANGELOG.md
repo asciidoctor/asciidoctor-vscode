@@ -1,5 +1,9 @@
 # Changes
 
+## 0.15.0
+
+* Support for copy/paste images
+
 ## 0.14.0
 
 * Style/Disable Preview Highlighting (closes #85)

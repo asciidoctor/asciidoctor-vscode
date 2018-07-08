@@ -33,7 +33,16 @@ export default async function ExportAsPDF() {
     <html
         <head>
             <script src="${ext_path + "/assets/mermaid.min.js"}"></script>
-            <script>mermaid.initialize({startOnLoad:true});</script>
+            <script>
+            var config = {
+                cloneCssStyles: true,
+                flowchart:{
+                    htmlLabels:false
+                },
+                startOnLoad:true
+            };
+            mermaid.initialize({config});
+            </script>
             <style>body { padding: 0; margin: 0; }</style>
         </head>
         <body>
