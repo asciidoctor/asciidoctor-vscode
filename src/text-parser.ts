@@ -94,7 +94,13 @@ export class AsciiDocParser {
         return new Promise<string>(resolve => {
             let asciidoctor_command = vscode.workspace.getConfiguration('AsciiDoc').get('asciidoctor_command', 'asciidoctor');
             var options = { shell: true, cwd: path.dirname(this.filename) }
-            var asciidoctor = spawn(asciidoctor_command, ['-q', '-o-', '-', '-B', '\'' + documentPath + '\''], options);
+            
+            var adoc_cmd_array = asciidoctor_command.split(/(\s+)/).filter( function(e) { return e.trim().length > 0; } ) ;
+            var adoc_cmd = adoc_cmd_array[0]
+            var adoc_cmd_args = adoc_cmd_array.slice(1)
+            adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-o-', '-', '-B', '\'' + documentPath + '\''])
+            var asciidoctor = spawn(adoc_cmd, adoc_cmd_args, options);
+            
             asciidoctor.stderr.on('data', (data) => {
                 let errorMessage = data.toString();
                 console.error(errorMessage);
