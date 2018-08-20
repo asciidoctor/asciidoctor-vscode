@@ -1,5 +1,10 @@
 # Changes
 
+## 0.15.1
+
+* asciidoctor_command can have arguments (closes #103)
+* updated fs-extra requirements (closes #88)
+
 ## 0.15.0
 
 * Support for copy/paste images
