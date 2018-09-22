@@ -20,7 +20,7 @@
     "icon": "images/icon.png",
     "main": "./out/src/extension",
     "engines": {
-        "vscode": "^1.21.0"
+        "vscode": "^1.25.0"
     },
     "categories": [
         "Programming Languages"
