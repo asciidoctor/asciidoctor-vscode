@@ -10,7 +10,7 @@ import {
 export default function registerDocumentSymbolProvider(): Disposable {
 
         const _atxPattern = /^((=|#){1,6})\s+(.+)$/;
-        const _blockPattern = /^[.\-]{4}$/;
+        const _blockPattern = /^(\.{4}|-{4})$/;
 
         return languages.registerDocumentSymbolProvider('asciidoc', {
 
