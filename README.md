@@ -24,7 +24,36 @@ Launch VS Code Quick Open (Ctrl+P), paste the following command, and press enter
 
 ## Optional
 
-If you want to use the Ruby version of [**Asciidoctor**](http://asciidoctor.org/docs/install-toolchain/ ) you need to change the AsciiDoc.use_asciidoctor_js setting to _false_.
+If you want to use the Ruby version of [**Asciidoctor**](http://asciidoctor.org/docs/install-toolchain/ ) you need to change the `AsciiDoc.use_asciidoctor_js` setting to _false_.
+
+### Use Asciidoc with PlantUML
+Instead of trying to implement PlantUML support in this extension, two methods can be used.
+
+#### Use external PlantUML files
+You can firstly put each PlantML file in an Asciidoc [`include`](https://asciidoctor.org/docs/asciidoc-syntax-quick-reference/#include-files).
+This way, the PlantUML content is edited using the plantuml extension, 
+and the asciidoc content is edited using this extension.
+
+Typically, you would write the Asciidoc document as follow
+
+```asciidoc
+[plantuml, example, png]
+----
+include::example.plantuml[]
+----
+```
+
+#### Have Asciidoc preview render PlantUML
+Rendering PlantUML requires modification of user settings.
+
+As asciioc js doesn't support PlantUML rendering, you have to disable it.
+
+    "AsciiDoc.use_asciidoctor_js": false,
+
+And to have asciidoctor load [asciidoctor-diagram](http://asciidoctor.org/docs/asciidoctor-diagram/) (which is used to render PlantUML and other diagrams)
+
+    "AsciiDoc.asciidoctor_command": "asciidoctor -r asciidoctor-diagram -o-",
+
 
 ## How to build and install from source (Linux)
 
