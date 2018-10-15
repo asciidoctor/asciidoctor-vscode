@@ -83,7 +83,7 @@
                 "AsciiDoc.forceUnixStyleSeparator": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Force set the file separator styel to unix style. If set false, separator styel will follow the system style."
+                    "description": "Force set the file separator style to unix style. If set false, separator style will follow the system style."
                 },
                 "AsciiDoc.prefix": {
                     "type": "string",
