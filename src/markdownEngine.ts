@@ -10,11 +10,12 @@ import * as crypto from 'crypto';
 import { MarkdownContributions } from './markdownExtensions';
 import { Slugifier } from './slugify';
 import { getUriForLinkWithKnownExternalScheme } from './util/links';
+import * as Asciidoctor from "asciidoctor.js";
 
 const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/;
 
 export class MarkdownEngine {
-	private md?: MarkdownIt;
+    private ad?: Asciidoctor;
 
 	private firstLine?: number;
 
@@ -25,59 +26,14 @@ export class MarkdownEngine {
 		private readonly slugifier: Slugifier,
 	) { }
 
-	private usePlugin(factory: (md: any) => any): void {
-		try {
-			this.md = factory(this.md);
-		} catch (e) {
-			// noop
-		}
-	}
 
 	private async getEngine(resource: vscode.Uri): Promise<MarkdownIt> {
-		if (!this.md) {
-            console.log("Setting up engine");
-            const hljs = await import('highlight.js');
-            console.log("Done");
-			const mdnh = await import('markdown-it-named-headers');
-			this.md = (await import('markdown-it'))({
-				html: true,
-				highlight: (str: string, lang: string) => {
-					// Workaround for highlight not supporting tsx: https://github.com/isagalaev/highlight.js/issues/1155
-					if (lang && ['tsx', 'typescriptreact'].indexOf(lang.toLocaleLowerCase()) >= 0) {
-						lang = 'jsx';
-					}
-					if (lang && hljs.getLanguage(lang)) {
-						try {
-							return `<div>${hljs.highlight(lang, str, true).value}</div>`;
-						} catch (error) { }
-					}
-					return `<code><div>${this.md!.utils.escapeHtml(str)}</div></code>`;
-				}
-			}).use(mdnh, {
-				slugify: (header: string) => this.slugifier.fromHeading(header).value
-			});
-
-			for (const plugin of this.extensionPreviewResourceProvider.markdownItPlugins) {
-				this.usePlugin(await plugin);
-			}
-
-			for (const renderName of ['paragraph_open', 'heading_open', 'image', 'code_block', 'fence', 'blockquote_open', 'list_item_open']) {
-				this.addLineNumberRenderer(this.md, renderName);
-			}
-
-			this.addImageStabilizer(this.md);
-			this.addFencedRenderer(this.md);
-
-			this.addLinkNormalizer(this.md);
-			this.addLinkValidator(this.md);
+		if (!this.ad) {
+            this.ad = (await import('asciidoctor.js'))();
 		}
 
 		const config = vscode.workspace.getConfiguration('markdown', resource);
-		this.md.set({
-			breaks: config.get<boolean>('preview.breaks', false),
-			linkify: config.get<boolean>('preview.linkify', true)
-		});
-		return this.md;
+		return this.ad;
 	}
 
 	private stripFrontmatter(text: string): { text: string, offset: number } {
@@ -97,11 +53,23 @@ export class MarkdownEngine {
 			const markdownContent = this.stripFrontmatter(text);
 			offset = markdownContent.offset;
 			text = markdownContent.text;
-		}
+        }
+        const options = {
+            safe: 'unsafe',
+            doctype: 'article',
+            header_footer: true,
+            to_file: false,
+            sourcemap: true,
+        }
 		this.currentDocument = document;
 		this.firstLine = offset;
-		const engine = await this.getEngine(document);
-		return engine.render(text);
+        const engine = await this.getEngine(document);
+        let ascii_doc = engine.load(text, options);
+        const blocksWithLineNumber = ascii_doc.findBy(function (b) { return typeof b.getLineNumber() !== 'undefined'; });
+        blocksWithLineNumber.forEach(function (block, key, myArray) {
+            block.addRole("data-line-" + block.getLineNumber());
+        })
+        return ascii_doc.convert();
 	}
 
 	public async parse(document: vscode.Uri, source: string): Promise<Token[]> {

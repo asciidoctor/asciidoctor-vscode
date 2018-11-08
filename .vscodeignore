@@ -3,3 +3,5 @@ wkhtmltopdf-bin/**
 **/*.vsix
 **/*.pdf
 out/src/wkhtmltopdf*
+extension.webpack.config.js
+media/*.js
