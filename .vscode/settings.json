@@ -1,8 +1,21 @@
 {
-    "AsciiDoc.active_line_color": "Transparent",
-    "AsciiDoc.path": "${currentFileDir}",
     "javascript.format.placeOpenBraceOnNewLineForFunctions": true,
     "javascript.format.placeOpenBraceOnNewLineForControlBlocks": true,
     "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
-    "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true
+    "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
+    "cSpell.words": [
+        "asciidoctor",
+        "deserialize",
+        "helvetica",
+        "joaompinto",
+        "junit",
+        "linkify",
+        "neue",
+        "segoe",
+        "upath",
+        "webview"
+    ],
+    "files.watcherExclude": {
+        "out/**": true
+    }
 }

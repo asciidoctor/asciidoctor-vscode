@@ -13,7 +13,7 @@ import { createNewMarkdownEngine } from './engine';
 
 const testFileName = vscode.Uri.file('test.md');
 
-suite('markdown.FoldingProvider', () => {
+suite('asciidoc.FoldingProvider', () => {
 	test('Should not return anything for empty document', async () => {
 		const folds = await getFoldsForDocument(``);
 		assert.strictEqual(folds.length, 0);

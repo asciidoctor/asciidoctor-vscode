@@ -32,7 +32,7 @@ function assertRangeEqual(expected: vscode.Range, actual: vscode.Range) {
 	assert.strictEqual(expected.end.character, actual.end.character);
 }
 
-suite('markdown.DocumentLinkProvider', () => {
+suite('asciidoc.DocumentLinkProvider', () => {
 	test('Should not return anything for empty document', () => {
 		const links = getLinksForFile('');
 		assert.strictEqual(links.length, 0);

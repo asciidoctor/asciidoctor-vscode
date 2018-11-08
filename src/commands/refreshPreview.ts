@@ -7,7 +7,7 @@ import { Command } from '../commandManager';
 import { MarkdownPreviewManager } from '../features/previewManager';
 
 export class RefreshPreviewCommand implements Command {
-	public readonly id = 'markdown.preview.refresh';
+	public readonly id = 'asciidoc.preview.refresh';
 
 	public constructor(
 		private readonly webviewManager: MarkdownPreviewManager

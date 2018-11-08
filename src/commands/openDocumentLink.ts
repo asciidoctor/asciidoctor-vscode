@@ -18,7 +18,7 @@ export interface OpenDocumentLinkArgs {
 }
 
 export class OpenDocumentLinkCommand implements Command {
-	private static readonly id = '_markdown.openDocumentLink';
+	private static readonly id = '_asciidoc.openDocumentLink';
 	public readonly id = OpenDocumentLinkCommand.id;
 
 	public static createCommandUri(

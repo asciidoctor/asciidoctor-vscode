@@ -33,7 +33,7 @@ function isString(value: any): value is string {
 export class Logger {
 	private trace?: Trace;
 
-	private readonly outputChannel = lazy(() => vscode.window.createOutputChannel('Markdown'));
+	private readonly outputChannel = lazy(() => vscode.window.createOutputChannel('Asciidoc'));
 
 	constructor() {
 		this.updateConfiguration();
@@ -57,7 +57,7 @@ export class Logger {
 	}
 
 	private readTrace(): Trace {
-		return Trace.fromString(vscode.workspace.getConfiguration().get<string>('markdown.trace', 'off'));
+		return Trace.fromString(vscode.workspace.getConfiguration().get<string>('asciidoc.trace', 'off'));
 	}
 
 	private static data2String(data: any): string {

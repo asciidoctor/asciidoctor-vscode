@@ -14,7 +14,7 @@ import { InMemoryDocument } from './inMemoryDocument';
 
 const symbolProvider = new MDDocumentSymbolProvider(createNewMarkdownEngine());
 
-suite('markdown.WorkspaceSymbolProvider', () => {
+suite('asciidoc.WorkspaceSymbolProvider', () => {
 	test('Should not return anything for empty workspace', async () => {
 		const provider = new MarkdownWorkspaceSymbolProvider(symbolProvider, new InMemoryWorkspaceMarkdownDocumentProvider([]));
 

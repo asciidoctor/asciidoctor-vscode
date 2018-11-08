@@ -8,7 +8,7 @@ import * as vscode from 'vscode';
 import { Command } from '../commandManager';
 
 export class MoveCursorToPositionCommand implements Command {
-	public readonly id = '_markdown.moveCursorToPosition';
+	public readonly id = '_asciidoc.moveCursorToPosition';
 
 	public execute(line: number, character: number) {
 		if (!vscode.window.activeTextEditor) {

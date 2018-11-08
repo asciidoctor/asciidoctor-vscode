@@ -6,7 +6,7 @@
 		"contributes": {
 			"type": "object",
 			"properties": {
-				"markdown.previewStyles": {
+				"asciidoc.previewStyles": {
 					"type": "array",
 					"description": "Contributed CSS files that change the look or layout of the Markdown preview",
 					"items": {
@@ -14,7 +14,7 @@
 						"description": "Extension relative path to a css file"
 					}
 				},
-				"markdown.previewScripts": {
+				"asciidoc.previewScripts": {
 					"type": "array",
 					"description": "Contributed scripts that are executed in the Markdown preview",
 					"items": {
@@ -22,7 +22,7 @@
 						"description": "Extension relative path to a JavaScript file"
 					}
 				},
-				"markdown.markdownItPlugins": {
+				"asciidoc.markdownItPlugins": {
 					"type": "boolean",
 					"description": "Does this extension contribute a markdown-it plugin?"
 				}

@@ -8,7 +8,7 @@ Preview as you type, including formatting like *this*, or _this_.
 It will automatically refresh, just as you type
 
 == Heading level 2
-Diferrente heading levels are easly procuded with the # symbol .
+Different heading levels are easily found with the # symbol .
 You can also do _italic_ or *bold* like in the more common mark down.
 
 AsciiDoc supports tables and much more.

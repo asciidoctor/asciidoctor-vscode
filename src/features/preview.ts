@@ -20,7 +20,7 @@ const localize = nls.loadMessageBundle();
 
 export class MarkdownPreview {
 
-	public static viewType = 'markdown.preview';
+	public static viewType = 'asciidoc.preview';
 
 	private _resource: vscode.Uri;
 	private _locked: boolean;
@@ -142,11 +142,11 @@ export class MarkdownPreview {
 					break;
 
 				case 'showPreviewSecuritySelector':
-					vscode.commands.executeCommand('markdown.showPreviewSecuritySelector', e.body.source);
+					vscode.commands.executeCommand('asciidoc.showPreviewSecuritySelector', e.body.source);
 					break;
 
 				case 'previewStyleLoadError':
-					vscode.window.showWarningMessage(localize('onPreviewStyleLoadError', "Could not load 'markdown.styles': {0}", e.body.unloadedStyles.join(', ')));
+					vscode.window.showWarningMessage(localize('onPreviewStyleLoadError', "Could not load 'asciidoc.styles': {0}", e.body.unloadedStyles.join(', ')));
 					break;
 			}
 		}, null, this.disposables);
@@ -426,7 +426,7 @@ export class MarkdownPreview {
 			}
 		}
 
-		vscode.commands.executeCommand('_markdown.openDocumentLink', { path, fragment });
+		vscode.commands.executeCommand('_asciidoc.openDocumentLink', { path, fragment });
 	}
 
 	private async onCacheImageSizes(imageInfo: { id: string, width: number, height: number }[]) {

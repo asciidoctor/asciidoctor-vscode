@@ -121,7 +121,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 				if (link) {
 					results.push(new vscode.DocumentLink(
 						new vscode.Range(linkStart, linkEnd),
-						vscode.Uri.parse(`command:_markdown.moveCursorToPosition?${encodeURIComponent(JSON.stringify([link.linkRange.start.line, link.linkRange.start.character]))}`)));
+						vscode.Uri.parse(`command:_asciidoc.moveCursorToPosition?${encodeURIComponent(JSON.stringify([link.linkRange.start.line, link.linkRange.start.character]))}`)));
 				}
 			} catch (e) {
 				// noop

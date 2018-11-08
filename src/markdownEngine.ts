@@ -35,7 +35,9 @@ export class MarkdownEngine {
 
 	private async getEngine(resource: vscode.Uri): Promise<MarkdownIt> {
 		if (!this.md) {
-			const hljs = await import('highlight.js');
+            console.log("Setting up engine");
+            const hljs = await import('highlight.js');
+            console.log("Done");
 			const mdnh = await import('markdown-it-named-headers');
 			this.md = (await import('markdown-it'))({
 				html: true,

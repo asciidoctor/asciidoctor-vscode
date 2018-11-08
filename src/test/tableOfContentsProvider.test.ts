@@ -13,7 +13,7 @@ import { createNewMarkdownEngine } from './engine';
 
 const testFileName = vscode.Uri.file('test.md');
 
-suite('markdown.TableOfContentsProvider', () => {
+suite('asciidoc.TableOfContentsProvider', () => {
 	test('Lookup should not return anything for empty document', async () => {
 		const doc = new InMemoryDocument(testFileName, '');
 		const provider = new TableOfContentsProvider(createNewMarkdownEngine(), doc);

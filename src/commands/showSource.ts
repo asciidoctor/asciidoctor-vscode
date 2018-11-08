@@ -8,7 +8,7 @@ import { Command } from '../commandManager';
 import { MarkdownPreviewManager } from '../features/previewManager';
 
 export class ShowSourceCommand implements Command {
-	public readonly id = 'markdown.showSource';
+	public readonly id = 'asciidoc.showSource';
 
 	public constructor(
 		private readonly previewManager: MarkdownPreviewManager

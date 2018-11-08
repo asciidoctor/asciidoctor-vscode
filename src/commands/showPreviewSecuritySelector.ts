@@ -10,7 +10,7 @@ import { isMarkdownFile } from '../util/file';
 import { MarkdownPreviewManager } from '../features/previewManager';
 
 export class ShowPreviewSecuritySelectorCommand implements Command {
-	public readonly id = 'markdown.showPreviewSecuritySelector';
+	public readonly id = 'asciidoc.showPreviewSecuritySelector';
 
 	public constructor(
 		private readonly previewSecuritySelector: PreviewSecuritySelector,

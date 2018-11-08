@@ -81,7 +81,7 @@ class MarkdownExtensionContributions implements MarkdownContributions {
 			this.tryLoadPreviewScripts(contributes, extension);
 			this.tryLoadMarkdownItPlugins(contributes, extension);
 
-			if (contributes['markdown.previewScripts'] || contributes['markdown.previewStyles']) {
+			if (contributes['asciidoc.previewScripts'] || contributes['asciidoc.previewStyles']) {
 				this._previewResourceRoots.push(vscode.Uri.file(extension.extensionPath));
 			}
 		}
@@ -91,7 +91,7 @@ class MarkdownExtensionContributions implements MarkdownContributions {
 		contributes: any,
 		extension: vscode.Extension<any>
 	) {
-		if (contributes['markdown.markdownItPlugins']) {
+		if (contributes['asciidoc.markdownItPlugins']) {
 			this._plugins.push(extension.activate().then(() => {
 				if (extension.exports && extension.exports.extendMarkdownIt) {
 					return (md: any) => extension.exports.extendMarkdownIt(md);
@@ -105,14 +105,14 @@ class MarkdownExtensionContributions implements MarkdownContributions {
 		contributes: any,
 		extension: vscode.Extension<any>
 	) {
-		this._scripts.push(...resolveExtensionResources(extension, contributes['markdown.previewScripts']));
+		this._scripts.push(...resolveExtensionResources(extension, contributes['asciidoc.previewScripts']));
 	}
 
 	private tryLoadPreviewStyles(
 		contributes: any,
 		extension: vscode.Extension<any>
 	) {
-		this._styles.push(...resolveExtensionResources(extension, contributes['markdown.previewStyles']));
+		this._styles.push(...resolveExtensionResources(extension, contributes['asciidoc.previewStyles']));
 	}
 }
 

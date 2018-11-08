@@ -19,7 +19,7 @@ async function showPreview(
 	uri: vscode.Uri | undefined,
 	previewSettings: ShowPreviewSettings,
 ): Promise<any> {
-	let resource = uri;
+    let resource = uri;
 	if (!(resource instanceof vscode.Uri)) {
 		if (vscode.window.activeTextEditor) {
 			// we are relaxed and don't check for markdown files
@@ -30,7 +30,7 @@ async function showPreview(
 	if (!(resource instanceof vscode.Uri)) {
 		if (!vscode.window.activeTextEditor) {
 			// this is most likely toggling the preview
-			return vscode.commands.executeCommand('markdown.showSource');
+			return vscode.commands.executeCommand('asciidoc.showSource');
 		}
 		// nothing found that could be shown or toggled
 		return;
@@ -46,7 +46,7 @@ async function showPreview(
 }
 
 export class ShowPreviewCommand implements Command {
-	public readonly id = 'markdown.showPreview';
+	public readonly id = 'asciidoc.showPreview';
 
 	public constructor(
 		private readonly webviewManager: MarkdownPreviewManager,
@@ -63,7 +63,7 @@ export class ShowPreviewCommand implements Command {
 }
 
 export class ShowPreviewToSideCommand implements Command {
-	public readonly id = 'markdown.showPreviewToSide';
+	public readonly id = 'asciidoc.showPreviewToSide';
 
 	public constructor(
 		private readonly webviewManager: MarkdownPreviewManager,
@@ -79,7 +79,7 @@ export class ShowPreviewToSideCommand implements Command {
 
 
 export class ShowLockedPreviewToSideCommand implements Command {
-	public readonly id = 'markdown.showLockedPreviewToSide';
+	public readonly id = 'asciidoc.showLockedPreviewToSide';
 
 	public constructor(
 		private readonly webviewManager: MarkdownPreviewManager,

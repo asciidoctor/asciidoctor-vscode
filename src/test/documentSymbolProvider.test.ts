@@ -21,7 +21,7 @@ function getSymbolsForFile(fileContents: string) {
 }
 
 
-suite('markdown.DocumentSymbolProvider', () => {
+suite('asciidoc.DocumentSymbolProvider', () => {
 	test('Should not return anything for empty document', async () => {
 		const symbols = await getSymbolsForFile('');
 		assert.strictEqual(symbols.length, 0);
