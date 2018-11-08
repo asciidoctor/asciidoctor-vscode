@@ -1,0 +1,38 @@
+
+{
+    "Technical Document": {
+        "prefix": "asciidoc-tech-doc",
+        "body": [
+            "Document Title",
+            "===============",
+            "Author Name <author@email.com>",
+            "v1.0, February 2018: Initial release",
+            ":showtitlepage:",
+            ":notitle:",
+            ":noheader:",
+            ":nofooter:",
+            "",
+            "== Introduction",
+            "",
+            "== Background",
+            "",
+            "== Theory",
+            "",
+            "== Materials and apparatus",
+            "",
+            "== Procedure",
+            "",
+            "== Workplan",
+            "",
+            "== Results",
+            "",
+            "== Discussion",
+            "",
+            "== Conclusion",
+            "",
+            "== Recomendations",
+            ""
+        ],
+        "description": "AsciiDoc Technical Document"
+    }
+}

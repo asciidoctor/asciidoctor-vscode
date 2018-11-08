@@ -1,0 +1,8 @@
+= Image
+:imagesdir: images
+
+image:web-console.png[Couchbase Web Console login]
+
++++
+<iframe width="560" height="315" src="https://www.youtube.com/embed/mor2p0UqZ14" frameborder="0" allowfullscreen></iframe>
++++

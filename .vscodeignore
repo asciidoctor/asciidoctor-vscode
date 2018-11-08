@@ -1,0 +1,5 @@
+wkhtmltopdf-bin/**
+**/*.ts
+**/*.vsix
+**/*.pdf
+out/src/wkhtmltopdf*
