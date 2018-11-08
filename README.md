@@ -29,7 +29,7 @@ If you want to use the Ruby version of [**Asciidoctor**](http://asciidoctor.org/
 ## How to build and install from source (Linux)
 
 ```bash
-git clone https://github.com/joaompinto/asciidoctor-vscode
+git clone https://github.com/asciidoctor/asciidoctor-vscode
 cd asciidoctor-vscode
 npm install
 sudo npm install -g vsce typescript
