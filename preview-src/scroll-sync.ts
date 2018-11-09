@@ -25,9 +25,12 @@ const getCodeLineElements = (() => {
 	return () => {
 		if (!elements) {
 			elements = Array.prototype.map.call(
-				document.getElementsByClassName('code-line'),
+                document.querySelectorAll('div[class^="data-line-"], div[class*=" data-line-"]'),
+				//document.getElementsByClassName('code-line'),
 				(element: any) => {
-					const line = +element.getAttribute('data-line');
+                    const num = element.className.split(' ').pop().match(/data-line-(\d+)/)[1];
+                    const line = parseInt(num);
+					//const line = +element.getAttribute('data-line');
 					return { element, line };
 				})
 				.filter((x: any) => !isNaN(x.line));

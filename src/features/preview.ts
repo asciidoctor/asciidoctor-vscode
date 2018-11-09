@@ -129,7 +129,7 @@ export class MarkdownPreview {
 					this.onCacheImageSizes(e.body);
 					break;
 
-				case 'revealLine':
+                case 'revealLine':
 					this.onDidScrollPreview(e.body.line);
 					break;
 
@@ -304,6 +304,7 @@ export class MarkdownPreview {
 	}
 
 	private updateForView(resource: vscode.Uri, topLine: number | undefined) {
+
 		if (!this.isPreviewOf(resource)) {
 			return;
 		}
@@ -311,7 +312,7 @@ export class MarkdownPreview {
 		if (this.isScrolling) {
 			this.isScrolling = false;
 			return;
-		}
+        }
 
 		if (typeof topLine === 'number') {
 			this._logger.log('updateForView', { markdownFile: resource });
