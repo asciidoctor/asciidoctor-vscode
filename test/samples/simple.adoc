@@ -25,4 +25,3 @@ AsciiDoc supports tables and much more.
   - One more
   - And again
 
-

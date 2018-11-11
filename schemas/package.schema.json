@@ -21,10 +21,6 @@
 						"type": "string",
 						"description": "Extension relative path to a JavaScript file"
 					}
-				},
-				"asciidoc.markdownItPlugins": {
-					"type": "boolean",
-					"description": "Does this extension contribute a markdown-it plugin?"
 				}
 			}
 		}

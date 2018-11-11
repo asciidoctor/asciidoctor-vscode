@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { MarkdownIt, Token } from 'markdown-it';
+import { Token } from 'markdown-it';
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as crypto from 'crypto';
@@ -27,7 +27,7 @@ export class MarkdownEngine {
 	) { }
 
 
-	private async getEngine(resource: vscode.Uri): Promise<MarkdownIt> {
+	private async getEngine(resource: vscode.Uri): Promise<Asciidoctor> {
 		if (!this.ad) {
             this.ad = (await import('asciidoctor.js'))();
 		}
