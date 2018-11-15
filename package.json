@@ -33,7 +33,8 @@
 		"onCommand:asciidoc.showPreviewToSide",
 		"onCommand:asciidoc.showLockedPreviewToSide",
 		"onCommand:asciidoc.showSource",
-		"onCommand:asciidoc.showPreviewSecuritySelector",
+        "onCommand:asciidoc.showPreviewSecuritySelector",
+        "onCommand:asciidoc.exportAsPDF",
 		"onWebviewPanel:asciidoc.preview"
 	],
     "contributes": {
@@ -60,6 +61,15 @@
             }
         ],
 		"commands": [
+			{
+				"command": "asciidoc.exportAsPDF",
+				"title": "%asciidoc.exportAsPDF.title%",
+				"category": "AsciiDoc",
+				"icon": {
+					"light": "./media/Preview.svg",
+					"dark": "./media/Preview_inverse.svg"
+				}
+			},
 			{
 				"command": "asciidoc.showPreview",
 				"title": "%asciidoc.preview.title%",
@@ -206,7 +216,7 @@
 		],
 		"configuration": {
 			"type": "object",
-			"title": "AsciiDoc",
+			"title": "asciidoc",
 			"order": 20,
 			"properties": {
 				"asciidoc.styles": {
@@ -308,7 +318,12 @@
 					"default": "off",
 					"description": "%asciidoc.trace.desc%",
 					"scope": "window"
-				}
+                },
+                "asciidoc.use_asciidoctor_js": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Use asciidoctor js instead of the 'html_generator'"
+                }
 			}
 		},
 		"configurationDefaults": {

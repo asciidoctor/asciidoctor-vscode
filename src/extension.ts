@@ -28,13 +28,13 @@ export function activate(context: vscode.ExtensionContext) {
 	const logger = new Logger();
 
 	const selector: vscode.DocumentSelector = [
-		{ language: 'markdown', scheme: 'file' },
-		{ language: 'markdown', scheme: 'untitled' }
+		{ language: 'asciidoc', scheme: 'file' },
+		{ language: 'asciidoc', scheme: 'untitled' }
 	];
 
 	const contentProvider = new MarkdownContentProvider(engine, context, cspArbiter, contributions, logger);
 	const symbolProvider = new MDDocumentSymbolProvider(engine);
-	const previewManager = new MarkdownPreviewManager(contentProvider, logger, contributions);
+    const previewManager = new MarkdownPreviewManager(contentProvider, logger, contributions);
 	context.subscriptions.push(previewManager);
 
 	context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider));
@@ -55,6 +55,7 @@ export function activate(context: vscode.ExtensionContext) {
 	commandManager.register(new commands.ShowPreviewSecuritySelectorCommand(previewSecuritySelector, previewManager));
 	commandManager.register(new commands.OpenDocumentLinkCommand(engine));
 	commandManager.register(new commands.ToggleLockCommand(previewManager));
+    commandManager.register(new commands.ExportAsPDF(engine));
 
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
 		logger.updateConfiguration();

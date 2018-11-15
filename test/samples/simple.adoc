@@ -22,6 +22,6 @@ AsciiDoc supports tables and much more.
 .Bulleted List
 * item 1
 * More items
-  - One more
-  - And again
+    - One more
+    - And again
 
