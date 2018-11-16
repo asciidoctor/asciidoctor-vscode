@@ -25,5 +25,6 @@
 	"asciidoc.preview.toggleLock.title": "Toggle Preview Locking",
 	"configuration.asciidoc.preview.openMarkdownLinks.description": "How should clicking on links to markdown files be handled in the preview.",
 	"configuration.asciidoc.preview.openMarkdownLinks.inEditor": "Try to open links in the editor",
-    "configuration.asciidoc.preview.openMarkdownLinks.inPreview": "Try to open links in the the markdown preview"
+    "configuration.asciidoc.preview.openMarkdownLinks.inPreview": "Try to open links in the the markdown preview",
+    "asciidoc.pasteImage.title" : "Paste Image"
 }

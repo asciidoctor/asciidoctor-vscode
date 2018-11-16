@@ -10,7 +10,6 @@ const Viz = require("viz.js");
 var which = npm_which(__dirname) // __dirname often good enough
 
 let previousHtml = null;
-let use_asciidoctor_js = vscode.workspace.getConfiguration('asciidoc').get('use_asciidoctor_js');
 const asciidoctor = Asciidoctor();
 
 
@@ -143,6 +142,7 @@ export class AsciiDocParser {
     }
 
     public async parseText(text: string): Promise<string> {
+        const use_asciidoctor_js = vscode.workspace.getConfiguration('asciidoc').get('use_asciidoctor_js');
         if (use_asciidoctor_js)
             return this.convert_using_javascript(text)
         else

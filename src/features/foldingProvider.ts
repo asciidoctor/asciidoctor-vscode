@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Token } from 'markdown-it';
 import * as vscode from 'vscode';
 import { MarkdownEngine } from '../markdownEngine';
 import { TableOfContentsProvider } from '../tableOfContentsProvider';
@@ -21,7 +20,7 @@ export default class MarkdownFoldingProvider implements vscode.FoldingRangeProvi
 		const isStartRegion = (t: string) => /^\s*<!--\s*#?region\b.*-->/.test(t);
 		const isEndRegion = (t: string) => /^\s*<!--\s*#?endregion\b.*-->/.test(t);
 
-		const isRegionMarker = (token: Token) => token.type === 'html_block' &&
+		const isRegionMarker = (token: any) => token.type === 'html_block' &&
 			(isStartRegion(token.content) || isEndRegion(token.content));
 
 
@@ -70,7 +69,7 @@ export default class MarkdownFoldingProvider implements vscode.FoldingRangeProvi
 
 	private async getBlockFoldingRanges(document: vscode.TextDocument): Promise<vscode.FoldingRange[]> {
 
-		const isFoldableToken = (token: Token) => {
+		const isFoldableToken = (token: any) => {
 			switch (token.type) {
 				case 'fence':
 				case 'list_item_open':

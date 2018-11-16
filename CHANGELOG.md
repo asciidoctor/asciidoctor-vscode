@@ -1,5 +1,11 @@
 # Changes
 
+## 1.0.99
+* Rebuilt using vscode-1.28.2/extensions/markdown* from Microsoft
+
+## 1.0.x
+* Test release
+
 ## 0.15.1
 
 * asciidoctor_command can have arguments (closes #103)

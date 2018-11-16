@@ -94,7 +94,7 @@ export class ExportAsPDF implements Command {
                 // cancellable: true
             }, async(progress) => {
                 progress.report({ message: 'Downloading wkhtmltopdf...'});
-                const download_url = `https://github.com/joaompinto/asciidoctor-vscode/raw/master/wkhtmltopdf-bin/wkhtmltopdf-${platform}-${arch}${ext}.gz`
+                const download_url = `https://github.com/asciidoctor/asciidoctor-vscode/raw/master/wkhtmltopdf-bin/wkhtmltopdf-${platform}-${arch}${ext}.gz`
                 await download_file(download_url, binary_path+".gz", progress).then( () => {
                     progress.report({ message: 'Unzipping wkhtmltopdf...'})
                     const ungzip = zlib.createGunzip()

@@ -2,21 +2,21 @@
     "name": "asciidoctor-vscode",
     "displayName": "%displayName%",
     "description": "%description%",
-    "version": "1.0.0",
+    "version": "1.0.99",
     "publisher": "joaompinto",
     "author": "João Pinto <lamego.pinto@gmail.com>",
     "license": "MIT",
     "readme": "README.md",
     "repository": {
         "type": "git",
-        "url": "https://github.com/joaompinto/asciidoctor-vscode"
+        "url": "https://github.com/asciidoctor/asciidoctor-vscode"
     },
     "galleryBanner": {
         "color": "#78d6f0",
         "theme": "light"
     },
-    "bugs": "https://github.com/joaompinto/asciidoctor-vscode/issues",
-    "homepage": "https://github.com/joaompinto/asciidoctor-vscode/blob/master/README.md",
+    "bugs": "https://github.com/asciidoctor/asciidoctor-vscode/issues",
+    "homepage": "https://github.com/asciidoctor/asciidoctor-vscode/blob/master/README.md",
     "icon": "images/icon.png",
     "main": "./out/src/extension",
     "engines": {
@@ -26,7 +26,9 @@
         "Programming Languages"
     ],
 	"activationEvents": [
-		"onLanguage:asciidoc",
+        "onLanguage:asciidoc",
+        "onCommand:asciidoc.exportAsPDF",
+        "onCommand:asciidoc.pasteImage",
 		"onCommand:asciidoc.preview.toggleLock",
 		"onCommand:asciidoc.preview.refresh",
 		"onCommand:asciidoc.showPreview",
@@ -34,7 +36,6 @@
 		"onCommand:asciidoc.showLockedPreviewToSide",
 		"onCommand:asciidoc.showSource",
         "onCommand:asciidoc.showPreviewSecuritySelector",
-        "onCommand:asciidoc.exportAsPDF",
 		"onWebviewPanel:asciidoc.preview"
 	],
     "contributes": {
@@ -48,7 +49,8 @@
                 "extensions": [
                     ".adoc",
                     ".ad",
-                    ".asciidoc"
+                    ".asciidoc",
+                    ".asc"
                 ],
                 "configuration": "./asciidoc-language-configuration.json"
             }
@@ -64,6 +66,15 @@
 			{
 				"command": "asciidoc.exportAsPDF",
 				"title": "%asciidoc.exportAsPDF.title%",
+				"category": "AsciiDoc",
+				"icon": {
+					"light": "./media/Preview.svg",
+					"dark": "./media/Preview_inverse.svg"
+				}
+            },
+			{
+				"command": "asciidoc.pasteImage",
+				"title": "%asciidoc.pasteImage.title%",
 				"category": "AsciiDoc",
 				"icon": {
 					"light": "./media/Preview.svg",
@@ -219,6 +230,11 @@
 			"title": "asciidoc",
 			"order": 20,
 			"properties": {
+                "asciidoc.asciidoctor_command": {
+                    "type": "string",
+                    "default": "asciidoctor",
+                    "description": "Full path for the asciidoctor binary/executable"
+                },
 				"asciidoc.styles": {
 					"type": "array",
 					"default": [],
@@ -322,7 +338,7 @@
                 "asciidoc.use_asciidoctor_js": {
                     "type": "boolean",
                     "default": true,
-                    "description": "Use asciidoctor js instead of the 'html_generator'"
+                    "description": "Use asciidoctor js instead of the 'asciidoctor_command'"
                 }
 			}
 		},
@@ -371,8 +387,6 @@
 		"ts-loader": "^4.0.1"
     },
     "dependencies": {
-		"highlight.js": "9.12.0",
-		"markdown-it": "^8.4.1",
         "asciidoctor.js": "^1.5.6-preview.5",
         "copy-paste": "^1.2.0",
         "file-url": "^1.0.1",

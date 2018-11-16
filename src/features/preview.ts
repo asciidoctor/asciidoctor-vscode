@@ -417,7 +417,7 @@ export class MarkdownPreview {
 	}
 
 	private async onDidClickPreviewLink(path: string, fragment: string | undefined) {
-		const config = vscode.workspace.getConfiguration('markdown', this.resource);
+		const config = vscode.workspace.getConfiguration('asciidoc', this.resource);
 		const openLinks = config.get<string>('preview.openMarkdownLinks', 'inPreview');
 		if (openLinks === 'inPreview') {
 			const markdownLink = await resolveLinkToMarkdownFile(path);
