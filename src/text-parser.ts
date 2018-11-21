@@ -56,10 +56,11 @@ export class AsciiDocParser {
 
     private async convert_using_javascript(text: string) {
         return new Promise<string>(resolve => {
+            const editor = vscode.window.activeTextEditor;
+            const doc = editor.document;
             const contains_stylesheet = !isNullOrUndefined(text.match(new RegExp("^\\s*:stylesheet:", "img")));
             const use_default_stylesheet = vscode.workspace.getConfiguration('asciidoc').get('useDefaultStylesheet', false);
-            const documentPath = path.dirname(this.filename);
-            console.log("Document path is", path.dirname(this.filename))
+            const documentPath = path.dirname(path.resolve(doc.fileName));
             const ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
             const stylesdir = path.join(ext_path, 'assets')
             var attributes = {};
