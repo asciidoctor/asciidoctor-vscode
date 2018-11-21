@@ -84,8 +84,8 @@ export class AsciiDocParser {
                 block.addRole("data-line-" + block.getLineNumber());
             })
             let resultHTML = ascii_doc.convert(options);
-            let result = this.fixLinks(resultHTML);
-            resolve(result);
+            //let result = this.fixLinks(resultHTML);
+            resolve(resultHTML);
         })
     }
 
