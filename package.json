@@ -1,67 +1,67 @@
 {
-    "name": "asciidoctor-vscode",
-    "displayName": "%displayName%",
-    "description": "%description%",
-    "version": "1.0.99",
-    "publisher": "joaompinto",
-    "author": "João Pinto <lamego.pinto@gmail.com>",
-    "license": "MIT",
-    "readme": "README.md",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/asciidoctor/asciidoctor-vscode"
-    },
-    "galleryBanner": {
-        "color": "#78d6f0",
-        "theme": "light"
-    },
-    "bugs": "https://github.com/asciidoctor/asciidoctor-vscode/issues",
-    "homepage": "https://github.com/asciidoctor/asciidoctor-vscode/blob/master/README.md",
-    "icon": "images/icon.png",
-    "main": "./out/src/extension",
-    "engines": {
-        "vscode": "^1.28.0"
-    },
-    "categories": [
-        "Programming Languages"
-    ],
+	"name": "asciidoctor-vscode",
+	"displayName": "%displayName%",
+	"description": "%description%",
+	"version": "1.0.100",
+	"publisher": "joaompinto",
+	"author": "João Pinto <lamego.pinto@gmail.com>",
+	"license": "MIT",
+	"readme": "README.md",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/asciidoctor/asciidoctor-vscode"
+	},
+	"galleryBanner": {
+		"color": "#78d6f0",
+		"theme": "light"
+	},
+	"bugs": "https://github.com/asciidoctor/asciidoctor-vscode/issues",
+	"homepage": "https://github.com/asciidoctor/asciidoctor-vscode/blob/master/README.md",
+	"icon": "images/icon.png",
+	"main": "./out/src/extension",
+	"engines": {
+		"vscode": "^1.28.0"
+	},
+	"categories": [
+		"Programming Languages"
+	],
 	"activationEvents": [
-        "onLanguage:asciidoc",
-        "onCommand:asciidoc.exportAsPDF",
-        "onCommand:asciidoc.pasteImage",
+		"onLanguage:asciidoc",
+		"onCommand:asciidoc.exportAsPDF",
+		"onCommand:asciidoc.pasteImage",
 		"onCommand:asciidoc.preview.toggleLock",
 		"onCommand:asciidoc.preview.refresh",
 		"onCommand:asciidoc.showPreview",
 		"onCommand:asciidoc.showPreviewToSide",
 		"onCommand:asciidoc.showLockedPreviewToSide",
 		"onCommand:asciidoc.showSource",
-        "onCommand:asciidoc.showPreviewSecuritySelector",
+		"onCommand:asciidoc.showPreviewSecuritySelector",
 		"onWebviewPanel:asciidoc.preview"
 	],
-    "contributes": {
-        "languages": [
-            {
-                "id": "asciidoc",
-                "aliases": [
-                    "AsciiDoc",
-                    "AsciiDoc(tor)"
-                ],
-                "extensions": [
-                    ".adoc",
-                    ".ad",
-                    ".asciidoc",
-                    ".asc"
-                ],
-                "configuration": "./asciidoc-language-configuration.json"
-            }
-        ],
-        "grammars": [
-            {
-                "language": "asciidoc",
-                "scopeName": "text.asciidoc",
-                "path": "./syntaxes/Asciidoctor.tmLanguage"
-            }
-        ],
+	"contributes": {
+		"languages": [
+			{
+				"id": "asciidoc",
+				"aliases": [
+					"AsciiDoc",
+					"AsciiDoc(tor)"
+				],
+				"extensions": [
+					".adoc",
+					".ad",
+					".asciidoc",
+					".asc"
+				],
+				"configuration": "./asciidoc-language-configuration.json"
+			}
+		],
+		"grammars": [
+			{
+				"language": "asciidoc",
+				"scopeName": "text.asciidoc",
+				"path": "./syntaxes/Asciidoctor.tmLanguage"
+			}
+		],
 		"commands": [
 			{
 				"command": "asciidoc.exportAsPDF",
@@ -71,7 +71,7 @@
 					"light": "./media/Preview.svg",
 					"dark": "./media/Preview_inverse.svg"
 				}
-            },
+			},
 			{
 				"command": "asciidoc.pasteImage",
 				"title": "%asciidoc.pasteImage.title%",
@@ -230,11 +230,11 @@
 			"title": "asciidoc",
 			"order": 20,
 			"properties": {
-                "asciidoc.asciidoctor_command": {
-                    "type": "string",
-                    "default": "asciidoctor",
-                    "description": "Full path for the asciidoctor binary/executable"
-                },
+				"asciidoc.asciidoctor_command": {
+					"type": "string",
+					"default": "asciidoctor",
+					"description": "Full path for the asciidoctor binary/executable"
+				},
 				"asciidoc.styles": {
 					"type": "array",
 					"default": [],
@@ -334,12 +334,12 @@
 					"default": "off",
 					"description": "%asciidoc.trace.desc%",
 					"scope": "window"
-                },
-                "asciidoc.use_asciidoctor_js": {
-                    "type": "boolean",
-                    "default": true,
-                    "description": "Use asciidoctor js instead of the 'asciidoctor_command'"
-                }
+				},
+				"asciidoc.use_asciidoctor_js": {
+					"type": "boolean",
+					"default": true,
+					"description": "Use asciidoctor js instead of the 'asciidoctor_command'"
+				}
 			}
 		},
 		"configurationDefaults": {
@@ -362,42 +362,41 @@
 			"./media/index.js"
 		]
 	},
-    "scripts": {
-        "compile": "tsc -watch -p ./ && npm run build-preview",
-        "vscode:prepublish": "tsc -p ./ && npm run build-preview",
-        "watch": "npm run build-preview && tsc -watch -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "node ./node_modules/vscode/bin/test",
-        "build-preview": "webpack --mode development"
-    },
-    "devDependencies": {
+	"scripts": {
+		"compile": "tsc -watch -p ./ && npm run build-preview",
+		"vscode:prepublish": "tsc -p ./ && npm run build-preview",
+		"watch": "npm run build-preview && tsc -watch -p ./",
+		"postinstall": "node ./node_modules/vscode/bin/install",
+		"test": "node ./node_modules/vscode/bin/test",
+		"build-preview": "webpack --mode development"
+	},
+	"devDependencies": {
 		"@types/highlight.js": "9.1.10",
 		"@types/lodash.throttle": "^4.1.3",
-        "@types/node": "^8.10.25",
-        "@types/mocha": "^5.2.5",
-        "lodash.throttle": "^4.1.1",
-        "typescript": "^2.7.2",
-        "vscode": "^1.1.10",
-        "mocha": "^2.3.3",
-        "tslint": "^5.9.1",
-        "mocha-junit-reporter": "^1.17.0",
-        "mocha-multi-reporters": "^1.1.7",
-        "webpack": "^4.20.2",
-        "webpack-cli": "^3.1.1",
+		"@types/node": "^8.10.25",
+		"@types/mocha": "^5.2.5",
+		"lodash.throttle": "^4.1.1",
+		"typescript": "^2.7.2",
+		"vscode": "^1.1.10",
+		"tslint": "^5.9.1",
+		"mocha-junit-reporter": "^1.17.0",
+		"mocha-multi-reporters": "^1.1.7",
+		"webpack": "^4.20.2",
+		"webpack-cli": "^3.1.1",
 		"ts-loader": "^4.0.1"
-    },
-    "dependencies": {
-        "asciidoctor.js": "^1.5.6-preview.5",
-        "copy-paste": "^1.2.0",
-        "file-url": "^1.0.1",
-        "follow-redirects": "^1.4.1",
-        "fs-extra": "^7.0.0",
-        "https-proxy-agent": "^2.2.1",
-        "moment": "^2.14.1",
-        "npm-which": "^3.0.1",
-        "tmp": "0.0.33",
-        "upath": "^1.0.0",
-        "viz.js": "^1.8.1",
-        "vscode-nls": "^4.0.0"
-    }
+	},
+	"dependencies": {
+		"asciidoctor.js": "^1.5.6-preview.5",
+		"copy-paste": "^1.2.0",
+		"file-url": "^1.0.1",
+		"follow-redirects": "^1.4.1",
+		"fs-extra": "^7.0.0",
+		"https-proxy-agent": "^2.2.1",
+		"moment": "^2.14.1",
+		"npm-which": "^3.0.1",
+		"tmp": "0.0.33",
+		"upath": "^1.0.0",
+		"viz.js": "^1.8.1",
+		"vscode-nls": "^4.0.0"
+	}
 }
