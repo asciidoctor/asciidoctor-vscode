@@ -890,9 +890,9 @@ double colon followed by a space inside a label, i.e. it matches the
 		<dict>
 			<key>begin</key>
 			<string>(?x)
-(\[[^\]]*?\])?               # might be preceded by an attributes list
-(?&lt;=^|[^a-zA-Z0-9])(?&lt;!\\|}) # must be preceded by nonword character, and not by escape or } (attribute)
-(_)(?=[\S ]+_)               # must be followed by inline characters and closed</string>
+(\[[^\]]*?\])?       # might be preceded by an attributes list
+(?&lt;=^|\W)(?&lt;!\\|})   # must be preceded by nonword character, and not by escape or } (attribute)
+(_)(?=\S[\S ]*\S_\W) # must be followed by inline characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -917,8 +917,8 @@ Examples:
 			<string>meta.italicinner.single.asciidoc</string>
 			<key>end</key>
 			<string>(?x)
-(?&lt;=\S)(_)      # delimiter underscore that must be preceded by a nonspace character
-(?![a-zA-Z0-9]) # ...and followed by a nonword character</string>
+(_)
+(?!\w) # must be followed by a nonword character</string>
 			<key>endCaptures</key>
 			<dict>
 				<key>1</key>
@@ -973,9 +973,9 @@ Examples:
 		<dict>
 			<key>begin</key>
 			<string>(?x)
-(\[[^\]]*?\])? # might start with attribute list
-(?&lt;!\\)        # must not be preceded by escape
-(__)(?=[\S ]+__)  # must be followed by inline characters and closed</string>
+(\[[^\]]*?\])?   # might start with attribute list
+(?&lt;!\\)          # must not be preceded by escape
+(__)(?=[\S ]+__) # must be followed by inline characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -1060,7 +1060,7 @@ Examples:
   &amp;sup2;
 </string>
 			<key>match</key>
-			<string>(?&lt;!\\)&amp;([a-zA-Z][a-zA-Z0-9]*);</string>
+			<string>(?&lt;!\\)&amp;([a-zA-Z]\w*);</string>
 			<key>name</key>
 			<string>constant.character.entity.xml.asciidoc</string>
 		</dict>
@@ -1393,7 +1393,7 @@ square brackets.
   ?:{1}  # inline only
   \S*)   # (others such as image are partial URLs and/or TextMate cannot handle them)
 |
-  (([a-zA-Z0-9][a-zA-Z0-9_]*)
+  ((\w[a-zA-Z0-9_]*)
   (:{1,2})
   (\S*))
 )
@@ -1465,9 +1465,9 @@ Examples:
 		<dict>
 			<key>begin</key>
 			<string>(?x)
-(\[[^\]]*?\])?               # might start with attribute list (darned well better or why are we here)
-(?&lt;=^|[^a-zA-Z0-9])(?&lt;!\\|}) # must be preceded by nonword character, and not by escape or } (attribute)
-(\#)(?=[\S ]+\#)             # must be followed by inline characters and closed</string>
+(\[[^\]]*?\])?         # might start with attribute list (darned well better or why are we here)
+(?&lt;=^|\W)(?&lt;!\\|})     # must be preceded by nonword character, and not by escape or } (attribute)
+(\#)(?=\S[\S ]*\S\#\W) # must be followed by inline characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -1492,8 +1492,8 @@ Examples:
 			<string>string.unquoted.unquotedinner.single.asciidoc</string>
 			<key>end</key>
 			<string>(?x)
-(?&lt;=\S)(\#)     # delimiter hash that must be preceded by a nonspace character
-(?![a-zA-Z0-9]) # ...and followed by a nonword character</string>
+(\#)
+(?!\w) # must be followed by a nonword character</string>
 			<key>endCaptures</key>
 			<dict>
 				<key>1</key>
@@ -1548,8 +1548,8 @@ Examples:
 		<dict>
 			<key>begin</key>
 			<string>(?x)
-(\[[^\]]*?\])?    # might start with an attribute list (indeed, that is its purpose)
-(?&lt;!\\)           # must not be preceded by escape
+(\[[^\]]*?\])?       # might start with an attribute list (indeed, that is its purpose)
+(?&lt;!\\)              # must not be preceded by escape
 (\#\#)(?=[\S ]+\#\#) # must be followed by inline characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
@@ -1629,9 +1629,9 @@ Examples:
 		<dict>
 			<key>begin</key>
 			<string>(?x)
-(\[[^\]]*?\])?               # might start with attributes list
-(?&lt;=^|[^a-zA-Z0-9])(?&lt;!\\|}) # must be preceded by nonword character, and not by escape or } (attribute)
-(`)(?=[\S ]+`)               # must be followed by inline characters and closed</string>
+(\[[^\]]*?\])?       # might start with attributes list
+(?&lt;=^|\W)(?&lt;!\\|})   # must be preceded by nonword character, and not by escape or } (attribute)
+(`)(?=\S[\S ]*\S`\W) # must be followed by inline characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -1656,8 +1656,8 @@ Examples:
 			<string>meta.literalinner.single.asciidoc</string>
 			<key>end</key>
 			<string>(?x)
-(?&lt;=\S)(`)      # delimiter backtick that must be preceded by a nonspace character
-(?![a-zA-Z0-9]) # ...and followed by a nonword character</string>
+(`)
+(?!\w) # must be followed by a nonword character</string>
 			<key>endCaptures</key>
 			<dict>
 				<key>1</key>
@@ -1712,9 +1712,9 @@ Examples:
 		<dict>
 			<key>begin</key>
 			<string>(?x)
-(\[[^\]]*?\])? # might start with attribute list
-(?&lt;!\\)        # must not be preceded by escape
-(``)(?=[\S ]+``)  # must be followed by inline characters and closed</string>
+(\[[^\]]*?\])?   # might start with attribute list
+(?&lt;!\\)          # must not be preceded by escape
+(``)(?=[\S ]+``) # must be followed by inline characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -1958,9 +1958,9 @@ sect\d|abstract|preface|colophon|dedication|glossary|bibliography|synopsis|appen
 		<dict>
 			<key>begin</key>
 			<string>(?x)
-(\[[^\]]*?\])?               # might start with an attributes list
-(?&lt;=^|[^a-zA-Z0-9])(?&lt;!\\|}) # must be preceded by nonword character, and not by escape or } (attribute)
-(\*)(?=[\S ]+\*)             # must be followed by inline characters and closed</string>
+(\[[^\]]*?\])?         # might start with an attributes list
+(?&lt;=^|\W)(?&lt;!\\|})     # must be preceded by nonword character, and not by escape or } (attribute)
+(\*)(?=\S[\S ]*\S\*\W) # must be followed by inline characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -1985,8 +1985,8 @@ Examples:
 			<string>meta.boldinner.single.asciidoc</string>
 			<key>end</key>
 			<string>(?x)
-(?&lt;=\S)(\*)     # delimiter star that must be preceded by a nonspace character
-(?![a-zA-Z0-9]) # ...and followed by a nonword character</string>
+(\*)
+(?!\w) # must be followed by a nonword character</string>
 			<key>endCaptures</key>
 			<dict>
 				<key>1</key>
@@ -2041,8 +2041,8 @@ Examples:
 		<dict>
 			<key>begin</key>
 			<string>(?x)
-(\[[^\]]*?\])?    # might start with an attribute list
-(?&lt;!\\)           # must not be preceded by escape
+(\[[^\]]*?\])?       # might start with an attribute list
+(?&lt;!\\)              # must not be preceded by escape
 (\*\*)(?=[\S ]+\*\*) # must be followed by inline characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
@@ -2124,7 +2124,7 @@ Examples:
 			<string>(?x)
 (\[[^\]]*?\])? # might start with attribute list
 (?&lt;!\\)        # must not be preceded by escape
-(~)(?=[\S ]+~) # must be followed by inline characters and closed</string>
+(~)(?=\S+~)    # must be followed by inline, nonspace characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -2149,7 +2149,7 @@ Examples:
 			<string>meta.subscriptinner.asciidoc</string>
 			<key>end</key>
 			<string>(?x)
-(?&lt;=\S)(~) # delimiter hash that must be preceded by a nonspace character</string>
+(~)</string>
 			<key>endCaptures</key>
 			<dict>
 				<key>1</key>
@@ -2208,9 +2208,9 @@ Examples:
 		<dict>
 			<key>begin</key>
 			<string>(?x)
-(\[[^\]]*?\])?   # might start with attribute list
-(?&lt;!\\)          # no preceding escape
-(\^)(?=[\S ]+\^) # must be followed by inline characters and closed</string>
+(\[[^\]]*?\])? # might start with attribute list
+(?&lt;!\\)        # no preceding escape
+(\^)(?=\S+\^)  # must be followed by inline, nonspace characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -2235,7 +2235,7 @@ Examples:
 			<string>meta.superscriptinner.asciidoc</string>
 			<key>end</key>
 			<string>(?x)
-(?&lt;=\S)(\^) # delimiter hash that must be preceded by a nonspace character</string>
+(\^)</string>
 			<key>endCaptures</key>
 			<dict>
 				<key>1</key>
