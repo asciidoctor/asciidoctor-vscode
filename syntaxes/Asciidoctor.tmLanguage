@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
+<!--
+ |	This file is auto-generated from Asciidoctor.YAML-tmLanguage, do not edit it by hand!
+-->
 <dict>
 	<key>fileTypes</key>
 	<array>
@@ -332,7 +335,7 @@ Examples:
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>markup.underline.listing.begin.asciidoc</string>
+					<string>constant.delimiter.listing.begin.asciidoc</string>
 				</dict>
 			</dict>
 			<key>comment</key>
@@ -350,7 +353,7 @@ Examples:
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>markup.underline.listing.end.asciidoc</string>
+					<string>constant.delimiter.listing.end.asciidoc</string>
 				</dict>
 			</dict>
 			<key>name</key>
@@ -412,7 +415,7 @@ Examples:
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>markup.underline.block.open.begin.asciidoc</string>
+					<string>constant.delimiter.block.open.begin.asciidoc</string>
 				</dict>
 			</dict>
 			<key>comment</key>
@@ -431,7 +434,7 @@ Note: Might need to check on these includes.
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>markup.underline.block.open.begin.asciidoc</string>
+					<string>constant.delimiter.block.open.end.asciidoc</string>
 				</dict>
 			</dict>
 			<key>name</key>
@@ -491,7 +494,7 @@ Examples:
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>markup.underline.block.passthrough.begin.asciidoc</string>
+					<string>constant.delimiter.block.passthrough.begin.asciidoc</string>
 				</dict>
 			</dict>
 			<key>contentName</key>
@@ -503,7 +506,7 @@ Examples:
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>markup.underline.block.passthrough.end.asciidoc</string>
+					<string>constant.delimiter.block.passthrough.end.asciidoc</string>
 				</dict>
 			</dict>
 			<key>name</key>
@@ -565,47 +568,6 @@ Note: Might need to add more includes, but these are the ones that arise for me 
 					<string>#characters</string>
 				</dict>
 			</array>
-		</dict>
-		<key>block_req</key>
-		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>markup.underline.block.id.asciidoc</string>
-				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>variable.parameter.reqid.id.asciidoc</string>
-				</dict>
-				<key>4</key>
-				<dict>
-					<key>name</key>
-					<string>markup.underline.block.version.asciidoc</string>
-				</dict>
-				<key>6</key>
-				<dict>
-					<key>name</key>
-					<string>variable.parameter.reqversion.id.asciidoc</string>
-				</dict>
-				<key>7</key>
-				<dict>
-					<key>name</key>
-					<string>markup.underline.block.id.asciidoc</string>
-				</dict>
-			</dict>
-			<key>comment</key>
-			<string>A requirement id (i.e. anchor).
-Examples:
-  [req,id=ROPR1234,version=1]
-  Lorem ipsum dolor.
-</string>
-			<key>match</key>
-			<string>(\[req,(\s+)?id=)(.+?)(,(\s+)?version=)([0-9])(\])</string>
-			<key>name</key>
-			<string>meta.tag.blockid.req.asciidoc</string>
 		</dict>
 		<key>block_sidebar</key>
 		<dict>
@@ -728,9 +690,16 @@ Examples:
 		</dict>
 		<key>block_title</key>
 		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.blockheading.asciidoc</string>
+				</dict>
+			</dict>
 			<key>comment</key>
-			<string>Title of a block. Exludes custom block titles for better
-scoping / preventing overlap.
+			<string>Title of a block.
 
 Examples:
   .My title
@@ -752,10 +721,6 @@ Examples:
 				<dict>
 					<key>include</key>
 					<string>#block_comment</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#custom_block</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -874,41 +839,6 @@ Examples:
 			<key>name</key>
 			<string>markup.list.numbered.callout.asciidoc</string>
 		</dict>
-		<key>custom_block</key>
-		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>markup.underline.block.asciidoc</string>
-				</dict>
-				<key>2</key>
-				<dict>
-					<key>name</key>
-					<string>markup.underline.block.asciidoc</string>
-				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>variable.parameter.sourcelang.asciidoc</string>
-				</dict>
-				<key>4</key>
-				<dict>
-					<key>name</key>
-					<string>markup.underline.block.asciidoc</string>
-				</dict>
-			</dict>
-			<key>match</key>
-			<string>(?x)^
-(\[)
-(sect\d|def|math|TODO|quote|example|source,?(\w+))
-(\s*\])
-\s*$\n?
-</string>
-			<key>name</key>
-			<string>markup.underline.block.id.def.asciidoc</string>
-		</dict>
 		<key>dlist_item_label</key>
 		<dict>
 			<key>begin</key>
@@ -958,7 +888,12 @@ double colon followed by a space inside a label, i.e. it matches the
 		</dict>
 		<key>emphasis</key>
 		<dict>
-			<key>captures</key>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?               # might be preceded by an attributes list
+(?&lt;=^|[^a-zA-Z0-9])(?&lt;!\\|}) # must be preceded by nonword character, and not by escape or } (attribute)
+(_)(?=\S+_)                  # must be followed by inline characters and closed</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
@@ -970,11 +905,6 @@ double colon followed by a space inside a label, i.e. it matches the
 					<key>name</key>
 					<string>punctuation.definition.italic.single.begin.asciidoc</string>
 				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.italic.single.end.asciidoc</string>
-				</dict>
 			</dict>
 			<key>comment</key>
 			<string>Emphasized (italic) text (constrained variant).
@@ -983,14 +913,70 @@ Examples:
   _Lorem ipsum_ dolor
   [red]_Lorem ipsum_ dolor
 </string>
-			<key>match</key>
-			<string>(?!_{4,}\s*$)(?&lt;=^|[^\p{Word};:])(\[(?:[^\]]+?)\])?((_)(\S|\S.*?\S)(_))(?!\p{Word})</string>
+			<key>contentName</key>
+			<string>meta.italicinner.single.asciidoc</string>
+			<key>end</key>
+			<string>(?x)
+(?&lt;=\S)(_)      # delimiter underscore that must be preceded by a nonspace character
+(?![a-zA-Z0-9]) # ...and followed by a nonword character</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.italic.single.end.asciidoc</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>markup.italic.single.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
 		</dict>
 		<key>emphasis_double</key>
 		<dict>
-			<key>captures</key>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])? # might start with attribute list
+(?&lt;!\\)        # must not be preceded by escape
+(__)(?=\S+__)  # must be followed by inline characters and closed</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
@@ -1002,11 +988,6 @@ Examples:
 					<key>name</key>
 					<string>punctuation.definition.italic.double.begin.asciidoc</string>
 				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.italic.double.end.asciidoc</string>
-				</dict>
 			</dict>
 			<key>comment</key>
 			<string>Emphasized (italic) text (unconstrained variant).
@@ -1015,10 +996,59 @@ Examples:
   Lo__re__m __ipsum dolor__.
   Lo[red]__re__m
 </string>
-			<key>match</key>
-			<string>(?&lt;!\\\\)(\[(?:[^\]]+?)\])?((__)((?!_).+?)(__))</string>
+			<key>contentName</key>
+			<string>meta.italicinner.double.asciidoc</string>
+			<key>end</key>
+			<string>(__)</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.italic.double.end.asciidoc</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>markup.italic.double.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
 		</dict>
 		<key>entity_name</key>
 		<dict>
@@ -1264,10 +1294,6 @@ Examples:
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#block_req</string>
-				</dict>
-				<dict>
-					<key>include</key>
 					<string>#section_template</string>
 				</dict>
 				<dict>
@@ -1437,7 +1463,12 @@ Examples:
 		</dict>
 		<key>mark</key>
 		<dict>
-			<key>captures</key>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?               # might start with attribute list (darned well better or why are we here)
+(?&lt;=^|[^a-zA-Z0-9])(?&lt;!\\|}) # must be preceded by nonword character, and not by escape or } (attribute)
+(\#)(?=\S+\#)                # must be followed by inline characters and closed</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
@@ -1449,11 +1480,6 @@ Examples:
 					<key>name</key>
 					<string>punctuation.definition.string.unquoted.single.begin.asciidoc</string>
 				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.string.unquoted.single.end.asciidoc</string>
-				</dict>
 			</dict>
 			<key>comment</key>
 			<string>Marked text (constrained variant).
@@ -1462,14 +1488,70 @@ Examples:
   #Lorem ipsum# dolor
   [red]#Lorem ipsum# dolor
 </string>
-			<key>match</key>
-			<string>((?&lt;![\\;:\p{Word}#])(\[[^\]]+?\])((#)(\S|\S.*?\S)(#)(?!\p{Word})))|((?&lt;![\\;:\p{Word}#])(\[[^\]]+?\])?((#)(\S|\S.*?\S)(#)(?!\p{Word})))</string>
+			<key>contentName</key>
+			<string>string.unquoted.unquotedinner.single.asciidoc</string>
+			<key>end</key>
+			<string>(?x)
+(?&lt;=\S)(\#)     # delimiter hash that must be preceded by a nonspace character
+(?![a-zA-Z0-9]) # ...and followed by a nonword character</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.unquoted.single.end.asciidoc</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>string.other.unquoted.single.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
 		</dict>
 		<key>mark_double</key>
 		<dict>
-			<key>captures</key>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?    # might start with an attribute list (indeed, that is its purpose)
+(?&lt;!\\)           # must not be preceded by escape
+(\#\#)(?=\S+\#\#) # must be followed by inline characters and closed</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
@@ -1481,11 +1563,6 @@ Examples:
 					<key>name</key>
 					<string>punctuation.definition.string.unquoted.double.begin.asciidoc</string>
 				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.string.unquoted.double.end.asciidoc</string>
-				</dict>
 			</dict>
 			<key>comment</key>
 			<string>Marked text (unconstrained variant).
@@ -1494,14 +1571,68 @@ Examples:
   Lo##re##m ##ipsum dolor##.
   Lo[red]##re##m
 </string>
-			<key>match</key>
-			<string>((?&lt;!\\\\)(\[[^\]]+?\])((##)(.+?)(##)))|((?&lt;!\\\\)((##)(.+?)(##)))</string>
+			<key>contentName</key>
+			<string>string.unquoted.unquotedinner.double.asciidoc</string>
+			<key>end</key>
+			<string>(\#\#)</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.unquoted.double.end.asciidoc</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>string.other.unquoted.double.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
 		</dict>
 		<key>monospaced</key>
 		<dict>
-			<key>captures</key>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?               # might start with attributes list
+(?&lt;=^|[^a-zA-Z0-9])(?&lt;!\\|}) # must be preceded by nonword character, and not by escape or } (attribute)
+(`)(?=\S+`)                  # must be followed by inline characters and closed</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
@@ -1513,11 +1644,6 @@ Examples:
 					<key>name</key>
 					<string>punctuation.definition.literal.single.begin.asciidoc</string>
 				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.literal.single.end.asciidoc</string>
-				</dict>
 			</dict>
 			<key>comment</key>
 			<string>Monospaced text (constrained variant).
@@ -1526,14 +1652,70 @@ Examples:
   `Lorem ipsum` dolor
   [red]`Lorem ipsum` dolor
 </string>
-			<key>match</key>
-			<string>(?&lt;![\\;:\p{Word}\"'`])(\[.+?\])?((`)(\S|\S.*?\S)(`))(?![\p{Word}\"'`])</string>
+			<key>contentName</key>
+			<string>meta.literalinner.single.asciidoc</string>
+			<key>end</key>
+			<string>(?x)
+(?&lt;=\S)(`)      # delimiter backtick that must be preceded by a nonspace character
+(?![a-zA-Z0-9]) # ...and followed by a nonword character</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.literal.single.end.asciidoc</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>string.other.literal.single.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
 		</dict>
 		<key>monospaced_double</key>
 		<dict>
-			<key>captures</key>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])? # might start with attribute list
+(?&lt;!\\)        # must not be preceded by escape
+(``)(?=\S+``)  # must be followed by inline characters and closed</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
@@ -1545,11 +1727,6 @@ Examples:
 					<key>name</key>
 					<string>punctuation.definition.literal.double.begin.asciidoc</string>
 				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.literal.double.end.asciidoc</string>
-				</dict>
 			</dict>
 			<key>comment</key>
 			<string>Monospaced text (unconstrained variant).
@@ -1558,10 +1735,59 @@ Examples:
   Lo``re``m ``ipsum dolor``.
   Lo[red]``re``m
 </string>
-			<key>match</key>
-			<string>(?&lt;!\\)(\[.+?\])?((``)(.+?)(``))</string>
+			<key>contentName</key>
+			<string>meta.literalinner.double.asciidoc</string>
+			<key>end</key>
+			<string>(``)</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.literal.double.end.asciidoc</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>string.other.literal.double.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
 		</dict>
 		<key>olist_item_marker</key>
 		<dict>
@@ -1611,7 +1837,7 @@ Note: The space distinguishes it from a block title.
 			<string>Inline triple-plus and double dolar passthrough.
 
 Examples:
-  Lo+++re++++m +++ipsum dolor+++.
+  Lo+++re+++m +++ipsum dolor+++.
   Lo$$re$$m $$ipsum dolor$$.
 
 Note: Must be dead first among the inlines, so as to take priority.
@@ -1685,8 +1911,7 @@ Note: Must be dead first among the inlines, so as to take priority.
 sect\d|abstract|preface|colophon|dedication|glossary|bibliography|synopsis|appendix|index # fixed list of known templates
 )
 (".*(\])|(\]))  # either close the quote (and perhaps go on) and close the bracket, or close the bracket immediately
-\s*$\n?
-</string>
+\s*$\n?</string>
 			<key>name</key>
 			<string>variable.parameter.sectiontemplate.asciidoc</string>
 		</dict>
@@ -1731,7 +1956,12 @@ sect\d|abstract|preface|colophon|dedication|glossary|bibliography|synopsis|appen
 		</dict>
 		<key>strong</key>
 		<dict>
-			<key>captures</key>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?               # might start with an attributes list
+(?&lt;=^|[^a-zA-Z0-9])(?&lt;!\\|}) # must be preceded by nonword character, and not by escape or } (attribute)
+(\*)(?=\S+\*)                # must be followed by inline characters and closed</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
@@ -1743,11 +1973,6 @@ sect\d|abstract|preface|colophon|dedication|glossary|bibliography|synopsis|appen
 					<key>name</key>
 					<string>punctuation.definition.bold.single.begin.asciidoc</string>
 				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.bold.single.end.asciidoc</string>
-				</dict>
 			</dict>
 			<key>comment</key>
 			<string>Strong (bold) text (constrained variant).
@@ -1756,14 +1981,70 @@ Examples:
   *Lorem ipsum* dolor
   [red]*Lorem ipsum* dolor
 </string>
-			<key>match</key>
-			<string>(?&lt;![\\;:\p{Word}\*])(\[.+?\])?((\*)(\S|\S.*?\S)(\*)(?!\p{Word}))</string>
+			<key>contentName</key>
+			<string>meta.boldinner.single.asciidoc</string>
+			<key>end</key>
+			<string>(?x)
+(?&lt;=\S)(\*)     # delimiter star that must be preceded by a nonspace character
+(?![a-zA-Z0-9]) # ...and followed by a nonword character</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.bold.single.end.asciidoc</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>markup.bold.single.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
 		</dict>
 		<key>strong_double</key>
 		<dict>
-			<key>captures</key>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?    # might start with an attribute list
+(?&lt;!\\)           # must not be preceded by escape
+(\*\*)(?=\S+\*\*) # must be followed by inline characters and closed</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
@@ -1775,11 +2056,6 @@ Examples:
 					<key>name</key>
 					<string>punctuation.definition.bold.double.begin.asciidoc</string>
 				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.bold.double.end.asciidoc</string>
-				</dict>
 			</dict>
 			<key>comment</key>
 			<string>Strong (bold) text (unconstrained variant).
@@ -1788,14 +2064,68 @@ Examples:
   Lo**re**m **ipsum dolor**.
   Lo[red]**re**m
 </string>
-			<key>match</key>
-			<string>(?&lt;!\\\\)(\[.+?\])?((\*\*)(.+?)(\*\*))</string>
+			<key>contentName</key>
+			<string>meta.boldinner.double.asciidoc</string>
+			<key>end</key>
+			<string>(\*\*)</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.bold.double.end.asciidoc</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>markup.bold.double.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
 		</dict>
 		<key>subscript</key>
 		<dict>
-			<key>captures</key>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])? # might start with attribute list
+(?&lt;!\\)        # must not be preceded by escape
+(~)(?=\S+~)    # must be followed by inline characters and closed</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
@@ -1807,11 +2137,6 @@ Examples:
 					<key>name</key>
 					<string>punctuation.definition.string.subscript.begin.asciidoc</string>
 				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.string.subscript.end.asciidoc</string>
-				</dict>
 			</dict>
 			<key>comment</key>
 			<string>Subscript text.
@@ -1820,14 +2145,72 @@ Examples:
   H~2~O
   H[red]~2~O
 </string>
-			<key>match</key>
-			<string>(?&lt;!\\)(\[.+?\])?((~)(\S+?)(~))</string>
+			<key>contentName</key>
+			<string>meta.subscriptinner.asciidoc</string>
+			<key>end</key>
+			<string>~</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>0</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.subscript.end.asciidoc</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>string.other.subscript.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
 		</dict>
 		<key>superscript</key>
 		<dict>
-			<key>captures</key>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])? # might start with attribute list
+(?&lt;!\\)        # no preceding escape
+(\^)(?=\S+\^)  # must be followed by inline characters and closed</string>
+			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
 				<dict>
@@ -1839,11 +2222,6 @@ Examples:
 					<key>name</key>
 					<string>punctuation.definition.string.superscript.begin.asciidoc</string>
 				</dict>
-				<key>3</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.string.superscript.end.asciidoc</string>
-				</dict>
 			</dict>
 			<key>comment</key>
 			<string>Superscript text.
@@ -1852,10 +2230,63 @@ Examples:
   E=mc^2^
   E=mc[red]^2^
 </string>
-			<key>match</key>
-			<string>(?&lt;!\\)(\[.+?\])?((\^)(\S+?)(\^))</string>
+			<key>contentName</key>
+			<string>meta.superscriptinner.asciidoc</string>
+			<key>end</key>
+			<string>(\^)</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.string.superscript.end.asciidoc</string>
+				</dict>
+			</dict>
 			<key>name</key>
 			<string>string.other.superscript.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#characters</string>
+				</dict>
+			</array>
 		</dict>
 		<key>title_level_0</key>
 		<dict>
@@ -1873,7 +2304,7 @@ Examples:
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>^(=) (\S.*)$\n?</string>
+			<string>^(=) (\w.*)$\n?</string>
 			<key>name</key>
 			<string>markup.heading.level.0.asciidoc</string>
 		</dict>
@@ -1893,7 +2324,7 @@ Examples:
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>^(==) (\S.*)$\n?</string>
+			<string>^(==) (\w.*)$\n?</string>
 			<key>name</key>
 			<string>markup.heading.level.1.asciidoc</string>
 		</dict>
@@ -1913,7 +2344,7 @@ Examples:
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>^(===) (\S.*)$\n?</string>
+			<string>^(===) (\w.*)$\n?</string>
 			<key>name</key>
 			<string>markup.heading.level.2.asciidoc</string>
 		</dict>
@@ -1933,7 +2364,7 @@ Examples:
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>^(====) (\S.*)$\n?</string>
+			<string>^(====) (\w.*)$\n?</string>
 			<key>name</key>
 			<string>markup.heading.level.3.asciidoc</string>
 		</dict>
@@ -1953,7 +2384,7 @@ Examples:
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>^(=====) (\S.*)$\n?</string>
+			<string>^(=====) (\w.*)$\n?</string>
 			<key>name</key>
 			<string>markup.heading.level.4.asciidoc</string>
 		</dict>
@@ -1973,7 +2404,7 @@ Examples:
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>^(======) (\S.*)$\n?</string>
+			<string>^(======) (\w.*)$\n?</string>
 			<key>name</key>
 			<string>markup.heading.level.5.asciidoc</string>
 		</dict>
