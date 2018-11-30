@@ -85,10 +85,10 @@ repository:
     contentName: source.block.listing.content.asciidoc
     begin: ^(\-{4,})\s*$\n?
     beginCaptures:
-      '0': {name: constant.delimiter.listing.begin.asciidoc}
+      '0': {name: markup.underline.listing.begin.asciidoc}
     end: ^\1\s*$\n?
     endCaptures:
-      '0': {name: constant.delimiter.listing.end.asciidoc}
+      '0': {name: markup.underline.listing.end.asciidoc}
     patterns:
     - include: '#inline_callout'
 
@@ -104,10 +104,10 @@ repository:
     contentName: source.block.listing.content.asciidoc
     begin: ^(```)(\w+)?\s*$\n?
     beginCaptures:
-      '0': {name: constant.delimiter.listing.begin.asciidoc}
+      '0': {name: markup.underline.listing.begin.asciidoc}
     end: ^\1\s*$\n?
     endCaptures:
-      '0': {name: constant.delimiter.listing.end.asciidoc}
+      '0': {name: markup.underline.listing.end.asciidoc}
     patterns:
     - include: '#inline_callout'
 
@@ -121,10 +121,10 @@ repository:
     contentName: meta.block.literal.content.asciidoc
     begin: ^(\.{4,})\s*$\n?
     beginCaptures:
-      '0': {name: constant.delimiter.block.literal.begin.asciidoc}
+      '0': {name: markup.underline.block.literal.begin.asciidoc}
     end: ^\1\s*$\n?
     endCaptures:
-      '0': {name: constant.delimiter.block.literal.end.asciidoc}
+      '0': {name: markup.underline.block.literal.end.asciidoc}
     patterns:
     - include: '#inline_callout'
 
@@ -139,10 +139,10 @@ repository:
     contentName: meta.block.open.content.asciidoc
     begin: ^\-\-\s*$\n?
     beginCaptures:
-      '0': {name: constant.delimiter.block.open.begin.asciidoc}
+      '0': {name: markup.underline.block.open.begin.asciidoc}
     end: ^\-\-\s*$\n?
     endCaptures:
-      '0': {name: constant.delimiter.block.open.end.asciidoc}
+      '0': {name: markup.underline.block.open.end.asciidoc}
     patterns:
     - include: '#lists'
     - include: '#block_comment'
@@ -157,10 +157,10 @@ repository:
     contentName: text.xml.block.passthrough.content.asciidoc
     begin: ^(\+{4,})\s*$\n?
     beginCaptures:
-      '0': {name: constant.delimiter.block.passthrough.begin.asciidoc}
+      '0': {name: markup.underline.block.passthrough.begin.asciidoc}
     end: ^\1\s*$\n?
     endCaptures:
-      '0': {name: constant.delimiter.block.passthrough.end.asciidoc}
+      '0': {name: markup.underline.block.passthrough.end.asciidoc}
     patterns:
     - include: text.xml
 
@@ -177,10 +177,10 @@ repository:
     contentName: meta.block.quote.content.asciidoc
     begin: ^(_{4,})\s*$\n?
     beginCaptures:
-      '0': {name: constant.delimiter.block.quote.begin.asciidoc}
+      '0': {name: markup.underline.block.quote.begin.asciidoc}
     end: ^\1\s*$\n?
     endCaptures:
-      '0': {name: constant.delimiter.block.quote.end.asciidoc}
+      '0': {name: markup.underline.block.quote.end.asciidoc}
     patterns:
     - include: '#lines'
     - include: '#inline'
@@ -199,10 +199,10 @@ repository:
     contentName: meta.block.sidebar.content.asciidoc
     begin: ^(\*{4,})\s*$\n?
     beginCaptures:
-      '0': {name: constant.delimiter.block.sidebar.begin.asciidoc}
+      '0': {name: markup.underline.block.sidebar.begin.asciidoc}
     end: ^\1\s*$\n?
     endCaptures:
-      '0': {name: constant.delimiter.block.sidebar.end.asciidoc}
+      '0': {name: markup.underline.block.sidebar.end.asciidoc}
     patterns:
     - include: '#lists'
     - include: '#block_comment'

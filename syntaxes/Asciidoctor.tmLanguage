@@ -335,7 +335,7 @@ Examples:
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>constant.delimiter.listing.begin.asciidoc</string>
+					<string>markup.underline.listing.begin.asciidoc</string>
 				</dict>
 			</dict>
 			<key>comment</key>
@@ -353,7 +353,7 @@ Examples:
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>constant.delimiter.listing.end.asciidoc</string>
+					<string>markup.underline.listing.end.asciidoc</string>
 				</dict>
 			</dict>
 			<key>name</key>
@@ -375,7 +375,7 @@ Examples:
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>constant.delimiter.block.literal.begin.asciidoc</string>
+					<string>markup.underline.block.literal.begin.asciidoc</string>
 				</dict>
 			</dict>
 			<key>comment</key>
@@ -393,7 +393,7 @@ Examples:
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>constant.delimiter.block.literal.end.asciidoc</string>
+					<string>markup.underline.block.literal.end.asciidoc</string>
 				</dict>
 			</dict>
 			<key>name</key>
@@ -415,7 +415,7 @@ Examples:
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>constant.delimiter.block.open.begin.asciidoc</string>
+					<string>markup.underline.block.open.begin.asciidoc</string>
 				</dict>
 			</dict>
 			<key>comment</key>
@@ -434,7 +434,7 @@ Note: Might need to check on these includes.
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>constant.delimiter.block.open.end.asciidoc</string>
+					<string>markup.underline.block.open.end.asciidoc</string>
 				</dict>
 			</dict>
 			<key>name</key>
@@ -494,7 +494,7 @@ Examples:
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>constant.delimiter.block.passthrough.begin.asciidoc</string>
+					<string>markup.underline.block.passthrough.begin.asciidoc</string>
 				</dict>
 			</dict>
 			<key>contentName</key>
@@ -506,7 +506,7 @@ Examples:
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>constant.delimiter.block.passthrough.end.asciidoc</string>
+					<string>markup.underline.block.passthrough.end.asciidoc</string>
 				</dict>
 			</dict>
 			<key>name</key>
@@ -528,7 +528,7 @@ Examples:
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>constant.delimiter.block.quote.begin.asciidoc</string>
+					<string>markup.underline.block.quote.begin.asciidoc</string>
 				</dict>
 			</dict>
 			<key>comment</key>
@@ -548,7 +548,7 @@ Note: Might need to add more includes, but these are the ones that arise for me 
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>constant.delimiter.block.quote.end.asciidoc</string>
+					<string>markup.underline.block.quote.end.asciidoc</string>
 				</dict>
 			</dict>
 			<key>name</key>
@@ -578,7 +578,7 @@ Note: Might need to add more includes, but these are the ones that arise for me 
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>constant.delimiter.block.sidebar.begin.asciidoc</string>
+					<string>markup.underline.block.sidebar.begin.asciidoc</string>
 				</dict>
 			</dict>
 			<key>comment</key>
@@ -599,7 +599,7 @@ for me in practice.
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>constant.delimiter.block.sidebar.end.asciidoc</string>
+					<string>markup.underline.block.sidebar.end.asciidoc</string>
 				</dict>
 			</dict>
 			<key>name</key>
@@ -641,7 +641,7 @@ for me in practice.
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>constant.delimiter.listing.begin.asciidoc</string>
+					<string>markup.underline.listing.begin.asciidoc</string>
 				</dict>
 			</dict>
 			<key>comment</key>
@@ -661,7 +661,7 @@ Examples:
 				<key>0</key>
 				<dict>
 					<key>name</key>
-					<string>constant.delimiter.listing.end.asciidoc</string>
+					<string>markup.underline.listing.end.asciidoc</string>
 				</dict>
 			</dict>
 			<key>name</key>
