@@ -443,7 +443,7 @@ repository:
       (?x)
       (\[[^\]]*?\])?    # might start with an attribute list
       (?<!\\)           # must not be preceded by escape
-      (\*\*)(?=\S+\*\*) # must be followed by inline characters and closed
+      (\*\*)(?=[\S ]+\*\*) # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.bold.double.begin.asciidoc}
@@ -475,7 +475,7 @@ repository:
       (?x)
       (\[[^\]]*?\])? # might start with attribute list
       (?<!\\)        # must not be preceded by escape
-      (__)(?=\S+__)  # must be followed by inline characters and closed
+      (__)(?=[\S ]+__)  # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.italic.double.begin.asciidoc}
@@ -507,7 +507,7 @@ repository:
       (?x)
       (\[[^\]]*?\])? # might start with attribute list
       (?<!\\)        # must not be preceded by escape
-      (``)(?=\S+``)  # must be followed by inline characters and closed
+      (``)(?=[\S ]+``)  # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.literal.double.begin.asciidoc}
@@ -539,7 +539,7 @@ repository:
       (?x)
       (\[[^\]]*?\])?    # might start with an attribute list (indeed, that is its purpose)
       (?<!\\)           # must not be preceded by escape
-      (\#\#)(?=\S+\#\#) # must be followed by inline characters and closed
+      (\#\#)(?=[\S ]+\#\#) # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.string.unquoted.double.begin.asciidoc}
@@ -589,7 +589,7 @@ repository:
       (?x)
       (\[[^\]]*?\])?               # might start with an attributes list
       (?<=^|[^a-zA-Z0-9])(?<!\\|}) # must be preceded by nonword character, and not by escape or } (attribute)
-      (\*)(?=\S+\*)                # must be followed by inline characters and closed
+      (\*)(?=[\S ]+\*)             # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.bold.single.begin.asciidoc}
@@ -623,7 +623,7 @@ repository:
       (?x)
       (\[[^\]]*?\])?               # might be preceded by an attributes list
       (?<=^|[^a-zA-Z0-9])(?<!\\|}) # must be preceded by nonword character, and not by escape or } (attribute)
-      (_)(?=\S+_)                  # must be followed by inline characters and closed
+      (_)(?=[\S ]+_)               # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.italic.single.begin.asciidoc}
@@ -657,7 +657,7 @@ repository:
       (?x)
       (\[[^\]]*?\])?               # might start with attributes list
       (?<=^|[^a-zA-Z0-9])(?<!\\|}) # must be preceded by nonword character, and not by escape or } (attribute)
-      (`)(?=\S+`)                  # must be followed by inline characters and closed
+      (`)(?=[\S ]+`)               # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.literal.single.begin.asciidoc}
@@ -691,7 +691,7 @@ repository:
       (?x)
       (\[[^\]]*?\])?               # might start with attribute list (darned well better or why are we here)
       (?<=^|[^a-zA-Z0-9])(?<!\\|}) # must be preceded by nonword character, and not by escape or } (attribute)
-      (\#)(?=\S+\#)                # must be followed by inline characters and closed
+      (\#)(?=[\S ]+\#)             # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.string.unquoted.single.begin.asciidoc}
@@ -725,13 +725,15 @@ repository:
       (?x)
       (\[[^\]]*?\])? # might start with attribute list
       (?<!\\)        # must not be preceded by escape
-      (~)(?=\S+~)    # must be followed by inline characters and closed
+      (~)(?=[\S ]+~) # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.string.subscript.begin.asciidoc}
-    end: '~'
+    end: |-
+      (?x)
+      (?<=\S)(~) # delimiter hash that must be preceded by a nonspace character
     endCaptures:
-      '0': {name: punctuation.definition.string.subscript.end.asciidoc}
+      '1': {name: punctuation.definition.string.subscript.end.asciidoc}
     patterns:
     - include: '#strong_double'
     - include: '#emphasis_double'
@@ -755,14 +757,15 @@ repository:
     contentName: meta.superscriptinner.asciidoc
     begin: |-
       (?x)
-      (\[[^\]]*?\])? # might start with attribute list
-      (?<!\\)        # no preceding escape
-      (\^)(?=\S+\^)  # must be followed by inline characters and closed
+      (\[[^\]]*?\])?   # might start with attribute list
+      (?<!\\)          # no preceding escape
+      (\^)(?=[\S ]+\^) # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.string.superscript.begin.asciidoc}
     end: |-
-      (\^)
+      (?x)
+      (?<=\S)(\^) # delimiter hash that must be preceded by a nonspace character
     endCaptures:
       '1': {name: punctuation.definition.string.superscript.end.asciidoc}
     patterns:
