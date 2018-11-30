@@ -11,6 +11,7 @@ cd "$(dirname "$0")/.."
 
 # Generate plist syntax
 echo "==> Converting YAML syntax to plist"
+[[ ! -x script/yaml-to-plist ]] && chmod +x script/yaml-to-plist
 script/yaml-to-plist "syntaxes/Asciidoctor.YAMXL-tmLanguage" "syntaxes/Asciidoctor.tmLanguage" || exitdialog $?
 
 # Build extension
