@@ -9,9 +9,11 @@ const fileUrl = require('file-url');
 const Viz = require("viz.js");
 var which = npm_which(__dirname) // __dirname often good enough
 
-let previousHtml = null;
 const asciidoctor = Asciidoctor();
 
+
+const plantuml = require('asciidoctor-plantuml');
+plantuml.register(asciidoctor.Extensions);
 
 asciidoctor.Extensions.register(function () {
     this.block(function () {
@@ -24,6 +26,7 @@ asciidoctor.Extensions.register(function () {
         });
     });
 });
+
 
 asciidoctor.Extensions.register(function () {
     this.block(function () {
@@ -90,7 +93,9 @@ export class AsciiDocParser {
     }
 
     private async convert_using_application(text: string) {
-        let documentPath = path.dirname(this.filename);
+        const editor = vscode.window.activeTextEditor;
+        const doc = editor.document;
+        const documentPath = path.dirname(path.resolve(doc.fileName));
         this.document = null;
 
         return new Promise<string>(resolve => {

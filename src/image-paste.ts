@@ -176,7 +176,7 @@ export class Paster
     {
         const editor = vscode.window.activeTextEditor;
         const selection = editor.document.getText(editor.selection);
-        const config = vscode.workspace.getConfiguration('AsciiDoc');
+        const config = vscode.workspace.getConfiguration('asciidoc');
 
         if(!this.validate({editor, selection})) return;
 

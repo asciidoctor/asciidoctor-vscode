@@ -11,6 +11,7 @@
         "junit",
         "linkify",
         "neue",
+        "plantuml",
         "segoe",
         "upath",
         "webview"

@@ -1,0 +1,12 @@
+
+[graphviz]
+....
+graph {
+    a -- b;
+    b -- c;
+    a -- c;
+    d -- c;
+    e -- c;
+    e -- a;
+}
+....

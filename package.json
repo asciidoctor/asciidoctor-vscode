@@ -2,7 +2,7 @@
 	"name": "asciidoctor-vscode",
 	"displayName": "%displayName%",
 	"description": "%description%",
-	"version": "2.0.0",
+	"version": "2.1.0",
 	"publisher": "joaompinto",
 	"author": "João Pinto <lamego.pinto@gmail.com>",
 	"license": "MIT",
@@ -339,7 +339,12 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Use asciidoctor js instead of the 'asciidoctor_command'"
-				}
+                },
+                "asciidoc.forceUnixStyleSeparator": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "Force set the file separator style to unix style. If set false, separator style will follow the system style."
+                }
 			}
 		},
 		"configurationDefaults": {
@@ -386,7 +391,8 @@
 		"ts-loader": "^4.0.1"
 	},
 	"dependencies": {
-		"asciidoctor.js": "^1.5.6-preview.5",
+        "asciidoctor.js": "1.5.6",
+        "asciidoctor-plantuml": "^0.10.0",
 		"copy-paste": "^1.2.0",
 		"file-url": "^1.0.1",
 		"follow-redirects": "^1.4.1",
