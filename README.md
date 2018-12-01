@@ -41,14 +41,19 @@ code --install-extension *.vsix
 
 ```git log --pretty="%an" | sort -u```
 
-    art Sokol
-    chriskoerner
+    Bart Sokol
     Daniel Mulholland
     Garrett D'Amore
     Gigacee
+    Jackson C. Wiebe
     João Pinto
     Kevin Palmowski
     Marcelo Alvim
     Mark Roszko
-    Øyvind Hansen
+    MatteoCampinoti94
+    Stephen Pegoraro
     Tatsunori Uchino
+    chriskoerner
+    ojn
+    sgn
+    Øyvind Hansen
