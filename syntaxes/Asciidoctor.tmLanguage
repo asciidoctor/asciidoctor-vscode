@@ -1191,6 +1191,10 @@ Examples:
 					<key>include</key>
 					<string>#subscript</string>
 				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mail</string>
+				</dict>
 			</array>
 		</dict>
 		<key>inline_break</key>
@@ -1460,6 +1464,19 @@ Examples:
 					<string>text.xml</string>
 				</dict>
 			</array>
+		</dict>
+		<key>mail</key>
+		<dict>
+			<key>comment</key>
+			<string>Mail links
+
+Examples:
+  doc.writer@example.com
+</string>
+			<key>match</key>
+			<string>(?:[a-z0-9!#$%&amp;'*+\/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+\/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])</string>
+			<key>name</key>
+			<string>markup.link.email.asciidoc</string>
 		</dict>
 		<key>mark</key>
 		<dict>
