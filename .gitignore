@@ -4,3 +4,4 @@ node_modules/
 .asciidoctor/
 test/samples/*.pdf
 media/*.js
+package-lock.json
