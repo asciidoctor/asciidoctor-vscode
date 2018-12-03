@@ -975,6 +975,10 @@ Examples:
 					<key>include</key>
 					<string>#characters</string>
 				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mail</string>
+				</dict>
 			</array>
 		</dict>
 		<key>emphasis_double</key>
@@ -1063,6 +1067,10 @@ Examples:
 				<dict>
 					<key>include</key>
 					<string>#characters</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mail</string>
 				</dict>
 			</array>
 		</dict>
@@ -1680,6 +1688,10 @@ Examples:
 					<key>include</key>
 					<string>#characters</string>
 				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mail</string>
+				</dict>
 			</array>
 		</dict>
 		<key>monospaced</key>
@@ -1771,6 +1783,10 @@ Examples:
 					<key>include</key>
 					<string>#characters</string>
 				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mail</string>
+				</dict>
 			</array>
 		</dict>
 		<key>monospaced_double</key>
@@ -1859,6 +1875,10 @@ Examples:
 				<dict>
 					<key>include</key>
 					<string>#characters</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mail</string>
 				</dict>
 			</array>
 		</dict>
@@ -2116,6 +2136,10 @@ Examples:
 					<key>include</key>
 					<string>#characters</string>
 				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mail</string>
+				</dict>
 			</array>
 		</dict>
 		<key>strong_double</key>
@@ -2205,6 +2229,10 @@ Examples:
 					<key>include</key>
 					<string>#characters</string>
 				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mail</string>
+				</dict>
 			</array>
 		</dict>
 		<key>subscript</key>
@@ -2291,6 +2319,10 @@ Examples:
 					<key>include</key>
 					<string>#characters</string>
 				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mail</string>
+				</dict>
 			</array>
 		</dict>
 		<key>superscript</key>
@@ -2376,6 +2408,10 @@ Examples:
 				<dict>
 					<key>include</key>
 					<string>#characters</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mail</string>
 				</dict>
 			</array>
 		</dict>

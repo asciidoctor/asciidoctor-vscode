@@ -540,6 +540,7 @@ repository:
     - include: '#superscript'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   emphasis_double:
     comment: |
@@ -574,6 +575,7 @@ repository:
     - include: '#superscript'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   monospaced_double:
     comment: |
@@ -608,6 +610,7 @@ repository:
     - include: '#superscript'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   mark_double:
     comment: |
@@ -642,6 +645,7 @@ repository:
     - include: '#superscript'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   passthrough:
     comment: |
@@ -696,6 +700,7 @@ repository:
     - include: '#superscript'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   emphasis:
     comment: |
@@ -732,6 +737,7 @@ repository:
     - include: '#superscript'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   monospaced:
     comment: |
@@ -768,6 +774,7 @@ repository:
     - include: '#superscript'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   mark:
     comment: |
@@ -838,6 +845,7 @@ repository:
     - include: '#mark'
     - include: '#superscript'
     - include: '#characters'
+    - include: '#mail'
 
   superscript:
     comment: |
@@ -872,6 +880,7 @@ repository:
     - include: '#mark'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   mail:
     comment: |
