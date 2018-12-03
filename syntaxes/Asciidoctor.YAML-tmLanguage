@@ -835,6 +835,8 @@ repository:
     endCaptures:
       '1': {name: punctuation.definition.string.subscript.end.asciidoc}
     patterns:
+    - include: '#typographic_quotes_single'
+    - include: '#typographic_quotes_double'
     - include: '#strong_double'
     - include: '#emphasis_double'
     - include: '#monospaced_double'
@@ -870,6 +872,8 @@ repository:
     endCaptures:
       '1': {name: punctuation.definition.string.superscript.end.asciidoc}
     patterns:
+    - include: '#typographic_quotes_single'
+    - include: '#typographic_quotes_double'
     - include: '#strong_double'
     - include: '#emphasis_double'
     - include: '#monospaced_double'

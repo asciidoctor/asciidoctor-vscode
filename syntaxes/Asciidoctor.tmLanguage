@@ -2281,6 +2281,14 @@ Examples:
 			<array>
 				<dict>
 					<key>include</key>
+					<string>#typographic_quotes_single</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
 					<string>#strong_double</string>
 				</dict>
 				<dict>
@@ -2369,6 +2377,14 @@ Examples:
 			<string>string.other.superscript.asciidoc</string>
 			<key>patterns</key>
 			<array>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_single</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_double</string>
+				</dict>
 				<dict>
 					<key>include</key>
 					<string>#strong_double</string>
