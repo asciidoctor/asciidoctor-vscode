@@ -454,7 +454,7 @@ repository:
       (`')
       (?!\w) # must be followed by a nonword character
     endCaptures:
-      '1': {name: punctuation.definition.typographic-quotes.single.begin.asciidoc}
+      '1': {name: punctuation.definition.typographic-quotes.single.end.asciidoc}
     patterns:
     - include: '#typographic_quotes_double'
     - include: '#passthrough'
@@ -491,7 +491,7 @@ repository:
       (`")
       (?!\w) # must be followed by a nonword character
     endCaptures:
-      '1': {name: punctuation.definition.typographic-quotes.double.begin.asciidoc}
+      '1': {name: punctuation.definition.typographic-quotes.double.end.asciidoc}
     patterns:
     - include: '#typographic_quotes_single'
     - include: '#passthrough'
