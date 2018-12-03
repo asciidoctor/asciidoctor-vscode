@@ -418,6 +418,82 @@ repository:
 
   inline:
     patterns:
+    - include: '#typographic_quotes_single'
+    - include: '#typographic_quotes_double'
+    - include: '#passthrough'
+    - include: '#strong_double'
+    - include: '#emphasis_double'
+    - include: '#monospaced_double'
+    - include: '#mark_double'
+    - include: '#strong'
+    - include: '#emphasis'
+    - include: '#monospaced'
+    - include: '#mark'
+    - include: '#superscript'
+    - include: '#subscript'
+    - include: '#mail'
+
+  typographic_quotes_single:
+    comment: |
+      Typographic quotes single.
+
+      Examples:
+        '`Text`'
+    name: markup.italic.quote.typographic-quotes.single.asciidoc
+    contentName: markup.italicinner.quote.typographic-quotes.single.asciidoc
+    begin: |-
+      (?x)
+      (\[[^\]]*?\])?         # might be preceded by an attributes list
+      (?<=^|\W)(?<!\\|})     # must be preceded by nonword character, and not by escape or } (attribute)
+      ('`)(?=\S[\S ]*\S`'\W) # must be followed by inline characters and closed
+    beginCaptures:
+      '1': {name: support.variable.attributelist.asciidoc}
+      '2': {name: punctuation.definition.typographic-quotes.single.begin.asciidoc}
+    end: |-
+      (?x)
+      (`')
+      (?!\w) # must be followed by a nonword character
+    endCaptures:
+      '1': {name: punctuation.definition.typographic-quotes.single.begin.asciidoc}
+    patterns:
+    - include: '#typographic_quotes_double'
+    - include: '#passthrough'
+    - include: '#strong_double'
+    - include: '#emphasis_double'
+    - include: '#monospaced_double'
+    - include: '#mark_double'
+    - include: '#strong'
+    - include: '#emphasis'
+    - include: '#monospaced'
+    - include: '#mark'
+    - include: '#superscript'
+    - include: '#subscript'
+    - include: '#mail'
+
+  typographic_quotes_double:
+    comment: |
+      Typographic quotes double.
+
+      Examples:
+        "`Text`"
+    name: markup.italic.quote.typographic-quotes.double.asciidoc
+    contentName: markup.italicinner.quote.typographic-quotes.double.asciidoc
+    begin: |-
+      (?x)
+      (\[[^\]]*?\])?         # might be preceded by an attributes list
+      (?<=^|\W)(?<!\\|})     # must be preceded by nonword character, and not by escape or } (attribute)
+      ("`)(?=\S[\S ]*\S`"\W) # must be followed by inline characters and closed
+    beginCaptures:
+      '1': {name: support.variable.attributelist.asciidoc}
+      '2': {name: punctuation.definition.typographic-quotes.double.begin.asciidoc}
+    end: |-
+      (?x)
+      (`")
+      (?!\w) # must be followed by a nonword character
+    endCaptures:
+      '1': {name: punctuation.definition.typographic-quotes.double.begin.asciidoc}
+    patterns:
+    - include: '#typographic_quotes_single'
     - include: '#passthrough'
     - include: '#strong_double'
     - include: '#emphasis_double'
@@ -453,6 +529,8 @@ repository:
     endCaptures:
       '1': {name: punctuation.definition.bold.double.end.asciidoc}
     patterns:
+    - include: '#typographic_quotes_single'
+    - include: '#typographic_quotes_double'
     - include: '#emphasis_double'
     - include: '#monospaced_double'
     - include: '#mark_double'
@@ -462,6 +540,7 @@ repository:
     - include: '#superscript'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   emphasis_double:
     comment: |
@@ -485,6 +564,8 @@ repository:
     endCaptures:
       '1': {name: punctuation.definition.italic.double.end.asciidoc}
     patterns:
+    - include: '#typographic_quotes_single'
+    - include: '#typographic_quotes_double'
     - include: '#strong_double'
     - include: '#monospaced_double'
     - include: '#mark_double'
@@ -494,6 +575,7 @@ repository:
     - include: '#superscript'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   monospaced_double:
     comment: |
@@ -517,6 +599,8 @@ repository:
     endCaptures:
       '1': {name: punctuation.definition.literal.double.end.asciidoc}
     patterns:
+    - include: '#typographic_quotes_single'
+    - include: '#typographic_quotes_double'
     - include: '#strong_double'
     - include: '#emphasis_double'
     - include: '#mark_double'
@@ -526,6 +610,7 @@ repository:
     - include: '#superscript'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   mark_double:
     comment: |
@@ -549,6 +634,8 @@ repository:
     endCaptures:
       '1': {name: punctuation.definition.string.unquoted.double.end.asciidoc}
     patterns:
+    - include: '#typographic_quotes_single'
+    - include: '#typographic_quotes_double'
     - include: '#strong_double'
     - include: '#emphasis_double'
     - include: '#monospaced_double'
@@ -558,6 +645,7 @@ repository:
     - include: '#superscript'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   passthrough:
     comment: |
@@ -601,6 +689,8 @@ repository:
     endCaptures:
       '1': {name: punctuation.definition.bold.single.end.asciidoc}
     patterns:
+    - include: '#typographic_quotes_single'
+    - include: '#typographic_quotes_double'
     - include: '#emphasis_double'
     - include: '#monospaced_double'
     - include: '#mark_double'
@@ -610,6 +700,7 @@ repository:
     - include: '#superscript'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   emphasis:
     comment: |
@@ -635,6 +726,8 @@ repository:
     endCaptures:
       '1': {name: punctuation.definition.italic.single.end.asciidoc}
     patterns:
+    - include: '#typographic_quotes_single'
+    - include: '#typographic_quotes_double'
     - include: '#strong_double'
     - include: '#monospaced_double'
     - include: '#mark_double'
@@ -644,6 +737,7 @@ repository:
     - include: '#superscript'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   monospaced:
     comment: |
@@ -669,6 +763,8 @@ repository:
     endCaptures:
       '1': {name: punctuation.definition.literal.single.end.asciidoc}
     patterns:
+    - include: '#typographic_quotes_single'
+    - include: '#typographic_quotes_double'
     - include: '#strong_double'
     - include: '#emphasis_double'
     - include: '#mark_double'
@@ -678,6 +774,7 @@ repository:
     - include: '#superscript'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   mark:
     comment: |
@@ -703,6 +800,8 @@ repository:
     endCaptures:
       '1': {name: punctuation.definition.string.unquoted.single.end.asciidoc}
     patterns:
+    - include: '#typographic_quotes_single'
+    - include: '#typographic_quotes_double'
     - include: '#strong_double'
     - include: '#emphasis_double'
     - include: '#monospaced_double'
@@ -736,6 +835,8 @@ repository:
     endCaptures:
       '1': {name: punctuation.definition.string.subscript.end.asciidoc}
     patterns:
+    - include: '#typographic_quotes_single'
+    - include: '#typographic_quotes_double'
     - include: '#strong_double'
     - include: '#emphasis_double'
     - include: '#monospaced_double'
@@ -746,6 +847,7 @@ repository:
     - include: '#mark'
     - include: '#superscript'
     - include: '#characters'
+    - include: '#mail'
 
   superscript:
     comment: |
@@ -770,6 +872,8 @@ repository:
     endCaptures:
       '1': {name: punctuation.definition.string.superscript.end.asciidoc}
     patterns:
+    - include: '#typographic_quotes_single'
+    - include: '#typographic_quotes_double'
     - include: '#strong_double'
     - include: '#emphasis_double'
     - include: '#monospaced_double'
@@ -780,6 +884,7 @@ repository:
     - include: '#mark'
     - include: '#subscript'
     - include: '#characters'
+    - include: '#mail'
 
   mail:
     comment: |
