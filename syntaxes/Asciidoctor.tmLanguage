@@ -2588,7 +2588,7 @@ Examples:
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>punctuation.definition.typographic-quotes.double.begin.asciidoc</string>
+					<string>punctuation.definition.typographic-quotes.double.end.asciidoc</string>
 				</dict>
 			</dict>
 			<key>name</key>
@@ -2686,7 +2686,7 @@ Examples:
 				<key>1</key>
 				<dict>
 					<key>name</key>
-					<string>punctuation.definition.typographic-quotes.single.begin.asciidoc</string>
+					<string>punctuation.definition.typographic-quotes.single.end.asciidoc</string>
 				</dict>
 			</dict>
 			<key>name</key>
