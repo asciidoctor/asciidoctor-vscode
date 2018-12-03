@@ -88,11 +88,9 @@ cd "$(dirname "$0")/.."
 # Run help() if -h or --help or help have been used as argument
 [[ -z $@ || $1 =~ (-h|--help|help) ]] && help && exit
 
-args=()
-for arg in $@ ; do args+=("$arg") ; done
-
-for arg in ${args[@]} ; do
-  case $arg in
+# Run operations for each argument
+while [[ $# > 0 ]] ; do
+  case $1 in
     build)
       npm_local_deps || exitdialog $?
       npm_global_deps || exitdialog $?
@@ -124,4 +122,5 @@ for arg in ${args[@]} ; do
       echo -e "==> ${red}${bold}ERROR${reset}: unknown argument '$1'"
       ;;
   esac
+  shift
 done
