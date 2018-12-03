@@ -6,33 +6,81 @@ exitdialog() {
   exit ${1:-1}
 }
 
+generate_syntax() {
+  # Generate plist syntax
+  echo "==> Converting YAML syntax to plist"
+  [[ ! -x script/yaml-to-plist ]] && chmod +x script/yaml-to-plist
+  script/yaml-to-plist "syntaxes/Asciidoctor.YAML-tmLanguage" "syntaxes/Asciidoctor.tmLanguage" || exitdialog $?
+}
+
+npm_local_deps() {
+  # Install node dependencies
+  echo "==> Installing local dependencies"
+  npm install || exitdialog $?
+}
+
+npm_global_deps() {
+  # Check status of vsce and typescript dependencies
+  unset deps
+  npm list -g vsce &>/dev/null || deps+=("vsce")
+  npm list -g typescript &>/dev/null || deps+=("typescript")
+  if [[ -n $deps ]] ; then
+    echo "==> Installing global dependencies [needs sudo]"
+    sudo npm install -g ${deps[@]} || exitdialog $?
+  fi
+}
+
+package() {
+  # Package extension
+  echo "==> Packaging extension"
+  rm -f *.vsix
+  vsce package || exitdialog
+}
+
+install() {
+  # Install extension
+  echo "==> Installing extension"
+  code --install-extension *.vsix || exitdialog $?
+}
+
 # Move to project root
 cd "$(dirname "$0")/.."
 
-# Generate plist syntax
-echo "==> Converting YAML syntax to plist"
-[[ ! -x script/yaml-to-plist ]] && chmod +x script/yaml-to-plist
-script/yaml-to-plist "syntaxes/Asciidoctor.YAML-tmLanguage" "syntaxes/Asciidoctor.tmLanguage" || exitdialog $?
+args=()
+for arg in $@ ; do args+=("$arg") ; done
+[[ -z $args ]] && args=(build)
 
-# Build extension
-echo "==> Installing local dependencies"
-npm install || exitdialog $?
+for arg in ${args[@]} ; do
+  case $arg in
+    build)
+      npm_local_deps
+      npm_global_deps
+      generate_syntax
+      package
+      ;;
 
-# Check status of vsce and typescript dependencies
-unset deps
-npm list -g vsce &>/dev/null || deps+=("vsce")
-npm list -g typescript &>/dev/null || deps+=("typescript")
-if [[ -n $deps ]] ; then
-  echo "==> Installing global dependencies [needs sudo]"
-  sudo npm install -g ${deps[@]} || exitdialog $?
-fi
+    npm|npm_local|npm_local_deps)
+      npm_local_deps
+      ;;
 
-# Package extension
-echo "==> Packaging extension"
-rm -f *.vsix
-vsce package || exitdialog
+    npm|npm_global|npm_global_deps)
+      npm_global_deps
+      ;;
 
-if [[ $1 == install ]] ; then
-  echo "==> Installing extension"
-  code --install-extension *.vsix || exitdialog $?
-fi
+    generate|generate_syntax)
+      generate_syntax
+      ;;
+
+    package)
+      package
+      ;;
+
+    install)
+      install
+      ;;
+
+    *)
+      echo -e "==> \033[0;31m\033[1mERROR\033[0m: unknown argument '${arg}'"
+      ;;
+  esac
+done
