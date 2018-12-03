@@ -53,30 +53,30 @@ for arg in $@ ; do args+=("$arg") ; done
 for arg in ${args[@]} ; do
   case $arg in
     build)
-      npm_local_deps
-      npm_global_deps
-      generate_syntax
-      package
+      npm_local_deps || exitdialog $?
+      npm_global_deps || exitdialog $?
+      generate_syntax || exitdialog $?
+      package || exitdialog $?
       ;;
 
     npm|npm_local|npm_local_deps)
-      npm_local_deps
+      npm_local_deps || exitdialog $?
       ;;
 
     npm|npm_global|npm_global_deps)
-      npm_global_deps
+      npm_global_deps || exitdialog $?
       ;;
 
     generate|generate_syntax)
-      generate_syntax
+      generate_syntax || exitdialog $?
       ;;
 
     package)
-      package
+      package || exitdialog $?
       ;;
 
     install)
-      install
+      install || exitdialog $?
       ;;
 
     *)
