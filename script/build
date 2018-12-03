@@ -6,21 +6,21 @@ exitdialog() {
   exit ${1:-1}
 }
 
+# Generate plist syntax
 generate_syntax() {
-  # Generate plist syntax
   echo "==> Converting YAML syntax to plist"
   [[ ! -x script/yaml-to-plist ]] && chmod +x script/yaml-to-plist
   script/yaml-to-plist "syntaxes/Asciidoctor.YAML-tmLanguage" "syntaxes/Asciidoctor.tmLanguage" || exitdialog $?
 }
 
+# Install node dependencies
 npm_local_deps() {
-  # Install node dependencies
   echo "==> Installing local dependencies"
   npm install || exitdialog $?
 }
 
+# Check status of vsce and typescript dependencies
 npm_global_deps() {
-  # Check status of vsce and typescript dependencies
   unset deps
   npm list -g vsce &>/dev/null || deps+=("vsce")
   npm list -g typescript &>/dev/null || deps+=("typescript")
@@ -30,15 +30,15 @@ npm_global_deps() {
   fi
 }
 
+# Package extension
 package() {
-  # Package extension
   echo "==> Packaging extension"
   rm -f *.vsix
   vsce package || exitdialog
 }
 
+# Install extension
 install() {
-  # Install extension
   echo "==> Installing extension"
   code --install-extension *.vsix || exitdialog $?
 }
