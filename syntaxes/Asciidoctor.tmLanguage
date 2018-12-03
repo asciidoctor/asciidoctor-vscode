@@ -933,6 +933,14 @@ Examples:
 			<array>
 				<dict>
 					<key>include</key>
+					<string>#typographic_quotes_single</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
 					<string>#strong_double</string>
 				</dict>
 				<dict>
@@ -1012,6 +1020,14 @@ Examples:
 			<string>markup.italic.double.asciidoc</string>
 			<key>patterns</key>
 			<array>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_single</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_double</string>
+				</dict>
 				<dict>
 					<key>include</key>
 					<string>#strong_double</string>
@@ -1147,6 +1163,14 @@ Examples:
 		<dict>
 			<key>patterns</key>
 			<array>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_single</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_double</string>
+				</dict>
 				<dict>
 					<key>include</key>
 					<string>#passthrough</string>
@@ -1525,6 +1549,14 @@ Examples:
 			<array>
 				<dict>
 					<key>include</key>
+					<string>#typographic_quotes_single</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
 					<string>#strong_double</string>
 				</dict>
 				<dict>
@@ -1604,6 +1636,14 @@ Examples:
 			<string>string.other.unquoted.double.asciidoc</string>
 			<key>patterns</key>
 			<array>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_single</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_double</string>
+				</dict>
 				<dict>
 					<key>include</key>
 					<string>#strong_double</string>
@@ -1689,6 +1729,14 @@ Examples:
 			<array>
 				<dict>
 					<key>include</key>
+					<string>#typographic_quotes_single</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
 					<string>#strong_double</string>
 				</dict>
 				<dict>
@@ -1768,6 +1816,14 @@ Examples:
 			<string>string.other.literal.double.asciidoc</string>
 			<key>patterns</key>
 			<array>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_single</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_double</string>
+				</dict>
 				<dict>
 					<key>include</key>
 					<string>#strong_double</string>
@@ -2018,6 +2074,14 @@ Examples:
 			<array>
 				<dict>
 					<key>include</key>
+					<string>#typographic_quotes_single</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
 					<string>#emphasis_double</string>
 				</dict>
 				<dict>
@@ -2097,6 +2161,14 @@ Examples:
 			<string>markup.bold.double.asciidoc</string>
 			<key>patterns</key>
 			<array>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_single</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_double</string>
+				</dict>
 				<dict>
 					<key>include</key>
 					<string>#emphasis_double</string>
@@ -2426,6 +2498,202 @@ Examples:
 			<string>^(======) (\w.*)$\n?</string>
 			<key>name</key>
 			<string>markup.heading.level.5.asciidoc</string>
+		</dict>
+		<key>typographic_quotes_double</key>
+		<dict>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?         # might be preceded by an attributes list
+(?&lt;=^|\W)(?&lt;!\\|})     # must be preceded by nonword character, and not by escape or } (attribute)
+("`)(?=\S[\S ]*\S`"\W) # must be followed by inline characters and closed</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.variable.attributelist.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.typographic-quotes.double.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Typographic quotes double.
+
+Examples:
+  "`Text`"
+</string>
+			<key>contentName</key>
+			<string>markup.italicinner.quote.typographic-quotes.double.asciidoc</string>
+			<key>end</key>
+			<string>(?x)
+(`")
+(?!\w) # must be followed by a nonword character</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.typographic-quotes.double.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>markup.italic.quote.typographic-quotes.double.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_single</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#passthrough</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mail</string>
+				</dict>
+			</array>
+		</dict>
+		<key>typographic_quotes_single</key>
+		<dict>
+			<key>begin</key>
+			<string>(?x)
+(\[[^\]]*?\])?         # might be preceded by an attributes list
+(?&lt;=^|\W)(?&lt;!\\|})     # must be preceded by nonword character, and not by escape or } (attribute)
+('`)(?=\S[\S ]*\S`'\W) # must be followed by inline characters and closed</string>
+			<key>beginCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>support.variable.attributelist.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.typographic-quotes.single.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Typographic quotes single.
+
+Examples:
+  '`Text`'
+</string>
+			<key>contentName</key>
+			<string>markup.italicinner.quote.typographic-quotes.single.asciidoc</string>
+			<key>end</key>
+			<string>(?x)
+(`')
+(?!\w) # must be followed by a nonword character</string>
+			<key>endCaptures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.typographic-quotes.single.begin.asciidoc</string>
+				</dict>
+			</dict>
+			<key>name</key>
+			<string>markup.italic.quote.typographic-quotes.single.asciidoc</string>
+			<key>patterns</key>
+			<array>
+				<dict>
+					<key>include</key>
+					<string>#typographic_quotes_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#passthrough</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark_double</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#strong</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#emphasis</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#monospaced</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mark</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#superscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#subscript</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#mail</string>
+				</dict>
+			</array>
 		</dict>
 		<key>ulist_item_marker</key>
 		<dict>
