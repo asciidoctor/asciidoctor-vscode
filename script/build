@@ -40,7 +40,7 @@ help() {
 
 # Exit if any operation fails
 exitdialog() {
-  echo -e "==> $red$boldERROR$reset: build aborted"
+  echo -e "==> ${red}${bold}ERROR${reset}: build aborted"
   exit ${1:-1}
 }
 
@@ -121,7 +121,7 @@ for arg in ${args[@]} ; do
       ;;
 
     *)
-      echo -e "==> $red$boldERROR$reset: unknown argument '${arg}'"
+      echo -e "==> ${red}${bold}ERROR${reset}: unknown argument '$1'"
       ;;
   esac
 done
