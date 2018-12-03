@@ -1,8 +1,46 @@
 #!/bin/bash
 
+red="\033[0;31m"
+bold="\033[1m"
+reset="\033[0m"
+
+
+# Help text
+help() {
+  echo -e "AsciiDoc extension build script
+
+  ${bold}-h${reset}, ${bold}--help${reset}, ${bold}help$reset
+    show this help
+
+  ${bold}build${reset}
+    1. install local node dependencies
+    2. install global node dependencies
+    3. generate the .tmLanguage file
+    4. package the extension
+
+  ${bold}npm${reset}
+    1. install local node dependencies
+    2. install global node dependencies
+
+  ${bold}npm_local${reset}, ${bold}npm_local_deps${reset}
+    1. install local node dependencies
+
+  ${bold}npm_global${reset}, ${bold}npm_global_deps${reset}
+    1. install global node dependencie
+
+  ${bold}generate${reset}, ${bold}generate_syntax${reset}
+    1. generate the .tmLanguage file
+
+  ${bold}package${reset}
+    1. package the extension
+
+  ${bold}install${reset}
+    1. install the extension\n"
+}
+
 # Exit if any operation fails
 exitdialog() {
-  echo -e "==> \033[0;31m\033[1mERROR\033[0m: build aborted"
+  echo -e "==> $red$boldERROR$reset: build aborted"
   exit ${1:-1}
 }
 
@@ -43,12 +81,15 @@ install() {
   code --install-extension *.vsix || exitdialog $?
 }
 
+
 # Move to project root
 cd "$(dirname "$0")/.."
 
+# Run help() if -h or --help or help have been used as argument
+[[ -z $@ || $1 =~ (-h|--help|help) ]] && help && exit
+
 args=()
 for arg in $@ ; do args+=("$arg") ; done
-[[ -z $args ]] && args=(build)
 
 for arg in ${args[@]} ; do
   case $arg in
@@ -80,7 +121,7 @@ for arg in ${args[@]} ; do
       ;;
 
     *)
-      echo -e "==> \033[0;31m\033[1mERROR\033[0m: unknown argument '${arg}'"
+      echo -e "==> $red$boldERROR$reset: unknown argument '${arg}'"
       ;;
   esac
 done
