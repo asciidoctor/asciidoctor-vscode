@@ -44,7 +44,7 @@ export class MarkdownEngine {
 		return { text, offset };
 	}
 
-	public async render(document: vscode.Uri, stripFrontmatter: boolean, text: string, preview: boolean): Promise<string> {
+	public async render(document: vscode.Uri, stripFrontmatter: boolean, text: string): Promise<string> {
 		let offset = 0;
 		if (stripFrontmatter) {
 			const markdownContent = this.stripFrontmatter(text);
@@ -55,7 +55,7 @@ export class MarkdownEngine {
 		this.currentDocument = document;
 		this.firstLine = offset;
         const engine = await this.getEngine(document);
-        let ascii_doc = engine.parseText(text, preview)
+        let ascii_doc = engine.parseText(text)
         return ascii_doc;
 	}
 

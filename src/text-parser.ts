@@ -57,7 +57,7 @@ export class AsciiDocParser {
         return match;
     }
 
-    private async convert_using_javascript(text: string, preview: boolean) {
+    private async convert_using_javascript(text: string) {
         return new Promise<string>(resolve => {
             const editor = vscode.window.activeTextEditor;
             const doc = editor.document;
@@ -148,10 +148,10 @@ export class AsciiDocParser {
         return result;
     }
 
-    public async parseText(text: string, preview: boolean): Promise<string> {
+    public async parseText(text: string): Promise<string> {
         const use_asciidoctor_js = vscode.workspace.getConfiguration('asciidoc').get('use_asciidoctor_js');
         if (use_asciidoctor_js)
-            return this.convert_using_javascript(text, preview)
+            return this.convert_using_javascript(text)
         else
             return this.convert_using_application(text)
     }

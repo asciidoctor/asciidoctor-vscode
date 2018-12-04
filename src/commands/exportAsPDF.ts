@@ -36,7 +36,7 @@ export class ExportAsPDF implements Command {
             destination = 'temp.pdf'
         let parser = new AsciiDocParser(path.resolve(doc.fileName))
         //const body =  await parser.parseText()
-        const body = await this.engine.render(doc.uri, true, text, false)
+        const body = await this.engine.render(doc.uri, true, text)
         const ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
         const html = body;
         const showtitlepage = parser.getAttribute("showtitlepage")
