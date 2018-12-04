@@ -131,7 +131,7 @@ meta.foundation-mq-large { font-family: "only screen and (min-width:1440px)"; wi
 
 html, body { font-size: 100%; }
 
-body { background: white; color: rgba(0, 0, 0, 0.8); padding: 0; margin: 0; font-family: "IBM Plex Serif", "Noto Serif", "DejaVu Serif", serif; font-weight: normal; font-style: normal; line-height: 1; position: relative; cursor: auto; }
+body { padding: 0; margin: 0; font-family: "IBM Plex Serif", "Noto Serif", "DejaVu Serif", serif; font-weight: normal; font-style: normal; line-height: 1; position: relative; cursor: auto; }
 
 a:hover { cursor: pointer; }
 
@@ -756,7 +756,7 @@ p { margin-bottom: 1.25rem; }
   .hide-on-print { display: none !important; }
   .print-only { display: block !important; }
   .hide-for-print { display: none !important; }
-  .show-for-print { display: inherit !important; } 
+  .show-for-print { display: inherit !important; }
 }
 
 .break-before { page-break-before: always; }

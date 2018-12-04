@@ -69,8 +69,6 @@ export class AsciiDocParser {
             var attributes = {};
             if (contains_stylesheet || use_default_stylesheet)
                 attributes = { 'copycss': true }
-            else if (preview)
-                attributes = { 'copycss': true, 'stylesdir': stylesdir, 'stylesheet': 'asciidoctor-preview.css' }
             else
                 attributes = { 'copycss': true, 'stylesdir': stylesdir, 'stylesheet': 'asciidoctor.css' }
             const options = {
