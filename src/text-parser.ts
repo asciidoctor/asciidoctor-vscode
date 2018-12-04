@@ -57,7 +57,7 @@ export class AsciiDocParser {
         return match;
     }
 
-    private async convert_using_javascript(text: string) {
+    private async convert_using_javascript(text: string, preview: boolean) {
         return new Promise<string>(resolve => {
             const editor = vscode.window.activeTextEditor;
             const doc = editor.document;
@@ -69,6 +69,8 @@ export class AsciiDocParser {
             var attributes = {};
             if (contains_stylesheet || use_default_stylesheet)
                 attributes = { 'copycss': true }
+            else if (preview)
+                attributes = { 'copycss': true, 'stylesdir': stylesdir, 'stylesheet': 'asciidoctor-preview.css' }
             else
                 attributes = { 'copycss': true, 'stylesdir': stylesdir, 'stylesheet': 'asciidoctor.css' }
             const options = {
@@ -148,14 +150,12 @@ export class AsciiDocParser {
         return result;
     }
 
-    public async parseText(text: string): Promise<string> {
+    public async parseText(text: string, preview: boolean): Promise<string> {
         const use_asciidoctor_js = vscode.workspace.getConfiguration('asciidoc').get('use_asciidoctor_js');
         if (use_asciidoctor_js)
-            return this.convert_using_javascript(text)
+            return this.convert_using_javascript(text, preview)
         else
             return this.convert_using_application(text)
     }
 
 }
-
-
