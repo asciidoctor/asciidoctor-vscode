@@ -16,7 +16,7 @@ script { display: none !important; }
 
 /* ========================================================================== Base ========================================================================== */
 /** 1. Set default font family to sans-serif. 2. Prevent iOS text size adjust after orientation change, without disabling user zoom. */
-html { font-family: sans-serif; /* 1 */ -ms-text-size-adjust: 100%; /* 2 */ -webkit-text-size-adjust: 100%; /* 2 */ }
+html { /* DISABLED font-family: sans-serif; */ /* 1 */ -ms-text-size-adjust: 100%; /* 2 */ -webkit-text-size-adjust: 100%; /* 2 */ }
 
 /** Remove default margin. */
 body { margin: 0; }
@@ -51,7 +51,7 @@ hr { -moz-box-sizing: content-box; box-sizing: content-box; height: 0; }
 /* DISABLED mark { background: #ff0; color: #000; } */
 
 /** Correct font family set oddly in Safari 5 and Chrome. */
-code, kbd, pre, samp { font-family: monospace, serif; font-size: 1em; }
+code, kbd, pre, samp { /* DISABLED font-family: monospace, serif; */ font-size: 1em; }
 
 /** Improve readability of pre-formatted text in all browsers. */
 pre { white-space: pre-wrap; }
@@ -88,7 +88,7 @@ fieldset { border: 1px solid #c0c0c0; margin: 0 2px; padding: 0.35em 0.625em 0.7
 legend { border: 0; /* 1 */ padding: 0; /* 2 */ }
 
 /** 1. Correct font family not being inherited in all browsers. 2. Correct font size not being inherited in all browsers. 3. Address margins set differently in Firefox 4+, Safari 5, and Chrome. */
-button, input, select, textarea { font-family: inherit; /* 1 */ font-size: 100%; /* 2 */ margin: 0; /* 3 */ }
+button, input, select, textarea { /* DISABLED font-family: inherit; */ /* 1 */ font-size: 100%; /* 2 */ margin: 0; /* 3 */ }
 
 /** Address Firefox 4+ setting `line-height` on `input` using `!important` in the UA stylesheet. */
 button, input { line-height: normal; }
@@ -121,17 +121,17 @@ textarea { overflow: auto; /* 1 */ vertical-align: top; /* 2 */ }
 /** Remove most spacing between table cells. */
 table { border-collapse: collapse; border-spacing: 0; }
 
-meta.foundation-mq-small { font-family: "only screen and (min-width: 768px)"; width: 768px; }
+meta.foundation-mq-small { /* DISABLED font-family: "only screen and (min-width: 768px)"; */ width: 768px; }
 
-meta.foundation-mq-medium { font-family: "only screen and (min-width:1280px)"; width: 1280px; }
+meta.foundation-mq-medium { /* DISABLED font-family: "only screen and (min-width:1280px)"; */ width: 1280px; }
 
-meta.foundation-mq-large { font-family: "only screen and (min-width:1440px)"; width: 1440px; }
+meta.foundation-mq-large { /* DISABLED font-family: "only screen and (min-width:1440px)"; */ width: 1440px; }
 
 *, *:before, *:after { -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box; }
 
 html, body { font-size: 100%; }
 
-body { padding: 0; margin: 0; font-family: "IBM Plex Serif", "Noto Serif", "DejaVu Serif", serif; font-weight: normal; font-style: normal; line-height: 1; position: relative; cursor: auto; }
+body { padding: 0; margin: 0; /* DISABLED font-family: "IBM Plex Serif", "Noto Serif", "DejaVu Serif", serif; */ font-weight: normal; font-style: normal; line-height: 1; position: relative; cursor: auto; }
 
 a:hover { cursor: pointer; }
 
@@ -184,11 +184,11 @@ a { /* DISABLED color: #2156a5; */ text-decoration: underline; line-height: inhe
 a img { border: none; }
 
 /* Default paragraph styles */
-p { font-family: inherit; font-weight: normal; font-size: 1em; line-height: 1.6; margin-bottom: 1.25em; text-rendering: optimizeLegibility; }
+p { /* DISABLED font-family: inherit; */ font-weight: normal; font-size: 1em; line-height: 1.6; margin-bottom: 1.25em; text-rendering: optimizeLegibility; }
 p aside { font-size: 0.875em; line-height: 1.35; font-style: italic; }
 
 /* Default header styles */
-h1, h2, h3, #toctitle, .sidebarblock > .content > .title, h4, h5, h6 { font-family: "IBM Plex Sans", "Open Sans", "DejaVu Sans", sans-serif; font-weight: 800; font-style: normal; /* DISABLED color: black; */ text-rendering: optimizeLegibility; margin-top: 1em; margin-bottom: 0.5em; line-height: 1.0125em; }
+h1, h2, h3, #toctitle, .sidebarblock > .content > .title, h4, h5, h6 { /* DISABLED font-family: "IBM Plex Sans", "Open Sans", "DejaVu Sans", sans-serif; */ font-weight: 800; font-style: normal; /* DISABLED color: black; */ text-rendering: optimizeLegibility; margin-top: 1em; margin-bottom: 0.5em; line-height: 1.0125em; }
 h1 small, h2 small, h3 small, #toctitle small, .sidebarblock > .content > .title small, h4 small, h5 small, h6 small { font-size: 60%; /* DISABLED color: #4d4d4d; */ line-height: 0; }
 
 h1 { font-size: 2.125em; }
@@ -212,10 +212,10 @@ strong, b { font-weight: bold; line-height: inherit; }
 
 small { font-size: 60%; line-height: inherit; }
 
-code { font-family: "Droid Sans Mono", "DejaVu Sans Mono", monospace; font-weight: normal; /* DISABLED color: rgba(0, 0, 0, 0.9); */ }
+code { /* DISABLED font-family: "Droid Sans Mono", "DejaVu Sans Mono", monospace; */ font-weight: normal; /* DISABLED color: rgba(0, 0, 0, 0.9); */ }
 
 /* Lists */
-ul, ol, dl { font-size: 1em; line-height: 1.6; margin-bottom: 1.25em; list-style-position: outside; font-family: inherit; }
+ul, ol, dl { font-size: 1em; line-height: 1.6; margin-bottom: 1.25em; list-style-position: outside; /* DISABLED font-family: inherit; */ }
 
 ul, ol { margin-left: 1.5em; }
 ul.no-bullet, ol.no-bullet { margin-left: 1.5em; }
@@ -280,7 +280,7 @@ h1, h2, h3, #toctitle, .sidebarblock > .content > .title, h4, h5, h6 { line-heig
 *:not(pre) > code.nobreak { word-wrap: normal; }
 *:not(pre) > code.nowrap { white-space: nowrap; }
 
-pre, pre > code { line-height: 1.45; /* DISABLED color: rgba(0, 0, 0, 0.9); */ font-family: "Droid Sans Mono", "DejaVu Sans Mono", "Monospace", monospace; font-weight: normal; text-rendering: optimizeSpeed; }
+pre, pre > code { line-height: 1.45; /* DISABLED color: rgba(0, 0, 0, 0.9); */ /* DISABLED font-family: "Droid Sans Mono", "DejaVu Sans Mono", "Monospace", monospace; */ font-weight: normal; text-rendering: optimizeSpeed; }
 
 em em { font-style: normal; }
 
@@ -288,7 +288,7 @@ strong strong { font-weight: normal; }
 
 /* DISABLED .keyseq { color: rgba(51, 51, 51, 0.8); } */
 
-kbd { font-family: "Droid Sans Mono", "DejaVu Sans Mono", monospace; display: inline-block; /* DISABLED color: rgba(0, 0, 0, 0.8); */ font-size: 0.65em; line-height: 1.45; /* DISABLED background-color: #f7f7f7; */ border: 1px solid #ccc; -webkit-border-radius: 3px; border-radius: 3px; /* DISABLED -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 0 0 0.1em white inset; */ /* DISABLED box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 0 0 0.1em white inset; */ margin: 0 0.15em; padding: 0.2em 0.5em; vertical-align: middle; position: relative; top: -0.1em; white-space: nowrap; }
+kbd { /* DISABLED font-family: "Droid Sans Mono", "DejaVu Sans Mono", monospace; */ display: inline-block; /* DISABLED color: rgba(0, 0, 0, 0.8); */ font-size: 0.65em; line-height: 1.45; /* DISABLED background-color: #f7f7f7; */ border: 1px solid #ccc; -webkit-border-radius: 3px; border-radius: 3px; /* DISABLED -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 0 0 0.1em white inset; */ /* DISABLED box-shadow: 0 1px 0 rgba(0, 0, 0, 0.2), 0 0 0 0.1em white inset; */ margin: 0 0.15em; padding: 0.2em 0.5em; vertical-align: middle; position: relative; top: -0.1em; white-space: nowrap; }
 
 .keyseq kbd:first-child { margin-left: 0; }
 
@@ -337,7 +337,7 @@ b.button:after { content: "]"; padding: 0 2px 0 3px; }
 #toc > ul { margin-left: 0.125em; }
 #toc ul.sectlevel0 > li > a { font-style: italic; }
 #toc ul.sectlevel0 ul.sectlevel1 { margin: 0.5em 0; }
-#toc ul { font-family: "IBM Plex Sans", "Open Sans", "DejaVu Sans", sans-serif; list-style-type: none; }
+#toc ul { /* DISABLED font-family: "IBM Plex Sans", "Open Sans", "DejaVu Sans", sans-serif; */ list-style-type: none; }
 #toc li { line-height: 1.3334; margin-top: 0.3334em; }
 #toc a { text-decoration: none; }
 #toc a:active { text-decoration: underline; }
@@ -385,7 +385,7 @@ b.button:after { content: "]"; padding: 0 2px 0 3px; }
 
 .audioblock, .imageblock, .literalblock, .listingblock, .stemblock, .videoblock { margin-bottom: 1.25em; }
 
-.admonitionblock td.content > .title, .audioblock > .title, .exampleblock > .title, .imageblock > .title, .listingblock > .title, .literalblock > .title, .stemblock > .title, .openblock > .title, .paragraph > .title, .quoteblock > .title, table.tableblock > .title, .verseblock > .title, .videoblock > .title, .dlist > .title, .olist > .title, .ulist > .title, .qlist > .title, .hdlist > .title { text-rendering: optimizeLegibility; text-align: left; font-family: "IBM Plex Serif", "Noto Serif", "DejaVu Serif", serif; font-size: 1rem; font-style: italic; }
+.admonitionblock td.content > .title, .audioblock > .title, .exampleblock > .title, .imageblock > .title, .listingblock > .title, .literalblock > .title, .stemblock > .title, .openblock > .title, .paragraph > .title, .quoteblock > .title, table.tableblock > .title, .verseblock > .title, .videoblock > .title, .dlist > .title, .olist > .title, .ulist > .title, .qlist > .title, .hdlist > .title { text-rendering: optimizeLegibility; text-align: left; /* DISABLED font-family: "IBM Plex Serif", "Noto Serif", "DejaVu Serif", serif; */ font-size: 1rem; font-style: italic; }
 
 table.tableblock > caption.title { white-space: nowrap; overflow: visible; max-width: 0; }
 
@@ -396,7 +396,7 @@ table.tableblock #preamble > .sectionbody > .paragraph:first-of-type p { font-si
 .admonitionblock > table { border-collapse: separate; border: 0; /* DISABLED background: none; */ width: 100%; }
 .admonitionblock > table td.icon { text-align: center; width: 80px; }
 .admonitionblock > table td.icon img { max-width: none; }
-.admonitionblock > table td.icon .title { font-weight: bold; font-family: "IBM Plex Sans", "Open Sans", "DejaVu Sans", sans-serif; text-transform: uppercase; }
+.admonitionblock > table td.icon .title { font-weight: bold; /* DISABLED font-family: "IBM Plex Sans", "Open Sans", "DejaVu Sans", sans-serif; */ text-transform: uppercase; }
 .admonitionblock > table td.content { padding-left: 1.125em; padding-right: 1.25em; border-left: 1px solid #ddddd8; /* DISABLED color: rgba(0, 0, 0, 0.6); */ }
 .admonitionblock > table td.content > :last-child > :last-child { margin-bottom: 0; }
 
@@ -460,7 +460,7 @@ table.pyhltable .linenodiv { /* DISABLED background: none !important; */ padding
 .quoteblock .quoteblock blockquote:before { display: none; }
 
 .verseblock { margin: 0 1em 1.25em 1em; }
-.verseblock pre { font-family: "Open Sans", "DejaVu Sans", sans; font-size: 1.15rem; /* DISABLED color: rgba(0, 0, 0, 0.85); */ font-weight: 300; text-rendering: optimizeLegibility; }
+.verseblock pre { /* DISABLED font-family: "Open Sans", "DejaVu Sans", sans; */ font-size: 1.15rem; /* DISABLED color: rgba(0, 0, 0, 0.85); */ font-weight: 300; text-rendering: optimizeLegibility; }
 .verseblock pre strong { font-weight: 400; }
 .verseblock .attribution { margin-top: 1.25rem; margin-left: 0.5ex; }
 
@@ -698,7 +698,7 @@ a span.icon > .fa { cursor: inherit; }
 .admonitionblock td.icon .icon-caution:before { content: "\f06d"; /* DISABLED color: #bf3400; */ }
 .admonitionblock td.icon .icon-important:before { content: "\f06a"; /* DISABLED color: #bf0000; */ }
 
-.conum[data-value] { display: inline-block; /* DISABLED color: #fff !important; */ /* DISABLED background-color: rgba(0, 0, 0, 0.8); */ -webkit-border-radius: 100px; border-radius: 100px; text-align: center; font-size: 0.75em; width: 1.67em; height: 1.67em; line-height: 1.67em; font-family: "Open Sans", "DejaVu Sans", sans-serif; font-style: normal; font-weight: bold; }
+.conum[data-value] { display: inline-block; /* DISABLED color: #fff !important; */ /* DISABLED background-color: rgba(0, 0, 0, 0.8); */ -webkit-border-radius: 100px; border-radius: 100px; text-align: center; font-size: 0.75em; width: 1.67em; height: 1.67em; line-height: 1.67em; /* DISABLED font-family: "Open Sans", "DejaVu Sans", sans-serif; */ font-style: normal; font-weight: bold; }
 /* DISABLED .conum[data-value] * { color: #fff !important; } */
 .conum[data-value] + b { display: none; }
 .conum[data-value]:after { content: attr(data-value); }
