@@ -624,69 +624,69 @@ div.unbreakable { page-break-inside: avoid; }
 
 .line-through { text-decoration: line-through; }
 
-/* DISABLED .aqua { color: #00bfbf; } */
+.aqua { color: #00bfbf; }
 
-/* DISABLED .aqua-background { background-color: #00fafa; } */
+.aqua-background { background-color: #00fafa; }
 
-/* DISABLED .black { color: black; } */
+.black { color: black; }
 
-/* DISABLED .black-background { background-color: black; } */
+.black-background { background-color: black; }
 
-/* DISABLED .blue { color: #0000bf; } */
+.blue { color: #0000bf; }
 
-/* DISABLED .blue-background { background-color: #0000fa; } */
+.blue-background { background-color: #0000fa; }
 
-/* DISABLED .fuchsia { color: #bf00bf; } */
+.fuchsia { color: #bf00bf; }
 
-/* DISABLED .fuchsia-background { background-color: #fa00fa; } */
+.fuchsia-background { background-color: #fa00fa; }
 
-/* DISABLED .gray { color: #606060; } */
+.gray { color: #606060; }
 
-/* DISABLED .gray-background { background-color: #7d7d7d; } */
+.gray-background { background-color: #7d7d7d; }
 
-/* DISABLED .green { color: #006000; } */
+.green { color: #006000; }
 
-/* DISABLED .green-background { background-color: #007d00; } */
+.green-background { background-color: #007d00; }
 
-/* DISABLED .lime { color: #00bf00; } */
+.lime { color: #00bf00; }
 
-/* DISABLED .lime-background { background-color: #00fa00; } */
+.lime-background { background-color: #00fa00; }
 
-/* DISABLED .maroon { color: #600000; } */
+.maroon { color: #600000; }
 
-/* DISABLED .maroon-background { background-color: #7d0000; } */
+.maroon-background { background-color: #7d0000; }
 
-/* DISABLED .navy { color: #000060; } */
+.navy { color: #000060; }
 
-/* DISABLED .navy-background { background-color: #00007d; } */
+.navy-background { background-color: #00007d; }
 
-/* DISABLED .olive { color: #606000; } */
+.olive { color: #606000; }
 
-/* DISABLED .olive-background { background-color: #7d7d00; } */
+.olive-background { background-color: #7d7d00; }
 
-/* DISABLED .purple { color: #600060; } */
+.purple { color: #600060; }
 
-/* DISABLED .purple-background { background-color: #7d007d; } */
+.purple-background { background-color: #7d007d; }
 
-/* DISABLED .red { color: #bf0000; } */
+.red { color: #bf0000; }
 
-/* DISABLED .red-background { background-color: #fa0000; } */
+.red-background { background-color: #fa0000; }
 
-/* DISABLED .silver { color: #909090; } */
+.silver { color: #909090; }
 
-/* DISABLED .silver-background { background-color: #bcbcbc; } */
+.silver-background { background-color: #bcbcbc; }
 
-/* DISABLED .teal { color: #006060; } */
+.teal { color: #006060; }
 
-/* DISABLED .teal-background { background-color: #007d7d; } */
+.teal-background { background-color: #007d7d; }
 
-/* DISABLED .white { color: #bfbfbf; } */
+.white { color: #bfbfbf; }
 
-/* DISABLED .white-background { background-color: #fafafa; } */
+.white-background { background-color: #fafafa; }
 
-/* DISABLED .yellow { color: #bfbf00; } */
+.yellow { color: #bfbf00; }
 
-/* DISABLED .yellow-background { background-color: #fafa00; } */
+.yellow-background { background-color: #fafa00; }
 
 span.icon > .fa { cursor: default; }
 a span.icon > .fa { cursor: inherit; }
