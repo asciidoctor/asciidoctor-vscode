@@ -157,5 +157,3 @@ export class AsciiDocParser {
     }
 
 }
-
-
