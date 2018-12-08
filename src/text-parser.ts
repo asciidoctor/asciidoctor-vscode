@@ -95,7 +95,7 @@ export class AsciiDocParser {
     private async convert_using_application(text: string) {
         const editor = vscode.window.activeTextEditor;
         const doc = editor.document;
-        const documentPath = path.dirname(path.resolve(doc.fileName));
+        const documentPath = path.dirname(this.filename);
         this.document = null;
 
         return new Promise<string>(resolve => {
@@ -123,8 +123,8 @@ export class AsciiDocParser {
                 result_data += data.toString();
             });
             asciidoctor.on('close', (code) => {
-                var result = this.fixLinks(result_data);
-                resolve(result);
+                //var result = this.fixLinks(result_data);
+                resolve(result_data);
             })
             asciidoctor.stdin.write(text);
             asciidoctor.stdin.end();

@@ -32,7 +32,6 @@ window.onload = () => {
 };
 
 onceDocumentLoaded(() => {
-    console.log("Document LOAD", settings.scrollPreviewWithEditor);
 	if (settings.scrollPreviewWithEditor) {
 		setTimeout(() => {
 			const initialLine = +settings.line;
