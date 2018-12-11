@@ -113,6 +113,8 @@ export class AsciiDocParser {
                 console.error(errorMessage);
                 errorMessage += errorMessage.replace("\n", '<br><br>');
                 errorMessage += "<br><br>"
+                errorMessage += "<b>command:</b> " + adoc_cmd + " " + adoc_cmd_args.join(" ")
+                errorMessage += "<br><br>"
                 errorMessage += "<b>If the asciidoctor binary is not in your PATH, you can set the full path.<br>"
                 errorMessage += "Go to `File -> Preferences -> User settings` and adjust the asciidoc.asciidoctor_command</b>"
                 resolve(errorMessage);
