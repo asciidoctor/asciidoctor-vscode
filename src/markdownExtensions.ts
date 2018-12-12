@@ -28,14 +28,16 @@ const resolveExtensionResources = (extension: vscode.Extension<any>, resourcePat
 export interface MarkdownContributions {
 	readonly extensionPath: string;
 	readonly previewScripts: vscode.Uri[];
-	readonly previewStyles: vscode.Uri[];
+	readonly previewStylesEditor: vscode.Uri[];
+	readonly previewStylesDefault: vscode.Uri[];
 	readonly markdownItPlugins: Thenable<(md: any) => any>[];
 	readonly previewResourceRoots: vscode.Uri[];
 }
 
 class MarkdownExtensionContributions implements MarkdownContributions {
 	private readonly _scripts: vscode.Uri[] = [];
-	private readonly _styles: vscode.Uri[] = [];
+	private readonly _stylesEditor: vscode.Uri[] = [];
+	private readonly _stylesDefault: vscode.Uri[] = [];
 	private readonly _previewResourceRoots: vscode.Uri[] = [];
 	private readonly _plugins: Thenable<(md: any) => any>[] = [];
 
@@ -50,9 +52,14 @@ class MarkdownExtensionContributions implements MarkdownContributions {
 		return this._scripts;
 	}
 
-	public get previewStyles(): vscode.Uri[] {
+	public get previewStylesEditor(): vscode.Uri[] {
 		this.ensureLoaded();
-		return this._styles;
+		return this._stylesEditor;
+	}
+
+	public get previewStylesDefault(): vscode.Uri[] {
+		this.ensureLoaded();
+		return this._stylesDefault;
 	}
 
 	public get previewResourceRoots(): vscode.Uri[] {
@@ -77,7 +84,8 @@ class MarkdownExtensionContributions implements MarkdownContributions {
 				continue;
 			}
 
-			this.tryLoadPreviewStyles(contributes, extension);
+			this.tryLoadPreviewStylesEditor(contributes, extension);
+			this.tryLoadPreviewStylesDefault(contributes, extension);
 			this.tryLoadPreviewScripts(contributes, extension);
 			this.tryLoadMarkdownItPlugins(contributes, extension);
 
@@ -108,17 +116,18 @@ class MarkdownExtensionContributions implements MarkdownContributions {
 		this._scripts.push(...resolveExtensionResources(extension, contributes['asciidoc.previewScripts']));
 	}
 
-	private tryLoadPreviewStyles(
+	private tryLoadPreviewStylesEditor(
 		contributes: any,
 		extension: vscode.Extension<any>
 	) {
-		const useEditorStyle = vscode.workspace.getConfiguration('asciidoc').get('preview.useEditorStyle')
-		if (useEditorStyle) {
-			this._styles.push(...resolveExtensionResources(extension, contributes['asciidoc.previewStylesEditor']));
-		} else {
-			this._styles.push(...resolveExtensionResources(extension, contributes['asciidoc.previewStylesDefault']));
-		}
-		console.log(this._styles)
+		this._stylesEditor.push(...resolveExtensionResources(extension, contributes['asciidoc.previewStylesEditor']));
+	}
+
+	private tryLoadPreviewStylesDefault(
+		contributes: any,
+		extension: vscode.Extension<any>
+	) {
+		this._stylesDefault.push(...resolveExtensionResources(extension, contributes['asciidoc.previewStylesDefault']));
 	}
 }
 
