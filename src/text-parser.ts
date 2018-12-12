@@ -95,7 +95,7 @@ export class AsciiDocParser {
     private async convert_using_application(text: string) {
         const editor = vscode.window.activeTextEditor;
         const doc = editor.document;
-        const documentPath = path.dirname(this.filename);
+        const documentPath = path.dirname(this.filename).replace('"', '\\"');
         this.document = null;
 
         return new Promise<string>(resolve => {
@@ -105,13 +105,15 @@ export class AsciiDocParser {
             var adoc_cmd_array = asciidoctor_command.split(/(\s+)/).filter( function(e) { return e.trim().length > 0; } ) ;
             var adoc_cmd = adoc_cmd_array[0]
             var adoc_cmd_args = adoc_cmd_array.slice(1)
-            adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-o-', '-', '-B', '\'' + documentPath + '\''])
+            adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-o-', '-', '-B', '"' + documentPath + '"'])
             var asciidoctor = spawn(adoc_cmd, adoc_cmd_args, options);
 
             asciidoctor.stderr.on('data', (data) => {
                 let errorMessage = data.toString();
                 console.error(errorMessage);
                 errorMessage += errorMessage.replace("\n", '<br><br>');
+                errorMessage += "<br><br>"
+                errorMessage += "<b>command:</b> " + adoc_cmd + " " + adoc_cmd_args.join(" ")
                 errorMessage += "<br><br>"
                 errorMessage += "<b>If the asciidoctor binary is not in your PATH, you can set the full path.<br>"
                 errorMessage += "Go to `File -> Preferences -> User settings` and adjust the asciidoc.asciidoctor_command</b>"
