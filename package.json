@@ -281,6 +281,11 @@
 					"description": "%asciidoc.preview.lineHeight.desc%",
 					"scope": "resource"
 				},
+				"asciidoc.preview.useEditorStyle": {
+					"type": "boolean",
+					"default": true,
+					"description": "Use editor style instead of default ascidoctor.css"
+				},
 				"asciidoc.preview.scrollPreviewWithEditor": {
 					"type": "boolean",
 					"default": true,
@@ -359,8 +364,12 @@
 				"url": "./schemas/package.schema.json"
 			}
 		],
-		"asciidoc.previewStyles": [
-			"./media/asciidoctor.css",
+		"asciidoc.previewStylesEditor": [
+			"./media/asciidoctor-editor.css",
+			"./media/highlight.css"
+		],
+		"asciidoc.previewStylesDefault": [
+			"./media/asciidoctor-default.css",
 			"./media/highlight.css"
 		],
 		"asciidoc.previewScripts": [

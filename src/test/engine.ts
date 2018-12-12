@@ -11,7 +11,8 @@ import { githubSlugifier } from '../slugify';
 const emptyContributions = new class implements MarkdownContributions {
 	readonly extensionPath = '';
 	readonly previewScripts: vscode.Uri[] = [];
-	readonly previewStyles: vscode.Uri[] = [];
+	readonly previewStylesEditor: vscode.Uri[] = [];
+	readonly previewStylesDefault: vscode.Uri[] = [];
 	readonly previewResourceRoots: vscode.Uri[] = [];
 	readonly markdownItPlugins: Promise<(md: any) => any>[] = [];
 };

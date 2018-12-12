@@ -163,9 +163,17 @@ export class MarkdownContentProvider {
 	}
 
 	private getStyles(resource: vscode.Uri, nonce: string, config: MarkdownPreviewConfiguration, state?: any): string {
-		const baseStyles = this.contributions.previewStyles
-			.map(resource => `<link rel="stylesheet" type="text/css" href="${resource.toString()}">`)
-			.join('\n');
+		const useEditorStyle = vscode.workspace.getConfiguration('asciidoc').get('preview.useEditorStyle')
+		var baseStyles;
+		if (useEditorStyle) {
+			baseStyles = this.contributions.previewStylesEditor
+				.map(resource => `<link rel="stylesheet" type="text/css" href="${resource.toString()}">`)
+				.join('\n');
+		} else {
+			baseStyles = this.contributions.previewStylesDefault
+				.map(resource => `<link rel="stylesheet" type="text/css" href="${resource.toString()}">`)
+				.join('\n');
+		}
 
 		return `${baseStyles}
 			${this.getSettingsOverrideStyles(nonce, config)}
