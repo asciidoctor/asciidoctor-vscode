@@ -28,6 +28,7 @@ If you want to use the Ruby version of [**Asciidoctor**](http://asciidoctor.org/
 
 ## How to build and install from source (Linux)
 
+### Manual build
 ```bash
 git clone https://github.com/asciidoctor/asciidoctor-vscode
 cd asciidoctor-vscode
@@ -36,6 +37,13 @@ sudo npm install -g vsce typescript
 vsce package
 code --install-extension *.vsix
 ```
+
+### Build script
+```bash
+git clone https://github.com/asciidoctor/asciidoctor-vscode
+bash ./script/build build install
+```
+The build script accepts other commands too, run `bash ./script/build help` for more information.
 
 ## Contributors
 
