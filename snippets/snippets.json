@@ -138,5 +138,20 @@
 			"$0"
 		],
 		"description": "Insert source block"
+    },
+    "Insert table": {
+        "prefix": "table",
+        "body": [
+            "[${1:Attributes}]",
+            "|===",
+            "|${2:Header column 1} |${3:Header column 2} |${4:Header column 3}",
+            "",
+            "|${5:Cell 1, row 1}",
+            "|${6:Cell 2, row 1}",
+            "|${7:Cell 3, row 1}",
+            "|===",
+            "$0"
+        ],
+        "description": "Insert table"
     }
 }
