@@ -132,7 +132,7 @@
     "Insert source block": {
         "prefix": "source",
 		"body": [
-            "[source,${1:language}${2:,attributes}]",
+            "[source,${1:language},${2:attributes}]",
 			"----",
 			"${3:${TM_SELECTED_TEXT:code}}",
 			"----",
