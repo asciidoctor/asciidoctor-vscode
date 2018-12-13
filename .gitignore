@@ -5,3 +5,4 @@ node_modules/
 test/samples/*.pdf
 media/*.js
 package-lock.json
+test/samples/playground.*
