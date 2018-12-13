@@ -186,5 +186,10 @@
         "prefix": "doctype",
         "body": ":doctype: ${1|article,book,manpage,inline|}\n",
         "description": "Insert doctype attribute"
+    },
+    "Insert source highlighter": {
+        "prefix": "source-highlighter",
+        "body": ":source-highlighter: ${1|coderay,highlightjs,prettify,pygments,rouge|}\n",
+        "description": "Insert source highlighter"
     }
 }
