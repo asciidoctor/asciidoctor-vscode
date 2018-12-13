@@ -121,8 +121,9 @@
     "Insert literal block": {
         "prefix": "literal",
 		"body": [
+            "[${1:attributes}]",
 			"....",
-			"${1:${TM_SELECTED_TEXT:text}}",
+			"${2:${TM_SELECTED_TEXT:text}}",
 			"....",
 			"$0"
 		],
