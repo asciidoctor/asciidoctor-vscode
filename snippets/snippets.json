@@ -153,5 +153,15 @@
             "$0"
         ],
         "description": "Insert table"
+    },
+    "Insert toc": {
+        "prefix": "toc",
+        "body": ":toc: ${1|auto,preamble,macro,right,left|}\n",
+        "description": "Insert toc attribute"
+    },
+    "Insert doctype": {
+        "prefix": "doctype",
+        "body": ":doctype: ${1|article,book,manpage,inline|}\n",
+        "description": "Insert doctype attribute"
     }
 }
