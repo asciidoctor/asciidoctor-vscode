@@ -374,6 +374,12 @@
 		],
 		"asciidoc.previewScripts": [
 			"./media/index.js"
+		],
+		"snippets": [
+			{
+				"language": "asciidoc",
+				"path": "./snippets/snippets.json"
+			}
 		]
 	},
 	"scripts": {
