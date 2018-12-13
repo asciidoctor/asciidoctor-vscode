@@ -1,5 +1,10 @@
 # Changes
 
+## 2.2.0
+* Fix documents with apostrophe in path not rendering with manual command
+* Add option to use editor or default style in preview
+* Snippets
+
 ## 2.1.1
 
 * Use theme background on preview (thanks to matteo.campinoti94@gmail.com)
