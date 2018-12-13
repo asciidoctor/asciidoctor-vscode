@@ -2,10 +2,10 @@
     "Technical Document": {
         "prefix": "asciidoc-tech-doc",
         "body": [
-            "Document Title",
+            "${TM_FILENAME_BASE:Document Title}",
             "===============",
             "Author Name <author@email.com>",
-            "v1.0, February 2018: Initial release",
+            "v1.0, ${CURRENT_MONTH_NAME:Month} ${CURRENT_YEAR:year}: Initial release",
             ":showtitlepage:",
             ":notitle:",
             ":noheader:",
