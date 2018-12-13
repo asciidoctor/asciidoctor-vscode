@@ -30,10 +30,13 @@ export class ExportAsPDF implements Command {
         const text = doc.getText()
         var destination
 
-        if (!doc.isUntitled)
-            destination = doc.fileName+".pdf"
-        else
+        if (!doc.isUntitled) {
+            let docPath = path.parse(path.resolve(doc.fileName))
+            destination = path.join(docPath.dir, docPath.name) + ".pdf"
+        } else {
             destination = 'temp.pdf'
+        }
+
         let parser = new AsciiDocParser(path.resolve(doc.fileName))
         //const body =  await parser.parseText()
         const body = await this.engine.render(doc.uri, true, text)
