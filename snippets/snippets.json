@@ -122,7 +122,7 @@
         "prefix": "literal",
 		"body": [
 			"....",
-			"${1:text}",
+			"${1:${TM_SELECTED_TEXT:text}}",
 			"....",
 			"$0"
 		],
@@ -133,7 +133,7 @@
 		"body": [
             "[source,${1:language}${2:,attributes}]",
 			"----",
-			"${3:code}",
+			"${3:${TM_SELECTED_TEXT:code}}",
 			"----",
 			"$0"
 		],
