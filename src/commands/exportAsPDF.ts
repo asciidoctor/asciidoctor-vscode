@@ -79,7 +79,7 @@ export class ExportAsPDF implements Command {
             })
 
             asciidoctorpdf.on('close', (code) => {
-                vscode.window.showInformationMessage(`${path.parse(pdfPath).base} has been saved`)
+                offer_open(pdfPath)
             })
 
             asciidoctorpdf.stdin.write(text)
