@@ -235,6 +235,11 @@
 					"default": "asciidoctor",
 					"description": "Full path for the asciidoctor binary/executable"
 				},
+				"asciidoc.asciidoctorpdf_command": {
+					"type": "string",
+					"default": "asciidoctor-pdf",
+					"description": "Full path for the asciidoctor-pdf binary/executable"
+				},
 				"asciidoc.styles": {
 					"type": "array",
 					"default": [],
@@ -344,6 +349,11 @@
 					"type": "boolean",
 					"default": true,
 					"description": "Use asciidoctor js instead of the 'asciidoctor_command'"
+				},
+				"asciidoc.use_asciidoctorpdf": {
+					"type": "boolean",
+					"default": false,
+					"description": "Use asciidoctor-pdf instead of the integrated renderer"
 				},
 				"asciidoc.forceUnixStyleSeparator": {
 					"type": "boolean",
