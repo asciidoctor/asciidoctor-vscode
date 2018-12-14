@@ -1,5 +1,9 @@
 # Changes
 
+## 2.3.0
+* Add option to use asciidoctor-pdf instead of wkhtmltopdf
+* Fix pdf paths with single quotes not opening from the notification after exportAsPDF
+
 ## 2.2.0
 * Fix documents with apostrophe in path not rendering with manual command
 * Add option to use editor or default style in preview
