@@ -225,14 +225,17 @@ function offer_open(destination){
         if (label == "Open File") {
             switch (process.platform)
             {
+                // Use backticks for unix systems to run the open command directly
+                // This avoids having to wrap the command AND path in quotes which
+                // breaks if there is a single quote (') in the path
                 case 'win32':
-                    exec(`"${destination}"`);
+                    exec(`"${destination.replace('"', '\\"')}"`);
                     break;
                 case 'darwin':
-                    exec(`bash -c 'open "${destination}"'`);
+                    exec(`\`open "${destination.replace('"', '\\"')}" ; exit\``);
                     break;
                 case 'linux':
-                    exec(`bash -c 'xdg-open "${destination}"'`);
+                    exec(`\`xdg-open "${destination.replace('"', '\\"')}" ; exit\``);
                     break;
                 default:
                     vscode. window.showWarningMessage("Output type is not supported");
