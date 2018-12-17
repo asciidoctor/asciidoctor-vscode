@@ -191,5 +191,10 @@
         "prefix": "source-highlighter",
         "body": ":source-highlighter: ${1|coderay,highlightjs,prettify,pygments,rouge|}\n",
         "description": "Insert source highlighter"
-    }
+    },
+    "Insert attribute": {
+        "prefix": "attribute",
+        "body": ":${1:attribute}: ${2:value}",
+        "description": "Insert attribute"
+    },
 }
