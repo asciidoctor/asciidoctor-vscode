@@ -200,9 +200,9 @@
     "Insert tagged block": {
         "prefix": "tag",
 		"body": [
-            "// tag::${1:-tagname}[]",
+            "// tag::${1:tagname}[]",
             "${2:${TM_SELECTED_TEXT:text}}",
-            "// end::${1:-tagname}[]",
+            "// end::${1:tagname}[]",
 			"$0"
 		],
 		"description": "Insert tagged block"
