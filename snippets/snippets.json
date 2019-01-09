@@ -198,13 +198,13 @@
         "description": "Insert attribute"
     },
     "Insert tagged block": {
-        "prefix": "literal",
+        "prefix": "tag",
 		"body": [
             "// tag::${1:-tagname}[]",
             "${2:${TM_SELECTED_TEXT:text}}",
             "// end::${1:-tagname}[]",
 			"$0"
 		],
-		"description": "Insert a tagged block"
+		"description": "Insert tagged block"
     },
 }
