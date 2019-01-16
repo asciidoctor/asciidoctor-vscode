@@ -18,5 +18,24 @@
     ],
     "files.watcherExclude": {
         "out/**": true
-    }
+    },
+  "asciidoc.asciidoctor_command": "asciidoctor",
+  "asciidoc.asciidoctorpdf_command": "asciidoctor-pdf",
+  "asciidoc.forceUnixStyleSeparator": true,
+  "asciidoc.preview.breaks": false,
+  "asciidoc.preview.doubleClickToSwitchToEditor": true,
+  "asciidoc.preview.fontFamily": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif",
+  "asciidoc.preview.fontSize": 14,
+  "asciidoc.preview.lineHeight": 1.6,
+  "asciidoc.preview.linkify": true,
+  "asciidoc.preview.markEditorSelection": true,
+  "asciidoc.preview.openAsciiDocLinks": "inPreview",
+  "asciidoc.preview.scrollEditorWithPreview": true,
+  "asciidoc.preview.scrollPreviewWithEditor": true,
+  "asciidoc.preview.useEditorStyle": true,
+  "asciidoc.previewFrontMatter": "hide",
+  "asciidoc.styles": [],
+  "asciidoc.trace": "off",
+  "asciidoc.use_asciidoctor_js": true,
+  "asciidoc.use_asciidoctorpdf": false
 }
