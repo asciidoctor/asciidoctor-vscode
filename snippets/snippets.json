@@ -178,22 +178,22 @@
         "description": "Insert table"
     },
     "Insert toc": {
-        "prefix": "toc",
+        "prefix": ":toc:",
         "body": ":toc: ${1|auto,preamble,macro,right,left|}\n",
         "description": "Insert toc attribute"
     },
     "Insert doctype": {
-        "prefix": "doctype",
+        "prefix": ":doctype:",
         "body": ":doctype: ${1|article,book,manpage,inline|}\n",
         "description": "Insert doctype attribute"
     },
     "Insert source highlighter": {
-        "prefix": "source-highlighter",
+        "prefix": ":source-highlighter:",
         "body": ":source-highlighter: ${1|coderay,highlightjs,prettify,pygments,rouge|}\n",
         "description": "Insert source highlighter"
     },
     "Insert attribute": {
-        "prefix": "attribute",
+        "prefix": ":attribute:",
         "body": ":${1:attribute}: ${2:value}",
         "description": "Insert attribute"
     },
@@ -206,5 +206,5 @@
 			"$0"
 		],
 		"description": "Insert tagged block"
-    },
+    }
 }
