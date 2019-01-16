@@ -1072,7 +1072,8 @@ body.toc2 #header>h1:nth-last-child(2) {
 }
 
 #toctitle {
-  /* DISABLED color: black; */
+  color: black;
+  /* TODO: fix transparent toc background */
   font-size: 1.2em;
 }
 
@@ -1088,7 +1089,8 @@ body.toc2 #header>h1:nth-last-child(2) {
 
   #toc.toc2 {
     margin-top: 0 !important;
-    /* DISABLED background-color: #f8f8f7; */
+    background-color: #f8f8f7;
+    /* TODO: fix transparent toc background */
     position: fixed;
     width: 15em;
     left: 0;
@@ -1171,7 +1173,8 @@ body.toc2 #header>h1:nth-last-child(2) {
   /* DISABLED border-color: #e0e0dc; */
   margin-bottom: 1.25em;
   padding: 1.25em;
-  /* DISABLED background: #f8f8f7; */
+  background: #f8f8f7;
+  /* TODO: fix transparent toc background */
   -webkit-border-radius: 4px;
   border-radius: 4px;
 }
@@ -1285,7 +1288,17 @@ h6>a.link {
   text-decoration: none;
 }
 
-/* DISABLED #content h1 > a.link:hover, h2 > a.link:hover, h3 > a.link:hover, #toctitle > a.link:hover, .sidebarblock > .content > .title > a.link:hover, h4 > a.link:hover, h5 > a.link:hover, h6 > a.link:hover { color: black; } */
+/* TODO: fix transparent toc background */
+#content h1>a.link:hover,
+h2>a.link:hover,
+h3>a.link:hover,
+#toctitle>a.link:hover,
+.sidebarblock>.content>.title>a.link:hover,
+h4>a.link:hover,
+h5>a.link:hover,
+h6>a.link:hover {
+  color: black;
+}
 
 .audioblock,
 .imageblock,
@@ -2420,7 +2433,13 @@ p.tableblock {
     page-break-after: avoid;
   }
 
-  /* DISABLED   #toc, .sidebarblock, .exampleblock > .content { background: none !important; } */
+  /* TODO: fix transparent toc background */
+  #toc,
+  .sidebarblock,
+  .exampleblock>.content {
+    background: none !important;
+  }
+
   #toc {
     border-bottom: 1px solid #ddddd8 !important;
     padding-bottom: 0 !important;
