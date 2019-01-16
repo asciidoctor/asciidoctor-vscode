@@ -1439,8 +1439,24 @@ table.tableblock #preamble>.sectionbody>.paragraph:first-of-type p {
   margin-bottom: 0;
 }
 
-/* DISABLED .literalblock pre, .listingblock pre:not(.highlight), .listingblock pre[class="highlight"], .listingblock pre[class^="highlight "], .listingblock pre.CodeRay, .listingblock pre.prettyprint { background: #f7f7f8; } */
-/* DISABLED .sidebarblock .literalblock pre, .sidebarblock .listingblock pre:not(.highlight), .sidebarblock .listingblock pre[class="highlight"], .sidebarblock .listingblock pre[class^="highlight "], .sidebarblock .listingblock pre.CodeRay, .sidebarblock .listingblock pre.prettyprint { background: #f2f1f1; } */
+/* DISABLED
+.literalblock pre,
+.listingblock pre:not(.highlight),
+.listingblock pre[class="highlight"],
+.listingblock pre[class^="highlight "],
+.listingblock pre.CodeRay,
+.listingblock pre.prettyprint {
+  background: #f7f7f8;
+}
+
+.sidebarblock .literalblock pre,
+.sidebarblock .listingblock pre:not(.highlight),
+.sidebarblock .listingblock pre[class="highlight"],
+.sidebarblock .listingblock pre[class^="highlight "],
+.sidebarblock .listingblock pre.CodeRay,
+.sidebarblock .listingblock pre.prettyprint {
+  background: #f2f1f1;
+} */
 
 .literalblock pre,
 .literalblock pre[class],
