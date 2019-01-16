@@ -1,5 +1,9 @@
 # Changes
 
+## 2.3.1
+* Add snippets for general attribute and tagged block
+* Temporary fix for transparent side toc (`:toc: left`, `:toc: right`)
+
 ## 2.3.0
 * Add option to use asciidoctor-pdf instead of wkhtmltopdf
 * Fix pdf paths with single quotes not opening from the notification after exportAsPDF
