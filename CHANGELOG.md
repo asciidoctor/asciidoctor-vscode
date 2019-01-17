@@ -1,5 +1,8 @@
 # Changes
 
+## 2.3.2
+* Highlight fenced source blocks (Markdown-like syntax) in the editor
+
 ## 2.3.1
 * Add snippets for general attribute and tagged block
 * Temporary fix for transparent side toc (`:toc: left`, `:toc: right`)
