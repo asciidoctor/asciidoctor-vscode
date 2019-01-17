@@ -25,6 +25,104 @@ repository:
     - include: '#block_literal'
     - include: '#block_comment'
     - include: '#block_listing'
+    - include: '#block_source_fenced_css'
+    - include: '#block_source_fenced_basic'
+    - include: '#block_source_fenced_ini'
+    - include: '#block_source_fenced_java'
+    - include: '#block_source_fenced_lua'
+    - include: '#block_source_fenced_makefile'
+    - include: '#block_source_fenced_perl'
+    - include: '#block_source_fenced_r'
+    - include: '#block_source_fenced_ruby'
+    - include: '#block_source_fenced_php'
+    - include: '#block_source_fenced_sql'
+    - include: '#block_source_fenced_vs_net'
+    - include: '#block_source_fenced_xml'
+    - include: '#block_source_fenced_xsl'
+    - include: '#block_source_fenced_yaml'
+    - include: '#block_source_fenced_dosbatch'
+    - include: '#block_source_fenced_clojure'
+    - include: '#block_source_fenced_coffee'
+    - include: '#block_source_fenced_c'
+    - include: '#block_source_fenced_cpp'
+    - include: '#block_source_fenced_diff'
+    - include: '#block_source_fenced_dockerfile'
+    - include: '#block_source_fenced_git_commit'
+    - include: '#block_source_fenced_git_rebase'
+    - include: '#block_source_fenced_go'
+    - include: '#block_source_fenced_groovy'
+    - include: '#block_source_fenced_pug'
+    - include: '#block_source_fenced_js'
+    - include: '#block_source_fenced_js_regexp'
+    - include: '#block_source_fenced_json'
+    - include: '#block_source_fenced_jsonc'
+    - include: '#block_source_fenced_less'
+    - include: '#block_source_fenced_objc'
+    - include: '#block_source_fenced_swift'
+    - include: '#block_source_fenced_scss'
+    - include: '#block_source_fenced_perl6'
+    - include: '#block_source_fenced_powershell'
+    - include: '#block_source_fenced_python'
+    - include: '#block_source_fenced_regexp_python'
+    - include: '#block_source_fenced_rust'
+    - include: '#block_source_fenced_scala'
+    - include: '#block_source_fenced_shell'
+    - include: '#block_source_fenced_ts'
+    - include: '#block_source_fenced_tsx'
+    - include: '#block_source_fenced_csharp'
+    - include: '#block_source_fenced_fsharp'
+    - include: '#block_source_fenced_dart'
+    - include: '#block_source_fenced_handlebars'
+    - include: '#block_source_fenced_markdown'
+    - include: '#block_source_fenced_css'
+    - include: '#block_source_fenced_basic'
+    - include: '#block_source_fenced_ini'
+    - include: '#block_source_fenced_java'
+    - include: '#block_source_fenced_lua'
+    - include: '#block_source_fenced_makefile'
+    - include: '#block_source_fenced_perl'
+    - include: '#block_source_fenced_r'
+    - include: '#block_source_fenced_ruby'
+    - include: '#block_source_fenced_php'
+    - include: '#block_source_fenced_sql'
+    - include: '#block_source_fenced_vs_net'
+    - include: '#block_source_fenced_xml'
+    - include: '#block_source_fenced_xsl'
+    - include: '#block_source_fenced_yaml'
+    - include: '#block_source_fenced_dosbatch'
+    - include: '#block_source_fenced_clojure'
+    - include: '#block_source_fenced_coffee'
+    - include: '#block_source_fenced_c'
+    - include: '#block_source_fenced_cpp'
+    - include: '#block_source_fenced_diff'
+    - include: '#block_source_fenced_dockerfile'
+    - include: '#block_source_fenced_git_commit'
+    - include: '#block_source_fenced_git_rebase'
+    - include: '#block_source_fenced_go'
+    - include: '#block_source_fenced_groovy'
+    - include: '#block_source_fenced_pug'
+    - include: '#block_source_fenced_js'
+    - include: '#block_source_fenced_js_regexp'
+    - include: '#block_source_fenced_json'
+    - include: '#block_source_fenced_jsonc'
+    - include: '#block_source_fenced_less'
+    - include: '#block_source_fenced_objc'
+    - include: '#block_source_fenced_swift'
+    - include: '#block_source_fenced_scss'
+    - include: '#block_source_fenced_perl6'
+    - include: '#block_source_fenced_powershell'
+    - include: '#block_source_fenced_python'
+    - include: '#block_source_fenced_regexp_python'
+    - include: '#block_source_fenced_rust'
+    - include: '#block_source_fenced_scala'
+    - include: '#block_source_fenced_shell'
+    - include: '#block_source_fenced_ts'
+    - include: '#block_source_fenced_tsx'
+    - include: '#block_source_fenced_csharp'
+    - include: '#block_source_fenced_fsharp'
+    - include: '#block_source_fenced_dart'
+    - include: '#block_source_fenced_handlebars'
+    - include: '#block_source_fenced_markdown'
     - include: '#block_source_fenced'
     - include: '#block_sidebar'
     - include: '#block_pass'
@@ -91,6 +189,1966 @@ repository:
       '0': {name: markup.underline.listing.end.asciidoc}
     patterns:
     - include: '#inline_callout'
+
+  block_source_fenced_css:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```css
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.css
+    begin: ^(```)css\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.css'
+
+  block_source_fenced_basic:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```basic
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.basic
+    begin: ^(```)basic\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.basic'
+
+  block_source_fenced_ini:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```ini
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.ini
+    begin: ^(```)ini\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.ini'
+
+  block_source_fenced_java:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```java
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.java
+    begin: ^(```)java\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.java'
+
+  block_source_fenced_lua:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```lua
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.lua
+    begin: ^(```)lua\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.lua'
+
+  block_source_fenced_makefile:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```makefile
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.makefile
+    begin: ^(```)makefile\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.makefile'
+
+  block_source_fenced_perl:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```perl
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.perl
+    begin: ^(```)perl\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.perl'
+
+  block_source_fenced_r:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```r
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.r
+    begin: ^(```)r\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.r'
+
+  block_source_fenced_ruby:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```ruby
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.ruby
+    begin: ^(```)ruby\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.ruby'
+
+  block_source_fenced_php:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```php
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.php
+    begin: ^(```)php\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.php'
+
+  block_source_fenced_sql:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```sql
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.sql
+    begin: ^(```)sql\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.sql'
+
+  block_source_fenced_vs_net:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```vs_net
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.vs_net
+    begin: ^(```)vs_net\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.vs_net'
+
+  block_source_fenced_xml:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```xml
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.xml
+    begin: ^(```)xml\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.xml'
+
+  block_source_fenced_xsl:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```xsl
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.xsl
+    begin: ^(```)xsl\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.xsl'
+
+  block_source_fenced_yaml:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```yaml
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.yaml
+    begin: ^(```)yaml\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.yaml'
+
+  block_source_fenced_dosbatch:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```dosbatch
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.dosbatch
+    begin: ^(```)dosbatch\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.dosbatch'
+
+  block_source_fenced_clojure:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```clojure
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.clojure
+    begin: ^(```)clojure\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.clojure'
+
+  block_source_fenced_coffee:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```coffee
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.coffee
+    begin: ^(```)coffee\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.coffee'
+
+  block_source_fenced_c:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```c
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.c
+    begin: ^(```)c\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.c'
+
+  block_source_fenced_cpp:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```cpp
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.cpp
+    begin: ^(```)cpp\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.cpp'
+
+  block_source_fenced_diff:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```diff
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.diff
+    begin: ^(```)diff\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.diff'
+
+  block_source_fenced_dockerfile:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```dockerfile
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.dockerfile
+    begin: ^(```)dockerfile\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.dockerfile'
+
+  block_source_fenced_git_commit:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```git_commit
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.git_commit
+    begin: ^(```)git_commit\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.git_commit'
+
+  block_source_fenced_git_rebase:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```git_rebase
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.git_rebase
+    begin: ^(```)git_rebase\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.git_rebase'
+
+  block_source_fenced_go:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```go
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.go
+    begin: ^(```)go\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.go'
+
+  block_source_fenced_groovy:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```groovy
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.groovy
+    begin: ^(```)groovy\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.groovy'
+
+  block_source_fenced_pug:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```pug
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.pug
+    begin: ^(```)pug\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.pug'
+
+  block_source_fenced_js:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```js
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.js
+    begin: ^(```)js\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.js'
+
+  block_source_fenced_js_regexp:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```js_regexp
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.js_regexp
+    begin: ^(```)js_regexp\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.js_regexp'
+
+  block_source_fenced_json:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```json
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.json
+    begin: ^(```)json\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.json'
+
+  block_source_fenced_jsonc:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```jsonc
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.jsonc
+    begin: ^(```)jsonc\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.jsonc'
+
+  block_source_fenced_less:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```less
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.less
+    begin: ^(```)less\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.less'
+
+  block_source_fenced_objc:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```objc
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.objc
+    begin: ^(```)objc\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.objc'
+
+  block_source_fenced_swift:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```swift
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.swift
+    begin: ^(```)swift\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.swift'
+
+  block_source_fenced_scss:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```scss
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.scss
+    begin: ^(```)scss\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.scss'
+
+  block_source_fenced_perl6:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```perl6
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.perl6
+    begin: ^(```)perl6\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.perl6'
+
+  block_source_fenced_powershell:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```powershell
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.powershell
+    begin: ^(```)powershell\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.powershell'
+
+  block_source_fenced_python:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```python
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.python
+    begin: ^(```)python\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.python'
+
+  block_source_fenced_regexp_python:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```regexp_python
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.regexp_python
+    begin: ^(```)regexp_python\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.regexp_python'
+
+  block_source_fenced_rust:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```rust
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.rust
+    begin: ^(```)rust\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.rust'
+
+  block_source_fenced_scala:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```scala
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.scala
+    begin: ^(```)scala\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.scala'
+
+  block_source_fenced_shell:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```shell
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.shell
+    begin: ^(```)shell\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.shell'
+
+  block_source_fenced_ts:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```ts
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.ts
+    begin: ^(```)ts\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.ts'
+
+  block_source_fenced_tsx:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```tsx
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.tsx
+    begin: ^(```)tsx\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.tsx'
+
+  block_source_fenced_csharp:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```csharp
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.csharp
+    begin: ^(```)csharp\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.csharp'
+
+  block_source_fenced_fsharp:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```fsharp
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.fsharp
+    begin: ^(```)fsharp\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.fsharp'
+
+  block_source_fenced_dart:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```dart
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.dart
+    begin: ^(```)dart\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.dart'
+
+  block_source_fenced_handlebars:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```handlebars
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.handlebars
+    begin: ^(```)handlebars\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.handlebars'
+
+  block_source_fenced_markdown:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```markdown
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.markdown
+    begin: ^(```)markdown\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.markdown'
+
+  block_source_fenced_css:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```css
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.css
+    begin: ^(```)css\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.css'
+
+  block_source_fenced_basic:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```basic
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.basic
+    begin: ^(```)basic\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.basic'
+
+  block_source_fenced_ini:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```ini
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.ini
+    begin: ^(```)ini\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.ini'
+
+  block_source_fenced_java:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```java
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.java
+    begin: ^(```)java\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.java'
+
+  block_source_fenced_lua:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```lua
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.lua
+    begin: ^(```)lua\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.lua'
+
+  block_source_fenced_makefile:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```makefile
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.makefile
+    begin: ^(```)makefile\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.makefile'
+
+  block_source_fenced_perl:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```perl
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.perl
+    begin: ^(```)perl\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.perl'
+
+  block_source_fenced_r:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```r
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.r
+    begin: ^(```)r\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.r'
+
+  block_source_fenced_ruby:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```ruby
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.ruby
+    begin: ^(```)ruby\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.ruby'
+
+  block_source_fenced_php:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```php
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.php
+    begin: ^(```)php\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.php'
+
+  block_source_fenced_sql:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```sql
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.sql
+    begin: ^(```)sql\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.sql'
+
+  block_source_fenced_vs_net:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```vs_net
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.vs_net
+    begin: ^(```)vs_net\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.vs_net'
+
+  block_source_fenced_xml:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```xml
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.xml
+    begin: ^(```)xml\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.xml'
+
+  block_source_fenced_xsl:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```xsl
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.xsl
+    begin: ^(```)xsl\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.xsl'
+
+  block_source_fenced_yaml:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```yaml
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.yaml
+    begin: ^(```)yaml\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.yaml'
+
+  block_source_fenced_dosbatch:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```dosbatch
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.dosbatch
+    begin: ^(```)dosbatch\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.dosbatch'
+
+  block_source_fenced_clojure:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```clojure
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.clojure
+    begin: ^(```)clojure\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.clojure'
+
+  block_source_fenced_coffee:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```coffee
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.coffee
+    begin: ^(```)coffee\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.coffee'
+
+  block_source_fenced_c:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```c
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.c
+    begin: ^(```)c\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.c'
+
+  block_source_fenced_cpp:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```cpp
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.cpp
+    begin: ^(```)cpp\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.cpp'
+
+  block_source_fenced_diff:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```diff
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.diff
+    begin: ^(```)diff\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.diff'
+
+  block_source_fenced_dockerfile:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```dockerfile
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.dockerfile
+    begin: ^(```)dockerfile\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.dockerfile'
+
+  block_source_fenced_git_commit:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```git_commit
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.git_commit
+    begin: ^(```)git_commit\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.git_commit'
+
+  block_source_fenced_git_rebase:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```git_rebase
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.git_rebase
+    begin: ^(```)git_rebase\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.git_rebase'
+
+  block_source_fenced_go:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```go
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.go
+    begin: ^(```)go\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.go'
+
+  block_source_fenced_groovy:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```groovy
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.groovy
+    begin: ^(```)groovy\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.groovy'
+
+  block_source_fenced_pug:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```pug
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.pug
+    begin: ^(```)pug\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.pug'
+
+  block_source_fenced_js:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```js
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.js
+    begin: ^(```)js\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.js'
+
+  block_source_fenced_js_regexp:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```js_regexp
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.js_regexp
+    begin: ^(```)js_regexp\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.js_regexp'
+
+  block_source_fenced_json:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```json
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.json
+    begin: ^(```)json\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.json'
+
+  block_source_fenced_jsonc:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```jsonc
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.jsonc
+    begin: ^(```)jsonc\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.jsonc'
+
+  block_source_fenced_less:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```less
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.less
+    begin: ^(```)less\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.less'
+
+  block_source_fenced_objc:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```objc
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.objc
+    begin: ^(```)objc\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.objc'
+
+  block_source_fenced_swift:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```swift
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.swift
+    begin: ^(```)swift\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.swift'
+
+  block_source_fenced_scss:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```scss
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.scss
+    begin: ^(```)scss\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.scss'
+
+  block_source_fenced_perl6:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```perl6
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.perl6
+    begin: ^(```)perl6\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.perl6'
+
+  block_source_fenced_powershell:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```powershell
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.powershell
+    begin: ^(```)powershell\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.powershell'
+
+  block_source_fenced_python:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```python
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.python
+    begin: ^(```)python\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.python'
+
+  block_source_fenced_regexp_python:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```regexp_python
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.regexp_python
+    begin: ^(```)regexp_python\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.regexp_python'
+
+  block_source_fenced_rust:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```rust
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.rust
+    begin: ^(```)rust\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.rust'
+
+  block_source_fenced_scala:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```scala
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.scala
+    begin: ^(```)scala\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.scala'
+
+  block_source_fenced_shell:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```shell
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.shell
+    begin: ^(```)shell\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.shell'
+
+  block_source_fenced_ts:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```ts
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.ts
+    begin: ^(```)ts\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.ts'
+
+  block_source_fenced_tsx:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```tsx
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.tsx
+    begin: ^(```)tsx\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.tsx'
+
+  block_source_fenced_csharp:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```csharp
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.csharp
+    begin: ^(```)csharp\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.csharp'
+
+  block_source_fenced_fsharp:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```fsharp
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.fsharp
+    begin: ^(```)fsharp\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.fsharp'
+
+  block_source_fenced_dart:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```dart
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.dart
+    begin: ^(```)dart\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.dart'
+
+  block_source_fenced_handlebars:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```handlebars
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.handlebars
+    begin: ^(```)handlebars\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.handlebars'
+
+  block_source_fenced_markdown:
+    comment: |
+      Fenced code block (ala Markdown)
+
+      Examples:
+        ```markdown
+        code
+        ```
+    name: meta.embedded.block.listing.asciidoc
+    contentName: source.block.listing.content.asciidoc.markdown
+    begin: ^(```)markdown\s*$\n?
+    beginCaptures:
+      '0': {name: markup.underline.listing.begin.asciidoc}
+    end: ^\1\s*$\n?
+    endCaptures:
+      '0': {name: markup.underline.listing.end.asciidoc}
+    patterns:
+    - include: '#inline_callout'
+    - include: 'source.markdown'
 
   block_source_fenced:
     comment: |
