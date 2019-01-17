@@ -2982,67 +2982,11 @@ Examples:
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#block_source_fenced_css</string>
-				</dict>
-				<dict>
-					<key>include</key>
 					<string>#block_source_fenced_basic</string>
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#block_source_fenced_ini</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_java</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_lua</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_makefile</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_perl</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_r</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_ruby</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_php</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_sql</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_vs_net</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_xml</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_xsl</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_yaml</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_dosbatch</string>
+					<string>#block_source_fenced_c</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -3054,11 +2998,19 @@ Examples:
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#block_source_fenced_c</string>
+					<string>#block_source_fenced_cpp</string>
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#block_source_fenced_cpp</string>
+					<string>#block_source_fenced_csharp</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_source_fenced_css</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_source_fenced_dart</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -3067,6 +3019,14 @@ Examples:
 				<dict>
 					<key>include</key>
 					<string>#block_source_fenced_dockerfile</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_source_fenced_dosbatch</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_source_fenced_fsharp</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -3086,7 +3046,15 @@ Examples:
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#block_source_fenced_pug</string>
+					<string>#block_source_fenced_handlebars</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_source_fenced_ini</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_source_fenced_java</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -3110,15 +3078,23 @@ Examples:
 				</dict>
 				<dict>
 					<key>include</key>
+					<string>#block_source_fenced_lua</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_source_fenced_makefile</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_source_fenced_markdown</string>
+				</dict>
+				<dict>
+					<key>include</key>
 					<string>#block_source_fenced_objc</string>
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#block_source_fenced_swift</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_scss</string>
+					<string>#block_source_fenced_perl</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -3126,7 +3102,15 @@ Examples:
 				</dict>
 				<dict>
 					<key>include</key>
+					<string>#block_source_fenced_php</string>
+				</dict>
+				<dict>
+					<key>include</key>
 					<string>#block_source_fenced_powershell</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_source_fenced_pug</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -3134,7 +3118,15 @@ Examples:
 				</dict>
 				<dict>
 					<key>include</key>
+					<string>#block_source_fenced_r</string>
+				</dict>
+				<dict>
+					<key>include</key>
 					<string>#block_source_fenced_regexp_python</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_source_fenced_ruby</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -3146,7 +3138,19 @@ Examples:
 				</dict>
 				<dict>
 					<key>include</key>
+					<string>#block_source_fenced_scss</string>
+				</dict>
+				<dict>
+					<key>include</key>
 					<string>#block_source_fenced_shell</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_source_fenced_sql</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#block_source_fenced_swift</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -3155,70 +3159,6 @@ Examples:
 				<dict>
 					<key>include</key>
 					<string>#block_source_fenced_tsx</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_csharp</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_fsharp</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_dart</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_handlebars</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_markdown</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_css</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_basic</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_ini</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_java</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_lua</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_makefile</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_perl</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_r</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_ruby</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_php</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_sql</string>
 				</dict>
 				<dict>
 					<key>include</key>
@@ -3235,142 +3175,6 @@ Examples:
 				<dict>
 					<key>include</key>
 					<string>#block_source_fenced_yaml</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_dosbatch</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_clojure</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_coffee</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_c</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_cpp</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_diff</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_dockerfile</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_git_commit</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_git_rebase</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_go</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_groovy</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_pug</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_js</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_js_regexp</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_json</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_jsonc</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_less</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_objc</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_swift</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_scss</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_perl6</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_powershell</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_python</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_regexp_python</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_rust</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_scala</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_shell</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_ts</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_tsx</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_csharp</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_fsharp</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_dart</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_handlebars</string>
-				</dict>
-				<dict>
-					<key>include</key>
-					<string>#block_source_fenced_markdown</string>
 				</dict>
 				<dict>
 					<key>include</key>
