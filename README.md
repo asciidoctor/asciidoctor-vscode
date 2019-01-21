@@ -58,7 +58,8 @@ The build script accepts other commands too, run `bash ./script/build help` for 
     Kevin Palmowski
     Marcelo Alvim
     Mark Roszko
-    MatteoCampinoti94
+    Masanori Asano
+    Matteo Campinoti
     Stephen Pegoraro
     Tatsunori Uchino
     chriskoerner
