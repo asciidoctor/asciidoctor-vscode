@@ -95,7 +95,7 @@ export class AsciiDocParser {
     private async convert_using_application(text: string) {
         const editor = vscode.window.activeTextEditor;
         const doc = editor.document;
-        const documentPath = path.dirname(this.filename).replace('"', '\\"');
+        const documentPath = path.dirname(doc.fileName).replace('"', '\\"');
         this.document = null;
 
         return new Promise<string>(resolve => {
