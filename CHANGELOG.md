@@ -1,5 +1,8 @@
 # Changes
 
+## 2.3.3
+* Fix plantUML preview from multiple files and folders (thanks to @Dimeiza <dimeiza@hotmail.com>)
+
 ## 2.3.2
 * Highlight fenced source blocks (Markdown-like syntax) in the editor
 
