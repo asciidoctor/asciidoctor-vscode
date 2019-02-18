@@ -11,7 +11,7 @@ import * as nls from 'vscode-nls';
 const localize = nls.loadMessageBundle();
 
 import { Logger } from '../logger';
-import { ContentSecurityPolicyArbiter, MarkdownPreviewSecurityLevel } from '../security';
+import { ContentSecurityPolicyArbiter, AsciiDocPreviewSecurityLevel } from '../security';
 import { MarkdownPreviewConfigurationManager, MarkdownPreviewConfiguration } from './previewConfig';
 import { MarkdownContributions } from '../markdownExtensions';
 
@@ -28,7 +28,7 @@ const previewStrings = {
 
 	cspAlertMessageTitle: localize(
 		'preview.securityMessage.title',
-		'Potentially unsafe or insecure content has been disabled in the markdown preview. Change the Markdown preview security setting to allow insecure content or enable scripts'),
+		'Potentially unsafe or insecure content has been disabled in the AsciiDoc preview. Change the AsciiDoc preview security setting to allow insecure content or enable scripts'),
 
 	cspAlertMessageLabel: localize(
 		'preview.securityMessage.label',
@@ -189,16 +189,16 @@ export class MarkdownContentProvider {
 
 	private getCspForResource(resource: vscode.Uri, nonce: string): string {
 		switch (this.cspArbiter.getSecurityLevelForResource(resource)) {
-			case MarkdownPreviewSecurityLevel.AllowInsecureContent:
+			case AsciiDocPreviewSecurityLevel.AllowInsecureContent:
 				return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: http: https: data:; media-src vscode-resource: http: https: data:; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' http: https: data:; font-src vscode-resource: http: https: data:;">`;
 
-			case MarkdownPreviewSecurityLevel.AllowInsecureLocalContent:
+			case AsciiDocPreviewSecurityLevel.AllowInsecureLocalContent:
 				return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*; media-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' https: data: http://localhost:* http://127.0.0.1:*; font-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*;">`;
 
-			case MarkdownPreviewSecurityLevel.AllowScriptsAndAllContent:
+			case AsciiDocPreviewSecurityLevel.AllowScriptsAndAllContent:
 				return '';
 
-			case MarkdownPreviewSecurityLevel.Strict:
+			case AsciiDocPreviewSecurityLevel.Strict:
 			default:
 				return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https: data:; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' https: data:; font-src vscode-resource: https: data:;">`;
 		}
