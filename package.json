@@ -374,17 +374,6 @@
 				"url": "./schemas/package.schema.json"
 			}
 		],
-		"asciidoc.previewStylesEditor": [
-			"./media/asciidoctor-editor.css",
-			"./media/highlight.css"
-		],
-		"asciidoc.previewStylesDefault": [
-			"./media/asciidoctor-default.css",
-			"./media/highlight.css"
-		],
-		"asciidoc.previewScripts": [
-			"./media/index.js"
-		],
 		"snippets": [
 			{
 				"language": "asciidoc",
