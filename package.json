@@ -368,12 +368,6 @@
 				"editor.quickSuggestions": false
 			}
 		},
-		"jsonValidation": [
-			{
-				"fileMatch": "package.json",
-				"url": "./schemas/package.schema.json"
-			}
-		],
 		"snippets": [
 			{
 				"language": "asciidoc",
