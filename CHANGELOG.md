@@ -1,5 +1,12 @@
 # Changes
 
+# 2.4.0
+* Fix errors with the preview security setting
+* Fix an error with jsonValidation (thanks to @shaneknysh <shane.knysh@gmail.com>)
+* Fix descriptiond still using "Markdown" instead of "AsciiDoc" (thanks to @ygra <joey@muhkuhsaft.de>)
+* Update preview to ascidoctor.js v1.5.9 (thanks to @Mogztter <ggrossetie@gmail.com>)
+* Fix encoding errors (thanks to @mojavelinux <dan.j.allen@gmail.com>)
+
 ## 2.3.3
 * Fix plantUML preview from multiple files and folders (thanks to @Dimeiza <dimeiza@hotmail.com>)
 
