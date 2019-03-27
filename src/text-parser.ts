@@ -100,7 +100,7 @@ export class AsciiDocParser {
 
         return new Promise<string>(resolve => {
             let asciidoctor_command = vscode.workspace.getConfiguration('asciidoc').get('asciidoctor_command', 'asciidoctor');
-            var options = { shell: true, cwd: path.dirname(this.filename) }
+            var options = { shell: true, cwd: path.dirname(this.filename), env: { ...process.env, RUBYOPT: '-E UTF-8' } }
 
             var adoc_cmd_array = asciidoctor_command.split(/(\s+)/).filter( function(e) { return e.trim().length > 0; } ) ;
             var adoc_cmd = adoc_cmd_array[0]
