@@ -399,8 +399,8 @@
 		"ts-loader": "^4.0.1"
 	},
 	"dependencies": {
-		"asciidoctor.js": "1.5.6",
-		"asciidoctor-plantuml": "^0.10.0",
+		"asciidoctor.js": "1.5.9",
+		"asciidoctor-plantuml": "1.1.13",
 		"copy-paste": "^1.2.0",
 		"file-url": "^1.0.1",
 		"follow-redirects": "^1.4.1",
