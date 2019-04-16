@@ -1,5 +1,10 @@
 # Changes
 
+## 2.5.0
+
+* Repaired preview.useEditorStyle option
+* Improved the editor-style css to match the default one used by asciidoctor
+
 ## 2.4.1
 
 * Fix missing highlight for single character constrained inlines (e.g. \*a\*)
