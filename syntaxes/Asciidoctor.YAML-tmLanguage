@@ -1474,7 +1474,7 @@ repository:
       (?x)
       (\[[^\]]*?\])?         # might be preceded by an attributes list
       (?<=^|\W)(?<!\\|})     # must be preceded by nonword character, and not by escape or } (attribute)
-      ('`)(?=\S[\S ]*\S`'\W) # must be followed by inline characters and closed
+      ('`)(?=(\S+|\S[\S ]*\S)`'\W) # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.typographic-quotes.single.begin.asciidoc}
@@ -1511,7 +1511,7 @@ repository:
       (?x)
       (\[[^\]]*?\])?         # might be preceded by an attributes list
       (?<=^|\W)(?<!\\|})     # must be preceded by nonword character, and not by escape or } (attribute)
-      ("`)(?=\S[\S ]*\S`"\W) # must be followed by inline characters and closed
+      ("`)(?=(\S+|\S[\S ]*\S)`"\W) # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.typographic-quotes.double.begin.asciidoc}
@@ -1707,7 +1707,7 @@ repository:
       (?x)
       (\[[^\]]*?\])?         # might start with an attributes list
       (?<=^|\W)(?<!\\|})     # must be preceded by nonword character, and not by escape or } (attribute)
-      (\*)(?=\S[\S ]*\S\*\W) # must be followed by inline characters and closed
+      (\*)(?=(\S+|\S[\S ]*\S)\*\W) # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.bold.single.begin.asciidoc}
@@ -1744,7 +1744,7 @@ repository:
       (?x)
       (\[[^\]]*?\])?       # might be preceded by an attributes list
       (?<=^|\W)(?<!\\|})   # must be preceded by nonword character, and not by escape or } (attribute)
-      (_)(?=\S[\S ]*\S_\W) # must be followed by inline characters and closed
+      (_)(?=(\S+|\S[\S ]*\S)_\W) # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.italic.single.begin.asciidoc}
@@ -1781,7 +1781,7 @@ repository:
       (?x)
       (\[[^\]]*?\])?       # might start with attributes list
       (?<=^|\W)(?<!\\|})   # must be preceded by nonword character, and not by escape or } (attribute)
-      (`)(?=\S[\S ]*\S`\W) # must be followed by inline characters and closed
+      (`)(?=(\S+|\S[\S ]*\S)`\W) # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.literal.single.begin.asciidoc}
@@ -1818,7 +1818,7 @@ repository:
       (?x)
       (\[[^\]]*?\])?         # might start with attribute list (darned well better or why are we here)
       (?<=^|\W)(?<!\\|})     # must be preceded by nonword character, and not by escape or } (attribute)
-      (\#)(?=\S[\S ]*\S\#\W) # must be followed by inline characters and closed
+      (\#)(?=(\S+|\S[\S ]*\S)\#\W) # must be followed by inline characters and closed
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.string.unquoted.single.begin.asciidoc}

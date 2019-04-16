@@ -3342,7 +3342,7 @@ double colon followed by a space inside a label, i.e. it matches the
 			<string>(?x)
 (\[[^\]]*?\])?       # might be preceded by an attributes list
 (?&lt;=^|\W)(?&lt;!\\|})   # must be preceded by nonword character, and not by escape or } (attribute)
-(_)(?=\S[\S ]*\S_\W) # must be followed by inline characters and closed</string>
+(_)(?=(\S+|\S[\S ]*\S)_\W) # must be followed by inline characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -3966,7 +3966,7 @@ Examples:
 			<string>(?x)
 (\[[^\]]*?\])?         # might start with attribute list (darned well better or why are we here)
 (?&lt;=^|\W)(?&lt;!\\|})     # must be preceded by nonword character, and not by escape or } (attribute)
-(\#)(?=\S[\S ]*\S\#\W) # must be followed by inline characters and closed</string>
+(\#)(?=(\S+|\S[\S ]*\S)\#\W) # must be followed by inline characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -4150,7 +4150,7 @@ Examples:
 			<string>(?x)
 (\[[^\]]*?\])?       # might start with attributes list
 (?&lt;=^|\W)(?&lt;!\\|})   # must be preceded by nonword character, and not by escape or } (attribute)
-(`)(?=\S[\S ]*\S`\W) # must be followed by inline characters and closed</string>
+(`)(?=(\S+|\S[\S ]*\S)`\W) # must be followed by inline characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -4503,7 +4503,7 @@ sect\d|abstract|preface|colophon|dedication|glossary|bibliography|synopsis|appen
 			<string>(?x)
 (\[[^\]]*?\])?         # might start with an attributes list
 (?&lt;=^|\W)(?&lt;!\\|})     # must be preceded by nonword character, and not by escape or } (attribute)
-(\*)(?=\S[\S ]*\S\*\W) # must be followed by inline characters and closed</string>
+(\*)(?=(\S+|\S[\S ]*\S)\*\W) # must be followed by inline characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -5007,7 +5007,7 @@ Examples:
 			<string>(?x)
 (\[[^\]]*?\])?         # might be preceded by an attributes list
 (?&lt;=^|\W)(?&lt;!\\|})     # must be preceded by nonword character, and not by escape or } (attribute)
-("`)(?=\S[\S ]*\S`"\W) # must be followed by inline characters and closed</string>
+("`)(?=(\S+|\S[\S ]*\S)`"\W) # must be followed by inline characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
@@ -5105,7 +5105,7 @@ Examples:
 			<string>(?x)
 (\[[^\]]*?\])?         # might be preceded by an attributes list
 (?&lt;=^|\W)(?&lt;!\\|})     # must be preceded by nonword character, and not by escape or } (attribute)
-('`)(?=\S[\S ]*\S`'\W) # must be followed by inline characters and closed</string>
+('`)(?=(\S+|\S[\S ]*\S)`'\W) # must be followed by inline characters and closed</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
