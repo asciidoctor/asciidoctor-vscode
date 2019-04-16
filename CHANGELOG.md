@@ -1,5 +1,9 @@
 # Changes
 
+## 2.4.1
+
+* Fix missing highlight for single character constrained inlines (e.g. \*a\*)
+
 ## 2.4.0
 
 * Fix errors with the preview security setting
