@@ -19,6 +19,8 @@
     "files.watcherExclude": {
         "out/**": true
     },
+    "spellright.documentTypes": [
+    ],
     "asciidoc.asciidoctor_command": "asciidoctor",
     "asciidoc.asciidoctorpdf_command": "asciidoctor-pdf",
     "asciidoc.forceUnixStyleSeparator": true,
