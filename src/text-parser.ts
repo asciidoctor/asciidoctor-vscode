@@ -72,7 +72,8 @@ export class AsciiDocParser {
             } else if (use_editor_stylesheet) {
                 attributes = { 'copycss': true, 'stylesdir': this.stylesdir, 'stylesheet': 'asciidoctor-editor.css@' }
             } else {
-                attributes = { 'copycss': true, 'stylesdir': this.stylesdir, 'stylesheet': 'asciidoctor-default.css@' }
+                // TODO: decide whether to use the included css or let ascidoctor.js decide
+                // attributes = { 'copycss': true, 'stylesdir': this.stylesdir, 'stylesheet': 'asciidoctor-default.css@' }
             }
             const options = {
                 safe: 'unsafe',
