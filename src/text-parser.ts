@@ -44,6 +44,8 @@ asciidoctor.Extensions.register(function () {
 export class AsciiDocParser {
     public html: string = '';
     public document = null;
+    private ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
+    private stylesdir = path.join(this.ext_path, 'media')
 
     constructor(private readonly filename: string) {
     }
@@ -61,16 +63,17 @@ export class AsciiDocParser {
         return new Promise<string>(resolve => {
             const editor = vscode.window.activeTextEditor;
             const doc = editor.document;
-            const contains_stylesheet = !isNullOrUndefined(text.match(new RegExp("^\\s*:stylesheet:", "img")));
-            const use_default_stylesheet = vscode.workspace.getConfiguration('asciidoc').get('useDefaultStylesheet', false);
             const documentPath = path.dirname(path.resolve(doc.fileName));
-            const ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
-            const stylesdir = path.join(ext_path, 'assets')
+            const contains_stylesheet = !isNullOrUndefined(text.match(new RegExp("^\\s*:stylesheet:", "img")));
+            const use_editor_stylesheet = vscode.workspace.getConfiguration('asciidoc').get('preview.useEditorStyle', false);
             var attributes = {};
-            if (contains_stylesheet || use_default_stylesheet)
+            if (contains_stylesheet) {
                 attributes = { 'copycss': true }
-            else
-                attributes = { 'copycss': true, 'stylesdir': stylesdir, 'stylesheet': 'asciidoctor.css' }
+            } else if (use_editor_stylesheet) {
+                attributes = { 'copycss': true, 'stylesdir': this.stylesdir, 'stylesheet': 'asciidoctor-editor.css@' }
+            } else {
+                attributes = { 'copycss': true, 'stylesdir': this.stylesdir, 'stylesheet': 'asciidoctor-default.css@' }
+            }
             const options = {
                 safe: 'unsafe',
                 doctype: 'article',
@@ -96,6 +99,7 @@ export class AsciiDocParser {
         const editor = vscode.window.activeTextEditor;
         const doc = editor.document;
         const documentPath = path.dirname(doc.fileName).replace('"', '\\"');
+        const use_editor_stylesheet = vscode.workspace.getConfiguration('asciidoc').get('preview.useEditorStyle', false);
         this.document = null;
 
         return new Promise<string>(resolve => {
@@ -115,6 +119,14 @@ export class AsciiDocParser {
             var adoc_cmd_array = asciidoctor_command.split(/(\s+)/).filter( function(e) { return e.trim().length > 0; } ) ;
             var adoc_cmd = adoc_cmd_array[0]
             var adoc_cmd_args = adoc_cmd_array.slice(1)
+            if (use_editor_stylesheet) {
+                adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', `stylesdir=${this.stylesdir}@`])
+                adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', 'stylesheet=asciidoctor-editor.css@'])
+            } else {
+                // TODO: decide whether to use the included css or let ascidoctor decide
+                // adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', `stylesdir=${this.stylesdir}@`])
+                // adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', 'stylesheet=asciidoctor-default.css@'])
+            }
             adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-o-', '-', '-B', '"' + documentPath + '"'])
             var asciidoctor = spawn(adoc_cmd, adoc_cmd_args, options);
 
