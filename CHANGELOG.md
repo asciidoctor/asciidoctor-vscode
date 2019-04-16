@@ -1,6 +1,6 @@
 # Changes
 
-# 2.4.0
+## 2.4.0
 * Fix errors with the preview security setting
 * Fix an error with jsonValidation (thanks to @shaneknysh <shane.knysh@gmail.com>)
 * Fix descriptiond still using "Markdown" instead of "AsciiDoc" (thanks to @ygra <joey@muhkuhsaft.de>)
