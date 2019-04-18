@@ -4,19 +4,19 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { MarkdownEngine } from '../markdownEngine';
-import { MarkdownContributions } from '../markdownExtensions';
+import { AsciidocEngine } from '../asciidocEngine';
+import { AsciidocContributions } from '../asciidocExtensions';
 import { githubSlugifier } from '../slugify';
 
-const emptyContributions = new class implements MarkdownContributions {
+const emptyContributions = new class implements AsciidocContributions {
 	readonly extensionPath = '';
 	readonly previewScripts: vscode.Uri[] = [];
 	readonly previewStylesEditor: vscode.Uri[] = [];
 	readonly previewStylesDefault: vscode.Uri[] = [];
 	readonly previewResourceRoots: vscode.Uri[] = [];
-	readonly markdownItPlugins: Promise<(md: any) => any>[] = [];
+	readonly asciidocItPlugins: Promise<(md: any) => any>[] = [];
 };
 
-export function createNewMarkdownEngine(): MarkdownEngine {
-	return new MarkdownEngine(emptyContributions, githubSlugifier);
+export function createNewAsciidocEngine(): AsciidocEngine {
+	return new AsciidocEngine(emptyContributions, githubSlugifier);
 }

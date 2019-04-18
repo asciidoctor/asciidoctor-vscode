@@ -9,14 +9,14 @@ import 'mocha';
 
 import { TableOfContentsProvider } from '../tableOfContentsProvider';
 import { InMemoryDocument } from './inMemoryDocument';
-import { createNewMarkdownEngine } from './engine';
+import { createNewAsciidocEngine } from './engine';
 
 const testFileName = vscode.Uri.file('test.md');
 
 suite('asciidoc.TableOfContentsProvider', () => {
 	test('Lookup should not return anything for empty document', async () => {
 		const doc = new InMemoryDocument(testFileName, '');
-		const provider = new TableOfContentsProvider(createNewMarkdownEngine(), doc);
+		const provider = new TableOfContentsProvider(createNewAsciidocEngine(), doc);
 
 		assert.strictEqual(await provider.lookup(''), undefined);
 		assert.strictEqual(await provider.lookup('foo'), undefined);
@@ -24,7 +24,7 @@ suite('asciidoc.TableOfContentsProvider', () => {
 
 	test('Lookup should not return anything for document with no headers', async () => {
 		const doc = new InMemoryDocument(testFileName, 'a *b*\nc');
-		const provider = new TableOfContentsProvider(createNewMarkdownEngine(), doc);
+		const provider = new TableOfContentsProvider(createNewAsciidocEngine(), doc);
 
 		assert.strictEqual(await provider.lookup(''), undefined);
 		assert.strictEqual(await provider.lookup('foo'), undefined);
@@ -34,7 +34,7 @@ suite('asciidoc.TableOfContentsProvider', () => {
 
 	test('Lookup should return basic #header', async () => {
 		const doc = new InMemoryDocument(testFileName, `# a\nx\n# c`);
-		const provider = new TableOfContentsProvider(createNewMarkdownEngine(), doc);
+		const provider = new TableOfContentsProvider(createNewAsciidocEngine(), doc);
 
 		{
 			const entry = await provider.lookup('a');
@@ -53,7 +53,7 @@ suite('asciidoc.TableOfContentsProvider', () => {
 
 	test('Lookups should be case in-sensitive', async () => {
 		const doc = new InMemoryDocument(testFileName, `# fOo\n`);
-		const provider = new TableOfContentsProvider(createNewMarkdownEngine(), doc);
+		const provider = new TableOfContentsProvider(createNewAsciidocEngine(), doc);
 
 		assert.strictEqual((await provider.lookup('fOo'))!.line, 0);
 		assert.strictEqual((await provider.lookup('foo'))!.line, 0);
@@ -62,7 +62,7 @@ suite('asciidoc.TableOfContentsProvider', () => {
 
 	test('Lookups should ignore leading and trailing white-space, and collapse internal whitespace', async () => {
 		const doc = new InMemoryDocument(testFileName, `#      f o  o    \n`);
-		const provider = new TableOfContentsProvider(createNewMarkdownEngine(), doc);
+		const provider = new TableOfContentsProvider(createNewAsciidocEngine(), doc);
 
 		assert.strictEqual((await provider.lookup('f o  o'))!.line, 0);
 		assert.strictEqual((await provider.lookup('  f o  o'))!.line, 0);
@@ -77,14 +77,14 @@ suite('asciidoc.TableOfContentsProvider', () => {
 
 	test('should handle special characters #44779', async () => {
 		const doc = new InMemoryDocument(testFileName, `# Indentação\n`);
-		const provider = new TableOfContentsProvider(createNewMarkdownEngine(), doc);
+		const provider = new TableOfContentsProvider(createNewAsciidocEngine(), doc);
 
 		assert.strictEqual((await provider.lookup('indentação'))!.line, 0);
 	});
 
 	test('should handle special characters 2, #48482', async () => {
 		const doc = new InMemoryDocument(testFileName, `# Инструкция - Делай Раз, Делай Два\n`);
-		const provider = new TableOfContentsProvider(createNewMarkdownEngine(), doc);
+		const provider = new TableOfContentsProvider(createNewAsciidocEngine(), doc);
 
 		assert.strictEqual((await provider.lookup('инструкция---делай-раз-делай-два'))!.line, 0);
 	});
@@ -97,7 +97,7 @@ suite('asciidoc.TableOfContentsProvider', () => {
 ### Заголовок Header 3
 ## Заголовок`);
 
-		const provider = new TableOfContentsProvider(createNewMarkdownEngine(), doc);
+		const provider = new TableOfContentsProvider(createNewAsciidocEngine(), doc);
 
 		assert.strictEqual((await provider.lookup('header-2'))!.line, 0);
 		assert.strictEqual((await provider.lookup('header-3'))!.line, 1);

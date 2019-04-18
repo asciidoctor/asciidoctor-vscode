@@ -7,9 +7,9 @@ import * as vscode from 'vscode';
 import { extname } from 'path';
 
 import { Command } from '../commandManager';
-import { MarkdownEngine } from '../markdownEngine';
+import { AsciidocEngine } from '../asciidocEngine';
 import { TableOfContentsProvider } from '../tableOfContentsProvider';
-import { isMarkdownFile } from '../util/file';
+import { isAsciidocFile } from '../util/file';
 
 
 export interface OpenDocumentLinkArgs {
@@ -29,7 +29,7 @@ export class OpenDocumentLinkCommand implements Command {
 	}
 
 	public constructor(
-		private readonly engine: MarkdownEngine
+		private readonly engine: AsciidocEngine
 	) { }
 
 	public execute(args: OpenDocumentLinkArgs) {
@@ -47,7 +47,7 @@ export class OpenDocumentLinkCommand implements Command {
 
 	private async tryOpen(path: string, args: OpenDocumentLinkArgs) {
 		const resource = vscode.Uri.file(path);
-		if (vscode.window.activeTextEditor && isMarkdownFile(vscode.window.activeTextEditor.document) && vscode.window.activeTextEditor.document.uri.fsPath === resource.fsPath) {
+		if (vscode.window.activeTextEditor && isAsciidocFile(vscode.window.activeTextEditor.document) && vscode.window.activeTextEditor.document.uri.fsPath === resource.fsPath) {
 			return this.tryRevealLine(vscode.window.activeTextEditor, args.fragment);
 		} else {
 			return vscode.workspace.openTextDocument(resource)
@@ -75,9 +75,9 @@ export class OpenDocumentLinkCommand implements Command {
 }
 
 
-export async function resolveLinkToMarkdownFile(path: string): Promise<vscode.Uri | undefined> {
+export async function resolveLinkToAsciidocFile(path: string): Promise<vscode.Uri | undefined> {
 	try {
-		const standardLink = await tryResolveLinkToMarkdownFile(path);
+		const standardLink = await tryResolveLinkToAsciidocFile(path);
 		if (standardLink) {
 			return standardLink;
 		}
@@ -87,13 +87,13 @@ export async function resolveLinkToMarkdownFile(path: string): Promise<vscode.Ur
 
 	// If no extension, try with `.md` extension
 	if (extname(path) === '') {
-		return tryResolveLinkToMarkdownFile(path + '.md');
+		return tryResolveLinkToAsciidocFile(path + '.md');
 	}
 
 	return undefined;
 }
 
-async function tryResolveLinkToMarkdownFile(path: string): Promise<vscode.Uri | undefined> {
+async function tryResolveLinkToAsciidocFile(path: string): Promise<vscode.Uri | undefined> {
 	const resource = vscode.Uri.file(path);
 
 	let document: vscode.TextDocument;
@@ -102,7 +102,7 @@ async function tryResolveLinkToMarkdownFile(path: string): Promise<vscode.Uri | 
 	} catch {
 		return undefined;
 	}
-	if (isMarkdownFile(document)) {
+	if (isAsciidocFile(document)) {
 		return document.uri;
 	}
 	return undefined;

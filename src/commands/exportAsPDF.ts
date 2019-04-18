@@ -8,7 +8,7 @@ import { isNullOrUndefined } from 'util'
 import { spawn } from "child_process";
 import { AsciiDocParser } from '../text-parser';
 import { Command } from '../commandManager';
-import { MarkdownEngine } from '../markdownEngine';
+import { AsciidocEngine } from '../asciidocEngine';
 import * as tmp from "tmp";
 
 var HttpsProxyAgent = require('https-proxy-agent');
@@ -18,7 +18,7 @@ export class ExportAsPDF implements Command {
     public readonly id = 'asciidoc.exportAsPDF';
 
 	constructor(
-		private readonly engine: MarkdownEngine
+		private readonly engine: AsciidocEngine
 	) { }
 
     public async execute() {

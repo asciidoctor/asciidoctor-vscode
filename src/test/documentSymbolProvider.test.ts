@@ -8,7 +8,7 @@ import 'mocha';
 import * as vscode from 'vscode';
 import SymbolProvider from '../features/documentSymbolProvider';
 import { InMemoryDocument } from './inMemoryDocument';
-import { createNewMarkdownEngine } from './engine';
+import { createNewAsciidocEngine } from './engine';
 
 
 const testFileName = vscode.Uri.file('test.md');
@@ -16,7 +16,7 @@ const testFileName = vscode.Uri.file('test.md');
 
 function getSymbolsForFile(fileContents: string) {
 	const doc = new InMemoryDocument(testFileName, fileContents);
-	const provider = new SymbolProvider(createNewMarkdownEngine());
+	const provider = new SymbolProvider(createNewAsciidocEngine());
 	return provider.provideDocumentSymbols(doc);
 }
 
@@ -83,4 +83,3 @@ suite('asciidoc.DocumentSymbolProvider', () => {
 		assert.strictEqual(symbols[0].children[1].name, '## h3');
 	});
 });
-

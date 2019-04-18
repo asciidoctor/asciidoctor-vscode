@@ -5,6 +5,6 @@
 
 import * as vscode from 'vscode';
 
-export function isMarkdownFile(document: vscode.TextDocument) {
+export function isAsciidocFile(document: vscode.TextDocument) {
 	return document.languageId === 'asciidoc';
 }

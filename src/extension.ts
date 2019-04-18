@@ -8,23 +8,23 @@ import { CommandManager } from './commandManager';
 import * as commands from './commands/index';
 import LinkProvider from './features/documentLinkProvider';
 import MDDocumentSymbolProvider from './features/documentSymbolProvider';
-import MarkdownFoldingProvider from './features/foldingProvider';
-import { MarkdownContentProvider } from './features/previewContentProvider';
-import { MarkdownPreviewManager } from './features/previewManager';
-import MarkdownWorkspaceSymbolProvider from './features/workspaceSymbolProvider';
+import AsciidocFoldingProvider from './features/foldingProvider';
+import { AsciidocContentProvider } from './features/previewContentProvider';
+import { AsciidocPreviewManager } from './features/previewManager';
+import AsciidocWorkspaceSymbolProvider from './features/workspaceSymbolProvider';
 import { Logger } from './logger';
-import { MarkdownEngine } from './markdownEngine';
-import { getMarkdownExtensionContributions } from './markdownExtensions';
+import { AsciidocEngine } from './asciidocEngine';
+import { getAsciidocExtensionContributions } from './asciidocExtensions';
 import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security';
 import { githubSlugifier } from './slugify';
 
 
 export function activate(context: vscode.ExtensionContext) {
 
-	const contributions = getMarkdownExtensionContributions(context);
+	const contributions = getAsciidocExtensionContributions(context);
 
 	const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
-	const engine = new MarkdownEngine(contributions, githubSlugifier);
+	const engine = new AsciidocEngine(contributions, githubSlugifier);
 	const logger = new Logger();
 
 	const selector: vscode.DocumentSelector = [
@@ -32,15 +32,15 @@ export function activate(context: vscode.ExtensionContext) {
 		{ language: 'asciidoc', scheme: 'untitled' }
 	];
 
-	const contentProvider = new MarkdownContentProvider(engine, context, cspArbiter, contributions, logger);
+	const contentProvider = new AsciidocContentProvider(engine, context, cspArbiter, contributions, logger);
 	const symbolProvider = new MDDocumentSymbolProvider(engine);
-    const previewManager = new MarkdownPreviewManager(contentProvider, logger, contributions);
+    const previewManager = new AsciidocPreviewManager(contentProvider, logger, contributions);
 	context.subscriptions.push(previewManager);
 
 	context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider));
 	context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider()));
-	context.subscriptions.push(vscode.languages.registerFoldingRangeProvider(selector, new MarkdownFoldingProvider(engine)));
-	context.subscriptions.push(vscode.languages.registerWorkspaceSymbolProvider(new MarkdownWorkspaceSymbolProvider(symbolProvider)));
+	context.subscriptions.push(vscode.languages.registerFoldingRangeProvider(selector, new AsciidocFoldingProvider(engine)));
+	context.subscriptions.push(vscode.languages.registerWorkspaceSymbolProvider(new AsciidocWorkspaceSymbolProvider(symbolProvider)));
 
 	const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
 

@@ -5,13 +5,13 @@
 
 import * as vscode from 'vscode';
 import { Command } from '../commandManager';
-import { MarkdownPreviewManager } from '../features/previewManager';
+import { AsciidocPreviewManager } from '../features/previewManager';
 
 export class ShowSourceCommand implements Command {
 	public readonly id = 'asciidoc.showSource';
 
 	public constructor(
-		private readonly previewManager: MarkdownPreviewManager
+		private readonly previewManager: AsciidocPreviewManager
 	) { }
 
 	public execute() {

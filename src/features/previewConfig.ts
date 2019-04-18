@@ -5,9 +5,9 @@
 
 import * as vscode from 'vscode';
 
-export class MarkdownPreviewConfiguration {
+export class AsciidocPreviewConfiguration {
 	public static getForResource(resource: vscode.Uri) {
-		return new MarkdownPreviewConfiguration(resource);
+		return new AsciidocPreviewConfiguration(resource);
 	}
 
 	public readonly scrollBeyondLastLine: boolean;
@@ -26,31 +26,31 @@ export class MarkdownPreviewConfiguration {
 
 	private constructor(resource: vscode.Uri) {
 		const editorConfig = vscode.workspace.getConfiguration('editor', resource);
-		const markdownConfig = vscode.workspace.getConfiguration('asciidoc', resource);
-		const markdownEditorConfig = vscode.workspace.getConfiguration('[asciidoc]', resource);
+		const asciidocConfig = vscode.workspace.getConfiguration('asciidoc', resource);
+		const asciidocEditorConfig = vscode.workspace.getConfiguration('[asciidoc]', resource);
 
 		this.scrollBeyondLastLine = editorConfig.get<boolean>('scrollBeyondLastLine', false);
 
 		this.wordWrap = editorConfig.get<string>('wordWrap', 'off') !== 'off';
-		if (markdownEditorConfig && markdownEditorConfig['editor.wordWrap']) {
-			this.wordWrap = markdownEditorConfig['editor.wordWrap'] !== 'off';
+		if (asciidocEditorConfig && asciidocEditorConfig['editor.wordWrap']) {
+			this.wordWrap = asciidocEditorConfig['editor.wordWrap'] !== 'off';
 		}
 
-		this.previewFrontMatter = markdownConfig.get<string>('previewFrontMatter', 'hide');
-		this.scrollPreviewWithEditor = !!markdownConfig.get<boolean>('preview.scrollPreviewWithEditor', true);
-		this.scrollEditorWithPreview = !!markdownConfig.get<boolean>('preview.scrollEditorWithPreview', true);
-		this.lineBreaks = !!markdownConfig.get<boolean>('preview.breaks', false);
-		this.doubleClickToSwitchToEditor = !!markdownConfig.get<boolean>('preview.doubleClickToSwitchToEditor', true);
-		this.markEditorSelection = !!markdownConfig.get<boolean>('preview.markEditorSelection', true);
+		this.previewFrontMatter = asciidocConfig.get<string>('previewFrontMatter', 'hide');
+		this.scrollPreviewWithEditor = !!asciidocConfig.get<boolean>('preview.scrollPreviewWithEditor', true);
+		this.scrollEditorWithPreview = !!asciidocConfig.get<boolean>('preview.scrollEditorWithPreview', true);
+		this.lineBreaks = !!asciidocConfig.get<boolean>('preview.breaks', false);
+		this.doubleClickToSwitchToEditor = !!asciidocConfig.get<boolean>('preview.doubleClickToSwitchToEditor', true);
+		this.markEditorSelection = !!asciidocConfig.get<boolean>('preview.markEditorSelection', true);
 
-		this.fontFamily = markdownConfig.get<string | undefined>('preview.fontFamily', undefined);
-		this.fontSize = Math.max(8, +markdownConfig.get<number>('preview.fontSize', NaN));
-		this.lineHeight = Math.max(0.6, +markdownConfig.get<number>('preview.lineHeight', NaN));
+		this.fontFamily = asciidocConfig.get<string | undefined>('preview.fontFamily', undefined);
+		this.fontSize = Math.max(8, +asciidocConfig.get<number>('preview.fontSize', NaN));
+		this.lineHeight = Math.max(0.6, +asciidocConfig.get<number>('preview.lineHeight', NaN));
 
-		this.styles = markdownConfig.get<string[]>('styles', []);
+		this.styles = asciidocConfig.get<string[]>('styles', []);
 	}
 
-	public isEqualTo(otherConfig: MarkdownPreviewConfiguration) {
+	public isEqualTo(otherConfig: AsciidocPreviewConfiguration) {
 		for (let key in this) {
 			if (this.hasOwnProperty(key) && key !== 'styles') {
 				if (this[key] !== otherConfig[key]) {
@@ -75,13 +75,13 @@ export class MarkdownPreviewConfiguration {
 	[key: string]: any;
 }
 
-export class MarkdownPreviewConfigurationManager {
-	private readonly previewConfigurationsForWorkspaces = new Map<string, MarkdownPreviewConfiguration>();
+export class AsciidocPreviewConfigurationManager {
+	private readonly previewConfigurationsForWorkspaces = new Map<string, AsciidocPreviewConfiguration>();
 
 	public loadAndCacheConfiguration(
 		resource: vscode.Uri
-	): MarkdownPreviewConfiguration {
-		const config = MarkdownPreviewConfiguration.getForResource(resource);
+	): AsciidocPreviewConfiguration {
+		const config = AsciidocPreviewConfiguration.getForResource(resource);
 		this.previewConfigurationsForWorkspaces.set(this.getKey(resource), config);
 		return config;
 	}
@@ -91,7 +91,7 @@ export class MarkdownPreviewConfigurationManager {
 	): boolean {
 		const key = this.getKey(resource);
 		const currentConfig = this.previewConfigurationsForWorkspaces.get(key);
-		const newConfig = MarkdownPreviewConfiguration.getForResource(resource);
+		const newConfig = AsciidocPreviewConfiguration.getForResource(resource);
 		return (!currentConfig || !currentConfig.isEqualTo(newConfig));
 	}
 

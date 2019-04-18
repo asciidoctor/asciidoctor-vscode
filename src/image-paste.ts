@@ -7,10 +7,10 @@
 // to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 // copies of the Software, and to permit persons to whom the Software is
 // furnished to do so, subject to the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be included in all
 // copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 // IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 // FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -26,7 +26,7 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
-import { spawn } from 'child_process';  
+import { spawn } from 'child_process';
 import * as moment from 'moment';
 import * as upath from 'upath';
 
@@ -91,10 +91,10 @@ export class Paster
 
     /**
      * Reads the current `:imagesdir:` [attribute](https://asciidoctor.org/docs/user-manual/#setting-the-location-of-images) from the document.
-     * 
+     *
      * **Caution**: Only reads from the _active_ document (_not_ `included` documents).
-     * 
-     * Reads the _nearest_ `:imagesdir:` attribute that appears _before_ the current selection 
+     *
+     * Reads the _nearest_ `:imagesdir:` attribute that appears _before_ the current selection
      * or cursor location
      */
     static get_current_imagesdir()
@@ -142,8 +142,8 @@ export class Paster
      * @param selection Selection
      */
     public static is_inline_context(
-        selected: string, 
-        document: vscode.TextDocument, 
+        selected: string,
+        document: vscode.TextDocument,
         selection: vscode.Selection): boolean
     {
         const line = document.lineAt(selection.start).text;
@@ -151,10 +151,10 @@ export class Paster
 
         return selected && !is_block.test(line);
     }
-    
+
     static validate(
         required: {
-            editor: vscode.TextEditor, 
+            editor: vscode.TextEditor,
             selection: string
         }) :boolean
     {
@@ -195,12 +195,12 @@ export class Paster
         this.nameSuffixConfig = config['nameSuffix'];
         this.insertPatternConfig = config['insertPattern'];
 
-        const validate = (path: string) :boolean => 
+        const validate = (path: string) :boolean =>
         {
             return (path.length === path.trim().length);
         }
 
-        if(!validate(this.folderPathConfig)) 
+        if(!validate(this.folderPathConfig))
         {
             Logger.showErrorMessage(
                 `The config AsciiDoc.path = '${this.folderPathConfig}' is invalid. Please check your config.`);
@@ -215,7 +215,7 @@ export class Paster
         }
 
         // replace variable in config
-        
+
         const filePath = editor.document.uri.fsPath;
         const projectPath = vscode.workspace.rootPath;
 
@@ -280,11 +280,11 @@ export class Paster
                 }
 
                 imagePath = this.renderFilePath(
-                    editor.document.languageId, 
-                    this.basePathConfig, 
-                    imagePath, 
-                    this.forceUnixStyleSeparatorConfig, 
-                    this.prefixConfig, 
+                    editor.document.languageId,
+                    this.basePathConfig,
+                    imagePath,
+                    this.forceUnixStyleSeparatorConfig,
+                    this.prefixConfig,
                     this.suffixConfig
                 );
 
@@ -450,7 +450,7 @@ export class Paster
             });
         } else
         {
-            // Linux 
+            // Linux
             let scriptPath = path.join(__dirname, '../../res/linux.sh');
 
             let ascript = spawn('sh', [scriptPath, imagePath]);
@@ -477,7 +477,7 @@ export class Paster
 
     /**
      * render the image file path dependen on file type
-     * e.g. in markdown image file path will render to ![](path)
+     * e.g. in asciidoc image file path will render to ![](path)
      */
     public static renderFilePath(languageId: string, basePath: string, imageFilePath: string, forceUnixStyleSeparator: boolean, prefix: string, suffix: string): string
     {
@@ -510,7 +510,7 @@ export class Paster
         let imageSyntaxSuffix = ""
         switch (languageId)
         {
-            case "markdown":
+            case "asciidoc":
                 imageSyntaxPrefix = '![]('
                 imageSyntaxSuffix = ')'
                 break;
@@ -533,9 +533,9 @@ export class Paster
     }
 
     public static replacePathVariable(
-        pathStr: string, 
-        projectRoot: string, 
-        curFilePath: string, 
+        pathStr: string,
+        projectRoot: string,
+        curFilePath: string,
         postFunction: (string) => string = (x) => x
     ): string
     {

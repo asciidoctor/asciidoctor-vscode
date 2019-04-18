@@ -6,7 +6,7 @@
 import * as vscode from 'vscode';
 
 import { Command } from '../commandManager';
-import { MarkdownPreviewManager } from '../features/previewManager';
+import { AsciidocPreviewManager } from '../features/previewManager';
 import { PreviewSettings } from '../features/preview';
 
 interface ShowPreviewSettings {
@@ -15,14 +15,14 @@ interface ShowPreviewSettings {
 }
 
 async function showPreview(
-	webviewManager: MarkdownPreviewManager,
+	webviewManager: AsciidocPreviewManager,
 	uri: vscode.Uri | undefined,
 	previewSettings: ShowPreviewSettings,
 ): Promise<any> {
     let resource = uri;
 	if (!(resource instanceof vscode.Uri)) {
 		if (vscode.window.activeTextEditor) {
-			// we are relaxed and don't check for markdown files
+			// we are relaxed and don't check for asciidoc files
 			resource = vscode.window.activeTextEditor.document.uri;
 		}
 	}
@@ -49,7 +49,7 @@ export class ShowPreviewCommand implements Command {
 	public readonly id = 'asciidoc.showPreview';
 
 	public constructor(
-		private readonly webviewManager: MarkdownPreviewManager,
+		private readonly webviewManager: AsciidocPreviewManager,
 	) { }
 
 	public execute(mainUri?: vscode.Uri, allUris?: vscode.Uri[], previewSettings?: PreviewSettings) {
@@ -66,7 +66,7 @@ export class ShowPreviewToSideCommand implements Command {
 	public readonly id = 'asciidoc.showPreviewToSide';
 
 	public constructor(
-		private readonly webviewManager: MarkdownPreviewManager,
+		private readonly webviewManager: AsciidocPreviewManager,
 	) { }
 
 	public execute(uri?: vscode.Uri, previewSettings?: PreviewSettings) {
@@ -82,7 +82,7 @@ export class ShowLockedPreviewToSideCommand implements Command {
 	public readonly id = 'asciidoc.showLockedPreviewToSide';
 
 	public constructor(
-		private readonly webviewManager: MarkdownPreviewManager,
+		private readonly webviewManager: AsciidocPreviewManager,
 	) { }
 
 	public execute(uri?: vscode.Uri) {

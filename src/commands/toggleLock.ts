@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Command } from '../commandManager';
-import { MarkdownPreviewManager } from '../features/previewManager';
+import { AsciidocPreviewManager } from '../features/previewManager';
 
 export class ToggleLockCommand implements Command {
 	public readonly id = 'asciidoc.preview.toggleLock';
 
 	public constructor(
-		private readonly previewManager: MarkdownPreviewManager
+		private readonly previewManager: AsciidocPreviewManager
 	) { }
 
 	public execute() {

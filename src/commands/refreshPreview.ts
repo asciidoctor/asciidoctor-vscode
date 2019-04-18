@@ -4,13 +4,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Command } from '../commandManager';
-import { MarkdownPreviewManager } from '../features/previewManager';
+import { AsciidocPreviewManager } from '../features/previewManager';
 
 export class RefreshPreviewCommand implements Command {
 	public readonly id = 'asciidoc.preview.refresh';
 
 	public constructor(
-		private readonly webviewManager: MarkdownPreviewManager
+		private readonly webviewManager: AsciidocPreviewManager
 	) { }
 
 	public execute() {

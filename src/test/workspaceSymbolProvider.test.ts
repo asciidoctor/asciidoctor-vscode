@@ -7,24 +7,24 @@ import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
 import MDDocumentSymbolProvider from '../features/documentSymbolProvider';
-import MarkdownWorkspaceSymbolProvider, { WorkspaceMarkdownDocumentProvider } from '../features/workspaceSymbolProvider';
-import { createNewMarkdownEngine } from './engine';
+import AsciidocWorkspaceSymbolProvider, { WorkspaceAsciidocDocumentProvider } from '../features/workspaceSymbolProvider';
+import { createNewAsciidocEngine } from './engine';
 import { InMemoryDocument } from './inMemoryDocument';
 
 
-const symbolProvider = new MDDocumentSymbolProvider(createNewMarkdownEngine());
+const symbolProvider = new MDDocumentSymbolProvider(createNewAsciidocEngine());
 
 suite('asciidoc.WorkspaceSymbolProvider', () => {
 	test('Should not return anything for empty workspace', async () => {
-		const provider = new MarkdownWorkspaceSymbolProvider(symbolProvider, new InMemoryWorkspaceMarkdownDocumentProvider([]));
+		const provider = new AsciidocWorkspaceSymbolProvider(symbolProvider, new InMemoryWorkspaceAsciidocDocumentProvider([]));
 
 		assert.deepEqual(await provider.provideWorkspaceSymbols(''), []);
 	});
 
-	test('Should return symbols from workspace with one markdown file', async () => {
+	test('Should return symbols from workspace with one asciidoc file', async () => {
 		const testFileName = vscode.Uri.file('test.md');
 
-		const provider = new MarkdownWorkspaceSymbolProvider(symbolProvider, new InMemoryWorkspaceMarkdownDocumentProvider([
+		const provider = new AsciidocWorkspaceSymbolProvider(symbolProvider, new InMemoryWorkspaceAsciidocDocumentProvider([
 			new InMemoryDocument(testFileName, `# header1\nabc\n## header2`)
 		]));
 
@@ -42,20 +42,20 @@ suite('asciidoc.WorkspaceSymbolProvider', () => {
 			files.push(new InMemoryDocument(testFileName, `# common\nabc\n## header${i}`));
 		}
 
-		const provider = new MarkdownWorkspaceSymbolProvider(symbolProvider, new InMemoryWorkspaceMarkdownDocumentProvider(files));
+		const provider = new AsciidocWorkspaceSymbolProvider(symbolProvider, new InMemoryWorkspaceAsciidocDocumentProvider(files));
 
 		const symbols = await provider.provideWorkspaceSymbols('');
 		assert.strictEqual(symbols.length, fileNameCount * 2);
 	});
 
-	test('Should update results when markdown file changes symbols', async () => {
+	test('Should update results when asciidoc file changes symbols', async () => {
 		const testFileName = vscode.Uri.file('test.md');
 
-		const workspaceFileProvider = new InMemoryWorkspaceMarkdownDocumentProvider([
+		const workspaceFileProvider = new InMemoryWorkspaceAsciidocDocumentProvider([
 			new InMemoryDocument(testFileName, `# header1`)
 		]);
 
-		const provider = new MarkdownWorkspaceSymbolProvider(symbolProvider, workspaceFileProvider);
+		const provider = new AsciidocWorkspaceSymbolProvider(symbolProvider, workspaceFileProvider);
 
 		assert.strictEqual((await provider.provideWorkspaceSymbols('')).length, 1);
 
@@ -70,11 +70,11 @@ suite('asciidoc.WorkspaceSymbolProvider', () => {
 	test('Should remove results when file is deleted', async () => {
 		const testFileName = vscode.Uri.file('test.md');
 
-		const workspaceFileProvider = new InMemoryWorkspaceMarkdownDocumentProvider([
+		const workspaceFileProvider = new InMemoryWorkspaceAsciidocDocumentProvider([
 			new InMemoryDocument(testFileName, `# header1`)
 		]);
 
-		const provider = new MarkdownWorkspaceSymbolProvider(symbolProvider, workspaceFileProvider);
+		const provider = new AsciidocWorkspaceSymbolProvider(symbolProvider, workspaceFileProvider);
 		assert.strictEqual((await provider.provideWorkspaceSymbols('')).length, 1);
 
 		// delete file
@@ -83,14 +83,14 @@ suite('asciidoc.WorkspaceSymbolProvider', () => {
 		assert.strictEqual(newSymbols.length, 0);
 	});
 
-	test('Should update results when markdown file is created', async () => {
+	test('Should update results when asciidoc file is created', async () => {
 		const testFileName = vscode.Uri.file('test.md');
 
-		const workspaceFileProvider = new InMemoryWorkspaceMarkdownDocumentProvider([
+		const workspaceFileProvider = new InMemoryWorkspaceAsciidocDocumentProvider([
 			new InMemoryDocument(testFileName, `# header1`)
 		]);
 
-		const provider = new MarkdownWorkspaceSymbolProvider(symbolProvider, workspaceFileProvider);
+		const provider = new AsciidocWorkspaceSymbolProvider(symbolProvider, workspaceFileProvider);
 		assert.strictEqual((await provider.provideWorkspaceSymbols('')).length, 1);
 
 		// Creat file
@@ -101,7 +101,7 @@ suite('asciidoc.WorkspaceSymbolProvider', () => {
 });
 
 
-class InMemoryWorkspaceMarkdownDocumentProvider implements WorkspaceMarkdownDocumentProvider {
+class InMemoryWorkspaceAsciidocDocumentProvider implements WorkspaceAsciidocDocumentProvider {
 	private readonly _documents = new Map<string, vscode.TextDocument>();
 
 	constructor(documents: vscode.TextDocument[]) {
@@ -110,33 +110,33 @@ class InMemoryWorkspaceMarkdownDocumentProvider implements WorkspaceMarkdownDocu
 		}
 	}
 
-	async getAllMarkdownDocuments() {
+	async getAllAsciidocDocuments() {
 		return Array.from(this._documents.values());
 	}
 
-	private readonly _onDidChangeMarkdownDocumentEmitter = new vscode.EventEmitter<vscode.TextDocument>();
-	public onDidChangeMarkdownDocument = this._onDidChangeMarkdownDocumentEmitter.event;
+	private readonly _onDidChangeAsciidocDocumentEmitter = new vscode.EventEmitter<vscode.TextDocument>();
+	public onDidChangeAsciidocDocument = this._onDidChangeAsciidocDocumentEmitter.event;
 
-	private readonly _onDidCreateMarkdownDocumentEmitter = new vscode.EventEmitter<vscode.TextDocument>();
-	public onDidCreateMarkdownDocument = this._onDidCreateMarkdownDocumentEmitter.event;
+	private readonly _onDidCreateAsciidocDocumentEmitter = new vscode.EventEmitter<vscode.TextDocument>();
+	public onDidCreateAsciidocDocument = this._onDidCreateAsciidocDocumentEmitter.event;
 
-	private readonly _onDidDeleteMarkdownDocumentEmitter = new vscode.EventEmitter<vscode.Uri>();
-	public onDidDeleteMarkdownDocument = this._onDidDeleteMarkdownDocumentEmitter.event;
+	private readonly _onDidDeleteAsciidocDocumentEmitter = new vscode.EventEmitter<vscode.Uri>();
+	public onDidDeleteAsciidocDocument = this._onDidDeleteAsciidocDocumentEmitter.event;
 
 	public updateDocument(document: vscode.TextDocument) {
 		this._documents.set(document.fileName, document);
-		this._onDidChangeMarkdownDocumentEmitter.fire(document);
+		this._onDidChangeAsciidocDocumentEmitter.fire(document);
 	}
 
 	public createDocument(document: vscode.TextDocument) {
 		assert.ok(!this._documents.has(document.uri.fsPath));
 
 		this._documents.set(document.uri.fsPath, document);
-		this._onDidCreateMarkdownDocumentEmitter.fire(document);
+		this._onDidCreateAsciidocDocumentEmitter.fire(document);
 	}
 
 	public deleteDocument(resource: vscode.Uri) {
 		this._documents.delete(resource.fsPath);
-		this._onDidDeleteMarkdownDocumentEmitter.fire(resource);
+		this._onDidDeleteAsciidocDocumentEmitter.fire(resource);
 	}
 }

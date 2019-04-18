@@ -5,29 +5,29 @@
 
 import * as vscode from 'vscode';
 import { Logger } from '../logger';
-import { MarkdownContributions } from '../markdownExtensions';
+import { AsciidocContributions } from '../asciidocExtensions';
 import { disposeAll } from '../util/dispose';
-import { MarkdownFileTopmostLineMonitor } from '../util/topmostLineMonitor';
-import { MarkdownPreview, PreviewSettings } from './preview';
-import { MarkdownPreviewConfigurationManager } from './previewConfig';
-import { MarkdownContentProvider } from './previewContentProvider';
+import { AsciidocFileTopmostLineMonitor } from '../util/topmostLineMonitor';
+import { AsciidocPreview, PreviewSettings } from './preview';
+import { AsciidocPreviewConfigurationManager } from './previewConfig';
+import { AsciidocContentProvider } from './previewContentProvider';
 
 
-export class MarkdownPreviewManager implements vscode.WebviewPanelSerializer {
-	private static readonly markdownPreviewActiveContextKey = 'markdownPreviewFocus';
+export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer {
+	private static readonly asciidocPreviewActiveContextKey = 'asciidocPreviewFocus';
 
-	private readonly _topmostLineMonitor = new MarkdownFileTopmostLineMonitor();
-	private readonly _previewConfigurations = new MarkdownPreviewConfigurationManager();
-	private readonly _previews: MarkdownPreview[] = [];
-	private _activePreview: MarkdownPreview | undefined = undefined;
+	private readonly _topmostLineMonitor = new AsciidocFileTopmostLineMonitor();
+	private readonly _previewConfigurations = new AsciidocPreviewConfigurationManager();
+	private readonly _previews: AsciidocPreview[] = [];
+	private _activePreview: AsciidocPreview | undefined = undefined;
 	private readonly _disposables: vscode.Disposable[] = [];
 
 	public constructor(
-		private readonly _contentProvider: MarkdownContentProvider,
+		private readonly _contentProvider: AsciidocContentProvider,
 		private readonly _logger: Logger,
-		private readonly _contributions: MarkdownContributions
+		private readonly _contributions: AsciidocContributions
 	) {
-		this._disposables.push(vscode.window.registerWebviewPanelSerializer(MarkdownPreview.viewType, this));
+		this._disposables.push(vscode.window.registerWebviewPanelSerializer(AsciidocPreview.viewType, this));
 	}
 
 	public dispose(): void {
@@ -83,7 +83,7 @@ export class MarkdownPreviewManager implements vscode.WebviewPanelSerializer {
 		webview: vscode.WebviewPanel,
 		state: any
 	): Promise<void> {
-		const preview = await MarkdownPreview.revive(
+		const preview = await AsciidocPreview.revive(
 			webview,
 			state,
 			this._contentProvider,
@@ -98,7 +98,7 @@ export class MarkdownPreviewManager implements vscode.WebviewPanelSerializer {
 	private getExistingPreview(
 		resource: vscode.Uri,
 		previewSettings: PreviewSettings
-	): MarkdownPreview | undefined {
+	): AsciidocPreview | undefined {
 		return this._previews.find(preview =>
 			preview.matchesResource(resource, previewSettings.previewColumn, previewSettings.locked));
 	}
@@ -106,8 +106,8 @@ export class MarkdownPreviewManager implements vscode.WebviewPanelSerializer {
 	private createNewPreview(
 		resource: vscode.Uri,
 		previewSettings: PreviewSettings
-	): MarkdownPreview {
-		const preview = MarkdownPreview.create(
+	): AsciidocPreview {
+		const preview = AsciidocPreview.create(
 			resource,
 			previewSettings.previewColumn,
 			previewSettings.locked,
@@ -123,8 +123,8 @@ export class MarkdownPreviewManager implements vscode.WebviewPanelSerializer {
 	}
 
 	private registerPreview(
-		preview: MarkdownPreview
-	): MarkdownPreview {
+		preview: AsciidocPreview
+	): AsciidocPreview {
 		this._previews.push(preview);
 
 		preview.onDispose(() => {
@@ -150,7 +150,6 @@ export class MarkdownPreviewManager implements vscode.WebviewPanelSerializer {
 	}
 
 	private setPreviewActiveContext(value: boolean) {
-		vscode.commands.executeCommand('setContext', MarkdownPreviewManager.markdownPreviewActiveContextKey, value);
+		vscode.commands.executeCommand('setContext', AsciidocPreviewManager.asciidocPreviewActiveContextKey, value);
 	}
 }
-

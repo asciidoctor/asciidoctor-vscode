@@ -4,15 +4,15 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { MarkdownEngine } from '../markdownEngine';
+import { AsciidocEngine } from '../asciidocEngine';
 import { TableOfContentsProvider } from '../tableOfContentsProvider';
 
 const rangeLimit = 5000;
 
-export default class MarkdownFoldingProvider implements vscode.FoldingRangeProvider {
+export default class AsciidocFoldingProvider implements vscode.FoldingRangeProvider {
 
 	constructor(
-		private readonly engine: MarkdownEngine
+		private readonly engine: AsciidocEngine
 	) { }
 
 	private async getRegions(document: vscode.TextDocument): Promise<vscode.FoldingRange[]> {

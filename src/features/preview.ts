@@ -7,18 +7,18 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 import { Logger } from '../logger';
-import { MarkdownContentProvider } from './previewContentProvider';
+import { AsciidocContentProvider } from './previewContentProvider';
 import { disposeAll } from '../util/dispose';
 
 import * as nls from 'vscode-nls';
-import { getVisibleLine, MarkdownFileTopmostLineMonitor } from '../util/topmostLineMonitor';
-import { MarkdownPreviewConfigurationManager } from './previewConfig';
-import { MarkdownContributions } from '../markdownExtensions';
-import { isMarkdownFile } from '../util/file';
-import { resolveLinkToMarkdownFile } from '../commands/openDocumentLink';
+import { getVisibleLine, AsciidocFileTopmostLineMonitor } from '../util/topmostLineMonitor';
+import { AsciidocPreviewConfigurationManager } from './previewConfig';
+import { AsciidocContributions } from '../asciidocExtensions';
+import { isAsciidocFile } from '../util/file';
+import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink';
 const localize = nls.loadMessageBundle();
 
-export class MarkdownPreview {
+export class AsciidocPreview {
 
 	public static viewType = 'asciidoc.preview';
 
@@ -39,17 +39,17 @@ export class MarkdownPreview {
 	public static async revive(
 		webview: vscode.WebviewPanel,
 		state: any,
-		contentProvider: MarkdownContentProvider,
-		previewConfigurations: MarkdownPreviewConfigurationManager,
+		contentProvider: AsciidocContentProvider,
+		previewConfigurations: AsciidocPreviewConfigurationManager,
 		logger: Logger,
-		topmostLineMonitor: MarkdownFileTopmostLineMonitor,
-		contributions: MarkdownContributions,
-	): Promise<MarkdownPreview> {
+		topmostLineMonitor: AsciidocFileTopmostLineMonitor,
+		contributions: AsciidocContributions,
+	): Promise<AsciidocPreview> {
 		const resource = vscode.Uri.parse(state.resource);
 		const locked = state.locked;
 		const line = state.line;
 
-		const preview = new MarkdownPreview(
+		const preview = new AsciidocPreview(
 			webview,
 			resource,
 			locked,
@@ -59,7 +59,7 @@ export class MarkdownPreview {
 			topmostLineMonitor,
 			contributions);
 
-		preview.editor.webview.options = MarkdownPreview.getWebviewOptions(resource, contributions);
+		preview.editor.webview.options = AsciidocPreview.getWebviewOptions(resource, contributions);
 
 		if (!isNaN(line)) {
 			preview.line = line;
@@ -72,21 +72,21 @@ export class MarkdownPreview {
 		resource: vscode.Uri,
 		previewColumn: vscode.ViewColumn,
 		locked: boolean,
-		contentProvider: MarkdownContentProvider,
-		previewConfigurations: MarkdownPreviewConfigurationManager,
+		contentProvider: AsciidocContentProvider,
+		previewConfigurations: AsciidocPreviewConfigurationManager,
 		logger: Logger,
-		topmostLineMonitor: MarkdownFileTopmostLineMonitor,
-		contributions: MarkdownContributions
-	): MarkdownPreview {
+		topmostLineMonitor: AsciidocFileTopmostLineMonitor,
+		contributions: AsciidocContributions
+	): AsciidocPreview {
 		const webview = vscode.window.createWebviewPanel(
-			MarkdownPreview.viewType,
-			MarkdownPreview.getPreviewTitle(resource, locked),
+			AsciidocPreview.viewType,
+			AsciidocPreview.getPreviewTitle(resource, locked),
 			previewColumn, {
 				enableFindWidget: true,
-				...MarkdownPreview.getWebviewOptions(resource, contributions)
+				...AsciidocPreview.getWebviewOptions(resource, contributions)
 			});
 
-		return new MarkdownPreview(
+		return new AsciidocPreview(
 			webview,
 			resource,
 			locked,
@@ -101,11 +101,11 @@ export class MarkdownPreview {
 		webview: vscode.WebviewPanel,
 		resource: vscode.Uri,
 		locked: boolean,
-		private readonly _contentProvider: MarkdownContentProvider,
-		private readonly _previewConfigurations: MarkdownPreviewConfigurationManager,
+		private readonly _contentProvider: AsciidocContentProvider,
+		private readonly _previewConfigurations: AsciidocPreviewConfigurationManager,
 		private readonly _logger: Logger,
-		topmostLineMonitor: MarkdownFileTopmostLineMonitor,
-		private readonly _contributions: MarkdownContributions,
+		topmostLineMonitor: AsciidocFileTopmostLineMonitor,
+		private readonly _contributions: AsciidocContributions,
 	) {
 		this._resource = resource;
 		this._locked = locked;
@@ -174,7 +174,7 @@ export class MarkdownPreview {
 		}, null, this.disposables);
 
 		vscode.window.onDidChangeActiveTextEditor(editor => {
-			if (editor && isMarkdownFile(editor.document) && !this._locked) {
+			if (editor && isAsciidocFile(editor.document) && !this._locked) {
 				this.update(editor.document.uri);
 			}
 		}, null, this.disposables);
@@ -272,7 +272,7 @@ export class MarkdownPreview {
 		}
 	}
 
-	public matches(otherPreview: MarkdownPreview): boolean {
+	public matches(otherPreview: AsciidocPreview): boolean {
 		return this.matchesResource(otherPreview._resource, otherPreview.position, otherPreview._locked);
 	}
 
@@ -282,7 +282,7 @@ export class MarkdownPreview {
 
 	public toggleLock() {
 		this._locked = !this._locked;
-		this.editor.title = MarkdownPreview.getPreviewTitle(this._resource, this._locked);
+		this.editor.title = AsciidocPreview.getPreviewTitle(this._resource, this._locked);
 	}
 
 	private get iconPath() {
@@ -315,7 +315,7 @@ export class MarkdownPreview {
         }
 
 		if (typeof topLine === 'number') {
-			this._logger.log('updateForView', { markdownFile: resource });
+			this._logger.log('updateForView', { asciidocFile: resource });
 			this.line = topLine;
 			this.postMessage({
 				type: 'updateView',
@@ -349,27 +349,27 @@ export class MarkdownPreview {
 		this.currentVersion = { resource, version: document.version };
 		const content = await this._contentProvider.provideTextDocumentContent(document, this._previewConfigurations, this.line, this.state);
 		if (this._resource === resource) {
-			this.editor.title = MarkdownPreview.getPreviewTitle(this._resource, this._locked);
+			this.editor.title = AsciidocPreview.getPreviewTitle(this._resource, this._locked);
 			this.editor.iconPath = this.iconPath;
-			this.editor.webview.options = MarkdownPreview.getWebviewOptions(resource, this._contributions);
+			this.editor.webview.options = AsciidocPreview.getWebviewOptions(resource, this._contributions);
 			this.editor.webview.html = content;
 		}
 	}
 
 	private static getWebviewOptions(
 		resource: vscode.Uri,
-		contributions: MarkdownContributions
+		contributions: AsciidocContributions
 	): vscode.WebviewOptions {
 		return {
 			enableScripts: true,
 			enableCommandUris: true,
-			localResourceRoots: MarkdownPreview.getLocalResourceRoots(resource, contributions)
+			localResourceRoots: AsciidocPreview.getLocalResourceRoots(resource, contributions)
 		};
 	}
 
 	private static getLocalResourceRoots(
 		resource: vscode.Uri,
-		contributions: MarkdownContributions
+		contributions: AsciidocContributions
 	): vscode.Uri[] {
 		const baseRoots = contributions.previewResourceRoots;
 
@@ -418,11 +418,11 @@ export class MarkdownPreview {
 
 	private async onDidClickPreviewLink(path: string, fragment: string | undefined) {
 		const config = vscode.workspace.getConfiguration('asciidoc', this.resource);
-		const openLinks = config.get<string>('preview.openMarkdownLinks', 'inPreview');
+		const openLinks = config.get<string>('preview.openAsciidocLinks', 'inPreview');
 		if (openLinks === 'inPreview') {
-			const markdownLink = await resolveLinkToMarkdownFile(path);
-			if (markdownLink) {
-				this.update(markdownLink);
+			const asciidocLink = await resolveLinkToAsciidocFile(path);
+			if (asciidocLink) {
+				this.update(asciidocLink);
 				return;
 			}
 		}

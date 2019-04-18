@@ -6,15 +6,15 @@
 import * as vscode from 'vscode';
 import { Command } from '../commandManager';
 import { PreviewSecuritySelector } from '../security';
-import { isMarkdownFile } from '../util/file';
-import { MarkdownPreviewManager } from '../features/previewManager';
+import { isAsciidocFile } from '../util/file';
+import { AsciidocPreviewManager } from '../features/previewManager';
 
 export class ShowPreviewSecuritySelectorCommand implements Command {
 	public readonly id = 'asciidoc.showPreviewSecuritySelector';
 
 	public constructor(
 		private readonly previewSecuritySelector: PreviewSecuritySelector,
-		private readonly previewManager: MarkdownPreviewManager
+		private readonly previewManager: AsciidocPreviewManager
 	) { }
 
 	public execute(resource: string | undefined) {
@@ -23,7 +23,7 @@ export class ShowPreviewSecuritySelectorCommand implements Command {
 		} else if (resource) {
 			const source = vscode.Uri.parse(resource);
 			this.previewSecuritySelector.showSecutitySelectorForResource(source.query ? vscode.Uri.parse(source.query) : source);
-		} else if (vscode.window.activeTextEditor && isMarkdownFile(vscode.window.activeTextEditor.document)) {
+		} else if (vscode.window.activeTextEditor && isAsciidocFile(vscode.window.activeTextEditor.document)) {
 			this.previewSecuritySelector.showSecutitySelectorForResource(vscode.window.activeTextEditor.document.uri);
 		}
 	}

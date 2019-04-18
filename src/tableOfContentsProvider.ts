@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { MarkdownEngine } from './markdownEngine';
+import { AsciidocEngine } from './asciidocEngine';
 import { Slug, githubSlugifier } from './slugify';
 
 export interface TocEntry {
@@ -26,7 +26,7 @@ export class TableOfContentsProvider {
 	private toc?: TocEntry[];
 
 	public constructor(
-		private engine: MarkdownEngine,
+		private engine: AsciidocEngine,
 		private document: SkinnyTextDocument
 	) { }
 

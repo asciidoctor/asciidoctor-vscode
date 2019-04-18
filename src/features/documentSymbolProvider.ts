@@ -4,19 +4,19 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { MarkdownEngine } from '../markdownEngine';
+import { AsciidocEngine } from '../asciidocEngine';
 import { TableOfContentsProvider, SkinnyTextDocument, TocEntry } from '../tableOfContentsProvider';
 
-interface MarkdownSymbol {
+interface AsciidocSymbol {
 	readonly level: number;
-	readonly parent: MarkdownSymbol | undefined;
+	readonly parent: AsciidocSymbol | undefined;
 	readonly children: vscode.DocumentSymbol[];
 }
 
 export default class MDDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
 
 	constructor(
-		private readonly engine: MarkdownEngine
+		private readonly engine: AsciidocEngine
 	) { }
 
 	public async provideDocumentSymbolInformation(document: SkinnyTextDocument): Promise<vscode.SymbolInformation[]> {
@@ -26,7 +26,7 @@ export default class MDDocumentSymbolProvider implements vscode.DocumentSymbolPr
 
 	public async provideDocumentSymbols(document: SkinnyTextDocument): Promise<vscode.DocumentSymbol[]> {
 		const toc = await new TableOfContentsProvider(this.engine, document).getToc();
-		const root: MarkdownSymbol = {
+		const root: AsciidocSymbol = {
 			level: -Infinity,
 			children: [],
 			parent: undefined
@@ -35,7 +35,7 @@ export default class MDDocumentSymbolProvider implements vscode.DocumentSymbolPr
 		return root.children;
 	}
 
-	private buildTree(parent: MarkdownSymbol, entries: TocEntry[]) {
+	private buildTree(parent: AsciidocSymbol, entries: TocEntry[]) {
 		if (!entries.length) {
 			return;
 		}

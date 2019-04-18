@@ -5,31 +5,31 @@
 
 import * as vscode from 'vscode';
 import { disposeAll } from '../util/dispose';
-import { isMarkdownFile } from '../util/file';
+import { isAsciidocFile } from '../util/file';
 import { Lazy, lazy } from '../util/lazy';
 import MDDocumentSymbolProvider from './documentSymbolProvider';
 import { SkinnyTextDocument } from '../tableOfContentsProvider';
 
-export interface WorkspaceMarkdownDocumentProvider {
-	getAllMarkdownDocuments(): Thenable<Iterable<SkinnyTextDocument>>;
+export interface WorkspaceAsciidocDocumentProvider {
+	getAllAsciidocDocuments(): Thenable<Iterable<SkinnyTextDocument>>;
 
-	readonly onDidChangeMarkdownDocument: vscode.Event<SkinnyTextDocument>;
-	readonly onDidCreateMarkdownDocument: vscode.Event<SkinnyTextDocument>;
-	readonly onDidDeleteMarkdownDocument: vscode.Event<vscode.Uri>;
+	readonly onDidChangeAsciidocDocument: vscode.Event<SkinnyTextDocument>;
+	readonly onDidCreateAsciidocDocument: vscode.Event<SkinnyTextDocument>;
+	readonly onDidDeleteAsciidocDocument: vscode.Event<vscode.Uri>;
 }
 
-class VSCodeWorkspaceMarkdownDocumentProvider implements WorkspaceMarkdownDocumentProvider {
+class VSCodeWorkspaceAsciidocDocumentProvider implements WorkspaceAsciidocDocumentProvider {
 
-	private readonly _onDidChangeMarkdownDocumentEmitter = new vscode.EventEmitter<SkinnyTextDocument>();
-	private readonly _onDidCreateMarkdownDocumentEmitter = new vscode.EventEmitter<SkinnyTextDocument>();
-	private readonly _onDidDeleteMarkdownDocumentEmitter = new vscode.EventEmitter<vscode.Uri>();
+	private readonly _onDidChangeAsciidocDocumentEmitter = new vscode.EventEmitter<SkinnyTextDocument>();
+	private readonly _onDidCreateAsciidocDocumentEmitter = new vscode.EventEmitter<SkinnyTextDocument>();
+	private readonly _onDidDeleteAsciidocDocumentEmitter = new vscode.EventEmitter<vscode.Uri>();
 
 	private _watcher: vscode.FileSystemWatcher | undefined;
 	private _disposables: vscode.Disposable[] = [];
 
 	public dispose() {
-		this._onDidChangeMarkdownDocumentEmitter.dispose();
-		this._onDidDeleteMarkdownDocumentEmitter.dispose();
+		this._onDidChangeAsciidocDocumentEmitter.dispose();
+		this._onDidDeleteAsciidocDocumentEmitter.dispose();
 
 		if (this._watcher) {
 			this._watcher.dispose();
@@ -38,25 +38,25 @@ class VSCodeWorkspaceMarkdownDocumentProvider implements WorkspaceMarkdownDocume
 		disposeAll(this._disposables);
 	}
 
-	async getAllMarkdownDocuments() {
+	async getAllAsciidocDocuments() {
 		const resources = await vscode.workspace.findFiles('**/*.md', '**/node_modules/**');
-		const docs = await Promise.all(resources.map(doc => this.getMarkdownDocument(doc)));
+		const docs = await Promise.all(resources.map(doc => this.getAsciidocDocument(doc)));
 		return docs.filter(doc => !!doc) as SkinnyTextDocument[];
 	}
 
-	public get onDidChangeMarkdownDocument() {
+	public get onDidChangeAsciidocDocument() {
 		this.ensureWatcher();
-		return this._onDidChangeMarkdownDocumentEmitter.event;
+		return this._onDidChangeAsciidocDocumentEmitter.event;
 	}
 
-	public get onDidCreateMarkdownDocument() {
+	public get onDidCreateAsciidocDocument() {
 		this.ensureWatcher();
-		return this._onDidCreateMarkdownDocumentEmitter.event;
+		return this._onDidCreateAsciidocDocumentEmitter.event;
 	}
 
-	public get onDidDeleteMarkdownDocument() {
+	public get onDidDeleteAsciidocDocument() {
 		this.ensureWatcher();
-		return this._onDidDeleteMarkdownDocumentEmitter.event;
+		return this._onDidDeleteAsciidocDocumentEmitter.event;
 	}
 
 	private ensureWatcher(): void {
@@ -67,45 +67,45 @@ class VSCodeWorkspaceMarkdownDocumentProvider implements WorkspaceMarkdownDocume
 		this._watcher = vscode.workspace.createFileSystemWatcher('**/*.md');
 
 		this._watcher.onDidChange(async resource => {
-			const document = await this.getMarkdownDocument(resource);
+			const document = await this.getAsciidocDocument(resource);
 			if (document) {
-				this._onDidChangeMarkdownDocumentEmitter.fire(document);
+				this._onDidChangeAsciidocDocumentEmitter.fire(document);
 			}
 		}, null, this._disposables);
 
 		this._watcher.onDidCreate(async resource => {
-			const document = await this.getMarkdownDocument(resource);
+			const document = await this.getAsciidocDocument(resource);
 			if (document) {
-				this._onDidCreateMarkdownDocumentEmitter.fire(document);
+				this._onDidCreateAsciidocDocumentEmitter.fire(document);
 			}
 		}, null, this._disposables);
 
 		this._watcher.onDidDelete(async resource => {
-			this._onDidDeleteMarkdownDocumentEmitter.fire(resource);
+			this._onDidDeleteAsciidocDocumentEmitter.fire(resource);
 		}, null, this._disposables);
 
 		vscode.workspace.onDidChangeTextDocument(e => {
-			if (isMarkdownFile(e.document)) {
-				this._onDidChangeMarkdownDocumentEmitter.fire(e.document);
+			if (isAsciidocFile(e.document)) {
+				this._onDidChangeAsciidocDocumentEmitter.fire(e.document);
 			}
 		}, null, this._disposables);
 	}
 
-	private async getMarkdownDocument(resource: vscode.Uri): Promise<SkinnyTextDocument | undefined> {
+	private async getAsciidocDocument(resource: vscode.Uri): Promise<SkinnyTextDocument | undefined> {
 		const doc = await vscode.workspace.openTextDocument(resource);
-		return doc && isMarkdownFile(doc) ? doc : undefined;
+		return doc && isAsciidocFile(doc) ? doc : undefined;
 	}
 }
 
 
-export default class MarkdownWorkspaceSymbolProvider implements vscode.WorkspaceSymbolProvider {
+export default class AsciidocWorkspaceSymbolProvider implements vscode.WorkspaceSymbolProvider {
 	private _symbolCache = new Map<string, Lazy<Thenable<vscode.SymbolInformation[]>>>();
 	private _symbolCachePopulated: boolean = false;
 	private _disposables: vscode.Disposable[] = [];
 
 	public constructor(
 		private _symbolProvider: MDDocumentSymbolProvider,
-		private _workspaceMarkdownDocumentProvider: WorkspaceMarkdownDocumentProvider = new VSCodeWorkspaceMarkdownDocumentProvider()
+		private _workspaceAsciidocDocumentProvider: WorkspaceAsciidocDocumentProvider = new VSCodeWorkspaceAsciidocDocumentProvider()
 	) { }
 
 	public async provideWorkspaceSymbols(query: string): Promise<vscode.SymbolInformation[]> {
@@ -113,9 +113,9 @@ export default class MarkdownWorkspaceSymbolProvider implements vscode.Workspace
 			await this.populateSymbolCache();
 			this._symbolCachePopulated = true;
 
-			this._workspaceMarkdownDocumentProvider.onDidChangeMarkdownDocument(this.onDidChangeDocument, this, this._disposables);
-			this._workspaceMarkdownDocumentProvider.onDidCreateMarkdownDocument(this.onDidChangeDocument, this, this._disposables);
-			this._workspaceMarkdownDocumentProvider.onDidDeleteMarkdownDocument(this.onDidDeleteDocument, this, this._disposables);
+			this._workspaceAsciidocDocumentProvider.onDidChangeAsciidocDocument(this.onDidChangeDocument, this, this._disposables);
+			this._workspaceAsciidocDocumentProvider.onDidCreateAsciidocDocument(this.onDidChangeDocument, this, this._disposables);
+			this._workspaceAsciidocDocumentProvider.onDidDeleteAsciidocDocument(this.onDidDeleteDocument, this, this._disposables);
 		}
 
 		const allSymbolsSets = await Promise.all(Array.from(this._symbolCache.values()).map(x => x.value));
@@ -124,8 +124,8 @@ export default class MarkdownWorkspaceSymbolProvider implements vscode.Workspace
 	}
 
 	public async populateSymbolCache(): Promise<void> {
-		const markdownDocumentUris = await this._workspaceMarkdownDocumentProvider.getAllMarkdownDocuments();
-		for (const document of markdownDocumentUris) {
+		const asciidocDocumentUris = await this._workspaceAsciidocDocumentProvider.getAllAsciidocDocuments();
+		for (const document of asciidocDocumentUris) {
 			this._symbolCache.set(document.uri.fsPath, this.getSymbols(document));
 		}
 	}

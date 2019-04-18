@@ -6,7 +6,7 @@
 const path = require('path');
 const testRunner = require('vscode/lib/testrunner');
 
-const suite = 'Integration Markdown Tests';
+const suite = 'Integration Asciidoc Tests';
 
 const options: any = {
 	ui: 'tdd',

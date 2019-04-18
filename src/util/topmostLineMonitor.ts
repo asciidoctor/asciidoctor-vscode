@@ -5,9 +5,9 @@
 
 import * as vscode from 'vscode';
 import { disposeAll } from '../util/dispose';
-import { isMarkdownFile } from './file';
+import { isAsciidocFile } from './file';
 
-export class MarkdownFileTopmostLineMonitor {
+export class AsciidocFileTopmostLineMonitor {
 	private readonly disposables: vscode.Disposable[] = [];
 
 	private readonly pendingUpdates = new Map<string, number>();
@@ -16,7 +16,7 @@ export class MarkdownFileTopmostLineMonitor {
 
 	constructor() {
 		vscode.window.onDidChangeTextEditorVisibleRanges(event => {
-			if (isMarkdownFile(event.textEditor.document)) {
+			if (isAsciidocFile(event.textEditor.document)) {
 				const line = getVisibleLine(event.textEditor);
 				if (typeof line === 'number') {
 					this.updateLine(event.textEditor.document.uri, line);

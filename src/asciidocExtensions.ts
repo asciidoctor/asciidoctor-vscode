@@ -25,16 +25,16 @@ const resolveExtensionResources = (extension: vscode.Extension<any>, resourcePat
 	return result;
 };
 
-export interface MarkdownContributions {
+export interface AsciidocContributions {
 	readonly extensionPath: string;
 	readonly previewScripts: vscode.Uri[];
 	readonly previewStylesEditor: vscode.Uri[];
 	readonly previewStylesDefault: vscode.Uri[];
-	readonly markdownItPlugins: Thenable<(md: any) => any>[];
+	readonly asciidocItPlugins: Thenable<(md: any) => any>[];
 	readonly previewResourceRoots: vscode.Uri[];
 }
 
-class MarkdownExtensionContributions implements MarkdownContributions {
+class AsciidocExtensionContributions implements AsciidocContributions {
 	private readonly _scripts: vscode.Uri[] = [];
 	private readonly _stylesEditor: vscode.Uri[] = [];
 	private readonly _stylesDefault: vscode.Uri[] = [];
@@ -67,7 +67,7 @@ class MarkdownExtensionContributions implements MarkdownContributions {
 		return this._previewResourceRoots;
 	}
 
-	public get markdownItPlugins(): Thenable<(md: any) => any>[] {
+	public get asciidocItPlugins(): Thenable<(md: any) => any>[] {
 		this.ensureLoaded();
 		return this._plugins;
 	}
@@ -88,6 +88,6 @@ class MarkdownExtensionContributions implements MarkdownContributions {
 
 }
 
-export function getMarkdownExtensionContributions(context: vscode.ExtensionContext): MarkdownContributions {
-	return new MarkdownExtensionContributions(context.extensionPath);
+export function getAsciidocExtensionContributions(context: vscode.ExtensionContext): AsciidocContributions {
+	return new AsciidocExtensionContributions(context.extensionPath);
 }

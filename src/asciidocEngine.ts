@@ -4,14 +4,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode';
-import { MarkdownContributions } from './markdownExtensions';
+import { AsciidocContributions } from './asciidocExtensions';
 import { Slugifier } from './slugify';
 import { getUriForLinkWithKnownExternalScheme } from './util/links';
 import { AsciiDocParser } from './text-parser'
 
 const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/;
 
-export class MarkdownEngine {
+export class AsciidocEngine {
     private ad?: AsciiDocParser;
 
 	private firstLine?: number;
@@ -19,7 +19,7 @@ export class MarkdownEngine {
 	private currentDocument?: vscode.Uri;
 
 	public constructor(
-		private readonly extensionPreviewResourceProvider: MarkdownContributions,
+		private readonly extensionPreviewResourceProvider: AsciidocContributions,
 		private readonly slugifier: Slugifier,
 	) { }
 
@@ -47,9 +47,9 @@ export class MarkdownEngine {
 	public async render(document: vscode.Uri, stripFrontmatter: boolean, text: string): Promise<string> {
 		let offset = 0;
 		if (stripFrontmatter) {
-			const markdownContent = this.stripFrontmatter(text);
-			offset = markdownContent.offset;
-			text = markdownContent.text;
+			const asciidocContent = this.stripFrontmatter(text);
+			offset = asciidocContent.offset;
+			text = asciidocContent.text;
         }
 
 		this.currentDocument = document;

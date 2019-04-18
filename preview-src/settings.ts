@@ -16,7 +16,7 @@ export interface PreviewSettings {
 let cachedSettings: PreviewSettings | undefined = undefined;
 
 export function getData(key: string): PreviewSettings {
-	const element = document.getElementById('vscode-markdown-preview-data');
+	const element = document.getElementById('vscode-asciidoc-preview-data');
 	if (element) {
 		const data = element.getAttribute(key);
 		if (data) {

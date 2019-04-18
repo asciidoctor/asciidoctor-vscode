@@ -5,18 +5,18 @@
 
 import * as vscode from 'vscode';
 import * as path from 'path';
-import { MarkdownEngine } from '../markdownEngine';
+import { AsciidocEngine } from '../asciidocEngine';
 
 import * as nls from 'vscode-nls';
 const localize = nls.loadMessageBundle();
 
 import { Logger } from '../logger';
 import { ContentSecurityPolicyArbiter, AsciiDocPreviewSecurityLevel } from '../security';
-import { MarkdownPreviewConfigurationManager, MarkdownPreviewConfiguration } from './previewConfig';
-import { MarkdownContributions } from '../markdownExtensions';
+import { AsciidocPreviewConfigurationManager, AsciidocPreviewConfiguration } from './previewConfig';
+import { AsciidocContributions } from '../asciidocExtensions';
 
 /**
- * Strings used inside the markdown preview.
+ * Strings used inside the asciidoc preview.
  *
  * Stored here and then injected in the preview so that they
  * can be localized using our normal localization process.
@@ -35,27 +35,27 @@ const previewStrings = {
 		'Content Disabled Security Warning')
 };
 
-export class MarkdownContentProvider {
+export class AsciidocContentProvider {
 	constructor(
-		private readonly engine: MarkdownEngine,
+		private readonly engine: AsciidocEngine,
 		private readonly context: vscode.ExtensionContext,
 		private readonly cspArbiter: ContentSecurityPolicyArbiter,
-		private readonly contributions: MarkdownContributions,
+		private readonly contributions: AsciidocContributions,
 		private readonly logger: Logger
 	) { }
 
 	public async provideTextDocumentContent(
-		markdownDocument: vscode.TextDocument,
-		previewConfigurations: MarkdownPreviewConfigurationManager,
+		asciidocDocument: vscode.TextDocument,
+		previewConfigurations: AsciidocPreviewConfigurationManager,
 		initialLine: number | undefined = undefined,
 		state?: any
 	): Promise<string> {
-		const sourceUri = markdownDocument.uri;
+		const sourceUri = asciidocDocument.uri;
 		const config = previewConfigurations.loadAndCacheConfiguration(sourceUri);
 		const initialData = {
 			source: sourceUri.toString(),
 			line: initialLine,
-			lineCount: markdownDocument.lineCount,
+			lineCount: asciidocDocument.lineCount,
 			scrollPreviewWithEditor: config.scrollPreviewWithEditor,
 			scrollEditorWithPreview: config.scrollEditorWithPreview,
 			doubleClickToSwitchToEditor: config.doubleClickToSwitchToEditor,
@@ -68,23 +68,23 @@ export class MarkdownContentProvider {
 		const nonce = new Date().getTime() + '' + new Date().getMilliseconds();
 		const csp = this.getCspForResource(sourceUri, nonce);
 
-		const body = await this.engine.render(sourceUri, config.previewFrontMatter === 'hide', markdownDocument.getText());
+		const body = await this.engine.render(sourceUri, config.previewFrontMatter === 'hide', asciidocDocument.getText());
 		return `<!DOCTYPE html>
 			<html>
 			<head>
 				<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
 				${csp}
-				<meta id="vscode-markdown-preview-data"
+				<meta id="vscode-asciidoc-preview-data"
 					data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}"
 					data-strings="${JSON.stringify(previewStrings).replace(/"/g, '&quot;')}"
 					data-state="${JSON.stringify(state || {}).replace(/"/g, '&quot;')}">
 				<script src="${this.extensionResourcePath('pre.js')}" nonce="${nonce}"></script>
 				${this.getStyles(sourceUri, nonce, config, state)}
-				<base href="${markdownDocument.uri.with({ scheme: 'vscode-resource' }).toString(true)}">
+				<base href="${asciidocDocument.uri.with({ scheme: 'vscode-resource' }).toString(true)}">
 			</head>
 			<body class="vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.markEditorSelection ? 'showEditorSelection' : ''}">
 				${body}
-				<div class="code-line" data-line="${markdownDocument.lineCount}"></div>
+				<div class="code-line" data-line="${asciidocDocument.lineCount}"></div>
 				${this.getScripts(nonce)}
 			</body>
 			</html>`;
@@ -122,13 +122,13 @@ export class MarkdownContentProvider {
 				.toString();
 		}
 
-		// Otherwise look relative to the markdown file
+		// Otherwise look relative to the asciidoc file
 		return vscode.Uri.file(path.join(path.dirname(resource.fsPath), href))
 			.with({ scheme: 'vscode-resource' })
 			.toString();
 	}
 
-	private computeCustomStyleSheetIncludes(resource: vscode.Uri, config: MarkdownPreviewConfiguration): string {
+	private computeCustomStyleSheetIncludes(resource: vscode.Uri, config: AsciidocPreviewConfiguration): string {
 		if (Array.isArray(config.styles)) {
 			return config.styles.map(style => {
 				return `<link rel="stylesheet" class="code-user-style" data-source="${style.replace(/"/g, '&quot;')}" href="${this.fixHref(resource, style)}" type="text/css" media="screen">`;
@@ -137,7 +137,7 @@ export class MarkdownContentProvider {
 		return '';
 	}
 
-	private getSettingsOverrideStyles(nonce: string, config: MarkdownPreviewConfiguration): string {
+	private getSettingsOverrideStyles(nonce: string, config: AsciidocPreviewConfiguration): string {
 		return `<style nonce="${nonce}">
 			body {
 				${config.fontFamily ? `font-family: ${config.fontFamily};` : ''}
@@ -162,7 +162,7 @@ export class MarkdownContentProvider {
 		return ret;
 	}
 
-	private getStyles(resource: vscode.Uri, nonce: string, config: MarkdownPreviewConfiguration, state?: any): string {
+	private getStyles(resource: vscode.Uri, nonce: string, config: AsciidocPreviewConfiguration, state?: any): string {
 		const useEditorStyle = vscode.workspace.getConfiguration('asciidoc').get('preview.useEditorStyle')
 		var baseStyles;
 		if (useEditorStyle) {
