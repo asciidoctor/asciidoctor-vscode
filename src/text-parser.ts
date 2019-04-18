@@ -41,7 +41,7 @@ asciidoctor.Extensions.register(function () {
     });
 });
 
-export class AsciiDocParser {
+export class AsciidocParser {
     public html: string = '';
     public document = null;
     private ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;

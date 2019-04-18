@@ -203,14 +203,14 @@ export class Paster
         if(!validate(this.folderPathConfig))
         {
             Logger.showErrorMessage(
-                `The config AsciiDoc.path = '${this.folderPathConfig}' is invalid. Please check your config.`);
+                `The config Asciidoc.path = '${this.folderPathConfig}' is invalid. Please check your config.`);
             return;
         }
 
         if(!validate(this.basePathConfig))
         {
             Logger.showErrorMessage(
-                `The config AsciiDoc.path = '${this.basePathConfig}' is invalid. Please check your config.`);
+                `The config Asciidoc.path = '${this.basePathConfig}' is invalid. Please check your config.`);
             return;
         }
 
@@ -360,7 +360,7 @@ export class Paster
                         resolve(imagePath);
                     } else
                     {
-                        reject(new PluginError(`The image dest directory '${imageDir}' is a file. please check your 'AsciiDoc.path' config.`))
+                        reject(new PluginError(`The image dest directory '${imageDir}' is a file. please check your 'Asciidoc.path' config.`))
                     }
                 } else if (err.code == "ENOENT")
                 {

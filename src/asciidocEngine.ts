@@ -7,12 +7,12 @@ import * as vscode from 'vscode';
 import { AsciidocContributions } from './asciidocExtensions';
 import { Slugifier } from './slugify';
 import { getUriForLinkWithKnownExternalScheme } from './util/links';
-import { AsciiDocParser } from './text-parser'
+import { AsciidocParser } from './text-parser'
 
 const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/;
 
 export class AsciidocEngine {
-    private ad?: AsciiDocParser;
+    private ad?: AsciidocParser;
 
 	private firstLine?: number;
 
@@ -24,9 +24,9 @@ export class AsciidocEngine {
 	) { }
 
 
-	private async getEngine(resource: vscode.Uri): Promise<AsciiDocParser> {
+	private async getEngine(resource: vscode.Uri): Promise<AsciidocParser> {
 		if (!this.ad) {
-            this.ad = new AsciiDocParser(resource.fsPath);
+            this.ad = new AsciidocParser(resource.fsPath);
 		}
 
 		const config = vscode.workspace.getConfiguration('asciidoc', resource);
