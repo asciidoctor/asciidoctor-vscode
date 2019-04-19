@@ -1546,8 +1546,8 @@ repository:
     name: markup.italic.quote.typographic-quotes.single.asciidoc
     match: |-
       (?x)
-      (\[[^\]]*?\])? # might be preceded by an attributes list
-      (`')
+      (\[[^\]]*?\])?              # might be preceded by an attributes list
+      (`')(?!( ?[^`\s])*`[^\w"']) # must not be closed by a constrained literal (`)
     captures:
       '1': {name: punctuation.definition.typographic-quotes.single.end.asciidoc}
 
@@ -1794,8 +1794,8 @@ repository:
     contentName: meta.literalinner.single.asciidoc
     begin: |-
       (?x)
-      (\[[^\]]*?\])?       # might start with attributes list
-      (?<=^|[^\w\\}"'])   # must be preceded by nonword character, and not by escape, } (attribute) or quotes
+      (\[[^\]]*?\])?                  # might start with attributes list
+      (?<=^|[^\w\\}])                 # must be preceded by nonword character, and not by escape, } (attribute)
       (`)(?=(\S+|\S[\S ]*\S)`[^\w"']) # must be followed by inline characters, closed and followed by non-word and non-quotes
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}

@@ -4152,8 +4152,8 @@ Examples:
 		<dict>
 			<key>begin</key>
 			<string>(?x)
-(\[[^\]]*?\])?       # might start with attributes list
-(?&lt;=^|[^\w\\}"'])   # must be preceded by nonword character, and not by escape, } (attribute) or quotes
+(\[[^\]]*?\])?                  # might start with attributes list
+(?&lt;=^|[^\w\\}])                 # must be preceded by nonword character, and not by escape, } (attribute)
 (`)(?=(\S+|\S[\S ]*\S)`[^\w"']) # must be followed by inline characters, closed and followed by non-word and non-quotes</string>
 			<key>beginCaptures</key>
 			<dict>
@@ -5219,8 +5219,8 @@ Examples:
 </string>
 			<key>match</key>
 			<string>(?x)
-(\[[^\]]*?\])? # might be preceded by an attributes list
-(`')</string>
+(\[[^\]]*?\])?              # might be preceded by an attributes list
+(`')(?!( ?[^`\s])*`[^\w"']) # must not be closed by a constrained literal (`)</string>
 			<key>name</key>
 			<string>markup.italic.quote.typographic-quotes.single.asciidoc</string>
 		</dict>
