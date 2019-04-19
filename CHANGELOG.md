@@ -1,5 +1,9 @@
 # Changes
 
+## 2.5.1-1
+
+* Fix an error from [2.5.1](#2.5.1) that caused all syntax highlighting to fail
+
 ## 2.5.1
 
 * Change remaining Markdown-named variables/modules to AsciiDoc
