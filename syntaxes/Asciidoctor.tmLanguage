@@ -4149,8 +4149,8 @@ Examples:
 			<key>begin</key>
 			<string>(?x)
 (\[[^\]]*?\])?       # might start with attributes list
-(?&lt;=^|\W)(?&lt;!\\|})   # must be preceded by nonword character, and not by escape or } (attribute)
-(`)(?=(\S+|\S[\S ]*\S)`\W) # must be followed by inline characters and closed</string>
+(?&lt;=^|\W)(?&lt;!\\|}|"|')   # must be preceded by nonword character, and not by escape, } (attribute) or quotes
+(`)(?=(\S+|\S[\S ]*\S)`)(?![^\w"']) # must be followed by inline characters, closed and followed by non-word and non-quotes</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>1</key>
