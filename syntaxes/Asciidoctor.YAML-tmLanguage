@@ -1449,6 +1449,7 @@ repository:
     patterns:
     - include: '#typographic_quotes_single'
     - include: '#typographic_quotes_double'
+    - include: '#typographic_quotes_single_close'
     - include: '#passthrough'
     - include: '#strong_double'
     - include: '#emphasis_double'
@@ -1535,6 +1536,20 @@ repository:
     - include: '#superscript'
     - include: '#subscript'
     - include: '#mail'
+
+  typographic_quotes_single_close:
+    comment: |
+      Closing single typographic quote.
+
+      Examples:
+        Text
+    name: markup.italic.quote.typographic-quotes.single.asciidoc
+    match: |-
+      (?x)
+      (\[[^\]]*?\])? # might be preceded by an attributes list
+      (`')
+    captures:
+      '1': {name: punctuation.definition.typographic-quotes.single.end.asciidoc}
 
   strong_double:
     comment: |

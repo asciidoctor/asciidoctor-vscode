@@ -3631,6 +3631,10 @@ Examples:
 				</dict>
 				<dict>
 					<key>include</key>
+					<string>#typographic_quotes_single_close</string>
+				</dict>
+				<dict>
+					<key>include</key>
 					<string>#passthrough</string>
 				</dict>
 				<dict>
@@ -5196,6 +5200,29 @@ Examples:
 					<string>#mail</string>
 				</dict>
 			</array>
+		</dict>
+		<key>typographic_quotes_single_close</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.typographic-quotes.single.end.asciidoc</string>
+				</dict>
+			</dict>
+			<key>comment</key>
+			<string>Closing single typographic quote.
+
+Examples:
+  Text
+</string>
+			<key>match</key>
+			<string>(?x)
+(\[[^\]]*?\])? # might be preceded by an attributes list
+(`')</string>
+			<key>name</key>
+			<string>markup.italic.quote.typographic-quotes.single.asciidoc</string>
 		</dict>
 		<key>ulist_item_marker</key>
 		<dict>
