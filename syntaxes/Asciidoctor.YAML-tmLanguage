@@ -1547,7 +1547,8 @@ repository:
     match: |-
       (?x)
       (\[[^\]]*?\])?              # might be preceded by an attributes list
-      (`')(?!( ?[^`\s])*`[^\w"']) # must not be closed by a constrained literal (`)
+      (?<=^|[^\w\\}])             # must be preceded by nonword character, and not by escape, } (attribute)
+      (`')(?!(( )?[^`\s])*`[^\w"']) # must not be closed by a constrained literal (`)
     captures:
       '1': {name: punctuation.definition.typographic-quotes.single.end.asciidoc}
 

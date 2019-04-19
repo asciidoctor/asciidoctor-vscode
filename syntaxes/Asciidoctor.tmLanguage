@@ -5220,7 +5220,8 @@ Examples:
 			<key>match</key>
 			<string>(?x)
 (\[[^\]]*?\])?              # might be preceded by an attributes list
-(`')(?!( ?[^`\s])*`[^\w"']) # must not be closed by a constrained literal (`)</string>
+(?&lt;=^|[^\w\\}])             # must be preceded by nonword character, and not by escape, } (attribute)
+(`')(?!(( )?[^`\s])*`[^\w"']) # must not be closed by a constrained literal (`)</string>
 			<key>name</key>
 			<string>markup.italic.quote.typographic-quotes.single.asciidoc</string>
 		</dict>
