@@ -1780,15 +1780,15 @@ repository:
     begin: |-
       (?x)
       (\[[^\]]*?\])?       # might start with attributes list
-      (?<=^|\W)(?<!\\|}|"|')   # must be preceded by nonword character, and not by escape, } (attribute) or quotes
-      (`)(?=(\S+|\S[\S ]*\S)`)(?![^\w"']) # must be followed by inline characters, closed and followed by non-word and non-quotes
+      (?<=^|[^\w\\}"'])   # must be preceded by nonword character, and not by escape, } (attribute) or quotes
+      (`)(?=(\S+|\S[\S ]*\S)`[^\w"']) # must be followed by inline characters, closed and followed by non-word and non-quotes
     beginCaptures:
       '1': {name: support.variable.attributelist.asciidoc}
       '2': {name: punctuation.definition.literal.single.begin.asciidoc}
     end: |-
       (?x)
       (`)
-      (?!\w) # must be followed by a nonword character
+      (?=[^\w"']) # must be followed by a non-word and non-quotes character
     endCaptures:
       '1': {name: punctuation.definition.literal.single.end.asciidoc}
     patterns:
