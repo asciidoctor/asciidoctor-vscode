@@ -1,5 +1,12 @@
 # Changes
 
+## 2.5.1
+
+* Change remaining Markdown-named variables/modules to AsciiDoc
+* Improve automated building/packaging script
+* Fix contrained literal (\`) or closing single typographic quote (\`') bug when used inside typographic quotes (e.g. "\`busy \`'till tomorrow\`" would create a recursive match)
+* Add syntax highlight for closing single typographic quote (\`')
+
 ## 2.5.0
 
 * Repaired preview.useEditorStyle option
