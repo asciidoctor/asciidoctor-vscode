@@ -54,6 +54,7 @@ generate_syntax() {
 # Install node dependencies
 npm_local_deps() {
   echo "==> Installing local dependencies"
+  rm -f package-lock.json
   npm install || exitdialog $?
 }
 
@@ -72,7 +73,6 @@ npm_global_deps() {
 package() {
   echo "==> Packaging extension"
   rm -f *.vsix
-  rm -f package-lock.json
   rm -rf out/
   vsce package || exitdialog
 }
