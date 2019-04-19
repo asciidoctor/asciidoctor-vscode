@@ -23,8 +23,8 @@
 	"asciidoc.trace.desc": "Enable debug logging for the AsciiDoc extension.",
 	"asciidoc.preview.refresh.title": "Refresh Preview",
 	"asciidoc.preview.toggleLock.title": "Toggle Preview Locking",
-	"configuration.asciidoc.preview.openMarkdownLinks.description": "How should clicking on links to AsciiDoc files be handled in the preview.",
-	"configuration.asciidoc.preview.openMarkdownLinks.inEditor": "Try to open links in the editor",
-    "configuration.asciidoc.preview.openMarkdownLinks.inPreview": "Try to open links in the the AsciiDoc preview",
+	"configuration.asciidoc.preview.openAsciiDocLinks.description": "How should clicking on links to AsciiDoc files be handled in the preview.",
+	"configuration.asciidoc.preview.openAsciiDocLinks.inEditor": "Try to open links in the editor",
+    "configuration.asciidoc.preview.openAsciiDocLinks.inPreview": "Try to open links in the the AsciiDoc preview",
     "asciidoc.pasteImage.title" : "Paste Image"
 }
