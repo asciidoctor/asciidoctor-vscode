@@ -41,9 +41,9 @@ code --install-extension *.vsix
 ### Build script
 ```bash
 git clone https://github.com/asciidoctor/asciidoctor-vscode
-bash ./script/build build install
+bash ./script/build.sh build install
 ```
-The build script accepts other commands too, run `bash ./script/build help` for more information.
+The build script accepts other commands too, run `bash ./script/build.sh help` for more information.
 
 ## Contributors
 
