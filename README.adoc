@@ -129,18 +129,24 @@ This setting has been replaced by 'asciidoc.preview.scrollPreviewWithEditor' and
 == How to Build and Install from Source (Linux and Mac)
 
 === Manual
-`shell
+
+[source,shell]
+----
 git clone https://github.com/asciidoctor/asciidoctor-vscode
 cd asciidoctor-vscode
 npm install
 sudo npm install -g vsce typescript
 vsce package
-code --install-extension *.vsix`
+code --install-extension *.vsix
+----
 
 === Script
-`shell
+
+[source,shell]
+----
 git clone https://github.com/asciidoctor/asciidoctor-vscode
-bash ./script/build.sh build install`
+bash ./script/build.sh build install
+----
 
 == Contributing
 
