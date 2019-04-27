@@ -146,7 +146,7 @@ bash ./script/build.sh build install`
 
 To contribute simply clone the repository and then commit your changes. When you do a pull requests please clearly highlight what you changed in the pull comment.
 
-Do not update the extension version or changelog, it will be done by the maintainers.
+Do not update the extension version, changelog or readme, it will be done by the maintainers.
 
 == Credits
 
