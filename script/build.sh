@@ -47,8 +47,8 @@ exitdialog() {
 # Generate plist syntax
 generate_syntax() {
   echo "==> Converting YAML syntax to plist"
-  [[ ! -x script/yaml-to-plist ]] && chmod +x script/yaml-to-plist
-  script/yaml-to-plist "syntaxes/Asciidoctor.YAML-tmLanguage" "syntaxes/Asciidoctor.tmLanguage" || exitdialog $?
+  [[ ! -x script/yaml-to-plist.py ]] && chmod +x script/yaml-to-plist
+  script/yaml-to-plist.py "syntaxes/Asciidoctor.YAML-tmLanguage" "syntaxes/Asciidoctor.tmLanguage" || exitdialog $?
 }
 
 # Install node dependencies
