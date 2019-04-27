@@ -11,6 +11,9 @@ An extension that provides live preview, syntax highlighting and snippets for th
 
 image::images/simple.gif[]
 
++++ +++ +
++++ +++ +
+
 toc::[]
 
 == How to Install
