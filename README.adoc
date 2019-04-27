@@ -38,7 +38,7 @@ To show the preview you can use the same commands as the Markdown extension:
 The preview refreshes automatically, but it can also be forced with the _AsciiDoc: Refresh Preview_ command.
 
 By default the preview style follows the VSCode theme (`workbench.colorTheme`). To use Asciidoctor's style set option `asciidoc.preview.useEditorStyle` to `false`. +
-(See more details under <<#_options,Options>>)
+(See more details under <<#options,Options>>)
 
 === Export as PDF
 
@@ -49,7 +49,7 @@ The extension provides a quick command to export your AsciiDoc file as PDF.
 . Choose the folder and filename for the generated PDF
 
 By default a separate binary is downloaded and used to render the document in PDF format. To use Asciidoctor PDF set option `asciidoc.use_asciidoctorpdf` to `true`. +
-(See more details under <<#_options,Options>>)
+(See more details under <<#options,Options>>)
 
 === Snippets
 
