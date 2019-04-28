@@ -1,5 +1,9 @@
 # Changes
 
+## 2.6.0
+
+* Add an option to set preview attributes in the user/workspace settings
+
 ## 2.5.2
 
 * Fix an error from [2.5.1](#2.5.1) that caused all syntax highlighting to fail
