@@ -10,17 +10,17 @@ An extension that provides live preview, syntax highlighting and snippets for th
 
 ## Contents
 
-1. [How to Install](##how-to-install)
-2. [How to Use](##how-to-use)
-    1. [Preview](###preview)
-    2. [Export as PDF](###export-as-pdf)
-    3. [Snippets](###snippets)
-3. [Options](##options)
-4. [How to Build and Install from Source (Linux and Mac)](##how-to-build-and-install-from-source-(linux-and-mac))
-    1. [Manual](###manual)
-    2. [Script](###script)
-5. [Contributing](##contributing)
-6. [Credits](##credits)
+1. [How to Install](#how-to-install)
+2. [How to Use](#how-to-use)
+    1. [Preview](#preview)
+    2. [Export as PDF](#export-as-pdf)
+    3. [Snippets](#snippets)
+3. [Options](#options)
+4. [How to Build and Install from Source (Linux and Mac)](#how-to-build-and-install-from-source-(linux-and-mac))
+    1. [Manual](#manual)
+    2. [Script](#script)
+5. [Contributing](#contributing)
+6. [Credits](#credits)
 
 ## How to Install
 
@@ -44,7 +44,7 @@ To show the preview you can use the same commands as the Markdown extension:
 The preview refreshes automatically, but it can also be forced with the _AsciiDoc: Refresh Preview_ command.
 
 By default the preview style follows the VSCode theme (`workbench.colorTheme`). To use Asciidoctor's style set option `asciidoc.preview.useEditorStyle` to `false`.<br/>
-(See more details under [Options](##options))
+(See more details under [Options](#options))
 
 ### Export as PDF
 
@@ -55,7 +55,7 @@ The extension provides a quick command to export your AsciiDoc file as PDF.
 * Choose the folder and filename for the generated PDF
 
 By default a separate binary is downloaded and used to render the document in PDF format. To use Asciidoctor PDF set option `asciidoc.use_asciidoctorpdf` to `true`.<br/>
-(See more details under [Options](##options))
+(See more details under [Options](#options))
 
 ### Snippets
 
