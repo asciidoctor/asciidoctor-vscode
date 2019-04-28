@@ -66,7 +66,10 @@ export class AsciidocParser {
             const documentPath = path.dirname(path.resolve(doc.fileName));
             const contains_stylesheet = !isNullOrUndefined(text.match(new RegExp("^\\s*:stylesheet:", "img")));
             const use_editor_stylesheet = vscode.workspace.getConfiguration('asciidoc').get('preview.useEditorStyle', false);
+            const preview_attributes = vscode.workspace.getConfiguration('asciidoc').get('preview.attributes', {});
+
             var attributes = {};
+
             if (contains_stylesheet) {
                 attributes = { 'copycss': true }
             } else if (use_editor_stylesheet) {
@@ -75,6 +78,13 @@ export class AsciidocParser {
                 // TODO: decide whether to use the included css or let ascidoctor.js decide
                 // attributes = { 'copycss': true, 'stylesdir': this.stylesdir, 'stylesheet': 'asciidoctor-default.css@' }
             }
+
+            Object.keys(preview_attributes).forEach(key => {
+                if (typeof preview_attributes[key] === "string") {
+                    attributes[key] = preview_attributes[key];
+                }
+            })
+
             const options = {
                 safe: 'unsafe',
                 doctype: 'article',
@@ -84,6 +94,7 @@ export class AsciidocParser {
                 base_dir: documentPath,
                 sourcemap: true,
             }
+
             let ascii_doc = asciidoctor.load(text, options);
             this.document = ascii_doc;
             const blocksWithLineNumber = ascii_doc.findBy(function (b) { return typeof b.getLineNumber() !== 'undefined'; });
@@ -101,6 +112,7 @@ export class AsciidocParser {
         const doc = editor.document;
         const documentPath = path.dirname(doc.fileName).replace('"', '\\"');
         const use_editor_stylesheet = vscode.workspace.getConfiguration('asciidoc').get('preview.useEditorStyle', false);
+        const preview_attributes = vscode.workspace.getConfiguration('asciidoc').get('preview.attributes', {});
         this.document = null;
 
         return new Promise<string>(resolve => {
@@ -128,6 +140,19 @@ export class AsciidocParser {
                 // adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', `stylesdir=${this.stylesdir}@`])
                 // adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', 'stylesheet=asciidoctor-default.css@'])
             }
+
+            Object.keys(preview_attributes).forEach(key => {
+                if (typeof preview_attributes[key] === "string") {
+                    var value: string = preview_attributes[key]
+
+                    if (value.endsWith('!')) {
+                        adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', `${value}`])
+                    } else {
+                        adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', `${key}=${value}`])
+                    }
+                }
+            })
+
             adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-o-', '-', '-B', '"' + documentPath + '"'])
             var asciidoctor = spawn(adoc_cmd, adoc_cmd_args, options);
 
