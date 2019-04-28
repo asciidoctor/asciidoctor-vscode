@@ -1,7 +1,8 @@
 {
 	"displayName": "AsciiDoc",
     "description": "Provides rich language support for AsciiDoc.",
-    "asciidoc.exportAsPDF.title": "Export document as PDF",
+	"asciidoc.exportAsPDF.title": "Export document as PDF",
+	"asciidoc.preview.attributes.desc": "Set attributes to be used in the preview. Attributes need to be written as an object of type {string: string}",
 	"asciidoc.preview.breaks.desc": "Sets how line-breaks are rendered in the AsciiDoc preview. Setting it to 'true' creates a <br> for every newline.",
 	"asciidoc.preview.linkify": "Enable or disable conversion of URL-like text to links in the AsciiDoc preview.",
 	"asciidoc.preview.doubleClickToSwitchToEditor.desc": "Double click in the AsciiDoc preview to switch to the editor.",

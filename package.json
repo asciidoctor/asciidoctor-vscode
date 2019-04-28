@@ -228,7 +228,7 @@
 		"configuration": {
 			"type": "object",
 			"title": "asciidoc",
-			"order": 20,
+			"order": 21,
 			"properties": {
 				"asciidoc.asciidoctor_command": {
 					"type": "string",
@@ -254,6 +254,12 @@
 					],
 					"default": "hide",
 					"description": "%asciidoc.previewFrontMatter.dec%",
+					"scope": "resource"
+				},
+				"asciidoc.preview.attributes": {
+					"type": "object",
+					"default": {},
+					"description": "%asciidoc.preview.atributes.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.breaks": {
