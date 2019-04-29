@@ -64,13 +64,13 @@ export class AsciidocParser {
             const editor = vscode.window.activeTextEditor;
             const doc = editor.document;
             const documentPath = path.dirname(path.resolve(doc.fileName));
-            const contains_stylesheet = !isNullOrUndefined(text.match(new RegExp("^\\s*:stylesheet:", "img")));
+            const contains_style = !isNullOrUndefined(text.match(new RegExp("^\\s*:(stylesheet|stylesdir):", "img")));
             const use_editor_stylesheet = vscode.workspace.getConfiguration('asciidoc').get('preview.useEditorStyle', false);
             const preview_attributes = vscode.workspace.getConfiguration('asciidoc').get('preview.attributes', {});
 
             var attributes = {};
 
-            if (contains_stylesheet) {
+            if (contains_style) {
                 attributes = { 'copycss': true }
             } else if (use_editor_stylesheet) {
                 attributes = { 'copycss': true, 'stylesdir': this.stylesdir, 'stylesheet': 'asciidoctor-editor.css' }
