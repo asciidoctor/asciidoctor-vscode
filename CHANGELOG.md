@@ -7,6 +7,7 @@
 ## 2.6.0
 
 * Add `preview.attributes` option to set preview attributes in the user/workspace settings
+* Overhaul README
 
 ## 2.5.2
 
