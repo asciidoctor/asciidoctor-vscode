@@ -16,7 +16,7 @@ An extension that provides live preview, syntax highlighting and snippets for th
     2. [Export as PDF](#export-as-pdf)
     3. [Snippets](#snippets)
 3. [Options](#options)
-4. [How to Build and Install from Source (Linux and Mac)](#how-to-build-and-install-from-source-(linux-and-mac))
+4. [How to Build and Install from Source (Linux and Mac)](#how-to-build-and-install-from-source-linux-and-mac)
     1. [Manual](#manual)
     2. [Script](#script)
 5. [Contributing](#contributing)
