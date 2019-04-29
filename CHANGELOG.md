@@ -1,5 +1,9 @@
 # Changes
 
+## 2.7.0
+
+* Add `preview.style` option to set preview stylesheet in settings
+
 ## 2.6.0
 
 * Add `preview.attributes` option to set preview attributes in the user/workspace settings
