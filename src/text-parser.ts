@@ -132,6 +132,7 @@ export class AsciidocParser {
         const doc = editor.document;
         const documentPath = path.dirname(doc.fileName).replace('"', '\\"');
         const workspacePath = vscode.workspace.workspaceFolders[0]
+        const contains_style = !isNullOrUndefined(text.match(new RegExp("^\\s*:(stylesheet|stylesdir):", "img")));
         const use_editor_stylesheet = vscode.workspace.getConfiguration('asciidoc').get('preview.useEditorStyle', false);
         const preview_attributes = vscode.workspace.getConfiguration('asciidoc').get('preview.attributes', {});
         const preview_style = vscode.workspace.getConfiguration('asciidoc').get('preview.style', "");
@@ -154,7 +155,9 @@ export class AsciidocParser {
             var adoc_cmd_array = asciidoctor_command.split(/(\s+)/).filter( function(e) { return e.trim().length > 0; } ) ;
             var adoc_cmd = adoc_cmd_array[0]
             var adoc_cmd_args = adoc_cmd_array.slice(1)
-            if (preview_style != "") {
+            if (contains_style) {
+                ; // Used an empty if to make it easier to use elses later
+            } else if (preview_style != "") {
                 var stylesdir: string, stylesheet: string
 
                 if (path.isAbsolute(preview_style)) {
