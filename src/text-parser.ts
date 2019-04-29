@@ -64,14 +64,34 @@ export class AsciidocParser {
             const editor = vscode.window.activeTextEditor;
             const doc = editor.document;
             const documentPath = path.dirname(path.resolve(doc.fileName));
+            const workspacePath = vscode.workspace.workspaceFolders[0]
             const contains_style = !isNullOrUndefined(text.match(new RegExp("^\\s*:(stylesheet|stylesdir):", "img")));
             const use_editor_stylesheet = vscode.workspace.getConfiguration('asciidoc').get('preview.useEditorStyle', false);
             const preview_attributes = vscode.workspace.getConfiguration('asciidoc').get('preview.attributes', {});
+            const preview_style = vscode.workspace.getConfiguration('asciidoc').get('preview.style', "");
 
             var attributes = {};
 
             if (contains_style) {
                 attributes = { 'copycss': true }
+            } else if (preview_style != "") {
+                var stylesdir: string, stylesheet: string
+
+                if (path.isAbsolute(preview_style)) {
+                    stylesdir = path.dirname(preview_style)
+                    stylesheet = path.basename(preview_style)
+                } else {
+                    if (workspacePath == undefined) {
+                        stylesdir = documentPath
+                    } else {
+                        stylesdir = workspacePath.uri.path
+                    }
+
+                    stylesdir = path.dirname(path.join(stylesdir, preview_style))
+                    stylesheet = path.basename(preview_style)
+                }
+
+                attributes = { 'copycss': true, 'stylesdir': stylesdir, 'stylesheet': stylesheet }
             } else if (use_editor_stylesheet) {
                 attributes = { 'copycss': true, 'stylesdir': this.stylesdir, 'stylesheet': 'asciidoctor-editor.css' }
             } else {
@@ -111,8 +131,10 @@ export class AsciidocParser {
         const editor = vscode.window.activeTextEditor;
         const doc = editor.document;
         const documentPath = path.dirname(doc.fileName).replace('"', '\\"');
+        const workspacePath = vscode.workspace.workspaceFolders[0]
         const use_editor_stylesheet = vscode.workspace.getConfiguration('asciidoc').get('preview.useEditorStyle', false);
         const preview_attributes = vscode.workspace.getConfiguration('asciidoc').get('preview.attributes', {});
+        const preview_style = vscode.workspace.getConfiguration('asciidoc').get('preview.style', "");
         this.document = null;
 
         return new Promise<string>(resolve => {
@@ -132,7 +154,26 @@ export class AsciidocParser {
             var adoc_cmd_array = asciidoctor_command.split(/(\s+)/).filter( function(e) { return e.trim().length > 0; } ) ;
             var adoc_cmd = adoc_cmd_array[0]
             var adoc_cmd_args = adoc_cmd_array.slice(1)
-            if (use_editor_stylesheet) {
+            if (preview_style != "") {
+                var stylesdir: string, stylesheet: string
+
+                if (path.isAbsolute(preview_style)) {
+                    stylesdir = path.dirname(preview_style)
+                    stylesheet = path.basename(preview_style)
+                } else {
+                    if (workspacePath == undefined) {
+                        stylesdir = documentPath
+                    } else {
+                        stylesdir = workspacePath.uri.path
+                    }
+
+                    stylesdir = path.dirname(path.join(stylesdir, preview_style))
+                    stylesheet = path.basename(preview_style)
+                }
+
+                adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', `stylesdir=${stylesdir}`])
+                adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', `stylesheet=${stylesheet}`])
+            } else if (use_editor_stylesheet) {
                 adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', `stylesdir=${this.stylesdir}@`])
                 adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', 'stylesheet=asciidoctor-editor.css@'])
             } else {
