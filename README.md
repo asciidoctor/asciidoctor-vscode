@@ -43,7 +43,10 @@ To show the preview you can use the same commands as the Markdown extension:
 
 The preview refreshes automatically, but it can also be forced with the _AsciiDoc: Refresh Preview_ command.
 
-By default the preview style follows the VSCode theme (`workbench.colorTheme`). To use Asciidoctor's style set option `asciidoc.preview.useEditorStyle` to `false`.<br/>
+The preview supports setting attributes through the `asciidoc.preview.attributes` option.
+
+By default the preview style follows the VSCode theme (`workbench.colorTheme`). To use Asciidoctor's style set option `asciidoc.preview.useEditorStyle` to `false`. It is also possible to set your own preview stylesheet with the `asciidoc.preview.style` option.
+
 (See more details under [Options](#options))
 
 ### Export as PDF
@@ -74,6 +77,7 @@ The following list contains all the options and their default value.
 | `asciidoc.asciidoctor_command: "asciidoctor"` | The path or command invoked when using Asciidcotor for the preview. |
 | `asciidoc.asciidoctorpdf_command: "asciidoctor-pdf"` | The path or command invoked when using Asciidcotor PDF for the _Export ad PDF_ function. |
 | `asciidoc.forceUnixStyleSeparator: true` | Force set the file separator style to unix style. If set false, separator style will follow the system style. |
+| `asciidoc.preview.style: "` | The local path to a CSS style sheet to use in the AsciiDoc preview. Relative paths are interpreted relative to the workspace folder. If no workspace is open the document path. |
 | `asciidoc.preview.attributes: {}` | Set attributes to be used in the preview. Attributes need to be written as an object of type {string: string} |
 | `asciidoc.preview.breaks: false` | Sets how line-breaks are rendered in the AsciiDoc preview. Setting it to 'true' creates a `<br>` for every newline. |
 | `asciidoc.preview.doubleClickToSwitchToEditor: true` | Double click in the AsciiDoc preview to switch to the editor. |
@@ -88,7 +92,6 @@ The following list contains all the options and their default value.
 | `asciidoc.preview.scrollPreviewWithEditorSelection: true` | [Deprecated] Scrolls the AsciiDoc preview to reveal the currently selected line from the editor.<br/>This setting has been replaced by 'asciidoc.preview.scrollPreviewWithEditor' and no longer has any effect. |
 | `asciidoc.preview.useEditorStyle: true` | Use editor style instead of default ascidoctor.css |
 | `asciidoc.previewFrontMatter: "hide"` | Sets how YAML front matter should be rendered in the AsciiDoc preview. "hide" removes the front matter. Otherwise, the front matter is treated as AsciiDoc content. |
-| `asciidoc.styles: []` | [Deprecated] A list of URLs or local paths to CSS style sheets to use for the AsciiDoc preview. Relative paths are interpreted relative to the folder open in the explorer. If there is no open folder, they are interpreted relative to the location of the AsciiDoc file. All "\" need to be written as "\\". |
 | `asciidoc.trace: "off"` | Enable debug logging for the AsciiDoc extension. |
 | `asciidoc.use_asciidoctor_js: true` | Use Asciidoctor.js instead of the 'asciidoctor_command' to render the preview. |
 | `asciidoc.use_asciidoctorpdf: false` | Use Asciidoctor PDF instead of the integrated renderer for the _Export as PDF_ command. |
