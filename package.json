@@ -240,12 +240,6 @@
 					"default": "asciidoctor-pdf",
 					"description": "Full path for the asciidoctor-pdf binary/executable"
 				},
-				"asciidoc.styles": {
-					"type": "array",
-					"default": [],
-					"description": "%asciidoc.styles.dec%",
-					"scope": "resource"
-				},
 				"asciidoc.previewFrontMatter": {
 					"type": "string",
 					"enum": [
@@ -254,6 +248,12 @@
 					],
 					"default": "hide",
 					"description": "%asciidoc.previewFrontMatter.dec%",
+					"scope": "resource"
+				},
+				"asciidoc.preview.style": {
+					"type": "string",
+					"default": "",
+					"description": "%asciidoc.preview.style.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.attributes": {
