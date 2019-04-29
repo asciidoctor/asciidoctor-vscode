@@ -16,7 +16,7 @@ An extension that provides live preview, syntax highlighting and snippets for th
     2. [Export as PDF](#export-as-pdf)
     3. [Snippets](#snippets)
 3. [Options](#options)
-4. [How to Build and Install from Source (Linux and Mac)](#how-to-build-and-install-from-source-linux-and-mac)
+4. [Build and Install from Source](#build-and-install-from-source)
     1. [Manual](#manual)
     2. [Script](#script)
 5. [Contributing](#contributing)
@@ -96,9 +96,11 @@ The following list contains all the options and their default value.
 | `asciidoc.use_asciidoctor_js: true` | Use Asciidoctor.js instead of the 'asciidoctor_command' to render the preview. |
 | `asciidoc.use_asciidoctorpdf: false` | Use Asciidoctor PDF instead of the integrated renderer for the _Export as PDF_ command. |
 
-## How to Build and Install from Source (Linux and Mac)
+## Build and Install from Source
 
 ### Manual
+
+**WARNING**: In Windows you cannot use `sudo`, use `npm install -g` from an admin PowerShell window.
 
 ```shell
 git clone https://github.com/asciidoctor/asciidoctor-vscode
@@ -110,6 +112,8 @@ code --install-extension *.vsix
 ```
 
 ### Script
+
+The script only works in MacOS and Windows
 
 ```sh
 git clone https://github.com/asciidoctor/asciidoctor-vscode
