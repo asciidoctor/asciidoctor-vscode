@@ -1,5 +1,9 @@
 # Changes
 
+## 2.7.1
+
+* Fix `preview.attributes` description.
+
 ## 2.7.0
 
 * Add `preview.style` option to set preview stylesheet in settings
