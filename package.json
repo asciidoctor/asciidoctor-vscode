@@ -259,7 +259,7 @@
 				"asciidoc.preview.attributes": {
 					"type": "object",
 					"default": {},
-					"description": "%asciidoc.preview.atributes.desc%",
+					"description": "%asciidoc.preview.attributes.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.breaks": {
