@@ -101,8 +101,6 @@ The following list contains all the options and their default value.
 
 ### Manual
 
-**WARNING**: In Windows you cannot use `sudo`, use `npm install -g` from an admin PowerShell window.
-
 ```shell
 git clone https://github.com/asciidoctor/asciidoctor-vscode
 cd asciidoctor-vscode
@@ -112,14 +110,18 @@ vsce package
 code --install-extension *.vsix
 ```
 
-### Script
+**WARNING**: In Windows you cannot use `sudo`, use `npm install -g`.
 
-The script only works in MacOS and Windows
+### Script
 
 ```shell
 git clone https://github.com/asciidoctor/asciidoctor-vscode
 bash ./script/build.sh build install
 ```
+
+The script included in the repository automates all operations needed to build the extension. Run `bash ./script/build.sh help` for more information.
+
+**WARNING**: The script only works in MacOS and Windows
 
 ## Issues
 
