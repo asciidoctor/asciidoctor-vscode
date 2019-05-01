@@ -91,7 +91,7 @@ The following list contains all the options and their default value.
 | `asciidoc.preview.scrollEditorWithPreview: true` | When an AsciiDoc preview is scrolled, update the view of the editor. |
 | `asciidoc.preview.scrollPreviewWithEditor: true` | When an AsciiDoc editor is scrolled, update the view of the preview. |
 | `asciidoc.preview.scrollPreviewWithEditorSelection: true` | [Deprecated] Scrolls the AsciiDoc preview to reveal the currently selected line from the editor.<br/>This setting has been replaced by 'asciidoc.preview.scrollPreviewWithEditor' and no longer has any effect. |
-| `asciidoc.preview.useEditorStyle: true` | Use editor style instead of default ascidoctor.css |
+| `asciidoc.preview.useEditorStyle: true` | Use editor style instead of default asciidoctor.css |
 | `asciidoc.previewFrontMatter: "hide"` | Sets how YAML front matter should be rendered in the AsciiDoc preview. "hide" removes the front matter. Otherwise, the front matter is treated as AsciiDoc content. |
 | `asciidoc.trace: "off"` | Enable debug logging for the AsciiDoc extension. |
 | `asciidoc.use_asciidoctor_js: true` | Use Asciidoctor.js instead of the 'asciidoctor_command' to render the preview. |
