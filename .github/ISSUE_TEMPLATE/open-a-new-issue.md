@@ -9,13 +9,13 @@ assignees: ''
 
 This is an example issue. Use just the headings and fill out all necessary information. Screenshots & Files and Additional Context are optional.
 
-## Describe the bug
+## Description
 
-A clear and concise description of what the bug is.
+A clear and concise description of what the issue is.
 
-## VSCode and OS
+## System Information
 
-You can find the VSCode and OS information under Help -> About. To check the extension information go to the extension browser (`CTRL+SHIFT+X`, Mac `CMD+SHIFT+X`).
+You can find the VSCode and OS information under Help -> About. To check the extension information go to the extension browser (CTRL+SHIFT+X, Mac CMD+SHIFT+X).
 
 ## To Reproduce
 
