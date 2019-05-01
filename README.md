@@ -115,7 +115,7 @@ code --install-extension *.vsix
 
 The script only works in MacOS and Windows
 
-```sh
+```shell
 git clone https://github.com/asciidoctor/asciidoctor-vscode
 bash ./script/build.sh build install
 ```
