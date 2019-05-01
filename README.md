@@ -19,8 +19,9 @@ An extension that provides live preview, syntax highlighting and snippets for th
 4. [Build and Install from Source](#build-and-install-from-source)
     1. [Manual](#manual)
     2. [Script](#script)
-5. [Contributing](#contributing)
-6. [Credits](#credits)
+5. [Issues](#issues)
+6. [Contributing](#contributing)
+7. [Credits](#credits)
 
 ## How to Install
 
@@ -119,6 +120,20 @@ The script only works in MacOS and Windows
 git clone https://github.com/asciidoctor/asciidoctor-vscode
 bash ./script/build.sh build install
 ```
+
+## Issues
+
+If you encounter any problems with the extension and cannot find the solution yourself, please open an issue in the dedicated GitHub page: [asciidoctor-vscode/issues](https://github.com/asciidoctor/asciidoctor-vscode/issues).
+
+Before opening an issue, please make sure that it is not a duplicate. Your problem may have already been brought up by another user and been solved: [asciidoctor-vscode/issues all](https://github.com/asciidoctor/asciidoctor-vscode/issues?utf8=%E2%9C%93&q=).
+
+When you do open an issue, remember to include the following information:
+
+1. VSCode version and OS (_Help -> About_)
+2. Extension version
+3. Steps to reproduce the issue<br/>
+**IMPORTANT**: We cannot solve the issue if you do not explain how you encountered it
+4. If the problem occurs only with a specific file, attach it
 
 ## Contributing
 
