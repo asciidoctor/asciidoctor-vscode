@@ -7,6 +7,8 @@ assignees: ''
 
 ---
 
+This is an example issue. Use just the headings and fill out all necessary information. Screenshots & Files and Additional Context are optional.
+
 ## Describe the bug
 
 A clear and concise description of what the bug is.
@@ -23,10 +25,10 @@ Steps to reproduce the issue:
 2. Click on '....'
 3. Etc...
 
-## Screenshots
+## Screenshots & Files
 
 If applicable, add screenshots to help explain your problem. If the problem occurs only in a specific file, attach the file to the issue (do not copy the contents here).
 
-## Additional context
+## Additional Context
 
 Add any other context about the problem here.
