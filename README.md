@@ -137,6 +137,8 @@ When you do open an issue, remember to include the following information:
 **IMPORTANT**: We cannot solve the issue if you do not explain how you encountered it
 4. If the problem occurs only with a specific file, attach it
 
+If your issue only appeared after updating to a new version of the extension, you can roll back to a previous one via the extensions browser. Click on the small gear icon beside the AsciiDoc extension, then select _Install Another Version..._. A selection menu will appear allowing you to select which version you want to install.
+
 ## Contributing
 
 To contribute simply clone the repository and then commit your changes. When you do a pull requests please clearly highlight what you changed in the pull comment.
