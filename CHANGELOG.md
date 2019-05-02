@@ -1,5 +1,9 @@
 # Changes
 
+## 2.7.2
+
+* Fix an error caused by incorrectly accessing the workspace folder (issue #191)
+
 ## 2.7.1
 
 * Fix `preview.attributes` description.
