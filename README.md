@@ -78,7 +78,7 @@ The following list contains all the options and their default value.
 | Option: Default value | Description |
 | :--- | :--- |
 | `asciidoc.asciidoctor_command: "asciidoctor"` | The path or command invoked when using Asciidoctor for the preview. |
-| `asciidoc.asciidoctorpdf_command: "asciidoctor-pdf"` | The path or command invoked when using Asciidoctor PDF for the _Export ad PDF_ function. |
+| `asciidoc.asciidoctorpdf_command: "asciidoctor-pdf"` | The path or command invoked when using Asciidoctor PDF for the _Export as PDF_ function. |
 | `asciidoc.forceUnixStyleSeparator: true` | Force set the file separator style to unix style. If set false, separator style will follow the system style. |
 | `asciidoc.preview.style: ""` | The local path to a CSS style sheet to use in the AsciiDoc preview. Relative paths are interpreted relative to the workspace folder. If no workspace is open the document path. |
 | `asciidoc.preview.attributes: {}` | Set attributes to be used in the preview. Attributes need to be written as an object of type {string: string} |
