@@ -10,20 +10,19 @@ An extension that provides live preview, syntax highlighting and snippets for th
 
 ## Contents
 
-- [AsciiDoc support for Visual Studio Code](#asciidoc-support-for-visual-studio-code)
-  - [Contents](#contents)
-  - [How to Install](#how-to-install)
-  - [How to Use](#how-to-use)
-    - [Preview](#preview)
-    - [Export as PDF](#export-as-pdf)
-    - [Snippets](#snippets)
-  - [Options](#options)
-  - [Build and Install from Source](#build-and-install-from-source)
-    - [Manual](#manual)
-    - [Script](#script)
-  - [Issues](#issues)
-  - [Contributing](#contributing)
-  - [Credits](#credits)
+* [Contents](#contents)
+* [How to Install](#how-to-install)
+* [How to Use](#how-to-use)
+  * [Preview](#preview)
+  * [Export as PDF](#export-as-pdf)
+  * [Snippets](#snippets)
+* [Options](#options)
+* [Build and Install from Source](#build-and-install-from-source)
+  * [Manual](#manual)
+  * [Script](#script)
+* [Issues](#issues)
+* [Contributing](#contributing)
+* [Credits](#credits)
 
 ## How to Install
 
