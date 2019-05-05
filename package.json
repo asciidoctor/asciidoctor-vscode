@@ -65,7 +65,7 @@
 		"commands": [
 			{
 				"command": "asciidoc.exportAsPDF",
-				"title": "%asciidoc.exportAsPDF.title%",
+				"title": "%cmd.asciidoc.exportAsPDF.title%",
 				"category": "AsciiDoc",
 				"icon": {
 					"light": "./media/Preview.svg",
@@ -74,7 +74,7 @@
 			},
 			{
 				"command": "asciidoc.pasteImage",
-				"title": "%asciidoc.pasteImage.title%",
+				"title": "%cmd.asciidoc.pasteImage.title%",
 				"category": "AsciiDoc",
 				"icon": {
 					"light": "./media/Preview.svg",
@@ -83,7 +83,7 @@
 			},
 			{
 				"command": "asciidoc.showPreview",
-				"title": "%asciidoc.preview.title%",
+				"title": "%cmd.asciidoc.preview.title%",
 				"category": "AsciiDoc",
 				"icon": {
 					"light": "./media/Preview.svg",
@@ -92,7 +92,7 @@
 			},
 			{
 				"command": "asciidoc.showPreviewToSide",
-				"title": "%asciidoc.previewSide.title%",
+				"title": "%cmd.asciidoc.previewSide.title%",
 				"category": "AsciiDoc",
 				"icon": {
 					"light": "./media/PreviewOnRightPane_16x.svg",
@@ -101,7 +101,7 @@
 			},
 			{
 				"command": "asciidoc.showLockedPreviewToSide",
-				"title": "%asciidoc.showLockedPreviewToSide.title%",
+				"title": "%cmd.asciidoc.showLockedPreviewToSide.title%",
 				"category": "AsciiDoc",
 				"icon": {
 					"light": "./media/PreviewOnRightPane_16x.svg",
@@ -110,7 +110,7 @@
 			},
 			{
 				"command": "asciidoc.showSource",
-				"title": "%asciidoc.showSource.title%",
+				"title": "%cmd.asciidoc.showSource.title%",
 				"category": "AsciiDoc",
 				"icon": {
 					"light": "./media/ViewSource.svg",
@@ -119,17 +119,17 @@
 			},
 			{
 				"command": "asciidoc.showPreviewSecuritySelector",
-				"title": "%asciidoc.showPreviewSecuritySelector.title%",
+				"title": "%cmd.asciidoc.showPreviewSecuritySelector.title%",
 				"category": "AsciiDoc"
 			},
 			{
 				"command": "asciidoc.preview.refresh",
-				"title": "%asciidoc.preview.refresh.title%",
+				"title": "%cmd.asciidoc.preview.refresh.title%",
 				"category": "AsciiDoc"
 			},
 			{
 				"command": "asciidoc.preview.toggleLock",
-				"title": "%asciidoc.preview.toggleLock.title%",
+				"title": "%cmd.asciidoc.preview.toggleLock.title%",
 				"category": "AsciiDoc"
 			}
 		],
@@ -233,12 +233,12 @@
 				"asciidoc.asciidoctor_command": {
 					"type": "string",
 					"default": "asciidoctor",
-					"description": "%asciidoc.asciidoctor_command.desc%"
+					"description": "%conf.asciidoc.asciidoctor_command.desc%"
 				},
 				"asciidoc.asciidoctorpdf_command": {
 					"type": "string",
 					"default": "asciidoctor-pdf",
-					"description": "%asciidoc.asciidoctorpdf_command.desc%"
+					"description": "%conf.asciidoc.asciidoctorpdf_command.desc%"
 				},
 				"asciidoc.previewFrontMatter": {
 					"type": "string",
@@ -247,98 +247,98 @@
 						"show"
 					],
 					"default": "hide",
-					"description": "%asciidoc.previewFrontMatter.desc%",
+					"description": "%conf.asciidoc.previewFrontMatter.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.style": {
 					"type": "string",
 					"default": "",
-					"description": "%asciidoc.preview.style.desc%",
+					"description": "%conf.asciidoc.preview.style.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.attributes": {
 					"type": "object",
 					"default": {},
-					"description": "%asciidoc.preview.attributes.desc%",
+					"description": "%conf.asciidoc.preview.attributes.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.breaks": {
 					"type": "boolean",
 					"default": false,
-					"description": "%asciidoc.preview.breaks.desc%",
+					"description": "%conf.asciidoc.preview.breaks.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.linkify": {
 					"type": "boolean",
 					"default": true,
-					"description": "%asciidoc.preview.linkify%",
+					"description": "%conf.asciidoc.preview.linkify.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.fontFamily": {
 					"type": "string",
 					"default": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif",
-					"description": "%asciidoc.preview.fontFamily.desc%",
+					"description": "%conf.asciidoc.preview.fontFamily.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.fontSize": {
 					"type": "number",
 					"default": 14,
-					"description": "%asciidoc.preview.fontSize.desc%",
+					"description": "%conf.asciidoc.preview.fontSize.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.lineHeight": {
 					"type": "number",
 					"default": 1.6,
-					"description": "%asciidoc.preview.lineHeight.desc%",
+					"description": "%conf.asciidoc.preview.lineHeight.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.useEditorStyle": {
 					"type": "boolean",
 					"default": true,
-					"description": "%asciidoc.preview.useEditorStyle.desc%"
+					"description": "%conf.asciidoc.preview.useEditorStyle.desc%"
 				},
 				"asciidoc.preview.scrollPreviewWithEditor": {
 					"type": "boolean",
 					"default": true,
-					"description": "%asciidoc.preview.scrollPreviewWithEditor.desc%",
+					"description": "%conf.asciidoc.preview.scrollPreviewWithEditor.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.scrollPreviewWithEditorSelection": {
 					"type": "boolean",
 					"default": true,
-					"description": "%asciidoc.preview.scrollPreviewWithEditorSelection.desc%",
-					"deprecationMessage": "%asciidoc.preview.scrollPreviewWithEditorSelection.deprecationMessage%"
+					"description": "%conf.asciidoc.preview.scrollPreviewWithEditorSelection.desc%",
+					"deprecationMessage": "%conf.asciidoc.preview.scrollPreviewWithEditorSelection.deprecationMessage%"
 				},
 				"asciidoc.preview.markEditorSelection": {
 					"type": "boolean",
 					"default": true,
-					"description": "%asciidoc.preview.markEditorSelection.desc%",
+					"description": "%conf.asciidoc.preview.markEditorSelection.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.scrollEditorWithPreview": {
 					"type": "boolean",
 					"default": true,
-					"description": "%asciidoc.preview.scrollEditorWithPreview.desc%",
+					"description": "%conf.asciidoc.preview.scrollEditorWithPreview.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.doubleClickToSwitchToEditor": {
 					"type": "boolean",
 					"default": true,
-					"description": "%asciidoc.preview.doubleClickToSwitchToEditor.desc%",
+					"description": "%conf.asciidoc.preview.doubleClickToSwitchToEditor.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.openAsciiDocLinks": {
 					"type": "string",
 					"default": "inPreview",
-					"description": "%configuration.asciidoc.preview.openAsciiDocLinks.desc%",
+					"description": "%conf.asciidoc.preview.openAsciiDocLinks.desc%",
 					"scope": "resource",
 					"enum": [
 						"inPreview",
 						"inEditor"
 					],
 					"enumDescriptions": [
-						"%configuration.asciidoc.preview.openAsciiDocLinks.inPreview%",
-						"%configuration.asciidoc.preview.openAsciiDocLinks.inEditor%"
+						"%conf.asciidoc.preview.openAsciiDocLinks.inPreview%",
+						"%conf.asciidoc.preview.openAsciiDocLinks.inEditor%"
 					]
 				},
 				"asciidoc.trace": {
@@ -348,23 +348,23 @@
 						"verbose"
 					],
 					"default": "off",
-					"description": "%asciidoc.trace.desc%",
+					"description": "%conf.asciidoc.trace.desc%",
 					"scope": "window"
 				},
 				"asciidoc.use_asciidoctor_js": {
 					"type": "boolean",
 					"default": true,
-					"description": "%asciidoc.use_asciidoctor_js.desc%"
+					"description": "%conf.asciidoc.use_asciidoctor_js.desc%"
 				},
 				"asciidoc.use_asciidoctorpdf": {
 					"type": "boolean",
 					"default": false,
-					"description": "%asciidoc.use_asciidoctorpdf.desc%"
+					"description": "%conf.asciidoc.use_asciidoctorpdf.desc%"
 				},
 				"asciidoc.forceUnixStyleSeparator": {
 					"type": "boolean",
 					"default": true,
-					"description": "%asciidoc.forceUnixStyleSeparator.desc%"
+					"description": "%conf.asciidoc.forceUnixStyleSeparator.desc%"
 				}
 			}
 		},
