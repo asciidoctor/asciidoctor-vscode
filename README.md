@@ -132,11 +132,11 @@ Before opening an issue, please make sure that it is not a duplicate. Your probl
 
 When you do open an issue, remember to include the following information:
 
-1. VSCode version and OS (_Help -> About_)
-2. Extension version
+1. Description of the issue
+2. VSCode version, OS (_Help -> About_) and extension version
 3. Steps to reproduce the issue<br/>
 **IMPORTANT**: We cannot solve the issue if you do not explain how you encountered it
-4. If the problem occurs only with a specific file, attach it
+4. If the problem occurs only with a specific file, attach it, together with any screnshot that might better show what the issue is.
 
 If your issue only appeared after updating to a new version of the extension, you can roll back to a previous one via the extensions browser. Click on the small gear icon beside the AsciiDoc extension, then select _Install Another Version..._. A selection menu will appear allowing you to select which version you want to install.
 
