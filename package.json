@@ -233,12 +233,12 @@
 				"asciidoc.asciidoctor_command": {
 					"type": "string",
 					"default": "asciidoctor",
-					"description": "Full path for the asciidoctor binary/executable"
+					"description": "%asciidoc.asciidoctor_command.desc%"
 				},
 				"asciidoc.asciidoctorpdf_command": {
 					"type": "string",
 					"default": "asciidoctor-pdf",
-					"description": "Full path for the asciidoctor-pdf binary/executable"
+					"description": "%asciidoc.asciidoctorpdf_command.desc%"
 				},
 				"asciidoc.previewFrontMatter": {
 					"type": "string",
@@ -247,7 +247,7 @@
 						"show"
 					],
 					"default": "hide",
-					"description": "%asciidoc.previewFrontMatter.dec%",
+					"description": "%asciidoc.previewFrontMatter.desc%",
 					"scope": "resource"
 				},
 				"asciidoc.preview.style": {
@@ -295,7 +295,7 @@
 				"asciidoc.preview.useEditorStyle": {
 					"type": "boolean",
 					"default": true,
-					"description": "Use editor style instead of default ascidoctor.css"
+					"description": "%asciidoc.preview.useEditorStyle.desc%"
 				},
 				"asciidoc.preview.scrollPreviewWithEditor": {
 					"type": "boolean",
@@ -330,7 +330,7 @@
 				"asciidoc.preview.openAsciiDocLinks": {
 					"type": "string",
 					"default": "inPreview",
-					"description": "%configuration.asciidoc.preview.openAsciiDocLinks.description%",
+					"description": "%configuration.asciidoc.preview.openAsciiDocLinks.desc%",
 					"scope": "resource",
 					"enum": [
 						"inPreview",
@@ -354,17 +354,17 @@
 				"asciidoc.use_asciidoctor_js": {
 					"type": "boolean",
 					"default": true,
-					"description": "Use asciidoctor js instead of the 'asciidoctor_command'"
+					"description": "%asciidoc.use_asciidoctor_js.desc%"
 				},
 				"asciidoc.use_asciidoctorpdf": {
 					"type": "boolean",
 					"default": false,
-					"description": "Use asciidoctor-pdf instead of the integrated renderer"
+					"description": "%asciidoc.use_asciidoctorpdf.desc%"
 				},
 				"asciidoc.forceUnixStyleSeparator": {
 					"type": "boolean",
 					"default": true,
-					"description": "Force set the file separator style to unix style. If set false, separator style will follow the system style."
+					"description": "%asciidoc.forceUnixStyleSeparator.desc%"
 				}
 			}
 		},
