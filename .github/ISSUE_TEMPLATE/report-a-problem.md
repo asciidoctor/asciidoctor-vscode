@@ -1,5 +1,5 @@
 ---
-name: Open a new issue
+name: Report a problem
 about: Create a report to help us improve
 title: ''
 labels: ''
