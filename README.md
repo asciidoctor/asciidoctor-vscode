@@ -144,7 +144,9 @@ If your issue only appeared after updating to a new version of the extension, yo
 
 To contribute simply clone the repository and then commit your changes. When you do a pull requests please clearly highlight what you changed in the pull comment.
 
-Do not update the extension version, changelog or readme, it will be done by the maintainers.
+Do not update the extension version or changelog, it will be done by the maintainers when a new version is released.
+
+If you want to update the readme, you are free to fix typos, errors, add or improve descriptions, but if you have a style change in mind please use an issue (or specific pull request) so that it can be discussed.
 
 ## Credits
 
