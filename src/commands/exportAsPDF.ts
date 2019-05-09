@@ -29,7 +29,7 @@ export class ExportAsPDF implements Command {
         const doc = editor.document
         const text = doc.getText()
 
-        if (vscode.workspace.getConfiguration('asciidoc').get('use_asciidoctorpdf')) {
+        if (vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctorpdf')) {
             var docPath = path.parse(path.resolve(doc.fileName))
             var pdfPath = ''
 
@@ -48,7 +48,7 @@ export class ExportAsPDF implements Command {
             }
 
             let asciidoctorpdf_command = vscode.workspace
-                .getConfiguration('asciidoc')
+                .getConfiguration('asciidoc', null)
                 .get('asciidoctorpdf_command', 'asciidoctor-pdf')
 
             var adocpdf_cmd_array = asciidoctorpdf_command
@@ -182,8 +182,8 @@ async function download_file(download_url: string, filename: string, progress) {
         var download_options = url.parse(download_url);
         var wstream = fs.createWriteStream(filename)
         var totalDownloaded = 0;
-        var proxy = process.env.http_proxy || vscode.workspace.getConfiguration("http")["proxy"].trim();
-        var proxyStrictSSL = vscode.workspace.getConfiguration("http")["proxyStrictSSL"];
+        var proxy = process.env.http_proxy || vscode.workspace.getConfiguration("http", null)["proxy"].trim();
+        var proxyStrictSSL = vscode.workspace.getConfiguration("http", null)["proxyStrictSSL"];
         if( proxy != '') {
             var agent = new HttpsProxyAgent(proxy);
             download_options.agent = agent
