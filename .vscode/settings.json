@@ -36,7 +36,8 @@
     "asciidoc.preview.scrollPreviewWithEditor": true,
     "asciidoc.preview.useEditorStyle": true,
     "asciidoc.previewFrontMatter": "hide",
-    "asciidoc.styles": [],
+    "asciidoc.preview.attributes": {},
+    "asciidoc.preview.style": "",
     "asciidoc.trace": "off",
     "asciidoc.use_asciidoctor_js": true,
     "asciidoc.use_asciidoctorpdf": false
