@@ -1,5 +1,11 @@
 # Changes
 
+## 2.7.3
+
+* Fixes to README (thanks to @jstafman <jstafman@protonmail.com>)
+* Changed the order of configuration settings
+* Display an error notification when asciidoctor.js fails
+
 ## 2.7.2
 
 * Fix an error caused by incorrectly accessing the workspace folder (issue #191)
