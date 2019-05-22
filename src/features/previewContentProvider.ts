@@ -67,7 +67,6 @@ export class AsciidocContentProvider {
 		// Content Security Policy
 		const nonce = new Date().getTime() + '' + new Date().getMilliseconds();
 		const csp = this.getCspForResource(sourceUri, nonce);
-
 		const body = await this.engine.render(sourceUri, config.previewFrontMatter === 'hide', asciidocDocument.getText());
 		return `<!DOCTYPE html>
 			<html>
@@ -85,7 +84,7 @@ export class AsciidocContentProvider {
 			<body class="vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.markEditorSelection ? 'showEditorSelection' : ''}">
 				${body}
 				<div class="code-line" data-line="${asciidocDocument.lineCount}"></div>
-				${this.getScripts(nonce)}
+				<script async src="${this.extensionResourcePath('index.js')}" nonce="${nonce}" charset="UTF-8"></script>
 			</body>
 			</html>`;
 	}
@@ -179,12 +178,6 @@ export class AsciidocContentProvider {
 			${this.getSettingsOverrideStyles(nonce, config)}
 			${this.computeCustomStyleSheetIncludes(resource, config)}
 			${this.getImageStabilizerStyles(state)}`;
-	}
-
-	private getScripts(nonce: string): string {
-		return this.contributions.previewScripts
-			.map(resource => `<script async src="${resource.toString()}" nonce="${nonce}" charset="UTF-8"></script>`)
-			.join('\n');
 	}
 
 	private getCspForResource(resource: vscode.Uri, nonce: string): string {
