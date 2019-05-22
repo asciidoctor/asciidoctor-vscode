@@ -114,16 +114,17 @@ export class AsciidocParser {
                 base_dir: documentPath,
                 sourcemap: true,
             }
-
             try {
                 let ascii_doc = asciidoctor.load(text, options);
                 let resultHTML = ascii_doc.convert(options);
                 this.document = ascii_doc;
                 const blocksWithLineNumber = ascii_doc.findBy(function (b) { return typeof b.getLineNumber() !== 'undefined'; });
                 blocksWithLineNumber.forEach(function (block, key, myArray) {
+                    console.log("DATA LINE IS" + block.getLineNumber())
                     block.addRole("data-line-" + block.getLineNumber());
                 })
                 //let result = this.fixLinks(resultHTML);
+                console.log("RESULT HTML is" + resultHTML)
                 resolve(resultHTML);
             }
             catch(e) {
