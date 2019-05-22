@@ -371,8 +371,8 @@ export class AsciidocPreview {
 		resource: vscode.Uri,
 		contributions: AsciidocContributions
 	): vscode.Uri[] {
-		const baseRoots = contributions.previewResourceRoots;
 
+		let baseRoots: vscode.Uri[] = [vscode.Uri.file(path.join(contributions.extensionPath, 'media'))];
 		const folder = vscode.workspace.getWorkspaceFolder(resource);
 		if (folder) {
 			return baseRoots.concat(folder.uri);
