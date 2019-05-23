@@ -1,5 +1,9 @@
 # Changes
 
+## 2.7.4
+
+*  Fixes: No autoscroll in VSCode > 1.28 #182
+
 ## 2.7.3
 
 * Fixes to README (thanks to @jstafman <jstafman@protonmail.com>)

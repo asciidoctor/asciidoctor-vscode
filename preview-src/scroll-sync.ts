@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { getSettings } from './settings';
-import { isNullOrUndefined, isNull } from 'util';
 
 
 function clamp(min: number, max: number, value: number) {
@@ -21,28 +20,25 @@ export interface CodeLineElement {
 	line: number;
 }
 
-
 const getCodeLineElements = (() => {
 	let elements: CodeLineElement[];
 	return () => {
 		if (!elements) {
-			elements = [{ element: document.body, line: 0 }];
-			for (const element of document.querySelectorAll('div[class^="data-line-"], div[class*=" data-line-"]')) {
-				const el_num = element.className.split(' ').pop();
-				if(isNullOrUndefined(el_num))
-					continue
-				var line_nr_match = el_num.match(/data-line-(\d+)/)
-
-				if(isNull(line_nr_match))
-					continue
-				const num = line_nr_match[1]
-				const line = parseInt(num);
-				elements.push({ element: element as HTMLElement, line });
-			}
+			elements = Array.prototype.map.call(
+                document.querySelectorAll('div[class^="data-line-"], div[class*=" data-line-"]'),
+				//document.getElementsByClassName('code-line'),
+				(element: any) => {
+                    const num = element.className.split(' ').pop().match(/data-line-(\d+)/)[1];
+                    const line = parseInt(num);
+					//const line = +element.getAttribute('data-line');
+					return { element, line };
+				})
+				.filter((x: any) => !isNaN(x.line));
 		}
 		return elements;
 	};
 })();
+
 
 /**
  * Find the html elements that map to a specific target line in the editor.
