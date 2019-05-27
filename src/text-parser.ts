@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import * as path from "path";
-import * as Asciidoctor from "asciidoctor.js";
 import { spawn } from "child_process";
 import { isNullOrUndefined } from 'util';
 import * as npm_which from "npm-which";
@@ -9,10 +8,9 @@ const fileUrl = require('file-url');
 const Viz = require("viz.js");
 var which = npm_which(__dirname) // __dirname often good enough
 
-const asciidoctor = Asciidoctor();
-
-
+const asciidoctor = require('@asciidoctor/core')()
 const plantuml = require('asciidoctor-plantuml');
+
 plantuml.register(asciidoctor.Extensions);
 
 asciidoctor.Extensions.register(function () {

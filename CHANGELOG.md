@@ -1,5 +1,9 @@
 # Changes
 
+## 2.7.5
+
+* Update Asciidoctor(.JS) requirement to 2.0.3 (fixes #203, thanks to @jvalkeal)
+
 ## 2.7.4
 
 *  Fixes: No autoscroll in VSCode > 1.28 #182
