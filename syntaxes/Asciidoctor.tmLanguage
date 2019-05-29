@@ -4901,7 +4901,7 @@ Examples:
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>^(=) (\w.*)$\n?</string>
+			<string>^(=|#) (\w.*)$\n?</string>
 			<key>name</key>
 			<string>markup.heading.level.0.asciidoc</string>
 		</dict>
@@ -4921,7 +4921,7 @@ Examples:
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>^(==) (\w.*)$\n?</string>
+			<string>^(==|##) (\w.*)$\n?</string>
 			<key>name</key>
 			<string>markup.heading.level.1.asciidoc</string>
 		</dict>
@@ -4941,7 +4941,7 @@ Examples:
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>^(===) (\w.*)$\n?</string>
+			<string>^(===|###) (\w.*)$\n?</string>
 			<key>name</key>
 			<string>markup.heading.level.2.asciidoc</string>
 		</dict>
@@ -4961,7 +4961,7 @@ Examples:
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>^(====) (\w.*)$\n?</string>
+			<string>^(====|####) (\w.*)$\n?</string>
 			<key>name</key>
 			<string>markup.heading.level.3.asciidoc</string>
 		</dict>
@@ -4981,7 +4981,7 @@ Examples:
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>^(=====) (\w.*)$\n?</string>
+			<string>^(=====|#####) (\w.*)$\n?</string>
 			<key>name</key>
 			<string>markup.heading.level.4.asciidoc</string>
 		</dict>
@@ -5001,7 +5001,7 @@ Examples:
 				</dict>
 			</dict>
 			<key>match</key>
-			<string>^(======) (\w.*)$\n?</string>
+			<string>^(======|######) (\w.*)$\n?</string>
 			<key>name</key>
 			<string>markup.heading.level.5.asciidoc</string>
 		</dict>

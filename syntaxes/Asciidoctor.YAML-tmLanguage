@@ -2217,42 +2217,42 @@ repository:
 
   title_level_0:
     name: markup.heading.level.0.asciidoc
-    match: ^(=) (\w.*)$\n?
+    match: ^(=|#) (\w.*)$\n?
     captures:
       '1': {name: punctuation.definition.heading.asciidoc}
       '2': {name: entity.name.section.asciidoc}
 
   title_level_1:
     name: markup.heading.level.1.asciidoc
-    match: ^(==) (\w.*)$\n?
+    match: ^(==|##) (\w.*)$\n?
     captures:
       '1': {name: punctuation.definition.heading.asciidoc}
       '2': {name: entity.name.section.asciidoc}
 
   title_level_2:
     name: markup.heading.level.2.asciidoc
-    match: ^(===) (\w.*)$\n?
+    match: ^(===|###) (\w.*)$\n?
     captures:
       '1': {name: punctuation.definition.heading.asciidoc}
       '2': {name: entity.name.section.asciidoc}
 
   title_level_3:
     name: markup.heading.level.3.asciidoc
-    match: ^(====) (\w.*)$\n?
+    match: ^(====|####) (\w.*)$\n?
     captures:
       '1': {name: punctuation.definition.heading.asciidoc}
       '2': {name: entity.name.section.asciidoc}
 
   title_level_4:
     name: markup.heading.level.4.asciidoc
-    match: ^(=====) (\w.*)$\n?
+    match: ^(=====|#####) (\w.*)$\n?
     captures:
       '1': {name: punctuation.definition.heading.asciidoc}
       '2': {name: entity.name.section.asciidoc}
 
   title_level_5:
     name: markup.heading.level.5.asciidoc
-    match: ^(======) (\w.*)$\n?
+    match: ^(======|######) (\w.*)$\n?
     captures:
       '1': {name: punctuation.definition.heading.asciidoc}
       '2': {name: entity.name.section.asciidoc}
