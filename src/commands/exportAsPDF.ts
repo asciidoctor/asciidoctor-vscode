@@ -85,6 +85,10 @@ export class ExportAsPDF implements Command {
             asciidoctorpdf.stdin.write(text)
             asciidoctorpdf.stdin.end()
         } else {
+            let wkhtmltopdf_path = vscode.workspace
+                .getConfiguration('asciidoc')
+                .get('wkhtmltopdf_path', '');
+
             let parser = new AsciidocParser(path.resolve(doc.fileName))
             //const body =  await parser.parseText()
             const body = await this.engine.render(doc.uri, true, text)
@@ -132,6 +136,10 @@ export class ExportAsPDF implements Command {
             const ext = platform == "win32" ? '.exe': ''
             const arch = process.arch;
             var binary_path = path.resolve(path.join(__dirname, 'wkhtmltopdf-'+platform+'-'+arch+ext))
+
+            if(wkhtmltopdf_path != '')
+                binary_path = wkhtmltopdf_path;
+
             const pdf_filename = vscode.Uri.file(path.join(source_name.root, source_name.dir, source_name.name+'.pdf'))
             if(!fs.existsSync(binary_path) ) {
                 var label = await vscode.window.showInformationMessage("This feature requires wkhtmltopdf\ndo you want to download", "Download")

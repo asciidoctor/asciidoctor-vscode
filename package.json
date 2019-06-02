@@ -2,7 +2,7 @@
 	"name": "asciidoctor-vscode",
 	"displayName": "%displayName%",
 	"description": "%description%",
-	"version": "2.7.5",
+	"version": "2.7.6",
 	"publisher": "joaompinto",
 	"author": "João Pinto <lamego.pinto@gmail.com>",
 	"license": "MIT",
@@ -360,6 +360,12 @@
 					"type": "boolean",
 					"default": false,
 					"description": "%asciidoc.use_asciidoctorpdf.desc%"
+				},
+				"asciidoc.wkhtmltopdf_path": {
+					"type": "string",
+					"default": "",
+					"description": "%asciidoc.wkhtmltopdf_path.desc%",
+					"scope": "resource"
 				},
 				"asciidoc.forceUnixStyleSeparator": {
 					"type": "boolean",

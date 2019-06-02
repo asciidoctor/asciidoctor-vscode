@@ -1,5 +1,9 @@
 # Changes
 
+## 2.7.6
+
+* Add config option to set the wkhtmltopdf binary path (closes #202)
+
 ## 2.7.5
 
 * Update Asciidoctor(.JS) requirement to 2.0.3 (fixes #203, thanks to @jvalkeal)
