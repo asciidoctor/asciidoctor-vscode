@@ -64,9 +64,9 @@ export class AsciidocParser {
             const documentPath = path.dirname(path.resolve(doc.fileName));
             const workspacePath = vscode.workspace.workspaceFolders
             const contains_style = !isNullOrUndefined(text.match(new RegExp("^\\s*:(stylesheet|stylesdir):", "img")));
-            const use_editor_stylesheet = vscode.workspace.getConfiguration('asciidoc').get('preview.useEditorStyle', false);
-            const preview_attributes = vscode.workspace.getConfiguration('asciidoc').get('preview.attributes', {});
-            const preview_style = vscode.workspace.getConfiguration('asciidoc').get('preview.style', "");
+            const use_editor_stylesheet = vscode.workspace.getConfiguration('asciidoc', null).get('preview.useEditorStyle', false);
+            const preview_attributes = vscode.workspace.getConfiguration('asciidoc', null).get('preview.attributes', {});
+            const preview_style = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', "");
 
             var attributes = {};
 
@@ -135,13 +135,13 @@ export class AsciidocParser {
         const documentPath = path.dirname(doc.fileName).replace('"', '\\"');
         const workspacePath = vscode.workspace.workspaceFolders
         const contains_style = !isNullOrUndefined(text.match(new RegExp("^\\s*:(stylesheet|stylesdir):", "img")));
-        const use_editor_stylesheet = vscode.workspace.getConfiguration('asciidoc').get('preview.useEditorStyle', false);
-        const preview_attributes = vscode.workspace.getConfiguration('asciidoc').get('preview.attributes', {});
-        const preview_style = vscode.workspace.getConfiguration('asciidoc').get('preview.style', "");
+        const use_editor_stylesheet = vscode.workspace.getConfiguration('asciidoc', null).get('preview.useEditorStyle', false);
+        const preview_attributes = vscode.workspace.getConfiguration('asciidoc', null).get('preview.attributes', {});
+        const preview_style = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', "");
         this.document = null;
 
         return new Promise<string>(resolve => {
-            let asciidoctor_command = vscode.workspace.getConfiguration('asciidoc').get('asciidoctor_command', 'asciidoctor');
+            let asciidoctor_command = vscode.workspace.getConfiguration('asciidoc', null).get('asciidoctor_command', 'asciidoctor');
             var RUBYOPT = process.env['RUBYOPT']
             if (RUBYOPT) {
                 var prevOpt
@@ -245,7 +245,7 @@ export class AsciidocParser {
     }
 
     public async parseText(text: string): Promise<string> {
-        const use_asciidoctor_js = vscode.workspace.getConfiguration('asciidoc').get('use_asciidoctor_js');
+        const use_asciidoctor_js = vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctor_js');
         if (use_asciidoctor_js)
             return this.convert_using_javascript(text)
         else

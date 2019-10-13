@@ -162,7 +162,7 @@ export class AsciidocContentProvider {
 	}
 
 	private getStyles(resource: vscode.Uri, nonce: string, config: AsciidocPreviewConfiguration, state?: any): string {
-		const useEditorStyle = vscode.workspace.getConfiguration('asciidoc').get('preview.useEditorStyle')
+		const useEditorStyle = vscode.workspace.getConfiguration('asciidoc', null).get('preview.useEditorStyle')
 		var baseStyles;
 		if (useEditorStyle) {
 			baseStyles = this.contributions.previewStylesEditor
