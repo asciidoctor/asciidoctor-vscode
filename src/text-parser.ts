@@ -3,6 +3,8 @@ import * as path from "path";
 import { spawn } from "child_process";
 import { isNullOrUndefined } from 'util';
 import * as npm_which from "npm-which";
+import * as tmp from "tmp";
+import * as fs from "fs";
 
 const fileUrl = require('file-url');
 const Viz = require("viz.js");
@@ -199,7 +201,11 @@ export class AsciidocParser {
                 }
             })
 
-            adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-o-', '-', '-B', '"' + documentPath + '"'])
+            var in_file = tmp.fileSync();
+            fs.writeFileSync(in_file.fd, text);
+            var out_file = tmp.fileSync();
+
+            adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-o', out_file.name, in_file.name, '-B', '"' + documentPath + '"'])
             var asciidoctor = spawn(adoc_cmd, adoc_cmd_args, options);
 
             asciidoctor.stderr.on('data', (data) => {
@@ -213,17 +219,11 @@ export class AsciidocParser {
                 errorMessage += "Go to `File -> Preferences -> User settings` and adjust the asciidoc.asciidoctor_command</b>"
                 resolve(errorMessage);
             })
-            var result_data = ''
-            /* with large outputs we can receive multiple calls */
-            asciidoctor.stdout.on('data', (data) => {
-                result_data += data.toString();
-            });
             asciidoctor.on('close', (code) => {
+                var result_data = fs.readFileSync(out_file.fd, "utf8");
                 //var result = this.fixLinks(result_data);
                 resolve(result_data);
             })
-            asciidoctor.stdin.write(text);
-            asciidoctor.stdin.end();
         });
     }
 
