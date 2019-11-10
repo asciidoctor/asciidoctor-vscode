@@ -47,9 +47,6 @@ export class ExportAsPDF implements Command {
                 return
             }
 
-            var in_file = tmp.fileSync();
-            fs.writeFileSync(in_file.fd, text);
-
             let asciidoctorpdf_command = vscode.workspace
                 .getConfiguration('asciidoc', null)
                 .get('asciidoctorpdf_command', 'asciidoctor-pdf')
@@ -61,7 +58,7 @@ export class ExportAsPDF implements Command {
             var adocpdf_cmd = adocpdf_cmd_array[0]
 
             var adocpdf_cmd_args = adocpdf_cmd_array.slice(1)
-            adocpdf_cmd_args.push.apply(adocpdf_cmd_args, ['-q', in_file.name,
+            adocpdf_cmd_args.push.apply(adocpdf_cmd_args, ['-q', '-',
                 '-B', '"' + docPath.dir.replace('"', '\\"') + '"',
                 '-o', '"' + pdfPath.replace('"', '\\"') + '"'
             ])
@@ -84,6 +81,9 @@ export class ExportAsPDF implements Command {
             asciidoctorpdf.on('close', (code) => {
                 offer_open(pdfPath)
             })
+
+            asciidoctorpdf.stdin.write(text)
+            asciidoctorpdf.stdin.end()
         } else {
             let wkhtmltopdf_path = vscode.workspace
                 .getConfiguration('asciidoc')
