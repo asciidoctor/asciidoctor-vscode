@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import { CommandManager } from './commandManager';
 import * as commands from './commands/index';
 import LinkProvider from './features/documentLinkProvider';
-import MDDocumentSymbolProvider from './features/documentSymbolProvider';
+import AdocDocumentSymbolProvider from './features/documentSymbolProvider';
 import AsciidocFoldingProvider from './features/foldingProvider';
 import { AsciidocContentProvider } from './features/previewContentProvider';
 import { AsciidocPreviewManager } from './features/previewManager';
@@ -33,7 +33,7 @@ export function activate(context: vscode.ExtensionContext) {
 	];
 
 	const contentProvider = new AsciidocContentProvider(engine, context, cspArbiter, contributions, logger);
-	const symbolProvider = new MDDocumentSymbolProvider(engine);
+	const symbolProvider = new AdocDocumentSymbolProvider(engine);
     const previewManager = new AsciidocPreviewManager(contentProvider, logger, contributions);
 	context.subscriptions.push(previewManager);
 

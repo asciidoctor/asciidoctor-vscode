@@ -7,7 +7,7 @@ import * as vscode from 'vscode';
 import { disposeAll } from '../util/dispose';
 import { isAsciidocFile } from '../util/file';
 import { Lazy, lazy } from '../util/lazy';
-import MDDocumentSymbolProvider from './documentSymbolProvider';
+import AdocDocumentSymbolProvider from './documentSymbolProvider';
 import { SkinnyTextDocument } from '../tableOfContentsProvider';
 
 export interface WorkspaceAsciidocDocumentProvider {
@@ -104,7 +104,7 @@ export default class AsciidocWorkspaceSymbolProvider implements vscode.Workspace
 	private _disposables: vscode.Disposable[] = [];
 
 	public constructor(
-		private _symbolProvider: MDDocumentSymbolProvider,
+		private _symbolProvider: AdocDocumentSymbolProvider,
 		private _workspaceAsciidocDocumentProvider: WorkspaceAsciidocDocumentProvider = new VSCodeWorkspaceAsciidocDocumentProvider()
 	) { }
 

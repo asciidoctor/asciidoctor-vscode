@@ -60,11 +60,10 @@ export class AsciidocEngine {
 	}
 
 	public async parse(document: vscode.Uri, source: string): Promise<any> {
-		// const { text, offset } = this.stripFrontmatter(source);
 		this.currentDocument = document;
-        // const engine = await this.getEngine(document);
-
-        return await {};
+		const engine = await this.getEngine(document);
+		let ascii_doc = await engine.parseText(source)
+		return engine.document
 	}
 
 }

@@ -48,20 +48,19 @@ export class TableOfContentsProvider {
 	}
 
 	private async buildToc(document: SkinnyTextDocument): Promise<TocEntry[]> {
-		const toc: TocEntry[] = [];
-		const tokens = await this.engine.parse(document.uri, document.getText());
-
-		for (const heading of tokens.filter(token => token.type === 'heading_open')) {
-			const lineNumber = heading.map[0];
-			const line = document.lineAt(lineNumber);
+		let toc: TocEntry[] = [];
+		const adoc = await this.engine.parse(document.uri, document.getText());
+		
+		adoc.findBy({ 'context': 'section' }, function (section) {
 			toc.push({
-				slug: githubSlugifier.fromHeading(line.text),
-				text: TableOfContentsProvider.getHeaderText(line.text),
-				level: TableOfContentsProvider.getHeaderLevel(heading.markup),
-				line: lineNumber,
-				location: new vscode.Location(document.uri, line.range)
-			});
-		}
+				slug: section.getId(),
+				text: section.getTitle(),
+				level: section.getLevel(),
+				line: section.getLineNumber()-1,
+				location: new vscode.Location(document.uri, 
+						  	new vscode.Position(section.getLineNumber()-1, 1))
+			})
+		})
 
 		// Get full range of section
 		return toc.map((entry, startIndex): TocEntry => {
@@ -83,17 +82,4 @@ export class TableOfContentsProvider {
 		});
 	}
 
-	private static getHeaderLevel(markup: string): number {
-		if (markup === '=') {
-			return 1;
-		} else if (markup === '-') {
-			return 2;
-		} else { // '#', '##', ...
-			return markup.length;
-		}
-	}
-
-	private static getHeaderText(header: string): string {
-		return header.replace(/^\s*#+\s*(.*?)\s*#*$/, (_, word) => word.trim());
-	}
 }
