@@ -6,13 +6,13 @@
 import * as assert from 'assert';
 import 'mocha';
 import * as vscode from 'vscode';
-import MDDocumentSymbolProvider from '../features/documentSymbolProvider';
+import AdocDocumentSymbolProvider from '../features/documentSymbolProvider';
 import AsciidocWorkspaceSymbolProvider, { WorkspaceAsciidocDocumentProvider } from '../features/workspaceSymbolProvider';
 import { createNewAsciidocEngine } from './engine';
 import { InMemoryDocument } from './inMemoryDocument';
 
 
-const symbolProvider = new MDDocumentSymbolProvider(createNewAsciidocEngine());
+const symbolProvider = new AdocDocumentSymbolProvider(createNewAsciidocEngine());
 
 suite('asciidoc.WorkspaceSymbolProvider', () => {
 	test('Should not return anything for empty workspace', async () => {

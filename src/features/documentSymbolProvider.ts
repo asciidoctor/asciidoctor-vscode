@@ -13,7 +13,7 @@ interface AsciidocSymbol {
 	readonly children: vscode.DocumentSymbol[];
 }
 
-export default class MDDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
+export default class AdocDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
 
 	constructor(
 		private readonly engine: AsciidocEngine
@@ -54,7 +54,7 @@ export default class MDDocumentSymbolProvider implements vscode.DocumentSymbolPr
 
 	private toSymbolInformation(entry: TocEntry): vscode.SymbolInformation {
 		return new vscode.SymbolInformation(
-			this.getSymbolName(entry),
+			entry.text,
 			vscode.SymbolKind.String,
 			'',
 			entry.location);
@@ -62,14 +62,11 @@ export default class MDDocumentSymbolProvider implements vscode.DocumentSymbolPr
 
 	private toDocumentSymbol(entry: TocEntry) {
 		return new vscode.DocumentSymbol(
-			this.getSymbolName(entry),
+			entry.text,
 			'',
 			vscode.SymbolKind.String,
 			entry.location.range,
 			entry.location.range);
 	}
 
-	private getSymbolName(entry: TocEntry): string {
-		return '#'.repeat(entry.level) + ' ' + entry.text;
-	}
 }
