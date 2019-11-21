@@ -199,7 +199,7 @@ export class AsciidocParser {
                 }
             })
 
-            adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-o-', '-', '-B', '"' + documentPath + '"'])
+            adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-o', '-', '-', '-B', '"' + documentPath + '"'])
             var asciidoctor = spawn(adoc_cmd, adoc_cmd_args, options);
 
             asciidoctor.stderr.on('data', (data) => {

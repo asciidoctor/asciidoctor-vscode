@@ -58,7 +58,7 @@ export class ExportAsPDF implements Command {
             var adocpdf_cmd = adocpdf_cmd_array[0]
 
             var adocpdf_cmd_args = adocpdf_cmd_array.slice(1)
-            adocpdf_cmd_args.push.apply(adocpdf_cmd_args, ['-q', '-o-', '-',
+            adocpdf_cmd_args.push.apply(adocpdf_cmd_args, ['-q', '-',
                 '-B', '"' + docPath.dir.replace('"', '\\"') + '"',
                 '-o', '"' + pdfPath.replace('"', '\\"') + '"'
             ])
