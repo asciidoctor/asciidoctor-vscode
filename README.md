@@ -159,19 +159,27 @@ If you want to update the readme, you are free to fix typos, errors, add or impr
 All the following people who have contributed to the extension:
 
 * Bart Sokol
+* chriskoerner
+* Dan Allen
 * Daniel Mulholland
 * Garrett D'Amore
 * Gigacee
+* Guillaume Grossetie
+* jacksoncougar
 * Jackson C. Wiebe
 * João Pinto
+* Johannes Rössel
+* Joshua Stafman
 * Kevin Palmowski
+* Loïc PÉRON
 * Marcelo Alvim
 * Mark Roszko
 * Masanori Asano
 * Matteo Campinoti
+* MatteoCampinoti94
+* ojn
+* Øyvind Hansen
+* sgn
+* shaneknysh
 * Stephen Pegoraro
 * Tatsunori Uchino
-* chriskoerner
-* ojn
-* sgn
-* Øyvind Hansen
