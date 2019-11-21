@@ -1,5 +1,10 @@
 # Changes
 
+## 2.7.7
+
+* Add basic symbol provider (closes #234)
+* Clean use of '-o' option for compatibility with asciidoctorj (closes #232)
+
 ## 2.7.6
 
 * Add config option to set the wkhtmltopdf binary path (closes #202)
