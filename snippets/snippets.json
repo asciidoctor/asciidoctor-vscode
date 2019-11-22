@@ -206,5 +206,26 @@
 			"$0"
 		],
 		"description": "Insert tagged block"
+    },
+    "Insert quote block": {
+        "prefix": "quote",
+		"body": [
+            "[quote, ${1:citation}, ${2:cite}]",
+			"____",
+			"${3:${TM_SELECTED_TEXT:quote}}",
+			"____",
+			"$0"
+		],
+		"description": "Insert quote block"
+    },
+    "Insert footnote": {
+        "prefix": "footnote",
+        "body": "footnote:[${1:note}]",
+        "description": "Insert footnote"
+    },
+    "Insert footnote with label": {
+        "prefix": "footnote",
+        "body": "footnote:${1:label}[${2:note}]",
+        "description": "Insert footnote with label"
     }
 }
