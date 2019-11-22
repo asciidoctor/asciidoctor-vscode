@@ -210,7 +210,7 @@
     "Insert quote block": {
         "prefix": "quote",
 		"body": [
-            "[quote, ${1:citation}, ${2:cite}]",
+            "[quote, ${1:attribution}, ${2:cite title}]",
 			"____",
 			"${3:${TM_SELECTED_TEXT:quote}}",
 			"____",
@@ -224,7 +224,7 @@
         "description": "Insert footnote"
     },
     "Insert footnote with label": {
-        "prefix": "footnote",
+        "prefix": "footnote-label",
         "body": "footnote:${1:label}[${2:note}]",
         "description": "Insert footnote with label"
     }
