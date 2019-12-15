@@ -16,7 +16,7 @@ const testFileName = vscode.Uri.file('test.md');
 
 function getSymbolsForFile(fileContents: string) {
 	const doc = new InMemoryDocument(testFileName, fileContents);
-	const provider = new SymbolProvider(createNewAsciidocEngine());
+	const provider = new SymbolProvider(createNewAsciidocEngine(), null, null, null, null);
 	return provider.provideDocumentSymbols(doc);
 }
 
