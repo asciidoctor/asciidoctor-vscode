@@ -24,7 +24,7 @@ export default class AdocDocumentSymbolProvider implements vscode.DocumentSymbol
 		},
 		private lastSymbolCall: number,
 		private lastRunTime: number = 1000,
-		private RunTimeFactor: number = 5
+		private RunTimeFactor: number = 1.5
 	) { }
 
 	public async provideDocumentSymbolInformation(document: SkinnyTextDocument): Promise<vscode.SymbolInformation[]> {
@@ -34,7 +34,7 @@ export default class AdocDocumentSymbolProvider implements vscode.DocumentSymbol
 
 	public async provideDocumentSymbols(document: SkinnyTextDocument): Promise<vscode.DocumentSymbol[]> {
 
-		const nextOKRunTime = this.lastSymbolCall + this.lastRunTime * this.RunTimeFactor;
+		const nextOKRunTime = this.lastSymbolCall + Math.max(this.lastRunTime * this.RunTimeFactor, 2000);
 		const startTime = (new Date()).getTime();
 		
 		if (this.lastSymbolCall == undefined || startTime > nextOKRunTime) {
