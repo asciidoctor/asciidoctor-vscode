@@ -16,7 +16,15 @@ interface AsciidocSymbol {
 export default class AdocDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
 
 	constructor(
-		private readonly engine: AsciidocEngine
+		private readonly engine: AsciidocEngine,
+		private root: AsciidocSymbol = {
+			level: -Infinity,
+			children: [],
+			parent: undefined
+		},
+		private lastSymbolCall: number,
+		private lastRunTime: number = 1000,
+		private RunTimeFactor: number = 1.5
 	) { }
 
 	public async provideDocumentSymbolInformation(document: SkinnyTextDocument): Promise<vscode.SymbolInformation[]> {
@@ -25,14 +33,26 @@ export default class AdocDocumentSymbolProvider implements vscode.DocumentSymbol
 	}
 
 	public async provideDocumentSymbols(document: SkinnyTextDocument): Promise<vscode.DocumentSymbol[]> {
-		const toc = await new TableOfContentsProvider(this.engine, document).getToc();
-		const root: AsciidocSymbol = {
-			level: -Infinity,
-			children: [],
-			parent: undefined
-		};
-		this.buildTree(root, toc);
-		return root.children;
+
+		const nextOKRunTime = this.lastSymbolCall + Math.max(this.lastRunTime * this.RunTimeFactor, 2000);
+		const startTime = (new Date()).getTime();
+		
+		if (this.lastSymbolCall == undefined || startTime > nextOKRunTime) {
+
+			const toc = await new TableOfContentsProvider(this.engine, document).getToc();
+			this.root = {
+				level: -Infinity,
+				children: [],
+				parent: undefined
+				}
+			this.buildTree(this.root, toc);
+
+			this.lastSymbolCall = (new Date).getTime();
+			this.lastRunTime = this.lastSymbolCall - startTime;
+
+		}
+
+		return this.root.children;
 	}
 
 	private buildTree(parent: AsciidocSymbol, entries: TocEntry[]) {

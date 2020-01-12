@@ -12,7 +12,7 @@ import { createNewAsciidocEngine } from './engine';
 import { InMemoryDocument } from './inMemoryDocument';
 
 
-const symbolProvider = new AdocDocumentSymbolProvider(createNewAsciidocEngine());
+const symbolProvider = new AdocDocumentSymbolProvider(createNewAsciidocEngine(), null, null, null, null);
 
 suite('asciidoc.WorkspaceSymbolProvider', () => {
 	test('Should not return anything for empty workspace', async () => {
