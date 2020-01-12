@@ -1,5 +1,9 @@
 # Changes
 
+## 2.7.8
+
+* Disable foldingProvider and add throthling to SymbolProvider
+
 ## 2.7.7
 
 * Add basic symbol provider (closes #234)
