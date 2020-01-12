@@ -8,7 +8,7 @@ import { CommandManager } from './commandManager';
 import * as commands from './commands/index';
 import LinkProvider from './features/documentLinkProvider';
 import AdocDocumentSymbolProvider from './features/documentSymbolProvider';
-import AsciidocFoldingProvider from './features/foldingProvider';
+// import AsciidocFoldingProvider from './features/foldingProvider';
 import { AsciidocContentProvider } from './features/previewContentProvider';
 import { AsciidocPreviewManager } from './features/previewManager';
 import AsciidocWorkspaceSymbolProvider from './features/workspaceSymbolProvider';
@@ -39,7 +39,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider));
 	context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider()));
-	context.subscriptions.push(vscode.languages.registerFoldingRangeProvider(selector, new AsciidocFoldingProvider(engine)));
+	// context.subscriptions.push(vscode.languages.registerFoldingRangeProvider(selector, new AsciidocFoldingProvider(engine)));
 	context.subscriptions.push(vscode.languages.registerWorkspaceSymbolProvider(new AsciidocWorkspaceSymbolProvider(symbolProvider)));
 
 	const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
