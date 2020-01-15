@@ -97,6 +97,7 @@ The following list contains all the options and their default value.
 | `asciidoc.trace: "off"` | Enable debug logging for the AsciiDoc extension. |
 | `asciidoc.use_asciidoctor_js: true` | Use Asciidoctor.js instead of the 'asciidoctor_command' to render the preview. |
 | `asciidoc.use_asciidoctorpdf: false` | Use Asciidoctor PDF instead of the integrated renderer for the _Export as PDF_ command. |
+| `asciidoc.use_kroki: false` | Enable kroki integration to generate diagrams. |
 
 ## Build and Install from Source
 

@@ -10,8 +10,12 @@ var which = npm_which(__dirname) // __dirname often good enough
 
 const asciidoctor = require('@asciidoctor/core')()
 const plantuml = require('asciidoctor-plantuml');
+const kroki = require('asciidoctor-kroki')
 
 plantuml.register(asciidoctor.Extensions);
+const use_kroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki');
+if (use_kroki)
+    kroki.register(asciidoctor.Extensions);
 
 asciidoctor.Extensions.register(function () {
     this.block(function () {
