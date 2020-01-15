@@ -361,6 +361,11 @@
 					"default": false,
 					"description": "%asciidoc.use_asciidoctorpdf.desc%"
 				},
+				"asciidoc.use_kroki": {
+					"type": "boolean",
+					"default": false,
+					"description": "%asciidoc.use_kroki.desc%"
+				},
 				"asciidoc.wkhtmltopdf_path": {
 					"type": "string",
 					"default": "",
@@ -412,6 +417,7 @@
 	},
 	"dependencies": {
 		"@asciidoctor/core": "2.0.3",
+		"asciidoctor-kroki": "^0.6.0",
 		"asciidoctor-plantuml": "1.1.13",
 		"copy-paste": "^1.2.0",
 		"file-url": "^1.0.1",
