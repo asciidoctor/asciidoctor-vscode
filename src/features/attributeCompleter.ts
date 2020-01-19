@@ -8,12 +8,12 @@ export class AttributeCompleter {
 
         const adoc = new AsciidocParser(document.uri.fsPath)
         adoc.parseText(document.getText())
-
+        const attributes = adoc.document.getAttributes()
         let attribs = []
-        for (const [key, value] of Object.entries(adoc.document.getAttributes()))
-        {
+        
+        for (const key in attributes) {
             let attrib = new vscode.CompletionItem(key, vscode.CompletionItemKind.Variable)
-            attrib.detail = value.toString()
+            attrib.detail = attributes[key].toString()
             attribs.push(attrib)
         }
 
