@@ -17,6 +17,7 @@ import { AsciidocEngine } from './asciidocEngine';
 import { getAsciidocExtensionContributions } from './asciidocExtensions';
 import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security';
 import { githubSlugifier } from './slugify';
+import { AttributeCompleter } from './features/attributeCompleter';
 
 
 export function activate(context: vscode.ExtensionContext) {
@@ -41,6 +42,7 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider()));
 	// context.subscriptions.push(vscode.languages.registerFoldingRangeProvider(selector, new AsciidocFoldingProvider(engine)));
 	context.subscriptions.push(vscode.languages.registerWorkspaceSymbolProvider(new AsciidocWorkspaceSymbolProvider(symbolProvider)));
+	context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new AttributeCompleter(), '{'));
 
 	const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
 
