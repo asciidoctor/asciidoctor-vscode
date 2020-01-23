@@ -154,6 +154,126 @@ Examples:
 			<key>name</key>
 			<string>variable.other</string>
 		</dict>
+		<key>atx_title_level_0</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.heading.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.section.asciidoc</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>^(=|#) (\w.*)$\n?</string>
+			<key>name</key>
+			<string>markup.heading.level.0.asciidoc</string>
+		</dict>
+		<key>atx_title_level_1</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.heading.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.section.asciidoc</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>^(==|##) (\w.*)$\n?</string>
+			<key>name</key>
+			<string>markup.heading.level.1.asciidoc</string>
+		</dict>
+		<key>atx_title_level_2</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.heading.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.section.asciidoc</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>^(===|###) (\w.*)$\n?</string>
+			<key>name</key>
+			<string>markup.heading.level.2.asciidoc</string>
+		</dict>
+		<key>atx_title_level_3</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.heading.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.section.asciidoc</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>^(====|####) (\w.*)$\n?</string>
+			<key>name</key>
+			<string>markup.heading.level.3.asciidoc</string>
+		</dict>
+		<key>atx_title_level_4</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.heading.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.section.asciidoc</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>^(=====|#####) (\w.*)$\n?</string>
+			<key>name</key>
+			<string>markup.heading.level.4.asciidoc</string>
+		</dict>
+		<key>atx_title_level_5</key>
+		<dict>
+			<key>captures</key>
+			<dict>
+				<key>1</key>
+				<dict>
+					<key>name</key>
+					<string>punctuation.definition.heading.asciidoc</string>
+				</dict>
+				<key>2</key>
+				<dict>
+					<key>name</key>
+					<string>entity.name.section.asciidoc</string>
+				</dict>
+			</dict>
+			<key>match</key>
+			<string>^(======|######) (\w.*)$\n?</string>
+			<key>name</key>
+			<string>markup.heading.level.5.asciidoc</string>
+		</dict>
 		<key>biblio_anchor</key>
 		<dict>
 			<key>captures</key>
@@ -238,7 +358,7 @@ Examples:
 		<key>block_example</key>
 		<dict>
 			<key>begin</key>
-			<string>^(={4,})\s*$\n?</string>
+			<string>^(={4,5})\s*$\n?</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>0</key>
@@ -329,7 +449,7 @@ Examples:
 		<key>block_listing</key>
 		<dict>
 			<key>begin</key>
-			<string>^(\-{4,})\s*$\n?</string>
+			<string>^(\-{4,5})\s*$\n?</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>0</key>
@@ -488,7 +608,7 @@ Examples:
 		<key>block_pass</key>
 		<dict>
 			<key>begin</key>
-			<string>^(\+{4,})\s*$\n?</string>
+			<string>^(\+{4,5})\s*$\n?</string>
 			<key>beginCaptures</key>
 			<dict>
 				<key>0</key>
@@ -4359,7 +4479,7 @@ Examples:
   .. level 2
   ... level 3
   .... level 4
-  ..... level 5
+  ..... level 5 
 
 Note: The space distinguishes it from a block title.
 </string>
@@ -4467,39 +4587,71 @@ sect\d|abstract|preface|colophon|dedication|glossary|bibliography|synopsis|appen
 			<key>comment</key>
 			<string>Examples:
 
+  atx titles
+
   = Document Title (Level 0)
 
   == Level 1 Section
 
   === Level 2 Section
+
+  Document Title (Level 0)
+  ========================
+
+  setex titles
+
+  Level 1 Title
+  -------------
+
+  Level 2 Title
+  ~~~~~~~~~~~~~
+
+  Level 3 Title
+  ^^^^^^^^^^^^^
+
+  Level 4 Title
+  +++++++++++++
 </string>
 			<key>patterns</key>
 			<array>
 				<dict>
 					<key>include</key>
-					<string>#title_level_5</string>
+					<string>#atx_title_level_5</string>
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#title_level_4</string>
+					<string>#atx_title_level_4</string>
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#title_level_3</string>
+					<string>#atx_title_level_3</string>
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#title_level_2</string>
+					<string>#atx_title_level_2</string>
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#title_level_1</string>
+					<string>#atx_title_level_1</string>
 				</dict>
 				<dict>
 					<key>include</key>
-					<string>#title_level_0</string>
+					<string>#atx_title_level_0</string>
+				</dict>
+				<dict>
+					<key>include</key>
+					<string>#setext_title</string>
 				</dict>
 			</array>
+		</dict>
+		<key>setext_title</key>
+		<dict>
+			<key>comment</key>
+			<string>Alas, all we can do is mark the second line; TextMate cannot do double-line patterns according to  https://github.com/mattneub/AsciiDoc-TextMate-2.tmbundle/blob/0d3d567a665062502e025c770c225051c2f42ac5/Syntaxes/asciidoc.tmLanguage#L2343</string>
+			<key>match</key>
+			<string>^(=|-|~|\^|\+){6,}\s*$\n?</string>
+			<key>name</key>
+			<string>markup.heading.setext.n.asciidoc</string>
 		</dict>
 		<key>strong</key>
 		<dict>
@@ -4884,126 +5036,6 @@ Examples:
 					<string>#mail</string>
 				</dict>
 			</array>
-		</dict>
-		<key>title_level_0</key>
-		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.heading.asciidoc</string>
-				</dict>
-				<key>2</key>
-				<dict>
-					<key>name</key>
-					<string>entity.name.section.asciidoc</string>
-				</dict>
-			</dict>
-			<key>match</key>
-			<string>^(=|#) (\w.*)$\n?</string>
-			<key>name</key>
-			<string>markup.heading.level.0.asciidoc</string>
-		</dict>
-		<key>title_level_1</key>
-		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.heading.asciidoc</string>
-				</dict>
-				<key>2</key>
-				<dict>
-					<key>name</key>
-					<string>entity.name.section.asciidoc</string>
-				</dict>
-			</dict>
-			<key>match</key>
-			<string>^(==|##) (\w.*)$\n?</string>
-			<key>name</key>
-			<string>markup.heading.level.1.asciidoc</string>
-		</dict>
-		<key>title_level_2</key>
-		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.heading.asciidoc</string>
-				</dict>
-				<key>2</key>
-				<dict>
-					<key>name</key>
-					<string>entity.name.section.asciidoc</string>
-				</dict>
-			</dict>
-			<key>match</key>
-			<string>^(===|###) (\w.*)$\n?</string>
-			<key>name</key>
-			<string>markup.heading.level.2.asciidoc</string>
-		</dict>
-		<key>title_level_3</key>
-		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.heading.asciidoc</string>
-				</dict>
-				<key>2</key>
-				<dict>
-					<key>name</key>
-					<string>entity.name.section.asciidoc</string>
-				</dict>
-			</dict>
-			<key>match</key>
-			<string>^(====|####) (\w.*)$\n?</string>
-			<key>name</key>
-			<string>markup.heading.level.3.asciidoc</string>
-		</dict>
-		<key>title_level_4</key>
-		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.heading.asciidoc</string>
-				</dict>
-				<key>2</key>
-				<dict>
-					<key>name</key>
-					<string>entity.name.section.asciidoc</string>
-				</dict>
-			</dict>
-			<key>match</key>
-			<string>^(=====|#####) (\w.*)$\n?</string>
-			<key>name</key>
-			<string>markup.heading.level.4.asciidoc</string>
-		</dict>
-		<key>title_level_5</key>
-		<dict>
-			<key>captures</key>
-			<dict>
-				<key>1</key>
-				<dict>
-					<key>name</key>
-					<string>punctuation.definition.heading.asciidoc</string>
-				</dict>
-				<key>2</key>
-				<dict>
-					<key>name</key>
-					<string>entity.name.section.asciidoc</string>
-				</dict>
-			</dict>
-			<key>match</key>
-			<string>^(======|######) (\w.*)$\n?</string>
-			<key>name</key>
-			<string>markup.heading.level.5.asciidoc</string>
 		</dict>
 		<key>typographic_quotes_double</key>
 		<dict>

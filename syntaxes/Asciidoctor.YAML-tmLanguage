@@ -111,7 +111,7 @@ repository:
       practice for me.
     name: string.unquoted.block.example.asciidoc
     contentName: meta.block.example.content.asciidoc
-    begin: ^(={4,})\s*$\n?
+    begin: ^(={4,5})\s*$\n?
     beginCaptures:
       '0': {name: constant.delimiter.example.begin.asciidoc}
     end: ^\1\s*$\n?
@@ -132,7 +132,7 @@ repository:
         ----
     name: meta.embedded.block.listing.asciidoc
     contentName: source.block.listing.content.asciidoc
-    begin: ^(\-{4,})\s*$\n?
+    begin: ^(\-{4,5})\s*$\n?
     beginCaptures:
       '0': {name: markup.underline.listing.begin.asciidoc}
     end: ^\1\s*$\n?
@@ -1184,7 +1184,7 @@ repository:
   block_pass:
     name: meta.embedded.block.passthrough.asciidoc
     contentName: text.xml.block.passthrough.content.asciidoc
-    begin: ^(\+{4,})\s*$\n?
+    begin: ^(\+{4,5})\s*$\n?
     beginCaptures:
       '0': {name: markup.underline.block.passthrough.begin.asciidoc}
     end: ^\1\s*$\n?
@@ -2184,7 +2184,7 @@ repository:
         .. level 2
         ... level 3
         .... level 4
-        ..... level 5
+        ..... level 5 
 
       Note: The space distinguishes it from a block title.
     name: markup.list.numbered.dotted.asciidoc
@@ -2202,57 +2202,83 @@ repository:
     comment: |
       Examples:
 
+        atx titles
+
         = Document Title (Level 0)
 
         == Level 1 Section
 
         === Level 2 Section
-    patterns:
-    - include: '#title_level_5'
-    - include: '#title_level_4'
-    - include: '#title_level_3'
-    - include: '#title_level_2'
-    - include: '#title_level_1'
-    - include: '#title_level_0'
 
-  title_level_0:
+        Document Title (Level 0)
+        ========================
+
+        setex titles
+
+        Level 1 Title
+        -------------
+
+        Level 2 Title
+        ~~~~~~~~~~~~~
+
+        Level 3 Title
+        ^^^^^^^^^^^^^
+
+        Level 4 Title
+        +++++++++++++
+
+    patterns:
+    - include: '#atx_title_level_5'
+    - include: '#atx_title_level_4'
+    - include: '#atx_title_level_3'
+    - include: '#atx_title_level_2'
+    - include: '#atx_title_level_1'
+    - include: '#atx_title_level_0'
+    - include: '#setext_title'
+
+  atx_title_level_0:
     name: markup.heading.level.0.asciidoc
     match: ^(=|#) (\w.*)$\n?
     captures:
       '1': {name: punctuation.definition.heading.asciidoc}
       '2': {name: entity.name.section.asciidoc}
 
-  title_level_1:
+  atx_title_level_1:
     name: markup.heading.level.1.asciidoc
     match: ^(==|##) (\w.*)$\n?
     captures:
       '1': {name: punctuation.definition.heading.asciidoc}
       '2': {name: entity.name.section.asciidoc}
 
-  title_level_2:
+  atx_title_level_2:
     name: markup.heading.level.2.asciidoc
     match: ^(===|###) (\w.*)$\n?
     captures:
       '1': {name: punctuation.definition.heading.asciidoc}
       '2': {name: entity.name.section.asciidoc}
 
-  title_level_3:
+  atx_title_level_3:
     name: markup.heading.level.3.asciidoc
     match: ^(====|####) (\w.*)$\n?
     captures:
       '1': {name: punctuation.definition.heading.asciidoc}
       '2': {name: entity.name.section.asciidoc}
 
-  title_level_4:
+  atx_title_level_4:
     name: markup.heading.level.4.asciidoc
     match: ^(=====|#####) (\w.*)$\n?
     captures:
       '1': {name: punctuation.definition.heading.asciidoc}
       '2': {name: entity.name.section.asciidoc}
 
-  title_level_5:
+  atx_title_level_5:
     name: markup.heading.level.5.asciidoc
     match: ^(======|######) (\w.*)$\n?
     captures:
       '1': {name: punctuation.definition.heading.asciidoc}
       '2': {name: entity.name.section.asciidoc}
+
+  setext_title:
+      name: markup.heading.setext.n.asciidoc
+      match: ^(=|-|~|\^|\+){6,}\s*$\n?
+      comment: Alas, all we can do is mark the second line; TextMate cannot do double-line patterns according to  https://github.com/mattneub/AsciiDoc-TextMate-2.tmbundle/blob/0d3d567a665062502e025c770c225051c2f42ac5/Syntaxes/asciidoc.tmLanguage#L2343
