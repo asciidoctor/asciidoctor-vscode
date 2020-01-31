@@ -26,4 +26,4 @@ out_path = sys.argv[2]
 
 with open(in_path, 'r', encoding='utf-8') as in_file:
     with open(out_path, 'w', encoding='utf-8') as out_file:
-        out_file.writelines(convert(yaml.load(in_file)))
+        out_file.writelines(convert(yaml.safe_load(in_file)))
