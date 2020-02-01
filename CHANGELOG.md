@@ -120,12 +120,12 @@
 * fixes typos in Description for AsciiDoc.forceUnixStyleSeparator (thanks to ccb012100)
 * diagram (specifically plantUML) support in asciidoctor.js (closes #105)
 
-# Changes
-
 ## 1.0.99
+
 * Rebuilt using vscode-1.28.2/extensions/markdown* from Microsoft
 
 ## 1.0.x
+
 * Test release
 
 ## 0.15.1
