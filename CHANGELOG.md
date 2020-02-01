@@ -1,8 +1,7 @@
 # CHANGELOG
 
-## UNRELEASED --- 2.7.9
+## 2.7.9
 
-* Your addition belongs here!
 * Prevent table of contents overlapping document for `:toc: left` and `:toc: right` (closes #141)
 * Provide Intellisense autocomplete for attributes
 * Provide basic support for setext two-line titles (closes #248)
@@ -32,7 +31,7 @@
 
 ## 2.7.4
 
-*  Fixes: No autoscroll in VSCode > 1.28 #182
+* Fixes: No autoscroll in VSCode > 1.28 #182
 
 ## 2.7.3
 
