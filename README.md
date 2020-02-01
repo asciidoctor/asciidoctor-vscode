@@ -159,6 +159,13 @@ If you want to update the readme, you are free to fix typos, errors, add or impr
 
 All the following people who have contributed to the extension:
 
+<!-- This list is generated using (on linux) a command something like: 
+
+    git log --format='%aN' | sort -u | awk '{print "* "$0}' | uniq
+
+-->
+
+* Achille Lacoin
 * Bart Sokol
 * chriskoerner
 * Dan Allen
@@ -172,15 +179,15 @@ All the following people who have contributed to the extension:
 * Johannes Rössel
 * Joshua Stafman
 * Kevin Palmowski
-* Loïc PÉRON
+* Loïc PÉRON
 * Marcelo Alvim
 * Mark Roszko
 * Masanori Asano
 * Matteo Campinoti
-* MatteoCampinoti94
 * ojn
 * Øyvind Hansen
 * sgn
 * shaneknysh
 * Stephen Pegoraro
 * Tatsunori Uchino
+* Tilmann Oestreich
