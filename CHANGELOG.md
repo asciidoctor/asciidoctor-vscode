@@ -3,7 +3,7 @@
 ## UNRELEASED
 
 * Your addition belongs here!
-* Support image pasting on Linux/Mac
+* Support image pasting on Linux/Mac (closes #255)
 * Add `.png` extension automatically for image pasting
 
 ## 2.7.9
