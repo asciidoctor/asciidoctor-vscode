@@ -179,7 +179,7 @@ All the following people who have contributed to the extension:
 * Johannes Rössel
 * Joshua Stafman
 * Kevin Palmowski
-* Loïc PÉRON
+* Loïc PÉRON
 * Marcelo Alvim
 * Mark Roszko
 * Masanori Asano
