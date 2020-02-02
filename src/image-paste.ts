@@ -5,6 +5,8 @@ import * as moment from 'moment';
 import { Uri } from 'vscode';
 import * as fs from 'fs';
 
+import { AsciidocParser } from './text-parser';
+
 export namespace Import {
   export class Configuration {
     DocumentDirectory: string = '';
@@ -63,40 +65,76 @@ export namespace Import {
      * @param filename the filename of the image file
      */
     static saveImageFromClipboard(filename: string) {
-      const script = path.join(__dirname, '../../res/pc.ps1');
+      const platform = process.platform
+      if (platform === 'win32') { 
+        const script = path.join(__dirname, '../../res/pc.ps1');
+        let promise = new Promise((resolve, reject) => {
+          let child = spawn('powershell', [
+            '-noprofile',
+            '-noninteractive',
+            '-nologo',
+            '-sta',
+            '-executionpolicy',
+            'unrestricted',
+            '-windowstyle',
+            'hidden',
+            '-file',
+            `${script}`,
+            `${filename}`
+          ]);
 
-      let promise = new Promise((resolve, reject) => {
-        let child = spawn('powershell', [
-          '-noprofile',
-          '-noninteractive',
-          '-nologo',
-          '-sta',
-          '-executionpolicy',
-          'unrestricted',
-          '-windowstyle',
-          'hidden',
-          '-file',
-          `${script}`,
-          `${filename}`
-        ]);
-
-        child.stdout.once('data', (e) => resolve(e.toString()));
-        child.stderr.once('data', (e) => {
-          let exception = e.toString().trim();
-          if (
-            exception ==
-            'Exception calling "Open" with "2" argument(s): "Could not find a part of the path'
-          )
-            reject(new ScriptArgumentError('bad path exception'));
-          else if (exception == 'no image')
-            reject(new ScriptArgumentError('no image exception'));
-          else if (exception == 'no filename')
-            reject(new ScriptArgumentError('no filename exception'));
+          child.stdout.once('data', (e) => resolve(e.toString()));
+          child.stderr.once('data', (e) => {
+            let exception = e.toString().trim();
+            if (
+              exception ==
+              'Exception calling "Open" with "2" argument(s): "Could not find a part of the path'
+            )
+              reject(new ScriptArgumentError('bad path exception'));
+            else if (exception == 'no image')
+              reject(new ScriptArgumentError('no image exception'));
+            else if (exception == 'no filename')
+              reject(new ScriptArgumentError('no filename exception'));
+          });
+          child.once('error', (e) => reject(e));
         });
-        child.once('error', (e) => reject(e));
-      });
-
-      return promise;
+        return promise;
+      } else if (platform === 'darwin') {
+        // Mac
+        let scriptPath = path.join(__dirname, '../../res/mac.applescript')
+        let promise = new Promise((resolve, reject) => {
+          let child = spawn('osascript', [scriptPath, filename])
+          child.stdout.once('data', (e) => resolve(e.toString()));
+          child.stderr.once('data', (e) => {
+            console.log(`stderr: ${e}`)
+            const exception = e.toString().trim()
+            if (exception == 'no image' ) {
+              reject(new ScriptArgumentError('no image exception'))
+            } else {
+              reject(exception)
+            }
+          });
+        })
+        return promise
+      } else {
+        // Linux
+        const scriptPath = path.join(__dirname, '../../res/linux.sh')
+        let promise = new Promise((resolve, reject) => {
+          let child = spawn(`"${scriptPath}"`, [`"${filename}"`], {shell: true})
+          child.stdout.once('data', (e) => resolve(e.toString()));
+          child.stderr.once('data', (e) => {
+            const exception = e.toString().trim()
+            if (exception == 'no xclip' ) {
+              reject(new ScriptArgumentError('no xclip'))
+            } else if (exception == 'no image') {
+              reject(new ScriptArgumentError('no image exception'))
+            } else {
+              reject(exception)
+            }
+          });
+        })
+        return promise
+      }
     }
 
     static async importFromClipboard(config: Configuration) {
@@ -131,7 +169,7 @@ export namespace Import {
             alttext = selectedText;
             break;
           case SelectionRole.Filename:
-            filename = selectedText;
+            filename = selectedText + '.png';
             break;
         }
       }
@@ -143,9 +181,8 @@ export namespace Import {
       }
 
       try {
-        await this.saveImageFromClipboard(
-          path.join(vscode.workspace.rootPath, directory, filename)
-        );
+        const docDir = path.dirname(vscode.window.activeTextEditor.document.uri.fsPath)
+        await this.saveImageFromClipboard(path.join(docDir, directory, filename));
       } catch (error) {
         if (error instanceof ScriptArgumentError) {
           if (error.message == 'bad path exception') {
@@ -167,7 +204,10 @@ export namespace Import {
             );
           else if (error.message == 'no filename exception')
             vscode.window.showErrorMessage('Missing image filename argument.');
-        } else vscode.window.showErrorMessage(error.toString());
+          else if (error.message == 'no xclip') 
+            vscode.window.showErrorMessage('To use this feature you must install xclip');
+          } else 
+            vscode.window.showErrorMessage(error.toString());
         return;
       }
 
@@ -260,16 +300,15 @@ export namespace Import {
 
       // does the macro start at the beginning of the line and end in only
       // whitespace.
-      return !(index === 0 && /^\s+$/.test(result));
+      return !(index === 0 && /^\s+$/.test(result) || /^\s+$|^\S+$/.test(result))
     }
 
     /**
      * Reads the current `:imagesdir:` [attribute](https://asciidoctor.org/docs/user-manual/#setting-the-location-of-images) from the document.
      *
-     * **Caution**: Only reads from the _active_ document (_not_ `included` documents).
      *
      * Reads the _nearest_ `:imagesdir:` attribute that appears _before_ the current selection
-     * or cursor location
+     * or cursor location, failing that figures it out from the API by converting the document and reading the attribute
      */
     static get_current_imagesdir() {
       const text = vscode.window.activeTextEditor.document.getText();
@@ -286,6 +325,13 @@ export namespace Import {
       while (matches && matches.index < cursor_index) {
         dir = matches[1] || '';
         matches = imagesdir.exec(text);
+      }
+
+      if (dir === '') {
+        const thisDocument = vscode.window.activeTextEditor.document
+        const adoc = new AsciidocParser(thisDocument.uri.fsPath)
+        adoc.parseText(thisDocument.getText())
+        dir = adoc.document.getAttribute('imagesdir')
       }
 
       return dir;
