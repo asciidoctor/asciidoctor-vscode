@@ -1,0 +1,35 @@
+= Contributing
+:uri-atom-textmate-language: https://github.com/asciidoctor/atom-language-asciidoc/blob/master/grammars/language-asciidoc.cson
+:uri-atom-textmate-language-raw: https://raw.githubusercontent.com/asciidoctor/atom-language-asciidoc/master/grammars/language-asciidoc.cson
+:uri-npm-package-cson: https://www.npmjs.com/package/cson
+
+== Updating The Grammar
+
+This package now uses the {uri-atom-textmate-language}[Atom language package] to generate a grammar.
+
+This can be updated manually using the following process:
+
+. Install the `cson` npm package
++
+  npm install --global cson
+
+. Retrieve and convert the grammar:
++
+[source,bash,subs=attributes+]
+curl {uri-atom-textmate-language-raw} | cson2json > ./syntaxes/Asciidoctor.json
+
+. Now manually edit and change the scope name from: 
++
+[source,json]
+"scopeName": "source.asciidoc",
++
+to
++
+[source,json]
+"scopeName": "text.asciidoc",
+
+Because this package has diverged slightly from upstream it may be best to cherry-pick commits after the original conversion or do before/after comparisons and account for each change.
+
+Where possible it is recommended to do PRs upstream and then use that result here.
+
+

@@ -15,8 +15,7 @@ help() {
   ${bold}build${reset}
     1. install local node dependencies
     2. install global node dependencies
-    3. generate the .tmLanguage file
-    4. package the extension
+    3. package the extension
 
   ${bold}npm${reset}
     1. install local node dependencies
@@ -27,9 +26,6 @@ help() {
 
   ${bold}npm_global${reset}, ${bold}npm_global_deps${reset}
     1. install global node dependencie
-
-  ${bold}generate${reset}, ${bold}generate_syntax${reset}
-    1. generate the .tmLanguage file
 
   ${bold}package${reset}
     1. package the extension
@@ -42,13 +38,6 @@ help() {
 exitdialog() {
   echo -e "==> ${red}${bold}ERROR${reset}: build aborted"
   exit ${1:-1}
-}
-
-# Generate plist syntax
-generate_syntax() {
-  echo "==> Converting YAML syntax to plist"
-  [[ ! -x script/yaml-to-plist.py ]] && chmod +x script/yaml-to-plist
-  script/yaml-to-plist.py "syntaxes/Asciidoctor.YAML-tmLanguage" "syntaxes/Asciidoctor.tmLanguage" || exitdialog $?
 }
 
 # Install node dependencies
@@ -96,7 +85,6 @@ while [[ $# > 0 ]] ; do
     build)
       npm_local_deps || exitdialog $?
       npm_global_deps || exitdialog $?
-      generate_syntax || exitdialog $?
       package || exitdialog $?
       ;;
 
@@ -106,10 +94,6 @@ while [[ $# > 0 ]] ; do
 
     npm|npm_global|npm_global_deps)
       npm_global_deps || exitdialog $?
-      ;;
-
-    generate|generate_syntax)
-      generate_syntax || exitdialog $?
       ;;
 
     package)
