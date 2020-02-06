@@ -67,9 +67,10 @@ export class AsciidocContentProvider {
 		const nonce = new Date().getTime() + '' + new Date().getMilliseconds();
 		const csp = this.getCspForResource(sourceUri, nonce);
 		const body = await this.engine.render(sourceUri, config.previewFrontMatter === 'hide', asciidocDocument.getText());
-
-		const bodyClassesRegex = /<body(?:(?:\s+class(?:\s*=\s*(?:\"(.+?)\"|\'(.+?)\')))+\s*)>/
+		const bodyClassesRegex = /<body(?:(?:\s+(?:id=\".*"\s*)?class(?:\s*=\s*(?:\"(.+?)\"|\'(.+?)\')))+\s*)>/
 		const bodyClasses = body.match(bodyClassesRegex)
+		const bodyClassesVal = bodyClasses === null ? '' : bodyClasses[1];
+
 		return `<!DOCTYPE html>
 			<html>
 			<head>
@@ -83,7 +84,7 @@ export class AsciidocContentProvider {
 				${this.getStyles(sourceUri, nonce, config, state)}
 				<base href="${asciidocDocument.uri.with({ scheme: 'vscode-resource' }).toString(true)}">
 			</head>
-			<body class="${bodyClasses[1]} vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.markEditorSelection ? 'showEditorSelection' : ''}">
+			<body class="${bodyClassesVal} vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.markEditorSelection ? 'showEditorSelection' : ''}">
 				${body}
 				<div class="code-line" data-line="${asciidocDocument.lineCount}"></div>
 				<script async src="${this.extensionResourcePath('index.js')}" nonce="${nonce}" charset="UTF-8"></script>
