@@ -59,7 +59,7 @@
 			{
 				"language": "asciidoc",
 				"scopeName": "text.asciidoc",
-				"path": "./syntaxes/Asciidoctor.tmLanguage"
+				"path": "./syntaxes/Asciidoctor.json"
 			}
 		],
 		"commands": [
