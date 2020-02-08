@@ -1,8 +1,7 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
-import { ChildProcess, spawn, exec, spawnSync, execSync } from 'child_process';
+import { spawn } from 'child_process';
 import * as moment from 'moment';
-import { Uri } from 'vscode';
 import * as fs from 'fs';
 
 import { AsciidocParser } from './text-parser';
@@ -66,7 +65,7 @@ export namespace Import {
      */
     static saveImageFromClipboard(filename: string) {
       const platform = process.platform
-      if (platform === 'win32') { 
+      if (platform === 'win32') {
         const script = path.join(__dirname, '../../res/pc.ps1');
         let promise = new Promise((resolve, reject) => {
           let child = spawn('powershell', [
@@ -182,6 +181,13 @@ export namespace Import {
 
       try {
         const docDir = path.dirname(vscode.window.activeTextEditor.document.uri.fsPath)
+
+        // docDir === '.' if a document has not yet been saved
+        if (docDir === '.') {
+          vscode.window.showErrorMessage('To allow images to be saved, first save your document.')
+          return
+        }
+
         await this.saveImageFromClipboard(path.join(docDir, directory, filename));
       } catch (error) {
         if (error instanceof ScriptArgumentError) {
@@ -204,9 +210,9 @@ export namespace Import {
             );
           else if (error.message == 'no filename exception')
             vscode.window.showErrorMessage('Missing image filename argument.');
-          else if (error.message == 'no xclip') 
+          else if (error.message == 'no xclip')
             vscode.window.showErrorMessage('To use this feature you must install xclip');
-          } else 
+          } else
             vscode.window.showErrorMessage(error.toString());
         return;
       }
@@ -288,19 +294,9 @@ export namespace Import {
       index: number,
       selectedText: string
     ) {
-      let result = '';
-      switch (selectionMode) {
-        case SelectionMode.Insert:
-          result = affectedText;
-          break;
-        case SelectionMode.Replace:
-          result = affectedText.replace(selectedText, '');
-          break;
-      }
-
       // does the macro start at the beginning of the line and end in only
       // whitespace.
-      return !(index === 0 && /^\s+$/.test(result) || /^\s+$|^\S+$/.test(result))
+      return !(index === 0 && /^\s+$/.test(affectedText) || /^\s+$|^\S+$/.test(affectedText))
     }
 
     /**
@@ -334,7 +330,7 @@ export namespace Import {
         dir = adoc.document.getAttribute('imagesdir')
       }
 
-      return dir;
+      return dir !== undefined ? dir : ''
     }
 
     /**
