@@ -294,19 +294,9 @@ export namespace Import {
       index: number,
       selectedText: string
     ) {
-      let result = '';
-      switch (selectionMode) {
-        case SelectionMode.Insert:
-          result = affectedText;
-          break;
-        case SelectionMode.Replace:
-          result = affectedText.replace(selectedText, '');
-          break;
-      }
-
       // does the macro start at the beginning of the line and end in only
       // whitespace.
-      return !(index === 0 && /^\s+$/.test(result) || /^\s+$|^\S+$/.test(result))
+      return !(index === 0 && /^\s+$/.test(affectedText) || /^\s+$|^\S+$/.test(affectedText))
     }
 
     /**
