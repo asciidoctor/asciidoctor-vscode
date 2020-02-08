@@ -1,8 +1,7 @@
 # CHANGELOG
 
-## UNRELEASED
+## 2.7.10
 
-* Your addition belongs here!
 * Change language definition to be the same as that of the Atom extension [atom-language-asciidoc](https://github.com/asciidoctor/atom-language-asciidoc/)
 * Support the source block (closes #212)
 * Support image pasting on Linux/Mac (closes #255)
