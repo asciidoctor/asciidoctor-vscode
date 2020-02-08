@@ -223,6 +223,12 @@
 				"key": "ctrl+k v",
 				"mac": "cmd+k v",
 				"when": "editorLangId == asciidoc"
+			},
+			{
+				"command": "asciidoc.pasteImage",
+				"key": "ctrl+alt+v",
+				"mac": "cmd+alt+v",
+				"when": "editorLangId == asciidoc"
 			}
 		],
 		"configuration": {
