@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.11
+
+* Add support for saving html output
+
 ## 2.7.10
 
 * Change language definition to be the same as that of the Atom extension [atom-language-asciidoc](https://github.com/asciidoctor/atom-language-asciidoc/)
