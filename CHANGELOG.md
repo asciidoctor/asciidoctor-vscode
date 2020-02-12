@@ -1,8 +1,12 @@
 # CHANGELOG
 
-## 2.7.11
+## 2.7.12
 
 * Add support for saving html output
+
+## 2.7.11
+
+* Add Ctrl+Alt+V/Cmd+Alt+V (Mac) as shortcut key for image paste
 
 ## 2.7.10
 
