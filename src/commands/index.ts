@@ -11,4 +11,5 @@ export { MoveCursorToPositionCommand } from './moveCursorToPosition';
 export { ToggleLockCommand } from './toggleLock';
 export { ExportAsPDF } from './exportAsPDF';
 export { PasteImage} from './pasteImage';
+export { SaveHTML } from './saveHTML';
 

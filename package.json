@@ -20,7 +20,7 @@
 	"icon": "images/icon.png",
 	"main": "./out/src/extension",
 	"engines": {
-		"vscode": "^1.28.0"
+		"vscode": "^1.31.0"
 	},
 	"categories": [
 		"Programming Languages"
@@ -31,6 +31,7 @@
 		"onCommand:asciidoc.pasteImage",
 		"onCommand:asciidoc.preview.toggleLock",
 		"onCommand:asciidoc.preview.refresh",
+		"onCommand:asciidoc.saveHTML",
 		"onCommand:asciidoc.showPreview",
 		"onCommand:asciidoc.showPreviewToSide",
 		"onCommand:asciidoc.showLockedPreviewToSide",
@@ -131,6 +132,15 @@
 				"command": "asciidoc.preview.toggleLock",
 				"title": "%asciidoc.preview.toggleLock.title%",
 				"category": "AsciiDoc"
+			},
+			{
+				"command": "asciidoc.saveHTML",
+				"title": "%asciidoc.saveHTML.title%",
+				"category": "AsciiDoc",
+				"icon": {
+					"light": "./media/SaveHTML.svg",
+					"dark": "./media/SaveHTML_inverse.svg"
+				}
 			}
 		],
 		"menus": {
@@ -228,6 +238,12 @@
 				"command": "asciidoc.pasteImage",
 				"key": "ctrl+alt+v",
 				"mac": "cmd+alt+v",
+				"when": "editorLangId == asciidoc"
+			},
+			{
+				"command": "asciidoc.saveHTML",
+				"key": "ctrl+alt+s",
+				"mac": "cmd+alt+s",
 				"when": "editorLangId == asciidoc"
 			}
 		],
@@ -402,7 +418,6 @@
 		"compile": "tsc -watch -p ./ && npm run build-preview",
 		"vscode:prepublish": "tsc -p ./ && npm run build-preview",
 		"watch": "npm run build-preview && tsc -watch -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install",
 		"test": "node ./node_modules/vscode/bin/test",
 		"build-preview": "webpack --mode development"
 	},
@@ -417,12 +432,12 @@
 		"ts-loader": "^4.0.1",
 		"tslint": "^5.9.1",
 		"typescript": "^2.7.2",
-		"vscode": "^1.1.10",
 		"webpack": "^4.41.5",
 		"webpack-cli": "^3.1.1"
 	},
 	"dependencies": {
 		"@asciidoctor/core": "2.1.0",
+		"@types/vscode": "^1.31.0",
 		"asciidoctor-kroki": "^0.6.0",
 		"asciidoctor-plantuml": "1.5.0",
 		"copy-paste": "^1.3.0",
@@ -438,3 +453,4 @@
 		"vscode-nls": "^4.1.1"
 	}
 }
+

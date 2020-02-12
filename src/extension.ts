@@ -58,7 +58,8 @@ export function activate(context: vscode.ExtensionContext) {
     commandManager.register(new commands.ExportAsPDF(engine));
     commandManager.register(new commands.PasteImage());
 	commandManager.register(new commands.ToggleLockCommand(previewManager));
-    commandManager.register(new commands.ShowPreviewCommand(previewManager));
+	commandManager.register(new commands.ShowPreviewCommand(previewManager));
+	commandManager.register(new commands.SaveHTML(engine));
 
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
 		logger.updateConfiguration();

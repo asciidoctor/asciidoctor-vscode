@@ -8,6 +8,7 @@
 	"asciidoc.preview.refresh.title": "Refresh Preview",
 	"asciidoc.preview.toggleLock.title": "Toggle Preview Locking",
 	"asciidoc.previewSide.title": "Open Preview to the Side",
+	"asciidoc.saveHTML.title": "Save HTML document",
 	"asciidoc.showLockedPreviewToSide.title": "Open Locked Preview to the Side",
 	"asciidoc.showPreviewSecuritySelector.title": "Change Preview Security Settings",
 	"asciidoc.showSource.title": "Show Source",

@@ -61,7 +61,7 @@ export class AsciidocParser {
         return match;
     }
 
-    private async convert_using_javascript(text: string) {
+    private async convert_using_javascript(text: string, forHTMLSave: boolean) {
         return new Promise<string>(resolve => {
             const editor = vscode.window.activeTextEditor;
             const doc = editor.document;
@@ -94,7 +94,7 @@ export class AsciidocParser {
                 }
 
                 attributes = { 'copycss': true, 'stylesdir': stylesdir, 'stylesheet': stylesheet }
-            } else if (use_editor_stylesheet) {
+            } else if (use_editor_stylesheet && !forHTMLSave) {
                 attributes = { 'copycss': true, 'stylesdir': this.stylesdir, 'stylesheet': 'asciidoctor-editor.css' }
             } else {
                 // TODO: decide whether to use the included css or let ascidoctor.js decide
@@ -133,7 +133,7 @@ export class AsciidocParser {
         })
     }
 
-    private async convert_using_application(text: string) {
+    private async convert_using_application(text: string, forHTMLSave: boolean) {
         const editor = vscode.window.activeTextEditor;
         const doc = editor.document;
         const documentPath = path.dirname(doc.fileName).replace('"', '\\"');
@@ -182,7 +182,7 @@ export class AsciidocParser {
 
                 adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', `stylesdir=${stylesdir}`])
                 adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', `stylesheet=${stylesheet}`])
-            } else if (use_editor_stylesheet) {
+            } else if (use_editor_stylesheet && !forHTMLSave) {
                 adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', `stylesdir=${this.stylesdir}@`])
                 adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', 'stylesheet=asciidoctor-editor.css@'])
             } else {
@@ -248,12 +248,12 @@ export class AsciidocParser {
         return result;
     }
 
-    public async parseText(text: string): Promise<string> {
+    public async parseText(text: string, forHTMLSave: boolean = false): Promise<string> {
         const use_asciidoctor_js = vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctor_js');
         if (use_asciidoctor_js)
-            return this.convert_using_javascript(text)
+            return this.convert_using_javascript(text, forHTMLSave)
         else
-            return this.convert_using_application(text)
+            return this.convert_using_application(text, forHTMLSave)
     }
 
 }

@@ -10,19 +10,21 @@ An extension that provides live preview, syntax highlighting and snippets for th
 
 ## Contents
 
-* [Contents](#contents)
-* [How to Install](#how-to-install)
-* [How to Use](#how-to-use)
-  * [Preview](#preview)
-  * [Export as PDF](#export-as-pdf)
-  * [Snippets](#snippets)
-* [Options](#options)
-* [Build and Install from Source](#build-and-install-from-source)
-  * [Manual](#manual)
-  * [Script](#script)
-* [Issues](#issues)
-* [Contributing](#contributing)
-* [Credits](#credits)
+- [AsciiDoc support for Visual Studio Code](#asciidoc-support-for-visual-studio-code)
+  - [Contents](#contents)
+  - [How to Install](#how-to-install)
+  - [How to Use](#how-to-use)
+    - [Preview](#preview)
+    - [Export as PDF](#export-as-pdf)
+    - [Save as HTML](#save-as-html)
+    - [Snippets](#snippets)
+  - [Options](#options)
+  - [Build and Install from Source](#build-and-install-from-source)
+    - [Manual](#manual)
+    - [Script](#script)
+  - [Issues](#issues)
+  - [Contributing](#contributing)
+  - [Credits](#credits)
 
 ## How to Install
 
@@ -61,6 +63,16 @@ The extension provides a quick command to export your AsciiDoc file as PDF.
 
 By default a separate binary is downloaded and used to render the document in PDF format. To use Asciidoctor PDF set option `asciidoc.use_asciidoctorpdf` to `true`.<br/>
 (See more details under [Options](#options))
+
+### Save as HTML
+
+The extension provides a quick command to export your AsciiDoc file as HTML using the default Asciidoctor stylesheet.
+
+* Open the command palette - `ctrl+shift+p` or `F1` (Mac: `cmd+shift+p`)
+* Select _AsciiDoc: Export document as HTML_
+* The file is generated in the same folder as the source document
+
+The shortcout key of `ctrl+alt+s` (Mac: `cmd+alt+s`) will also save the document.
 
 ### Snippets
 
