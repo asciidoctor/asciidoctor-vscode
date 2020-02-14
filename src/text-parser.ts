@@ -5,7 +5,6 @@ import { isNullOrUndefined } from 'util';
 import * as npm_which from "npm-which";
 
 const fileUrl = require('file-url');
-const Viz = require("viz.js");
 var which = npm_which(__dirname) // __dirname often good enough
 
 const asciidoctor = require('@asciidoctor/core')()
@@ -16,19 +15,6 @@ plantuml.register(asciidoctor.Extensions);
 const use_kroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki');
 if (use_kroki)
     kroki.register(asciidoctor.Extensions);
-
-asciidoctor.Extensions.register(function () {
-    this.block(function () {
-        const self = this;
-        self.named('graphviz');
-        self.onContext('literal');
-        self.process(function (parent, reader, attrs) {
-            var svg = Viz(reader.getString());
-            return self.createBlock(parent, 'pass', svg);
-        });
-    });
-});
-
 
 asciidoctor.Extensions.register(function () {
     this.block(function () {

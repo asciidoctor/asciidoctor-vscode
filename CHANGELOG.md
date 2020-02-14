@@ -3,6 +3,7 @@
 ## 2.7.13 (UNRELEASED)
 
 * Fix Save HTML file path on Windows (closes #269)
+* Remove viz.js, let kroki handle graphviz (closes #267)
 
 ## 2.7.12
 
