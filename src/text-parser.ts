@@ -5,7 +5,6 @@ import { isNullOrUndefined } from 'util';
 import * as npm_which from "npm-which";
 
 const fileUrl = require('file-url');
-var which = npm_which(__dirname) // __dirname often good enough
 
 const asciidoctor = require('@asciidoctor/core')()
 const plantuml = require('asciidoctor-plantuml');

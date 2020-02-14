@@ -30,7 +30,6 @@ export class SaveHTML implements Command {
             htmlPath = path.join(docPath.dir, docPath.name+".html")
         }
 
-        let parser = new AsciidocParser(path.resolve(doc.fileName))
         const html = await this.engine.render(doc.uri, true, text, true)
 
         fs.writeFile(htmlPath, html, function(err) {
