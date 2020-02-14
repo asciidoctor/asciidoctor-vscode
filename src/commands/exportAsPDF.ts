@@ -1,7 +1,7 @@
 import * as vscode from 'vscode'
 import * as fs from 'fs'
 import * as path from 'path'
-import { exec, spawnSync } from "child_process"
+import { exec } from "child_process"
 import * as zlib from 'zlib';
 import { https } from 'follow-redirects'
 import { isNullOrUndefined } from 'util'

@@ -1,8 +1,8 @@
 import * as vscode from 'vscode'
 import * as fs from 'fs'
 import * as path from 'path'
+import { exec } from "child_process"
 import { isNullOrUndefined } from 'util'
-import { AsciidocParser } from '../text-parser'
 import { Command } from '../commandManager'
 import { AsciidocEngine } from '../asciidocEngine'
 
@@ -40,7 +40,24 @@ export class SaveHTML implements Command {
             vscode.window.showInformationMessage('Successfully converted to ', htmlPath)
                 .then(selection => {
                     if (selection === htmlPath) {
-                        vscode.env.openExternal(vscode.Uri.parse(htmlPath))
+                        switch (process.platform)
+                        {
+                            // Use backticks for unix systems to run the open command directly
+                            // This avoids having to wrap the command AND path in quotes which
+                            // breaks if there is a single quote (') in the path
+                            case 'win32':
+                                exec(`"${htmlPath.replace('"', '\\"')}"`);
+                                break;
+                            case 'darwin':
+                                exec(`\`open "${htmlPath.replace('"', '\\"')}" ; exit\``);
+                                break;
+                            case 'linux':
+                                exec(`\`xdg-open "${htmlPath.replace('"', '\\"')}" ; exit\``);
+                                break;
+                            default:
+                                vscode. window.showWarningMessage("Output type is not supported");
+                                break;
+                        }
                     }
                 });    
         });
