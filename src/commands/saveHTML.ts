@@ -25,9 +25,9 @@ export class SaveHTML implements Command {
         let htmlPath
 
         if (doc.isUntitled) {
-            htmlPath = path.join(docPath.root, docPath.dir, "untitled.html")
+            htmlPath = path.join(docPath.dir, "untitled.html")
         } else {
-            htmlPath = path.join(docPath.root, docPath.dir, docPath.name+".html")
+            htmlPath = path.join(docPath.dir, docPath.name+".html")
         }
 
         let parser = new AsciidocParser(path.resolve(doc.fileName))

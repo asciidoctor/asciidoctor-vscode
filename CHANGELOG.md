@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.13 (UNRELEASED)
+
+* Fix Save HTML file path on Windows (closes #269)
+
 ## 2.7.12
 
 * Add support for saving html output
