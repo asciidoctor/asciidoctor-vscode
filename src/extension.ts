@@ -60,6 +60,7 @@ export function activate(context: vscode.ExtensionContext) {
 	commandManager.register(new commands.ToggleLockCommand(previewManager));
 	commandManager.register(new commands.ShowPreviewCommand(previewManager));
 	commandManager.register(new commands.SaveHTML(engine));
+	commandManager.register(new commands.SaveDocbook(engine));
 
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
 		logger.updateConfiguration();

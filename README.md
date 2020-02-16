@@ -17,8 +17,9 @@ An extension that provides live preview, syntax highlighting and snippets for th
     - [Preview](#preview)
     - [Export as PDF](#export-as-pdf)
     - [Save as HTML](#save-as-html)
+    - [Save to Docbook](#save-to-docbook)
     - [Snippets](#snippets)
-  - [Options](#options)
+  - [User Settings](#user-settings)
   - [Build and Install from Source](#build-and-install-from-source)
     - [Manual](#manual)
     - [Script](#script)
@@ -69,10 +70,31 @@ By default a separate binary is downloaded and used to render the document in PD
 The extension provides a quick command to export your AsciiDoc file as HTML using the default Asciidoctor stylesheet.
 
 * Open the command palette - `ctrl+shift+p` or `F1` (Mac: `cmd+shift+p`)
-* Select _AsciiDoc: Export document as HTML_
+* Select _AsciiDoc: Save HTML document_
 * The file is generated in the same folder as the source document
 
 The shortcout key of `ctrl+alt+s` (Mac: `cmd+alt+s`) will also save the document.
+
+### Save to Docbook
+
+The extension provides a quick command to export your AsciiDoc file as Docbook.
+
+* Open the command palette - `ctrl+shift+p` or `F1` (Mac: `cmd+shift+p`)
+* Select _AsciiDoc: Save to Docbook_
+* The file is generated in the same folder as the source document
+
+Docbook 5 is supported out of the box.
+
+Docbook 4.5 is more difficut to support (mostly because it's ancient).
+
+Docbook 4.5 requires the use of command line Asciidoctor and requires the use of either the community maintained docbook converter (which can be installed using [`specific_install`](https://github.com/rdp/specific_install)) or an older version of Asciidoctor (v1.5.8 or earlier).
+
+To use Docbook 4.5, the following is known to work on Debian based systems:
+
+1. From the command line, install the `specific_install` gem: `gem install specific_install`
+2. Then install the [community supported Docbook 4.5 converter](https://github.com/asciidoctor/asciidoctor-docbook45) from the command line: `gem specific_install -l https://github.com/asciidoctor/asciidoctor-docbook45`
+3. Then change the User setting `asciidoc.asciidoctor_command` to: `asciidoctor -r asciidoctor-docbook45`
+4. Finally, untick (disable) `asciidoc.use_asciidoctor_js`
 
 ### Snippets
 
@@ -80,9 +102,9 @@ Several code snippets are provided including but not limited to: include stateme
 
 For a full list open the command palette and select _Insert Snippet_.
 
-## Options
+## User Settings
 
-This extension is controlled by a multitude of options.
+This extension is controlled by a multitude of user settings.
 
 The following list contains all the options and their default value.
 
@@ -106,6 +128,7 @@ The following list contains all the options and their default value.
 | `asciidoc.preview.scrollPreviewWithEditorSelection: true` | [Deprecated] Scrolls the AsciiDoc preview to reveal the currently selected line from the editor.<br/>This setting has been replaced by 'asciidoc.preview.scrollPreviewWithEditor' and no longer has any effect. |
 | `asciidoc.preview.useEditorStyle: true` | Use editor style instead of default asciidoctor.css |
 | `asciidoc.previewFrontMatter: "hide"` | Sets how YAML front matter should be rendered in the AsciiDoc preview. "hide" removes the front matter. Otherwise, the front matter is treated as AsciiDoc content. |
+| `asciidoc.saveDocbook.docbookVersion: docbook5` | Choose either Docbook 5 or Docbook 4.5 for Docbook output command |
 | `asciidoc.trace: "off"` | Enable debug logging for the AsciiDoc extension. |
 | `asciidoc.use_asciidoctor_js: true` | Use Asciidoctor.js instead of the 'asciidoctor_command' to render the preview. |
 | `asciidoc.use_asciidoctorpdf: false` | Use Asciidoctor PDF instead of the integrated renderer for the _Export as PDF_ command. |

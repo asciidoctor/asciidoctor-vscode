@@ -141,6 +141,15 @@
 					"light": "./media/SaveHTML.svg",
 					"dark": "./media/SaveHTML_inverse.svg"
 				}
+			},
+			{
+				"command": "asciidoc.saveDocbook",
+				"title": "%asciidoc.saveDocbook.title%",
+				"category": "AsciiDoc",
+				"icon": {
+					"light": "./media/SaveDocbook.svg",
+					"dark": "./media/SaveDocbook_inverse.svg"
+				}
 			}
 		],
 		"menus": {
@@ -398,6 +407,19 @@
 					"type": "boolean",
 					"default": true,
 					"description": "%asciidoc.forceUnixStyleSeparator.desc%"
+				},
+				"asciidoc.saveDocbook.docbookVersion": {
+					"type": "string",
+					"default": "docbook5",
+					"description": "%asciidoc.saveDocbook.docbookVersion.desc%",
+					"enum": [
+						"docbook5",
+						"docbook45"
+					],
+					"enumDescriptions": [
+						"%asciidoc.saveDocbook.docbookVersion.docbook5%",
+						"%asciidoc.saveDocbook.docbookVersion.docbook45%"
+					]
 				}
 			}
 		},
@@ -437,6 +459,7 @@
 	},
 	"dependencies": {
 		"@asciidoctor/core": "2.1.0",
+		"@asciidoctor/docbook-converter": "^2.0.0",
 		"@types/vscode": "^1.31.0",
 		"asciidoctor-kroki": "^0.6.0",
 		"asciidoctor-plantuml": "1.5.0",
