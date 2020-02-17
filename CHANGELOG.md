@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.14
+
+* Add support for saving to Docbook (closes #102)
+
 ## 2.7.13
 
 * Fix Save HTML file path on Windows (closes #269)

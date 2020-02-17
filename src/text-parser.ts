@@ -7,6 +7,7 @@ import * as npm_which from "npm-which";
 const fileUrl = require('file-url');
 
 const asciidoctor = require('@asciidoctor/core')()
+const docbook = require('@asciidoctor/docbook-converter')
 const plantuml = require('asciidoctor-plantuml');
 const kroki = require('asciidoctor-kroki')
 
@@ -46,7 +47,7 @@ export class AsciidocParser {
         return match;
     }
 
-    private async convert_using_javascript(text: string, forHTMLSave: boolean) {
+    private async convert_using_javascript(text: string, forHTMLSave: boolean, backend: string) {
         return new Promise<string>(resolve => {
             const editor = vscode.window.activeTextEditor;
             const doc = editor.document;
@@ -92,6 +93,9 @@ export class AsciidocParser {
                 }
             })
 
+            if (backend.startsWith('docbook'))
+                docbook.register()
+
             const options = {
                 safe: 'unsafe',
                 doctype: 'article',
@@ -100,6 +104,7 @@ export class AsciidocParser {
                 to_file: false,
                 base_dir: documentPath,
                 sourcemap: true,
+                backend: backend
             }
             try {
                 let ascii_doc = asciidoctor.load(text, options);
@@ -118,7 +123,7 @@ export class AsciidocParser {
         })
     }
 
-    private async convert_using_application(text: string, forHTMLSave: boolean) {
+    private async convert_using_application(text: string, forHTMLSave: boolean, backend: string) {
         const editor = vscode.window.activeTextEditor;
         const doc = editor.document;
         const documentPath = path.dirname(doc.fileName).replace('"', '\\"');
@@ -176,6 +181,8 @@ export class AsciidocParser {
                 // adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', 'stylesheet=asciidoctor-default.css@'])
             }
 
+            adoc_cmd_args.push.apply(adoc_cmd_args, ['-b', backend])
+
             Object.keys(preview_attributes).forEach(key => {
                 if (typeof preview_attributes[key] === "string") {
                     var value: string = preview_attributes[key]
@@ -188,7 +195,7 @@ export class AsciidocParser {
                 }
             })
 
-            adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-o', '-', '-', '-B', '"' + documentPath + '"'])
+            adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-B', '"' + documentPath + '"', '-o', '-', '-',])
             var asciidoctor = spawn(adoc_cmd, adoc_cmd_args, options);
 
             asciidoctor.stderr.on('data', (data) => {
@@ -233,12 +240,12 @@ export class AsciidocParser {
         return result;
     }
 
-    public async parseText(text: string, forHTMLSave: boolean = false): Promise<string> {
+    public async parseText(text: string, forHTMLSave: boolean = false, backend: string = 'html'): Promise<string> {
         const use_asciidoctor_js = vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctor_js');
         if (use_asciidoctor_js)
-            return this.convert_using_javascript(text, forHTMLSave)
+            return this.convert_using_javascript(text, forHTMLSave, backend)
         else
-            return this.convert_using_application(text, forHTMLSave)
+            return this.convert_using_application(text, forHTMLSave, backend)
     }
 
 }
