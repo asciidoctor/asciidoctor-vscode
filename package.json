@@ -18,7 +18,7 @@
 	"bugs": "https://github.com/asciidoctor/asciidoctor-vscode/issues",
 	"homepage": "https://github.com/asciidoctor/asciidoctor-vscode/blob/master/README.md",
 	"icon": "images/icon.png",
-	"main": "./out/src/extension",
+	"main": "./dist/src/extension.js",
 	"engines": {
 		"vscode": "^1.31.0"
 	},
@@ -437,13 +437,20 @@
 		]
 	},
 	"scripts": {
+		"build-preview-old": "webpack --mode development",
+		"build-preview-old": "npm run webpack-app && npm run webpack-preview",
 		"compile": "tsc -watch -p ./ && npm run build-preview",
 		"vscode:prepublish": "npm run lint && tsc -p ./ && npm run build-preview",
-		"lint": "eslint src/**/*.ts preview-src/**/*.ts test/**/*.ts --format unix",
-		"lint:fix": "eslint --fix src/**/*.ts preview-src/**/*.ts test/**/*.ts --format unix",
+		"vscode:prepublish-new": "npm run webpack-app && npm run webpack-preview",
 		"watch": "npm run build-preview && tsc -watch -p ./",
+		"lint": "eslint src/**/*.ts src-preview/**/*.ts` test/**/*.ts --format unix",
+		"lint:fix": "eslint --fix src/**/*.ts src-preview/**/*.ts test/**/*.ts --format unix",
+		"webpack-app": "webpack --mode production --config webpack.config.app.js",
+		"webpack-app-dev": "webpack --mode development --watch --config webpack.config.app.js",
+		"webpack-preview": "webpack --mode production --config webpack.config.preview.js",
+		"webpack-preview-dev": "webpack --config webpack.config.preview.js --mode development",
 		"test": "node ./node_modules/vscode/bin/test",
-		"build-preview": "webpack --mode development"
+		"test-compile": "tsc -p ./"
 	},
 	"devDependencies": {
 		"@types/highlight.js": "9.1.10",
