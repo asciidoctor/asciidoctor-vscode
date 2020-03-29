@@ -129,7 +129,10 @@ document.addEventListener('click', event => {
 	while (node) {
 		if (node.tagName && node.tagName === 'A' && node.href) {
 			if (node.getAttribute('href').startsWith('#')) {
-				break;
+				const fragment = node.href.split('#')[1];
+				if (fragment) {
+					location.hash = "#" + decodeURI(fragment);
+				}
 			}
 			if (node.href.startsWith('file://') || node.href.startsWith('vscode-resource:')) {
 				const [path, fragment] = node.href.replace(/^(file:\/\/|vscode-resource:)/i, '').split('#');
