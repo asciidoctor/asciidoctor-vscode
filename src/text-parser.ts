@@ -93,6 +93,8 @@ export class AsciidocParser {
                 }
             })
 
+            attributes['env-vscode'] = ''
+
             if (backend.startsWith('docbook'))
                 docbook.register()
 
@@ -194,6 +196,8 @@ export class AsciidocParser {
                     }
                 }
             })
+
+            adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', 'env-vscode'])
 
             adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-B', '"' + documentPath + '"', '-o', '-', '-',])
             var asciidoctor = spawn(adoc_cmd, adoc_cmd_args, options);

@@ -134,6 +134,16 @@ The following list contains all the options and their default value.
 | `asciidoc.use_asciidoctorpdf: false` | Use Asciidoctor PDF instead of the integrated renderer for the _Export as PDF_ command. |
 | `asciidoc.use_kroki: false` | Enable kroki integration to generate diagrams. |
 
+## Identifying the VS Code Environment
+
+The `env-vscode` attribute is set on all output documents. If you need to identify or handle the VS Code environment you can use an `ifdef` expression similar to the following:
+
+```asciidoc
+ifdef::env-vscode[]
+This is for vscode only
+endif::[]
+```
+
 ## Build and Install from Source
 
 ### Manual
