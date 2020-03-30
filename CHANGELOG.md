@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.7.15
+
+* Support URI encoded characters in anchors links (closes #281)
+* Add env-vscode attribute to detect vs code environment (closes #280)
+
 ## 2.7.14
 
 * Add support for saving to Docbook (closes #102)

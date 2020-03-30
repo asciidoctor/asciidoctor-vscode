@@ -6,3 +6,4 @@ test/samples/*.pdf
 media/*.js
 package-lock.json
 test/samples/playground.*
+dist/

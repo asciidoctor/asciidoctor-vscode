@@ -22,7 +22,7 @@ An extension that provides live preview, syntax highlighting and snippets for th
   - [User Settings](#user-settings)
   - [Build and Install from Source](#build-and-install-from-source)
     - [Manual](#manual)
-    - [Script](#script)
+    - [Script](#script)q
   - [Issues](#issues)
   - [Contributing](#contributing)
   - [Credits](#credits)
