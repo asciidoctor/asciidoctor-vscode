@@ -22,7 +22,7 @@ An extension that provides live preview, syntax highlighting and snippets for th
   - [User Settings](#user-settings)
   - [Build and Install from Source](#build-and-install-from-source)
     - [Manual](#manual)
-    - [Script](#script)q
+    - [Script](#script)
   - [Issues](#issues)
   - [Contributing](#contributing)
   - [Credits](#credits)
@@ -37,7 +37,7 @@ Alternatively you can use the built-in extension browser to find the _AsciiDoc_ 
 
 ## How to Use
 
-The extension activates automatically when opening an AsciiDoc file (.adoc, ad, .asc, .asciidoc).
+The extension activates automatically when opening an AsciiDoc file (.adoc, .ad, .asc, .asciidoc).
 
 ### Preview
 
