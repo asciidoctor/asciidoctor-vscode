@@ -114,11 +114,11 @@ export class AsciidocPreview {
 			this.dispose();
 		}, null, this.disposables);
 
-		this.editor.onDidChangeViewState(e => {
+		this.editor.onDidChangeViewState((e) => {
 			this._onDidChangeViewStateEmitter.fire(e);
 		}, null, this.disposables);
 
-		this.editor.webview.onDidReceiveMessage(e => {
+		this.editor.webview.onDidReceiveMessage((e) => {
 			if (e.source !== this._resource.toString()) {
 				return;
 			}
@@ -150,19 +150,19 @@ export class AsciidocPreview {
 			}
 		}, null, this.disposables);
 
-		vscode.workspace.onDidChangeTextDocument(event => {
+		vscode.workspace.onDidChangeTextDocument((event) => {
 			if (this.isPreviewOf(event.document.uri)) {
 				this.refresh();
 			}
 		}, null, this.disposables);
 
-		topmostLineMonitor.onDidChangeTopmostLine(event => {
+		topmostLineMonitor.onDidChangeTopmostLine((event) => {
 			if (this.isPreviewOf(event.resource)) {
 				this.updateForView(event.resource, event.line);
 			}
 		}, null, this.disposables);
 
-		vscode.window.onDidChangeTextEditorSelection(event => {
+		vscode.window.onDidChangeTextEditorSelection((event) => {
 			if (this.isPreviewOf(event.textEditor.document.uri)) {
 				this.postMessage({
 					type: 'onDidChangeTextEditorSelection',
@@ -172,7 +172,7 @@ export class AsciidocPreview {
 			}
 		}, null, this.disposables);
 
-		vscode.window.onDidChangeActiveTextEditor(editor => {
+		vscode.window.onDidChangeActiveTextEditor((editor) => {
 			if (editor && isAsciidocFile(editor.document) && !this._locked) {
 				this.update(editor.document.uri);
 			}
@@ -337,7 +337,9 @@ export class AsciidocPreview {
 		this.throttleTimer = undefined;
 
 		const document = await vscode.workspace.openTextDocument(resource);
-		if (!this.forceUpdate && this.currentVersion && this.currentVersion.resource.fsPath === resource.fsPath && this.currentVersion.version === document.version) {
+    if (!this.forceUpdate && this.currentVersion
+        && this.currentVersion.resource.fsPath === resource.fsPath
+        && this.currentVersion.version === document.version) {
 			if (this.line) {
 				this.updateForView(resource, this.line);
 			}

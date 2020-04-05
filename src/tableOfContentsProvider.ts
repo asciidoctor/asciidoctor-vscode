@@ -43,7 +43,7 @@ export class TableOfContentsProvider {
 	public async lookup(fragment: string): Promise<TocEntry | undefined> {
 		const toc = await this.getToc();
 		const slug = githubSlugifier.fromHeading(fragment);
-		return toc.find(entry => entry.slug.equals(slug));
+		return toc.find((entry) => entry.slug.equals(slug));
 	}
 
 	private async buildToc(document: SkinnyTextDocument): Promise<TocEntry[]> {

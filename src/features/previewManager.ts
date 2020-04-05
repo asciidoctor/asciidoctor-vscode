@@ -98,7 +98,7 @@ export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer {
 		resource: vscode.Uri,
 		previewSettings: PreviewSettings
 	): AsciidocPreview | undefined {
-		return this._previews.find(preview =>
+		return this._previews.find((preview) =>
 			preview.matchesResource(resource, previewSettings.previewColumn, previewSettings.locked));
 	}
 
@@ -140,7 +140,7 @@ export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer {
 		});
 
 		preview.onDidChangeViewState(({ webviewPanel }) => {
-			disposeAll(this._previews.filter(otherPreview => preview !== otherPreview && preview!.matches(otherPreview)));
+			disposeAll(this._previews.filter((otherPreview) => preview !== otherPreview && preview!.matches(otherPreview)));
 			this.setPreviewActiveContext(webviewPanel.active);
 			this._activePreview = webviewPanel.active ? preview : undefined;
 		});

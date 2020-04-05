@@ -25,11 +25,11 @@ export default class AsciidocFoldingProvider implements vscode.FoldingRangeProvi
 
 		const tokens = await this.engine.parse(document.uri, document.getText());
 		const regionMarkers = tokens.filter(isRegionMarker)
-			.map(token => ({ line: token.map[0], isStart: isStartRegion(token.content) }));
+			.map((token) => ({ line: token.map[0], isStart: isStartRegion(token.content) }));
 
 		const nestingStack: { line: number, isStart: boolean }[] = [];
 		return regionMarkers
-			.map(marker => {
+			.map((marker) => {
 				if (marker.isStart) {
 					nestingStack.push(marker);
 				} else if (nestingStack.length && nestingStack[nestingStack.length - 1].isStart) {
@@ -57,7 +57,7 @@ export default class AsciidocFoldingProvider implements vscode.FoldingRangeProvi
 	private async getHeaderFoldingRanges(document: vscode.TextDocument) {
 		const tocProvider = new TableOfContentsProvider(this.engine, document);
 		const toc = await tocProvider.getToc();
-		return toc.map(entry => {
+		return toc.map((entry) => {
 			let endLine = entry.location.range.end.line;
 			if (document.lineAt(endLine).isEmptyOrWhitespace && endLine >= entry.line + 1) {
 				endLine = endLine - 1;
@@ -84,7 +84,7 @@ export default class AsciidocFoldingProvider implements vscode.FoldingRangeProvi
 
 		const tokens = await this.engine.parse(document.uri, document.getText());
 		const multiLineListItems = tokens.filter(isFoldableToken);
-		return multiLineListItems.map(listItem => {
+		return multiLineListItems.map((listItem) => {
 			const start = listItem.map[0];
 			let end = listItem.map[1] - 1;
 			if (document.lineAt(end).isEmptyOrWhitespace && end >= start + 1) {
