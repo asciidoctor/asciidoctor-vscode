@@ -438,7 +438,7 @@
 	},
 	"scripts": {
 		"compile": "tsc -watch -p ./ && npm run build-preview",
-		"vscode:prepublish": "tsc -p ./ && npm run build-preview",
+		"vscode:prepublish": "npm run lint && tsc -p ./ && npm run build-preview",
 		"lint": "eslint src/**/*.ts preview-src/**/*.ts test/**/*.ts --format unix",
 		"lint:fix": "eslint --fix src/**/*.ts preview-src/**/*.ts test/**/*.ts --format unix",
 		"watch": "npm run build-preview && tsc -watch -p ./",

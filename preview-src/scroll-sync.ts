@@ -32,7 +32,7 @@ const getCodeLineElements = (() => {
 					//const line = +element.getAttribute('data-line');
 					return { element, line };
 				})
-				.filter((x: any) => !isNaN(x.line));
+				.filter((x: any) => !isNaN(x.line)) as CodeLineElement[];
 		}
 		return elements;
 	};
