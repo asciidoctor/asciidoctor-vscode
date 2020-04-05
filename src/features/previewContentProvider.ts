@@ -132,7 +132,7 @@ export class AsciidocContentProvider {
 
 	private computeCustomStyleSheetIncludes(resource: vscode.Uri, config: AsciidocPreviewConfiguration): string {
 		if (Array.isArray(config.styles)) {
-			return config.styles.map(style => {
+			return config.styles.map((style) => {
 				return `<link rel="stylesheet" class="code-user-style" data-source="${style.replace(/"/g, '&quot;')}" href="${this.fixHref(resource, style)}" type="text/css" media="screen">`;
 			}).join('\n');
 		}
@@ -169,11 +169,11 @@ export class AsciidocContentProvider {
 		var baseStyles;
 		if (useEditorStyle) {
 			baseStyles = this.contributions.previewStylesEditor
-				.map(resource => `<link rel="stylesheet" type="text/css" href="${resource.toString()}">`)
+				.map((resource) => `<link rel="stylesheet" type="text/css" href="${resource.toString()}">`)
 				.join('\n');
 		} else {
 			baseStyles = this.contributions.previewStylesDefault
-				.map(resource => `<link rel="stylesheet" type="text/css" href="${resource.toString()}">`)
+				.map((resource) => `<link rel="stylesheet" type="text/css" href="${resource.toString()}">`)
 				.join('\n');
 		}
 

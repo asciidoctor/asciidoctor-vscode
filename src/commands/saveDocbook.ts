@@ -41,7 +41,7 @@ export class SaveDocbook implements Command {
                 return
             }
             vscode.window.showInformationMessage('Successfully converted to ', fsPath)
-                .then(selection => {
+                .then((selection) => {
                     if (selection === fsPath) {
                         switch (process.platform)
                         {

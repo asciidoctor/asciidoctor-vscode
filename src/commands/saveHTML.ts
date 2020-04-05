@@ -38,7 +38,7 @@ export class SaveHTML implements Command {
                 return
             }
             vscode.window.showInformationMessage('Successfully converted to ', htmlPath)
-                .then(selection => {
+                .then((selection) => {
                     if (selection === htmlPath) {
                         switch (process.platform)
                         {

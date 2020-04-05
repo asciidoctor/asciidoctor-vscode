@@ -175,7 +175,7 @@ export class ExportAsPDF implements Command {
             if(!isNullOrUndefined(save_filename)) {
                 html2pdf(html, binary_path, cover, footer_center, save_filename.fsPath)
                 .then((result) => { offer_open(result) })
-                .catch(reason => {
+                .catch((reason) => {
                     console.error("Got error", reason)
                     vscode.window.showErrorMessage("Error converting to PDF, "+reason.toString());
                 })

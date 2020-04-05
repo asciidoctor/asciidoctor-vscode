@@ -84,7 +84,7 @@ window.addEventListener('resize', () => {
 	updateImageSizes();
 }, true);
 
-window.addEventListener('message', event => {
+window.addEventListener('message', (event) => {
 	if (event.data.source !== settings.source) {
 		return;
 	}
@@ -101,7 +101,7 @@ window.addEventListener('message', event => {
 	}
 }, false);
 
-document.addEventListener('dblclick', event => {
+document.addEventListener('dblclick', (event) => {
 	if (!settings.doubleClickToSwitchToEditor) {
 		return;
 	}
@@ -120,7 +120,7 @@ document.addEventListener('dblclick', event => {
 	}
 });
 
-document.addEventListener('click', event => {
+document.addEventListener('click', (event) => {
 	if (!event) {
 		return;
 	}

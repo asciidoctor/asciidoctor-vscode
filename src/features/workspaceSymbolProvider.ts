@@ -39,8 +39,8 @@ class VSCodeWorkspaceAsciidocDocumentProvider implements WorkspaceAsciidocDocume
 
 	async getAllAsciidocDocuments() {
 		const resources = await vscode.workspace.findFiles('**/*.md', '**/node_modules/**');
-		const docs = await Promise.all(resources.map(doc => this.getAsciidocDocument(doc)));
-		return docs.filter(doc => !!doc) as SkinnyTextDocument[];
+		const docs = await Promise.all(resources.map((doc) => this.getAsciidocDocument(doc)));
+		return docs.filter((doc) => !!doc) as SkinnyTextDocument[];
 	}
 
 	public get onDidChangeAsciidocDocument() {
@@ -65,25 +65,25 @@ class VSCodeWorkspaceAsciidocDocumentProvider implements WorkspaceAsciidocDocume
 
 		this._watcher = vscode.workspace.createFileSystemWatcher('**/*.md');
 
-		this._watcher.onDidChange(async resource => {
+		this._watcher.onDidChange(async (resource) => {
 			const document = await this.getAsciidocDocument(resource);
 			if (document) {
 				this._onDidChangeAsciidocDocumentEmitter.fire(document);
 			}
 		}, null, this._disposables);
 
-		this._watcher.onDidCreate(async resource => {
+		this._watcher.onDidCreate(async (resource) => {
 			const document = await this.getAsciidocDocument(resource);
 			if (document) {
 				this._onDidCreateAsciidocDocumentEmitter.fire(document);
 			}
 		}, null, this._disposables);
 
-		this._watcher.onDidDelete(async resource => {
+		this._watcher.onDidDelete(async (resource) => {
 			this._onDidDeleteAsciidocDocumentEmitter.fire(resource);
 		}, null, this._disposables);
 
-		vscode.workspace.onDidChangeTextDocument(e => {
+		vscode.workspace.onDidChangeTextDocument((e) => {
 			if (isAsciidocFile(e.document)) {
 				this._onDidChangeAsciidocDocumentEmitter.fire(e.document);
 			}
@@ -117,9 +117,9 @@ export default class AsciidocWorkspaceSymbolProvider implements vscode.Workspace
 			this._workspaceAsciidocDocumentProvider.onDidDeleteAsciidocDocument(this.onDidDeleteDocument, this, this._disposables);
 		}
 
-		const allSymbolsSets = await Promise.all(Array.from(this._symbolCache.values()).map(x => x.value));
+		const allSymbolsSets = await Promise.all(Array.from(this._symbolCache.values()).map((x) => x.value));
 		const allSymbols: vscode.SymbolInformation[] = Array.prototype.concat.apply([], allSymbolsSets);
-		return allSymbols.filter(symbolInformation => symbolInformation.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+		return allSymbols.filter((symbolInformation) => symbolInformation.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
 	}
 
 	public async populateSymbolCache(): Promise<void> {

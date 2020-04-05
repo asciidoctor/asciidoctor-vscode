@@ -14,7 +14,7 @@ export class AsciidocFileTopmostLineMonitor {
 	private readonly throttle = 50;
 
 	constructor() {
-		vscode.window.onDidChangeTextEditorVisibleRanges(event => {
+		vscode.window.onDidChangeTextEditorVisibleRanges((event) => {
 			if (isAsciidocFile(event.textEditor.document)) {
 				const line = getVisibleLine(event.textEditor);
 				if (typeof line === 'number') {

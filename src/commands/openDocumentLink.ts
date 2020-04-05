@@ -46,12 +46,13 @@ export class OpenDocumentLinkCommand implements Command {
 
 	private async tryOpen(path: string, args: OpenDocumentLinkArgs) {
 		const resource = vscode.Uri.file(path);
-		if (vscode.window.activeTextEditor && isAsciidocFile(vscode.window.activeTextEditor.document) && vscode.window.activeTextEditor.document.uri.fsPath === resource.fsPath) {
+    if (vscode.window.activeTextEditor && isAsciidocFile(vscode.window.activeTextEditor.document)
+        && vscode.window.activeTextEditor.document.uri.fsPath === resource.fsPath) {
 			return this.tryRevealLine(vscode.window.activeTextEditor, args.fragment);
 		} else {
 			return vscode.workspace.openTextDocument(resource)
 				.then(vscode.window.showTextDocument)
-				.then(editor => this.tryRevealLine(editor, args.fragment));
+				.then((editor) => this.tryRevealLine(editor, args.fragment));
 		}
 	}
 

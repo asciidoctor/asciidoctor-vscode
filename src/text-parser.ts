@@ -48,7 +48,7 @@ export class AsciidocParser {
     }
 
     private async convert_using_javascript(text: string, forHTMLSave: boolean, backend: string) {
-        return new Promise<string>(resolve => {
+        return new Promise<string>((resolve) => {
             const editor = vscode.window.activeTextEditor;
             const doc = editor.document;
             const documentPath = path.dirname(path.resolve(doc.fileName));
@@ -87,7 +87,7 @@ export class AsciidocParser {
                 // attributes = { 'copycss': true, 'stylesdir': this.stylesdir, 'stylesheet': 'asciidoctor-default.css@' }
             }
 
-            Object.keys(preview_attributes).forEach(key => {
+            Object.keys(preview_attributes).forEach((key) => {
                 if (typeof preview_attributes[key] === "string") {
                     attributes[key] = preview_attributes[key];
                 }
@@ -136,7 +136,7 @@ export class AsciidocParser {
         const preview_style = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', "");
         this.document = null;
 
-        return new Promise<string>(resolve => {
+        return new Promise<string>((resolve) => {
             let asciidoctor_command = vscode.workspace.getConfiguration('asciidoc', null).get('asciidoctor_command', 'asciidoctor');
             var RUBYOPT = process.env['RUBYOPT']
             if (RUBYOPT) {
@@ -185,7 +185,7 @@ export class AsciidocParser {
 
             adoc_cmd_args.push.apply(adoc_cmd_args, ['-b', backend])
 
-            Object.keys(preview_attributes).forEach(key => {
+            Object.keys(preview_attributes).forEach((key) => {
                 if (typeof preview_attributes[key] === "string") {
                     var value: string = preview_attributes[key]
 
