@@ -13,6 +13,6 @@ export class RefreshPreviewCommand implements Command {
 	) { }
 
 	public execute() {
-		this.webviewManager.refresh();
+	  this.webviewManager.refresh();
 	}
 }

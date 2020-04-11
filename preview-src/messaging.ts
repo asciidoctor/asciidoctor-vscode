@@ -12,13 +12,13 @@ export interface MessagePoster {
 }
 
 export const createPosterForVsCode = (vscode: any) => {
-	return new class implements MessagePoster {
-		postMessage(type: string, body: object): void {
-			vscode.postMessage({
-				type,
-				source: getSettings().source,
-				body
-			});
-		}
-	};
+  return new class implements MessagePoster {
+    postMessage(type: string, body: object): void {
+      vscode.postMessage({
+        type,
+        source: getSettings().source,
+        body
+      });
+    }
+  };
 };

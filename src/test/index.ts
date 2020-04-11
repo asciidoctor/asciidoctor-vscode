@@ -8,20 +8,20 @@ const testRunner = require('vscode/lib/testrunner');
 const suite = 'Integration Asciidoc Tests';
 
 const options: any = {
-	ui: 'tdd',
-	useColors: true,
-	timeout: 60000
+  ui: 'tdd',
+  useColors: true,
+  timeout: 60000
 };
 
 if (process.env.BUILD_ARTIFACTSTAGINGDIRECTORY) {
-	options.reporter = 'mocha-multi-reporters';
-	options.reporterOptions = {
-		reporterEnabled: 'spec, mocha-junit-reporter',
-		mochaJunitReporterReporterOptions: {
-			testsuitesTitle: `${suite} ${process.platform}`,
-			mochaFile: path.join(process.env.BUILD_ARTIFACTSTAGINGDIRECTORY, `test-results/${process.platform}-${suite.toLowerCase().replace(/[^\w]/g, '-')}-results.xml`)
-		}
-	};
+  options.reporter = 'mocha-multi-reporters';
+  options.reporterOptions = {
+    reporterEnabled: 'spec, mocha-junit-reporter',
+    mochaJunitReporterReporterOptions: {
+      testsuitesTitle: `${suite} ${process.platform}`,
+      mochaFile: path.join(process.env.BUILD_ARTIFACTSTAGINGDIRECTORY, `test-results/${process.platform}-${suite.toLowerCase().replace(/[^\w]/g, '-')}-results.xml`)
+    }
+  };
 }
 
 testRunner.configure(options);

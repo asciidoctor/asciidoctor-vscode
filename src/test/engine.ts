@@ -17,5 +17,5 @@ const emptyContributions = new class implements AsciidocContributions {
 };
 
 export function createNewAsciidocEngine(): AsciidocEngine {
-	return new AsciidocEngine(emptyContributions, githubSlugifier);
+  return new AsciidocEngine(emptyContributions, githubSlugifier);
 }

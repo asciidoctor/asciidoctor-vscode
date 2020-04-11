@@ -14,12 +14,12 @@ namespace Trace {
   export function fromString(value: string): Trace {
     value = value.toLowerCase();
     switch (value) {
-      case 'off':
-        return Trace.Off;
-      case 'verbose':
-        return Trace.Verbose;
-      default:
-        return Trace.Off;
+    case 'off':
+      return Trace.Off;
+    case 'verbose':
+      return Trace.Verbose;
+    default:
+      return Trace.Off;
     }
   }
 }

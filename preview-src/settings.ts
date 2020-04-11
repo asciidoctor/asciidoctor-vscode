@@ -15,26 +15,26 @@ export interface PreviewSettings {
 let cachedSettings: PreviewSettings | undefined = undefined;
 
 export function getData(key: string): PreviewSettings {
-	const element = document.getElementById('vscode-asciidoc-preview-data');
-	if (element) {
-		const data = element.getAttribute(key);
-		if (data) {
-			return JSON.parse(data);
-		}
-	}
+  const element = document.getElementById('vscode-asciidoc-preview-data');
+  if (element) {
+    const data = element.getAttribute(key);
+    if (data) {
+      return JSON.parse(data);
+    }
+  }
 
-	throw new Error(`Could not load data for ${key}`);
+  throw new Error(`Could not load data for ${key}`);
 }
 
 export function getSettings(): PreviewSettings {
-	if (cachedSettings) {
-		return cachedSettings;
-	}
+  if (cachedSettings) {
+    return cachedSettings;
+  }
 
-	cachedSettings = getData('data-settings');
-	if (cachedSettings) {
-		return cachedSettings;
-	}
+  cachedSettings = getData('data-settings');
+  if (cachedSettings) {
+    return cachedSettings;
+  }
 
-	throw new Error('Could not load settings');
+  throw new Error('Could not load settings');
 }
