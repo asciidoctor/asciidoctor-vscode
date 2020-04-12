@@ -27,135 +27,135 @@ window.cspAlerter.setPoster(messaging);
 window.styleLoadingMonitor.setPoster(messaging);
 
 window.onload = () => {
-	updateImageSizes();
+  updateImageSizes();
 };
 
 onceDocumentLoaded(() => {
-	if (settings.scrollPreviewWithEditor) {
-		setTimeout(() => {
-			const initialLine = +settings.line;
-			if (!isNaN(initialLine)) {
-				scrollDisabled = true;
-				scrollToRevealSourceLine(initialLine);
-			}
-		}, 0);
-	}
+  if (settings.scrollPreviewWithEditor) {
+    setTimeout(() => {
+      const initialLine = +settings.line;
+      if (!isNaN(initialLine)) {
+        scrollDisabled = true;
+        scrollToRevealSourceLine(initialLine);
+      }
+    }, 0);
+  }
 });
 
 const onUpdateView = (() => {
-	const doScroll = throttle((line: number) => {
-		scrollDisabled = true;
-		scrollToRevealSourceLine(line);
-	}, 50);
+  const doScroll = throttle((line: number) => {
+    scrollDisabled = true;
+    scrollToRevealSourceLine(line);
+  }, 50);
 
-	return (line: number, settings: any) => {
-		if (!isNaN(line)) {
-			settings.line = line;
-			doScroll(line);
-		}
-	};
+  return (line: number, settings: any) => {
+    if (!isNaN(line)) {
+      settings.line = line;
+      doScroll(line);
+    }
+  };
 })();
 
 let updateImageSizes = throttle(() => {
-	const imageInfo: { id: string, height: number, width: number }[] = [];
-	let images = document.getElementsByTagName('img');
-	if (images) {
-		let i;
-		for (i = 0; i < images.length; i++) {
-			const img = images[i];
+  const imageInfo: { id: string, height: number, width: number }[] = [];
+  let images = document.getElementsByTagName('img');
+  if (images) {
+    let i;
+    for (i = 0; i < images.length; i++) {
+      const img = images[i];
 
-			if (img.classList.contains('loading')) {
-				img.classList.remove('loading');
-			}
+      if (img.classList.contains('loading')) {
+        img.classList.remove('loading');
+      }
 
-			imageInfo.push({
-				id: img.id,
-				height: img.height,
-				width: img.width
-			});
-		}
+      imageInfo.push({
+        id: img.id,
+        height: img.height,
+        width: img.width
+      });
+    }
 
-		messaging.postMessage('cacheImageSizes', imageInfo);
-	}
+    messaging.postMessage('cacheImageSizes', imageInfo);
+  }
 }, 50);
 
 window.addEventListener('resize', () => {
-	scrollDisabled = true;
-	updateImageSizes();
+  scrollDisabled = true;
+  updateImageSizes();
 }, true);
 
 window.addEventListener('message', (event) => {
-	if (event.data.source !== settings.source) {
-		return;
-	}
+  if (event.data.source !== settings.source) {
+    return;
+  }
 
-    //console.log("GOT MESSAGE", event.data);
-	switch (event.data.type) {
-		case 'onDidChangeTextEditorSelection':
-			marker.onDidChangeTextEditorSelection(event.data.line);
-			break;
+  //console.log("GOT MESSAGE", event.data);
+  switch (event.data.type) {
+  case 'onDidChangeTextEditorSelection':
+    marker.onDidChangeTextEditorSelection(event.data.line);
+    break;
 
-		case 'updateView':
-			onUpdateView(event.data.line, settings);
-			break;
-	}
+  case 'updateView':
+    onUpdateView(event.data.line, settings);
+    break;
+  }
 }, false);
 
 document.addEventListener('dblclick', (event) => {
-	if (!settings.doubleClickToSwitchToEditor) {
-		return;
-	}
+  if (!settings.doubleClickToSwitchToEditor) {
+    return;
+  }
 
-	// Ignore clicks on links
-	for (let node = event.target as HTMLElement; node; node = node.parentNode as HTMLElement) {
-		if (node.tagName === 'A') {
-			return;
-		}
-	}
+  // Ignore clicks on links
+  for (let node = event.target as HTMLElement; node; node = node.parentNode as HTMLElement) {
+    if (node.tagName === 'A') {
+      return;
+    }
+  }
 
-	const offset = event.pageY;
-	const line = getEditorLineNumberForPageOffset(offset);
-	if (typeof line === 'number' && !isNaN(line)) {
-		messaging.postMessage('didClick', { line: Math.floor(line) });
-	}
+  const offset = event.pageY;
+  const line = getEditorLineNumberForPageOffset(offset);
+  if (typeof line === 'number' && !isNaN(line)) {
+    messaging.postMessage('didClick', { line: Math.floor(line) });
+  }
 });
 
 document.addEventListener('click', (event) => {
-	if (!event) {
-		return;
-	}
+  if (!event) {
+    return;
+  }
 
-	let node: any = event.target;
-	while (node) {
-		if (node.tagName && node.tagName === 'A' && node.href) {
-			if (node.getAttribute('href').startsWith('#')) {
-				const fragment = node.href.split('#')[1];
-				if (fragment) {
-					location.hash = "#" + decodeURI(fragment);
-				}
-			}
-			if (node.href.startsWith('file://') || node.href.startsWith('vscode-resource:')) {
-				const [path, fragment] = node.href.replace(/^(file:\/\/|vscode-resource:)/i, '').split('#');
-				messaging.postMessage('clickLink', { path, fragment });
-				event.preventDefault();
-				event.stopPropagation();
-				break;
-			}
-			break;
-		}
-		node = node.parentNode;
-	}
+  let node: any = event.target;
+  while (node) {
+    if (node.tagName && node.tagName === 'A' && node.href) {
+      if (node.getAttribute('href').startsWith('#')) {
+        const fragment = node.href.split('#')[1];
+        if (fragment) {
+          location.hash = "#" + decodeURI(fragment);
+        }
+      }
+      if (node.href.startsWith('file://') || node.href.startsWith('vscode-resource:')) {
+        const [path, fragment] = node.href.replace(/^(file:\/\/|vscode-resource:)/i, '').split('#');
+        messaging.postMessage('clickLink', { path, fragment });
+        event.preventDefault();
+        event.stopPropagation();
+        break;
+      }
+      break;
+    }
+    node = node.parentNode;
+  }
 }, true);
 
 if (settings.scrollEditorWithPreview) {
-	window.addEventListener('scroll', throttle(() => {
-		if (scrollDisabled) {
-			scrollDisabled = false;
-		} else {
-			const line = getEditorLineNumberForPageOffset(window.scrollY);
-			if (typeof line === 'number' && !isNaN(line)) {
-				messaging.postMessage('revealLine', { line });
-			}
-		}
-	}, 50));
+  window.addEventListener('scroll', throttle(() => {
+    if (scrollDisabled) {
+      scrollDisabled = false;
+    } else {
+      const line = getEditorLineNumberForPageOffset(window.scrollY);
+      if (typeof line === 'number' && !isNaN(line)) {
+        messaging.postMessage('revealLine', { line });
+      }
+    }
+  }, 50));
 }

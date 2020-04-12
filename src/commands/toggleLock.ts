@@ -13,6 +13,6 @@ export class ToggleLockCommand implements Command {
 	) { }
 
 	public execute() {
-		this.previewManager.toggleLock();
+	  this.previewManager.toggleLock();
 	}
 }

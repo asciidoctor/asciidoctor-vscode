@@ -6,22 +6,22 @@ import * as vscode from 'vscode';
 import * as path from 'path';
 
 const resolveExtensionResource = (extension: vscode.Extension<any>, resourcePath: string): vscode.Uri => {
-	return vscode.Uri.file(path.join(extension.extensionPath, resourcePath))
-		.with({ scheme: 'vscode-resource' });
+  return vscode.Uri.file(path.join(extension.extensionPath, resourcePath))
+    .with({ scheme: 'vscode-resource' });
 };
 
 const resolveExtensionResources = (extension: vscode.Extension<any>, resourcePaths: any): vscode.Uri[] => {
-	const result: vscode.Uri[] = [];
-	if (Array.isArray(resourcePaths)) {
-		for (const resource of resourcePaths) {
-			try {
-				result.push(resolveExtensionResource(extension, resource));
-			} catch (e) {
-				// noop
-			}
-		}
-	}
-	return result;
+  const result: vscode.Uri[] = [];
+  if (Array.isArray(resourcePaths)) {
+    for (const resource of resourcePaths) {
+      try {
+        result.push(resolveExtensionResource(extension, resource));
+      } catch (e) {
+        // noop
+      }
+    }
+  }
+  return result;
 };
 
 export interface AsciidocContributions {
@@ -47,46 +47,46 @@ class AsciidocExtensionContributions implements AsciidocContributions {
 	) { }
 
 	public get previewScripts(): vscode.Uri[] {
-		this.ensureLoaded();
-		return this._scripts;
+	  this.ensureLoaded();
+	  return this._scripts;
 	}
 
 	public get previewStylesEditor(): vscode.Uri[] {
-		this.ensureLoaded();
-		return this._stylesEditor;
+	  this.ensureLoaded();
+	  return this._stylesEditor;
 	}
 
 	public get previewStylesDefault(): vscode.Uri[] {
-		this.ensureLoaded();
-		return this._stylesDefault;
+	  this.ensureLoaded();
+	  return this._stylesDefault;
 	}
 
 	public get previewResourceRoots(): vscode.Uri[] {
-		this.ensureLoaded();
-		return this._previewResourceRoots;
+	  this.ensureLoaded();
+	  return this._previewResourceRoots;
 	}
 
 	public get asciidocItPlugins(): Thenable<(md: any) => any>[] {
-		this.ensureLoaded();
-		return this._plugins;
+	  this.ensureLoaded();
+	  return this._plugins;
 	}
 
 	private ensureLoaded() {
-		if (this._loaded) {
-			return;
-		}
+	  if (this._loaded) {
+	    return;
+	  }
 
-		this._loaded = true;
-		for (const extension of vscode.extensions.all) {
-			const contributes = extension.packageJSON && extension.packageJSON.contributes;
-			if (!contributes) {
-				continue;
-			}
-		}
+	  this._loaded = true;
+	  for (const extension of vscode.extensions.all) {
+	    const contributes = extension.packageJSON && extension.packageJSON.contributes;
+	    if (!contributes) {
+	      continue;
+	    }
+	  }
 	}
 
 }
 
 export function getAsciidocExtensionContributions(context: vscode.ExtensionContext): AsciidocContributions {
-	return new AsciidocExtensionContributions(context.extensionPath);
+  return new AsciidocExtensionContributions(context.extensionPath);
 }

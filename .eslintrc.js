@@ -26,6 +26,7 @@ module.exports = {
       "ignoreUrls": true,
       "ignoreTemplateLiterals": true
     }],
+    "indent": ["error", 2],
     "spaced-comment": "off"
   }
 };

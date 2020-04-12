@@ -164,19 +164,19 @@ export namespace Import {
       const selectedText = editor.document.getText(editor.selection);
       if (!editor.selection.isEmpty) {
         switch (config.selectionRole) {
-          case SelectionRole.AltText:
-            alttext = selectedText;
-            break;
-          case SelectionRole.Filename:
-            filename = selectedText + '.png';
-            break;
+        case SelectionRole.AltText:
+          alttext = selectedText;
+          break;
+        case SelectionRole.Filename:
+          filename = selectedText + '.png';
+          break;
         }
       }
 
       switch (config.encoding) {
-        case FilenameEncoding.URIEncoding:
-          filename = encodeURIComponent(filename);
-          break;
+      case FilenameEncoding.URIEncoding:
+        filename = encodeURIComponent(filename);
+        break;
       }
 
       try {
@@ -212,8 +212,8 @@ export namespace Import {
             vscode.window.showErrorMessage('Missing image filename argument.');
           else if (error.message == 'no xclip')
             vscode.window.showErrorMessage('To use this feature you must install xclip');
-          } else
-            vscode.window.showErrorMessage(error.toString());
+        } else
+          vscode.window.showErrorMessage(error.toString());
         return;
       }
 
@@ -229,12 +229,12 @@ export namespace Import {
 
       editor.edit((edit) => {
         switch (config.mode) {
-          case SelectionMode.Insert:
-            edit.insert(editor.selection.active, macro);
-            break;
-          case SelectionMode.Replace:
-            edit.replace(editor.selection, macro);
-            break;
+        case SelectionMode.Insert:
+          edit.insert(editor.selection.active, macro);
+          break;
+        case SelectionMode.Replace:
+          edit.replace(editor.selection, macro);
+          break;
         }
       });
     }
@@ -249,13 +249,13 @@ export namespace Import {
         config.mode == SelectionMode.Replace
           ? editor.selection.active.isAfter(editor.selection.anchor)
             ? {
-                first: editor.selection.anchor,
-                second: editor.selection.active
-              }
+              first: editor.selection.anchor,
+              second: editor.selection.active
+            }
             : {
-                first: editor.selection.active,
-                second: editor.selection.anchor
-              }
+              first: editor.selection.active,
+              second: editor.selection.anchor
+            }
           : { first: editor.selection.active, second: editor.selection.active };
       let selection = editor.document.getText(
         new vscode.Range(
@@ -407,13 +407,13 @@ export namespace Import {
 
   function encodeFilename(config: Configuration, filename: string) {
     switch (config.encoding) {
-      case FilenameEncoding.None:
-        break;
-      case FilenameEncoding.URIEncoding:
-        filename = encodeURIComponent(filename);
-        break;
-      default:
-        return filename;
+    case FilenameEncoding.None:
+      break;
+    case FilenameEncoding.URIEncoding:
+      filename = encodeURIComponent(filename);
+      break;
+    default:
+      return filename;
     }
   }
 }

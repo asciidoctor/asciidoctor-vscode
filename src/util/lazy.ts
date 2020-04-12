@@ -17,22 +17,22 @@ class LazyValue<T> implements Lazy<T> {
 	) { }
 
 	get value(): T {
-		if (!this._hasValue) {
-			this._hasValue = true;
-			this._value = this._getValue();
-		}
-		return this._value!;
+	  if (!this._hasValue) {
+	    this._hasValue = true;
+	    this._value = this._getValue();
+	  }
+	  return this._value!;
 	}
 
 	get hasValue(): boolean {
-		return this._hasValue;
+	  return this._hasValue;
 	}
 
 	public map<R>(f: (x: T) => R): Lazy<R> {
-		return new LazyValue(() => f(this.value));
+	  return new LazyValue(() => f(this.value));
 	}
 }
 
 export function lazy<T>(getValue: () => T): Lazy<T> {
-	return new LazyValue<T>(getValue);
+  return new LazyValue<T>(getValue);
 }
