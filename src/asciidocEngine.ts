@@ -19,7 +19,7 @@ export class AsciidocEngine {
 
 	public constructor(
 		private readonly extensionPreviewResourceProvider: AsciidocContributions,
-		private readonly slugifier: Slugifier,
+		private readonly slugifier: Slugifier
 	) { }
 
 

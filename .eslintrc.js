@@ -12,14 +12,12 @@ module.exports = {
   ],
   "rules": {
     "arrow-parens": ["error", "always"],
-    /*
     "comma-dangle": ["error", {
       "arrays": "always-multiline",
       "objects": "always-multiline",
       "imports": "always-multiline",
       "exports": "always-multiline"
     }],
-    */
     "max-len": ["error", {
       "code": 160,
       "ignoreStrings": true,

@@ -31,7 +31,7 @@ const previewStrings = {
 
   cspAlertMessageLabel: localize(
     'preview.securityMessage.label',
-    'Content Disabled Security Warning')
+    'Content Disabled Security Warning'),
 };
 
 export class AsciidocContentProvider {
@@ -58,7 +58,7 @@ export class AsciidocContentProvider {
       scrollPreviewWithEditor: config.scrollPreviewWithEditor,
       scrollEditorWithPreview: config.scrollEditorWithPreview,
       doubleClickToSwitchToEditor: config.doubleClickToSwitchToEditor,
-      disableSecurityWarnings: this.cspArbiter.shouldDisableSecurityWarnings()
+      disableSecurityWarnings: this.cspArbiter.shouldDisableSecurityWarnings(),
     };
 
     this.logger.log('provideTextDocumentContent', initialData);

@@ -24,7 +24,7 @@ suite('asciidoc.WorkspaceSymbolProvider', () => {
     const testFileName = vscode.Uri.file('test.md');
 
     const provider = new AsciidocWorkspaceSymbolProvider(symbolProvider, new InMemoryWorkspaceAsciidocDocumentProvider([
-      new InMemoryDocument(testFileName, `# header1\nabc\n## header2`)
+      new InMemoryDocument(testFileName, `# header1\nabc\n## header2`),
     ]));
 
     const symbols = await provider.provideWorkspaceSymbols('');
@@ -51,7 +51,7 @@ suite('asciidoc.WorkspaceSymbolProvider', () => {
     const testFileName = vscode.Uri.file('test.md');
 
     const workspaceFileProvider = new InMemoryWorkspaceAsciidocDocumentProvider([
-      new InMemoryDocument(testFileName, `# header1`)
+      new InMemoryDocument(testFileName, `# header1`),
     ]);
 
     const provider = new AsciidocWorkspaceSymbolProvider(symbolProvider, workspaceFileProvider);
@@ -70,7 +70,7 @@ suite('asciidoc.WorkspaceSymbolProvider', () => {
     const testFileName = vscode.Uri.file('test.md');
 
     const workspaceFileProvider = new InMemoryWorkspaceAsciidocDocumentProvider([
-      new InMemoryDocument(testFileName, `# header1`)
+      new InMemoryDocument(testFileName, `# header1`),
     ]);
 
     const provider = new AsciidocWorkspaceSymbolProvider(symbolProvider, workspaceFileProvider);
@@ -86,7 +86,7 @@ suite('asciidoc.WorkspaceSymbolProvider', () => {
     const testFileName = vscode.Uri.file('test.md');
 
     const workspaceFileProvider = new InMemoryWorkspaceAsciidocDocumentProvider([
-      new InMemoryDocument(testFileName, `# header1`)
+      new InMemoryDocument(testFileName, `# header1`),
     ]);
 
     const provider = new AsciidocWorkspaceSymbolProvider(symbolProvider, workspaceFileProvider);

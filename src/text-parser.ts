@@ -106,7 +106,7 @@ export class AsciidocParser {
           to_file: false,
           base_dir: documentPath,
           sourcemap: true,
-          backend: backend
+          backend: backend,
         }
         try {
           let ascii_doc = asciidoctor.load(text, options);
@@ -199,7 +199,7 @@ export class AsciidocParser {
 
         adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', 'env-vscode'])
 
-        adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-B', '"' + documentPath + '"', '-o', '-', '-',])
+        adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-B', '"' + documentPath + '"', '-o', '-', '-'])
         var asciidoctor = spawn(adoc_cmd, adoc_cmd_args, options);
 
         asciidoctor.stderr.on('data', (data) => {
@@ -237,7 +237,7 @@ export class AsciidocParser {
               path.dirname(this.filename),
               p2
             )),
-            p3
+            p3,
           ].join("");
         }
       );

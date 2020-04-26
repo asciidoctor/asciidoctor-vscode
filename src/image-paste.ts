@@ -79,7 +79,7 @@ export namespace Import {
             'hidden',
             '-file',
             `${script}`,
-            `${filename}`
+            `${filename}`,
           ]);
 
           child.stdout.once('data', (e) => resolve(e.toString()));
@@ -250,11 +250,11 @@ export namespace Import {
           ? editor.selection.active.isAfter(editor.selection.anchor)
             ? {
               first: editor.selection.anchor,
-              second: editor.selection.active
+              second: editor.selection.active,
             }
             : {
               first: editor.selection.active,
-              second: editor.selection.anchor
+              second: editor.selection.anchor,
             }
           : { first: editor.selection.active, second: editor.selection.active };
       let selection = editor.document.getText(

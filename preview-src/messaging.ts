@@ -17,7 +17,7 @@ export const createPosterForVsCode = (vscode: any) => {
       vscode.postMessage({
         type,
         source: getSettings().source,
-        body
+        body,
       });
     }
   };

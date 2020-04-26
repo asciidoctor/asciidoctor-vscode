@@ -19,7 +19,7 @@ export default class AdocDocumentSymbolProvider implements vscode.DocumentSymbol
 		private root: AsciidocSymbol = {
 		  level: -Infinity,
 		  children: [],
-		  parent: undefined
+		  parent: undefined,
 		},
 		private lastSymbolCall: number,
 		private lastRunTime: number = 1000,
@@ -42,7 +42,7 @@ export default class AdocDocumentSymbolProvider implements vscode.DocumentSymbol
       this.root = {
         level: -Infinity,
         children: [],
-        parent: undefined
+        parent: undefined,
       }
       this.buildTree(this.root, toc);
 
