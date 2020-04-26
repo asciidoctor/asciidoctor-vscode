@@ -43,7 +43,7 @@ class AsciidocExtensionContributions implements AsciidocContributions {
 	private _loaded = false;
 
 	public constructor(
-		public readonly extensionPath: string,
+		public readonly extensionPath: string
 	) { }
 
 	public get previewScripts(): vscode.Uri[] {

@@ -42,7 +42,7 @@ export class AsciidocPreview {
 	  previewConfigurations: AsciidocPreviewConfigurationManager,
 	  logger: Logger,
 	  topmostLineMonitor: AsciidocFileTopmostLineMonitor,
-	  contributions: AsciidocContributions,
+	  contributions: AsciidocContributions
 	): Promise<AsciidocPreview> {
 	  const resource = vscode.Uri.parse(state.resource);
 	  const locked = state.locked;
@@ -82,7 +82,7 @@ export class AsciidocPreview {
 	    AsciidocPreview.getPreviewTitle(resource, locked),
 	    previewColumn, {
 	      enableFindWidget: true,
-	      ...AsciidocPreview.getWebviewOptions(resource, contributions)
+	      ...AsciidocPreview.getWebviewOptions(resource, contributions),
 	    });
 
 	  return new AsciidocPreview(
@@ -104,7 +104,7 @@ export class AsciidocPreview {
 		private readonly _previewConfigurations: AsciidocPreviewConfigurationManager,
 		private readonly _logger: Logger,
 		topmostLineMonitor: AsciidocFileTopmostLineMonitor,
-		private readonly _contributions: AsciidocContributions,
+		private readonly _contributions: AsciidocContributions
 	) {
 	  this._resource = resource;
 	  this._locked = locked;
@@ -167,7 +167,7 @@ export class AsciidocPreview {
 	      this.postMessage({
 	        type: 'onDidChangeTextEditorSelection',
 	        line: event.selections[0].active.line,
-	        source: this.resource.toString()
+	        source: this.resource.toString(),
 	      });
 	    }
 	  }, null, this.disposables);
@@ -194,7 +194,7 @@ export class AsciidocPreview {
 	    resource: this.resource.toString(),
 	    locked: this._locked,
 	    line: this.line,
-	    imageInfo: this.imageInfo
+	    imageInfo: this.imageInfo,
 	  };
 	}
 
@@ -288,7 +288,7 @@ export class AsciidocPreview {
 	  const root = path.join(this._contributions.extensionPath, 'media');
 	  return {
 	    light: vscode.Uri.file(path.join(root, 'Preview.svg')),
-	    dark: vscode.Uri.file(path.join(root, 'Preview_inverse.svg'))
+	    dark: vscode.Uri.file(path.join(root, 'Preview_inverse.svg')),
 	  };
 	}
 
@@ -319,7 +319,7 @@ export class AsciidocPreview {
 	    this.postMessage({
 	      type: 'updateView',
 	      line: topLine,
-	      source: resource.toString()
+	      source: resource.toString(),
 	    });
 	  }
 	}
@@ -364,7 +364,7 @@ export class AsciidocPreview {
 	  return {
 	    enableScripts: true,
 	    enableCommandUris: true,
-	    localResourceRoots: AsciidocPreview.getLocalResourceRoots(resource, contributions)
+	    localResourceRoots: AsciidocPreview.getLocalResourceRoots(resource, contributions),
 	  };
 	}
 

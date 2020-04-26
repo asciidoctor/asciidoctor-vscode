@@ -29,7 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   const selector: vscode.DocumentSelector = [
     { language: 'asciidoc', scheme: 'file' },
-    { language: 'asciidoc', scheme: 'untitled' }
+    { language: 'asciidoc', scheme: 'untitled' },
   ];
 
   const contentProvider = new AsciidocContentProvider(engine, context, cspArbiter, contributions, logger);

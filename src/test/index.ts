@@ -10,7 +10,7 @@ const suite = 'Integration Asciidoc Tests';
 const options: any = {
   ui: 'tdd',
   useColors: true,
-  timeout: 60000
+  timeout: 60000,
 };
 
 if (process.env.BUILD_ARTIFACTSTAGINGDIRECTORY) {
@@ -19,8 +19,8 @@ if (process.env.BUILD_ARTIFACTSTAGINGDIRECTORY) {
     reporterEnabled: 'spec, mocha-junit-reporter',
     mochaJunitReporterReporterOptions: {
       testsuitesTitle: `${suite} ${process.platform}`,
-      mochaFile: path.join(process.env.BUILD_ARTIFACTSTAGINGDIRECTORY, `test-results/${process.platform}-${suite.toLowerCase().replace(/[^\w]/g, '-')}-results.xml`)
-    }
+      mochaFile: path.join(process.env.BUILD_ARTIFACTSTAGINGDIRECTORY, `test-results/${process.platform}-${suite.toLowerCase().replace(/[^\w]/g, '-')}-results.xml`),
+    },
   };
 }
 

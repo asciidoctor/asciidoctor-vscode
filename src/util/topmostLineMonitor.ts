@@ -42,7 +42,7 @@ export class AsciidocFileTopmostLineMonitor {
 	      if (this.pendingUpdates.has(key)) {
 	        this._onDidChangeTopmostLineEmitter.fire({
 	          resource,
-	          line: this.pendingUpdates.get(key) as number
+	          line: this.pendingUpdates.get(key) as number,
 	        });
 	        this.pendingUpdates.delete(key);
 	      }

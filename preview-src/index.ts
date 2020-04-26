@@ -71,7 +71,7 @@ let updateImageSizes = throttle(() => {
       imageInfo.push({
         id: img.id,
         height: img.height,
-        width: img.width
+        width: img.width,
       });
     }
 

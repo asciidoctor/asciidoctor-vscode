@@ -16,7 +16,7 @@ interface ShowPreviewSettings {
 async function showPreview(
   webviewManager: AsciidocPreviewManager,
   uri: vscode.Uri | undefined,
-  previewSettings: ShowPreviewSettings,
+  previewSettings: ShowPreviewSettings
 ): Promise<any> {
   let resource = uri;
   if (!(resource instanceof vscode.Uri)) {
@@ -39,7 +39,7 @@ async function showPreview(
   webviewManager.preview(resource, {
     resourceColumn: resourceColumn,
     previewColumn: previewSettings.sideBySide ? resourceColumn + 1 : resourceColumn,
-    locked: !!previewSettings.locked
+    locked: !!previewSettings.locked,
   });
 
 }
@@ -48,14 +48,14 @@ export class ShowPreviewCommand implements Command {
 	public readonly id = 'asciidoc.showPreview';
 
 	public constructor(
-		private readonly webviewManager: AsciidocPreviewManager,
+		private readonly webviewManager: AsciidocPreviewManager
 	) { }
 
 	public execute(mainUri?: vscode.Uri, allUris?: vscode.Uri[], previewSettings?: PreviewSettings) {
 	  for (const uri of Array.isArray(allUris) ? allUris : [mainUri]) {
 	    showPreview(this.webviewManager, uri, {
 	      sideBySide: false,
-	      locked: previewSettings && previewSettings.locked
+	      locked: previewSettings && previewSettings.locked,
 	    });
 	  }
 	}
@@ -65,13 +65,13 @@ export class ShowPreviewToSideCommand implements Command {
 	public readonly id = 'asciidoc.showPreviewToSide';
 
 	public constructor(
-		private readonly webviewManager: AsciidocPreviewManager,
+		private readonly webviewManager: AsciidocPreviewManager
 	) { }
 
 	public execute(uri?: vscode.Uri, previewSettings?: PreviewSettings) {
 	  showPreview(this.webviewManager, uri, {
 	    sideBySide: true,
-	    locked: previewSettings && previewSettings.locked
+	    locked: previewSettings && previewSettings.locked,
 	  });
 	}
 }
@@ -81,13 +81,13 @@ export class ShowLockedPreviewToSideCommand implements Command {
 	public readonly id = 'asciidoc.showLockedPreviewToSide';
 
 	public constructor(
-		private readonly webviewManager: AsciidocPreviewManager,
+		private readonly webviewManager: AsciidocPreviewManager
 	) { }
 
 	public execute(uri?: vscode.Uri) {
 	  showPreview(this.webviewManager, uri, {
 	    sideBySide: true,
-	    locked: true
+	    locked: true,
 	  });
 	}
 }

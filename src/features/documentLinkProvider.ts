@@ -153,7 +153,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 
 	    out.set(reference, {
 	      link: link,
-	      linkRange: new vscode.Range(linkStart, linkEnd)
+	      linkRange: new vscode.Range(linkStart, linkEnd),
 	    });
 	  }
 	  return out;

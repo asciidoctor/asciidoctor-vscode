@@ -57,7 +57,7 @@ export class TableOfContentsProvider {
 	      level: section.getLevel(),
 	      line: section.getLineNumber()-1,
 	      location: new vscode.Location(document.uri, 
-						  	new vscode.Position(section.getLineNumber()-1, 1))
+						  	new vscode.Position(section.getLineNumber()-1, 1)),
 	    })
 	  })
 
@@ -76,7 +76,7 @@ export class TableOfContentsProvider {
 	      location: new vscode.Location(document.uri,
 	        new vscode.Range(
 	          entry.location.range.start,
-	          new vscode.Position(endLine, document.lineAt(endLine).range.end.character)))
+	          new vscode.Position(endLine, document.lineAt(endLine).range.end.character))),
 	    };
 	  });
 	}

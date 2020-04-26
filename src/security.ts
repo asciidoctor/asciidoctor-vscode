@@ -124,13 +124,13 @@ export class PreviewSecuritySelector {
 		    }, {
 		      type: 'moreinfo',
 		      label: localize('moreInfo.title', 'More Information'),
-		      description: ''
+		      description: '',
 		    }, {
 		      type: 'toggle',
 		      label: this.cspArbiter.shouldDisableSecurityWarnings()
 		        ? localize('enableSecurityWarning.title', "Enable preview security warnings in this workspace")
 		        : localize('disableSecurityWarning.title', "Disable preview security warning in this workspace"),
-		      description: localize('toggleSecurityWarning.description', 'Does not affect the content security level')
+		      description: localize('toggleSecurityWarning.description', 'Does not affect the content security level'),
 		    },
 		  ], {
 		    placeHolder: localize(
