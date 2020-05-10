@@ -14,24 +14,24 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
     filename: 'extension.js',
     libraryTarget: 'commonjs2',
-    devtoolModuleFilenameTemplate: '../[resource-path]'
+    devtoolModuleFilenameTemplate: '../[resource-path]',
   },
   devtool: 'source-map',
   externals: {
     vscode: 'commonjs vscode', // the vscode-module is created on-the-fly and must be excluded.
     'asciidoctor-opal-runtime': 'asciidoctor-opal-runtime',
-    '@asciidoctor/core': '@asciidoctor/core'
+    '@asciidoctor/core': '@asciidoctor/core',
   },  
-	resolve: {
-		extensions: ['.tsx', '.ts', '.js']
-	},
-	module: {
-		rules: [
-			{
-				test: /\.tsx?$/,
-				use: 'ts-loader',
-				exclude: /node_modules/
-			}
-		]
-	},
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
+  },
+  module: {
+    rules: [
+      {
+        test: /\.tsx?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
 };

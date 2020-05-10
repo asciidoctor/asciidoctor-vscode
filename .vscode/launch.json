@@ -7,7 +7,6 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
-			// was "preLaunchTask": "npm",
 			"preLaunchTask": "build:tsc",
 			"args": [
 				"--extensionDevelopmentPath=${workspaceRoot}",
@@ -16,7 +15,6 @@
 			"outFiles": ["${workspaceFolder}/out/src/**/*.js"],
 			"stopOnEntry": false,
 			"sourceMaps": true,
-			// "trace": true
 		},
 		{
 			"name": "Launch Tests",

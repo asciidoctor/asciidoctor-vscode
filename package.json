@@ -437,20 +437,17 @@
 		]
 	},
 	"scripts": {
-		"build-preview-old": "webpack --mode development",
-		"build-preview-old": "npm run webpack-app && npm run webpack-preview",
-		"compile": "tsc -watch -p ./ && npm run build-preview",
-		"vscode:prepublish": "npm run lint && tsc -p ./ && npm run build-preview",
-		"vscode:prepublish-new": "npm run webpack-app && npm run webpack-preview",
-		"watch": "npm run build-preview && tsc -watch -p ./",
-		"lint": "eslint src/**/*.ts src-preview/**/*.ts` test/**/*.ts --format unix",
+		"compile": "npm run webpack-preview && tsc -watch -p ./",
+		"vscode:prepublish": "npm run lint && npm run webpack",
+		"watch": "npm run webpack-preview-dev && tsc -watch -p ./",
+		"lint": "eslint src/**/*.ts src-preview/**/*.ts test/**/*.ts --format unix",
 		"lint:fix": "eslint --fix src/**/*.ts src-preview/**/*.ts test/**/*.ts --format unix",
+		"webpack": "npm run webpack-app && npm run webpack-preview",
 		"webpack-app": "webpack --mode production --config webpack.config.app.js",
 		"webpack-app-dev": "webpack --mode development --watch --config webpack.config.app.js",
 		"webpack-preview": "webpack --mode production --config webpack.config.preview.js",
 		"webpack-preview-dev": "webpack --config webpack.config.preview.js --mode development",
-		"test": "node ./node_modules/vscode/bin/test",
-		"test-compile": "tsc -p ./"
+		"test": "node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {
 		"@types/highlight.js": "9.1.10",
