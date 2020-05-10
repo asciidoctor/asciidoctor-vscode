@@ -21,6 +21,7 @@ module.exports = {
     vscode: 'commonjs vscode', // the vscode-module is created on-the-fly and must be excluded.
     'asciidoctor-opal-runtime': 'asciidoctor-opal-runtime',
     '@asciidoctor/core': '@asciidoctor/core',
+    '@asciidoctor/docbook-converter': '@asciidoctor/docbook-converter',
   },  
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
