@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import * as path from "path";
 import { spawn } from "child_process";
 import { isNullOrUndefined } from 'util';
-import * as npm_which from "npm-which";
 
 const fileUrl = require('file-url');
 
