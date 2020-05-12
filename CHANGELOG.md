@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.7.16
+
+* Update asciidoctor-kroki to 0.8.2 
+* Remove asciidoctor-plantuml extension as it is out of maintenance. Replaced now with asciidoctor-kroki (see #308)
+* Add CI to provide linting 
+
 ## 2.7.15
 
 * Align the "Export to PDF" to the "Save as HTML" (closes #298)
