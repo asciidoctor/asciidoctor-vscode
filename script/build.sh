@@ -62,6 +62,7 @@ npm_global_deps() {
 package() {
   echo "==> Packaging extension"
   rm -f *.vsix
+  rm -rf dist/
   rm -rf out/
   vsce package || exitdialog
 }

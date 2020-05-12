@@ -17,7 +17,8 @@
         "webview"
     ],
     "files.watcherExclude": {
-        "out/**": true
+        "out/**": true,
+        "dist/**": true
     },
     "spellright.documentTypes": [
     ],

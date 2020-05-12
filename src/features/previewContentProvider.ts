@@ -80,20 +80,20 @@ export class AsciidocContentProvider {
 					data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}"
 					data-strings="${JSON.stringify(previewStrings).replace(/"/g, '&quot;')}"
 					data-state="${JSON.stringify(state || {}).replace(/"/g, '&quot;')}">
-				<script src="${this.extensionResourcePath('pre.js')}" nonce="${nonce}"></script>
+				<script src="${this.extensionScriptPath('pre.js')}" nonce="${nonce}"></script>
 				${this.getStyles(sourceUri, nonce, config, state)}
 				<base href="${asciidocDocument.uri.with({ scheme: 'vscode-resource' }).toString(true)}">
 			</head>
 			<body class="${bodyClassesVal} vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.markEditorSelection ? 'showEditorSelection' : ''}">
 				${body}
 				<div class="code-line" data-line="${asciidocDocument.lineCount}"></div>
-				<script async src="${this.extensionResourcePath('index.js')}" nonce="${nonce}" charset="UTF-8"></script>
+				<script async src="${this.extensionScriptPath('index.js')}" nonce="${nonce}" charset="UTF-8"></script>
 			</body>
 			</html>`;
   }
 
-  private extensionResourcePath(mediaFile: string): string {
-    return vscode.Uri.file(this.context.asAbsolutePath(path.join('media', mediaFile)))
+  private extensionScriptPath(mediaFile: string): string {
+    return vscode.Uri.file(this.context.asAbsolutePath(path.join('dist', 'src-preview', mediaFile)))
       .with({ scheme: 'vscode-resource' })
       .toString();
   }

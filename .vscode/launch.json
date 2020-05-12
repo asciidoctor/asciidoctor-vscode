@@ -7,22 +7,33 @@
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
-			"args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
+			"preLaunchTask": "build:tsc",
+			"args": [
+				"--extensionDevelopmentPath=${workspaceRoot}",
+				"--disable-extensions" 
+			],
+			"outFiles": ["${workspaceFolder}/out/src/**/*.js"],
 			"stopOnEntry": false,
 			"sourceMaps": true,
-            "outFiles": [ "${workspaceRoot}/out/src/**/*.js" ],
-			"preLaunchTask": "npm"
 		},
 		{
 			"name": "Launch Tests",
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
-			"args": ["--extensionDevelopmentPath=${workspaceRoot}", "--extensionTestsPath=${workspaceRoot}/out/test" ],
+			"args": ["--extensionDevelopmentPath=${workspaceRoot}", "--extensionTestsPath=${workspaceRoot}/dist/test" ],
 			"stopOnEntry": false,
 			"sourceMaps": true,
-            "outFiles": [ "${workspaceRoot}/out/test/**/*.js" ],
+			"outFiles": [ 
+				"${workspaceRoot}/out/src/**/*.js",
+			 ],
 			"preLaunchTask": "npm"
-		}
+		},
+		{
+			"name": "Attach to Process",
+			"type": "node",
+			"request": "attach",
+			"processId": "${command:PickProcess}"
+		  }
 	]
 }
