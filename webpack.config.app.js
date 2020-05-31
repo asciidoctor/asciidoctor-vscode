@@ -22,9 +22,12 @@ module.exports = {
     'asciidoctor-opal-runtime': 'asciidoctor-opal-runtime',
     '@asciidoctor/core': '@asciidoctor/core',
     '@asciidoctor/docbook-converter': '@asciidoctor/docbook-converter',
-  },  
+  },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+  },
+  node: {
+    __dirname: false,
   },
   module: {
     rules: [
