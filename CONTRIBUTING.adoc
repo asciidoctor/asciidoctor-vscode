@@ -18,7 +18,7 @@ This can be updated manually using the following process:
 [source,bash,subs=attributes+]
 curl {uri-atom-textmate-language-raw} | cson2json > ./syntaxes/Asciidoctor.json
 
-. Now manually edit and change the scope name from: 
+. Now manually edit and change the scope name from:
 +
 [source,json]
 "scopeName": "source.asciidoc",
@@ -31,5 +31,3 @@ to
 Because this package has diverged slightly from upstream it may be best to cherry-pick commits after the original conversion or do before/after comparisons and account for each change.
 
 Where possible it is recommended to do PRs upstream and then use that result here.
-
-

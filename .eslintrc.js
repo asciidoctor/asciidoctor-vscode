@@ -7,8 +7,8 @@ module.exports = {
     "sourceType": "module"
   },
   "extends": [
-//    "eslint:recommended",
-//    "plugin:@typescript-eslint/recommended",
+    //    "eslint:recommended",
+    //    "plugin:@typescript-eslint/recommended",
   ],
   "rules": {
     "arrow-parens": ["error", "always"],
@@ -24,7 +24,7 @@ module.exports = {
       "ignoreUrls": true,
       "ignoreTemplateLiterals": true
     }],
-    "indent": ["error", 2],
+    //"indent": ["error", 4],
     "spaced-comment": "off"
   }
 };

@@ -43,7 +43,7 @@ export class AsciidocContentProvider {
 		private readonly logger: Logger
   ) { }
 
-  public async provideTextDocumentContent(
+  public async providePreviewHTML(
     asciidocDocument: vscode.TextDocument,
     previewConfigurations: AsciidocPreviewConfigurationManager,
     initialLine: number | undefined = undefined,
@@ -61,7 +61,7 @@ export class AsciidocContentProvider {
       disableSecurityWarnings: this.cspArbiter.shouldDisableSecurityWarnings(),
     };
 
-    this.logger.log('provideTextDocumentContent', initialData);
+    this.logger.log('providePreviewHTML', initialData);
 
     // Content Security Policy
     const nonce = new Date().getTime() + '' + new Date().getMilliseconds();
