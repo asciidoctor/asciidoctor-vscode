@@ -28,25 +28,17 @@ export class ExportAsPDF implements Command {
 
       const doc = editor.document
       const text = doc.getText()
+      const docPath = path.parse(path.resolve(doc.fileName))
+
+      var pdfPath = ''
+
+      if (doc.isUntitled) {
+        pdfPath = path.join(docPath.root, docPath.dir, "untitled.pdf")
+      } else {
+        pdfPath = path.join(docPath.root, docPath.dir, docPath.name+".pdf")
+      }
 
       if (vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctorpdf')) {
-        var docPath = path.parse(path.resolve(doc.fileName))
-        var pdfPath = ''
-
-        if (doc.isUntitled) {
-          pdfPath = path.join(docPath.root, docPath.dir, "temp.pdf")
-        } else {
-          pdfPath = path.join(docPath.root, docPath.dir, docPath.name+".pdf")
-        }
-
-        var pdfUri = await vscode.window.showSaveDialog({ defaultUri: vscode.Uri.file(pdfPath) })
-        if (!isNullOrUndefined(pdfUri)) {
-          pdfPath = pdfUri.fsPath
-        } else {
-          console.error(`ERROR: invalid pdfUri "${pdfUri}"`)
-          return
-        }
-
         let asciidoctorpdf_command = vscode.workspace
           .getConfiguration('asciidoc', null)
           .get('asciidoctorpdf_command', 'asciidoctor-pdf')
@@ -171,15 +163,12 @@ export class ExportAsPDF implements Command {
           if(isNullOrUndefined(binary_path))
             return;
         }
-        var save_filename = await vscode.window.showSaveDialog({ defaultUri: pdf_filename})
-        if(!isNullOrUndefined(save_filename)) {
-          html2pdf(html, binary_path, cover, footer_center, save_filename.fsPath)
-            .then((result) => { offer_open(result) })
-            .catch((reason) => {
-              console.error("Got error", reason)
-              vscode.window.showErrorMessage("Error converting to PDF, "+reason.toString());
-            })
-        }
+        await html2pdf(html, binary_path, cover, footer_center, pdfPath)
+          .then((result) => { offer_open(result) })
+          .catch((reason) => {
+            console.error("Got error", reason)
+            vscode.window.showErrorMessage("Error converting to PDF, "+reason.toString());
+          })
       }
     }
 }

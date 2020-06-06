@@ -2,6 +2,7 @@
 
 ## 2.7.15
 
+* Align the "Export to PDF" to the "Save as HTML" (closes #298)
 * Support URI encoded characters in anchors links (closes #281)
 * Add env-vscode attribute to detect vs code environment (closes #280)
 

@@ -59,7 +59,7 @@ export class SaveHTML implements Command {
                 break;
               }
             }
-          });    
+          });
       });
     }
 }
