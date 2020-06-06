@@ -196,14 +196,15 @@ async function download_file(download_url: string, filename: string, progress)
     var download_options = url.parse(download_url);
     var wstream = fs.createWriteStream(filename)
     var totalDownloaded = 0;
-    var proxy = process.env.http_proxy || vscode.workspace.getConfiguration("http", null)["proxy"].trim();
-    var proxyStrictSSL = vscode.workspace.getConfiguration("http", null)["proxyStrictSSL"];
-    if (proxy != '')
-    {
-      var agent = new HttpsProxyAgent(proxy);
-      download_options.agent = agent
-      download_options.rejectUnauthorized = proxyStrictSSL
-    }
+    // Proxy support needs to be reworked
+    // var proxy = process.env.http_proxy || vscode.workspace.getConfiguration("http", null)["proxy"].trim();
+    // var proxyStrictSSL = vscode.workspace.getConfiguration("http", null)["proxyStrictSSL"];
+    // if (proxy != '')
+    // {
+    //   var agent = new HttpsProxyAgent(proxy);
+    //   download_options.agent = agent
+    //   download_options.rejectUnauthorized = proxyStrictSSL
+    // }
     https.get(download_options, (resp) =>
     {
       const contentSize = resp.headers['content-length'];
