@@ -56,6 +56,12 @@ export class AsciidocParser {
         const use_editor_stylesheet = vscode.workspace.getConfiguration('asciidoc', null).get('preview.useEditorStyle', false);
         const preview_attributes = vscode.workspace.getConfiguration('asciidoc', null).get('preview.attributes', {});
         const preview_style = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', "");
+        const useWorkspaceAsBaseDir = vscode.workspace.getConfiguration('asciidoc', null).get('useWorkspaceRoot');
+        
+        let base_dir = documentPath;
+        if (useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined') {
+          base_dir = vscode.workspace.rootPath;
+        }
 
         var attributes = {};
 
@@ -103,7 +109,7 @@ export class AsciidocParser {
           attributes: attributes,
           header_footer: true,
           to_file: false,
-          base_dir: documentPath,
+          base_dir: base_dir,
           sourcemap: true,
           backend: backend,
         }
@@ -133,7 +139,13 @@ export class AsciidocParser {
       const use_editor_stylesheet = vscode.workspace.getConfiguration('asciidoc', null).get('preview.useEditorStyle', false);
       const preview_attributes = vscode.workspace.getConfiguration('asciidoc', null).get('preview.attributes', {});
       const preview_style = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', "");
+      const useWorkspaceAsBaseDir = vscode.workspace.getConfiguration('asciidoc', null).get('useWorkspaceRoot');
       this.document = null;
+
+      let base_dir = documentPath;
+      if (useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined') {
+        base_dir = vscode.workspace.rootPath.replace('"', '\\"');
+      }
 
       return new Promise<string>((resolve) => {
         let asciidoctor_command = vscode.workspace.getConfiguration('asciidoc', null).get('asciidoctor_command', 'asciidoctor');
@@ -198,7 +210,7 @@ export class AsciidocParser {
 
         adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', 'env-vscode'])
 
-        adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-B', '"' + documentPath + '"', '-o', '-', '-'])
+        adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-B', '"' + base_dir + '"', '-o', '-', '-'])
         var asciidoctor = spawn(adoc_cmd, adoc_cmd_args, options);
 
         asciidoctor.stderr.on('data', (data) => {
