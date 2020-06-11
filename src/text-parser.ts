@@ -33,8 +33,8 @@ export class AsciidocParser {
     public document = null;
     private ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
     private stylesdir = path.join(this.ext_path, 'media')
-
-    constructor(private readonly filename: string) {
+    
+    constructor(private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) {
     }
 
     public getAttribute(name: string) {
@@ -62,6 +62,12 @@ export class AsciidocParser {
         if (useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined') {
           base_dir = vscode.workspace.rootPath;
         }
+        if(this.errorCollection) {
+          this.errorCollection.clear();
+        }
+        
+        const memoryLogger = asciidoctor.MemoryLogger.create();
+        asciidoctor.LoggerManager.setLogger(memoryLogger);
 
         var attributes = {};
 
@@ -122,6 +128,31 @@ export class AsciidocParser {
           })
           let resultHTML = ascii_doc.convert(options);
           //let result = this.fixLinks(resultHTML);
+          let diagnostics = [];
+          memoryLogger.getMessages().forEach(error => {
+            let source = error.getSourceLocation();
+            let lineno = 1;
+            if(source) {
+              lineno = source.lineno;
+            }
+            //console.log(error.getSeverity()+": "+error.getText()+" - "+doc.fileName+" Line: "+lineno)
+            let canonicalFile = doc.fileName;
+            let errorLine = doc.lineAt(lineno-1);
+            let range = new vscode.Range(errorLine.range.start, errorLine.range.end);
+            const asciidocSeverity = error.getSeverity();
+            let severity = vscode.DiagnosticSeverity.Information;
+            if (asciidocSeverity=="WARN") {
+               severity = vscode.DiagnosticSeverity.Warning
+            } else if (asciidocSeverity=="ERROR") {
+              severity = vscode.DiagnosticSeverity.Error
+            } else if (asciidocSeverity=="DEBUG") {
+              severity = vscode.DiagnosticSeverity.Information
+            }
+            diagnostics.push(new vscode.Diagnostic(range, error.getText(), severity));
+          });
+          if(this.errorCollection) {
+            this.errorCollection.set(vscode.Uri.parse(doc.fileName), diagnostics);
+          }
           resolve(resultHTML);
         }
         catch(e) {
