@@ -53,8 +53,8 @@ npm_global_deps() {
   npm list -g vsce &>/dev/null || deps+=("vsce")
   npm list -g typescript &>/dev/null || deps+=("typescript")
   if [[ -n $deps ]] ; then
-    echo "==> Installing global dependencies [needs sudo]"
-    sudo npm install -g ${deps[@]} || exitdialog $?
+    echo "==> Installing global dependencies"
+    npm install -g ${deps[@]} || exitdialog $?
   fi
 }
 
