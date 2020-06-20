@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.17
+
+* Add "vsce" as a development dependency
+
 ## 2.7.16
 
 * Update asciidoctor-kroki to 0.9.1

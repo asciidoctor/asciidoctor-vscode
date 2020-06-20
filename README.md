@@ -178,7 +178,7 @@ git clone https://github.com/asciidoctor/asciidoctor-vscode
 cd asciidoctor-vscode
 npm install
 sudo npm install -g vsce typescript
-vsce package
+node_modules/vsce/out/vsce package
 code --install-extension *.vsix
 ```
 
