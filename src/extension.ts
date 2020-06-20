@@ -26,6 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
   const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
   const engine = new AsciidocEngine(contributions, githubSlugifier);
   const logger = new Logger();
+  logger.log("Extension was started");
 
   const selector: vscode.DocumentSelector = [
     { language: 'asciidoc', scheme: 'file' },

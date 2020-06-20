@@ -2,13 +2,13 @@
 **/*.vsix
 **/*.pdf
 .vscode
-node_modules
 !node_modules/@asciidoctor
 !node_modules/asciidoctor-opal-runtime
 !node_modules/balanced-match
 !node_modules/brace-expansion
 !node_modules/concat-map
 !node_modules/fs.realpath
+!node_modules/follow-redirects
 !node_modules/glob
 !node_modules/inflight
 !node_modules/inherits
