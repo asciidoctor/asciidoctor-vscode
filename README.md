@@ -229,17 +229,20 @@ If you want to update the readme, you are free to fix typos, errors, add or impr
 
 All the following people who have contributed to the extension:
 
-<!-- This list is generated using (on linux) a command something like: 
+<!-- This list is generated using (on linux) a command something like:
 
     git log --format='%aN' | sort -u | awk '{print "* "$0}' | uniq
 
 -->
 
 * Achille Lacoin
+* Andre Bossert
 * Bart Sokol
 * chriskoerner
+* cirrusj
 * Dan Allen
 * Daniel Mulholland
+* danyill
 * Garrett D'Amore
 * Gigacee
 * Guillaume Grossetie
@@ -249,7 +252,9 @@ All the following people who have contributed to the extension:
 * Johannes Rössel
 * Joshua Stafman
 * Kevin Palmowski
-* Loïc PÉRON
+* larshp
+* Lars Hvam
+* Loïc PÉRON
 * Marcelo Alvim
 * Mark Roszko
 * Masanori Asano

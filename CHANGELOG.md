@@ -3,9 +3,11 @@
 ## 2.7.16
 
 * Update asciidoctor-kroki to 0.9.1
-* Remove asciidoctor-plantuml extension as it is out of maintenance. Replaced now with asciidoctor-kroki (see #308). As part of this remove special treatment of mermaid diagrams.
+* Remove asciidoctor-plantuml «out of maintenance» (closes #308)
 * Add CI to provide linting
-* Update webpack configuration and restructure preview and app folders (see #276)
+* Update webpack configuration and restructure preview and app folders (closes #276)
+* Added the ability to use the workspace path as the base_dir (closes #326)
+* Added eslint validation (closes #290)
 
 ## 2.7.15
 
