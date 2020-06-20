@@ -42,5 +42,6 @@
 	"asciidoc.forceUnixStyleSeparator.desc": "Force set the file separator style to unix style. If set false, separator style will follow the system style.",
 	"asciidoc.preview.openAsciiDocLinks.desc": "How should clicking on links to AsciiDoc files be handled in the preview.",
 	"asciidoc.preview.openAsciiDocLinks.inEditor": "Try to open links in the editor",
-	"asciidoc.preview.openAsciiDocLinks.inPreview": "Try to open links in the the AsciiDoc preview"
+	"asciidoc.preview.openAsciiDocLinks.inPreview": "Try to open links in the the AsciiDoc preview",
+	"asciidoc.useWorkspaceRoot.desc": "When in a workspace, use the workspace root path as the base dir."
 }

@@ -420,6 +420,11 @@
 						"%asciidoc.saveDocbook.docbookVersion.docbook5%",
 						"%asciidoc.saveDocbook.docbookVersion.docbook45%"
 					]
+				},
+				"asciidoc.useWorkspaceRoot": {
+					"type": "boolean",
+					"default": false,
+					"description": "%asciidoc.useWorkspaceRoot.desc%"
 				}
 			}
 		},
