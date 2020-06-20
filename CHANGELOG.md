@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2.7.16
+
+* Update asciidoctor-kroki to 0.9.1
+* Remove asciidoctor-plantuml extension as it is out of maintenance. Replaced now with asciidoctor-kroki (see #308). As part of this remove special treatment of mermaid diagrams.
+* Add CI to provide linting
+* Update webpack configuration and restructure preview and app folders (see #276)
+
 ## 2.7.15
 
 * Align the "Export to PDF" to the "Save as HTML" (closes #298)

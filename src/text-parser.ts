@@ -7,26 +7,11 @@ const fileUrl = require('file-url');
 
 const asciidoctor = require('@asciidoctor/core')()
 const docbook = require('@asciidoctor/docbook-converter')
-const plantuml = require('asciidoctor-plantuml');
 const kroki = require('asciidoctor-kroki')
 
-plantuml.register(asciidoctor.Extensions);
 const use_kroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki');
 if (use_kroki)
   kroki.register(asciidoctor.Extensions);
-
-asciidoctor.Extensions.register(function () {
-  this.block(function () {
-    const self = this;
-    self.named('mermaid');
-    self.onContext('literal');
-    self.process(function (parent, reader, attrs) {
-      const txt = reader.getString();
-      const html = `<div class="mermaid">${txt}</div>`
-      return self.createBlock(parent, 'pass', html);
-    });
-  });
-});
 
 export class AsciidocParser {
     public html: string = '';
