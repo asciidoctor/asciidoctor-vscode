@@ -93,7 +93,7 @@ export class AsciidocContentProvider {
   }
 
   private extensionScriptPath(mediaFile: string): string {
-    return vscode.Uri.file(this.context.asAbsolutePath(path.join('dist', 'src-preview', mediaFile)))
+    return vscode.Uri.file(this.context.asAbsolutePath(path.join('dist', mediaFile)))
       .with({ scheme: 'vscode-resource' })
       .toString();
   }

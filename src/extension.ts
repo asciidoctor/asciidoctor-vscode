@@ -29,6 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   const engine = new AsciidocEngine(contributions, githubSlugifier, errorCollection);
   const logger = new Logger();
+  logger.log("Extension was started");
 
   const selector: vscode.DocumentSelector = [
     { language: 'asciidoc', scheme: 'file' },

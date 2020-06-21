@@ -144,6 +144,31 @@ This is for vscode only
 endif::[]
 ```
 
+## Diagram Integration
+
+This extension supports a wide range of diagrams from BPMN to Graphviz to PlantUML and Vega graphs using [kroki](https://kroki.io/) and [asciidoctor-kroki](https://github.com/Mogztter/asciidoctor-kroki).
+
+You can [see the full range](https://kroki.io/#support) on the kroki website.
+
+Note that this extension will send graph information to https://kroki.io. If this is an issue it is also possible to use your own kroki instance (see [the instructions](https://github.com/Mogztter/asciidoctor-kroki#using-your-own-kroki) for further information).
+
+To enable diagram support, set the `use_kroki` parameter in your User Settings to `true`.
+
+To cache and save diagrams locally set the `kroki-fetch-diagram` attribute in your document header:
+
+```asciidoc
+= My Amazing Document
+:kroki-fetch-diagram:
+```
+
+This will store images by default in your document folder, however you may also set `imagesdir` to store them elsewhere:
+
+```asciidoc
+= My Amazing Document
+:kroki-fetch-diagram:
+:imagesdir: media
+```
+
 ## Build and Install from Source
 
 ### Manual
@@ -153,7 +178,7 @@ git clone https://github.com/asciidoctor/asciidoctor-vscode
 cd asciidoctor-vscode
 npm install
 sudo npm install -g vsce typescript
-vsce package
+node_modules/vsce/out/vsce package
 code --install-extension *.vsix
 ```
 
@@ -204,17 +229,20 @@ If you want to update the readme, you are free to fix typos, errors, add or impr
 
 All the following people who have contributed to the extension:
 
-<!-- This list is generated using (on linux) a command something like: 
+<!-- This list is generated using (on linux) a command something like:
 
     git log --format='%aN' | sort -u | awk '{print "* "$0}' | uniq
 
 -->
 
 * Achille Lacoin
+* Andre Bossert
 * Bart Sokol
 * chriskoerner
+* cirrusj
 * Dan Allen
 * Daniel Mulholland
+* danyill
 * Garrett D'Amore
 * Gigacee
 * Guillaume Grossetie
@@ -224,7 +252,9 @@ All the following people who have contributed to the extension:
 * Johannes Rössel
 * Joshua Stafman
 * Kevin Palmowski
-* Loïc PÉRON
+* larshp
+* Lars Hvam
+* Loïc PÉRON
 * Marcelo Alvim
 * Mark Roszko
 * Masanori Asano
