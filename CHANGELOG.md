@@ -1,5 +1,18 @@
 # CHANGELOG
 
+## 2.7.17
+
+* Add "vsce" as a development dependency
+
+## 2.7.16
+
+* Update asciidoctor-kroki to 0.9.1
+* Remove asciidoctor-plantuml «out of maintenance» (closes #308)
+* Add CI to provide linting
+* Update webpack configuration and restructure preview and app folders (closes #276)
+* Added the ability to use the workspace path as the base_dir (closes #326)
+* Added eslint validation (closes #290)
+
 ## 2.7.15
 
 * Align the "Export to PDF" to the "Save as HTML" (closes #298)

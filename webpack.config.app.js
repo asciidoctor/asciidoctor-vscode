@@ -11,7 +11,7 @@ module.exports = {
   target: 'node',
   entry: './src/extension.ts',
   output: {
-    path: path.resolve(__dirname, 'dist/src'),
+    path: path.resolve(__dirname, 'dist'),
     filename: 'extension.js',
     libraryTarget: 'commonjs2',
     devtoolModuleFilenameTemplate: '../[resource-path]',
@@ -22,6 +22,18 @@ module.exports = {
     'asciidoctor-opal-runtime': 'asciidoctor-opal-runtime',
     '@asciidoctor/core': '@asciidoctor/core',
     '@asciidoctor/docbook-converter': '@asciidoctor/docbook-converter',
+    'balanced-match': 'balanced-match',
+    'brace-expansion': 'brace-expansion',
+    'concat-map': 'concat-map',
+    'docbook': '@asciidoctor/docbook-converter',
+    'fs.realpath': 'fs.realpath',
+    'inflight': 'inflight',
+    'inherits': 'inherits',
+    'minimatch': 'minimatch',
+    'once': 'once',
+    'path-is-absolute': 'path-is-absolute',
+    'unxhr': 'unxhr',
+    'wrappy': 'wrappy'
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],

@@ -381,7 +381,6 @@ export class AsciidocPreview
   private async doUpdate(): Promise<void>
   {
     var d = Date().toString();
-    console.log(d + "- Refreshing preview");
     const resource = this._resource;
 
     clearTimeout(this.throttleTimer);

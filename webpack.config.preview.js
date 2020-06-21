@@ -23,6 +23,6 @@ module.exports = {
   devtool: 'inline-source-map',
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'dist/src-preview'),
+    path: path.resolve(__dirname, 'dist'),
   },
 };
