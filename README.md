@@ -177,12 +177,9 @@ This will store images by default in your document folder, however you may also 
 git clone https://github.com/asciidoctor/asciidoctor-vscode
 cd asciidoctor-vscode
 npm install
-npm install typescript
 node_modules/vsce/out/vsce package
 code --install-extension *.vsix
 ```
-
-**WARNING**: In Windows you cannot use `sudo`, use `npm install -g`.
 
 ### Script
 

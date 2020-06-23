@@ -442,9 +442,9 @@
 		]
 	},
 	"scripts": {
-		"compile": "npm run webpack-preview && tsc -watch -p ./",
+		"compile": "npm run webpack-preview && node_modules/typescript/bin/tsc -watch -p ./",
 		"vscode:prepublish": "npm run lint && npm run webpack",
-		"watch": "npm run webpack-preview-dev && tsc -watch -p ./",
+		"watch": "npm run webpack-preview-dev && node_modules/typescript/bin/tsc -watch -p ./",
 		"lint": "eslint src/**/*.ts src-preview/**/*.ts test/**/*.ts --format unix",
 		"lint:fix": "eslint --fix src/**/*.ts src-preview/**/*.ts test/**/*.ts --format unix",
 		"webpack": "npm run webpack-preview",
@@ -466,7 +466,8 @@
 		"mocha-junit-reporter": "^1.23.3",
 		"mocha-multi-reporters": "^1.1.7",
 		"ts-loader": "^4.0.1",
-		"vsce": "^1.73.0",
+		"typescript": "^3.9.5",
+		"vsce": "^1.77.0",
 		"webpack": "^4.41.5",
 		"webpack-cli": "^3.1.1"
 	},
