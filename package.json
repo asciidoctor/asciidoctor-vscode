@@ -447,9 +447,7 @@
 		"watch": "npm run webpack-preview-dev && tsc -watch -p ./",
 		"lint": "eslint src/**/*.ts src-preview/**/*.ts test/**/*.ts --format unix",
 		"lint:fix": "eslint --fix src/**/*.ts src-preview/**/*.ts test/**/*.ts --format unix",
-		"webpack": "npm run webpack-app && npm run webpack-preview",
-		"webpack-app": "webpack --mode production --config webpack.config.app.js",
-		"webpack-app-dev": "webpack --mode development --watch --config webpack.config.app.js",
+		"webpack": "npm run webpack-preview",
 		"webpack-preview": "webpack --mode production --config webpack.config.preview.js",
 		"webpack-preview-dev": "webpack --config webpack.config.preview.js --mode development",
 		"test": "node ./node_modules/vscode/bin/test"
@@ -468,10 +466,9 @@
 		"mocha-junit-reporter": "^1.23.3",
 		"mocha-multi-reporters": "^1.1.7",
 		"ts-loader": "^4.0.1",
-		"typescript": "^3.8.3",
+		"vsce": "^1.73.0",
 		"webpack": "^4.41.5",
-		"webpack-cli": "^3.1.1",
-		"vsce": "^1.73.0"
+		"webpack-cli": "^3.1.1"
 	},
 	"dependencies": {
 		"@asciidoctor/core": "2.1.0",
