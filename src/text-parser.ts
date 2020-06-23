@@ -18,8 +18,8 @@ export class AsciidocParser {
     public document = null;
     private ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
     private stylesdir = path.join(this.ext_path, 'media')
-
-    constructor(private readonly filename: string) {
+    
+    constructor(private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) {
     }
 
     public getAttribute(name: string) {
@@ -42,11 +42,18 @@ export class AsciidocParser {
         const preview_attributes = vscode.workspace.getConfiguration('asciidoc', null).get('preview.attributes', {});
         const preview_style = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', "");
         const useWorkspaceAsBaseDir = vscode.workspace.getConfiguration('asciidoc', null).get('useWorkspaceRoot');
+        const enableErrorDiagnostics = vscode.workspace.getConfiguration('asciidoc', null).get('enableErrorDiagnostics');
         
         let base_dir = documentPath;
         if (useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined') {
           base_dir = vscode.workspace.rootPath;
         }
+        if(this.errorCollection) {
+          this.errorCollection.clear();
+        }
+        
+        const memoryLogger = asciidoctor.MemoryLogger.create();
+        asciidoctor.LoggerManager.setLogger(memoryLogger);
 
         var attributes = {};
 
@@ -107,6 +114,66 @@ export class AsciidocParser {
           })
           let resultHTML = ascii_doc.convert(options);
           //let result = this.fixLinks(resultHTML);
+          if (enableErrorDiagnostics) {
+            let diagnostics = [];
+            memoryLogger.getMessages().forEach(error => {
+              //console.log(error); //Error from asciidoctor.js
+              let errorMessage = error.message.text;
+              let sourceLine = 0;
+              let relatedFile = null;
+              let relatedLine = 0;
+              let diagnosticSource = "asciidoctor.js";
+              let sourceRange = null;
+              if (error.message.source_location) { //There is a source location
+                if (error.message.source_location.path == "<stdin>") { //error is within the file we are parsing
+                  sourceLine = error.message.source_location.lineno - 1;
+                  sourceRange = doc.lineAt(sourceLine).range;
+                } else { //error is coming from an included file
+                  relatedFile = error.message.source_location.file;
+                  relatedLine = error.message.source_location.lineno - 1;
+                  //try to find the include responsible from the info provided by asciidoctor.js
+                  sourceLine = doc.getText().split('\n').indexOf(doc.getText().split('\n').find(str => str.startsWith("include") && str.includes(error.message.source_location.path)));
+                  if (sourceLine!=-1) {
+                    sourceRange = doc.lineAt(sourceLine).range;
+                  } else {
+                    sourceRange = doc.lineAt(0).range;
+                  }
+                }
+              } else {
+                // generic error (e.g. :source-highlighter: coderay)
+                errorMessage = error.message;
+              }
+              let severity = vscode.DiagnosticSeverity.Information;
+              if (error.severity=="WARN") {
+                severity = vscode.DiagnosticSeverity.Warning
+              } else if (error.severity=="ERROR") {
+                severity = vscode.DiagnosticSeverity.Error
+              } else if (error.severity=="DEBUG") {
+                severity = vscode.DiagnosticSeverity.Information
+              }
+              let diagnosticRelated = null;
+              if(relatedFile) {
+                diagnosticRelated = [
+                  new vscode.DiagnosticRelatedInformation(
+                    new vscode.Location(vscode.Uri.file(relatedFile),
+                    new vscode.Position(0,0)
+                    ),
+                    errorMessage
+                  )
+                ]
+                errorMessage = "There was an error in an included file";
+              }
+              var diagnosticError = new vscode.Diagnostic(sourceRange, errorMessage, severity);
+              diagnosticError.source = diagnosticSource;
+              if (diagnosticRelated) {
+                diagnosticError.relatedInformation = diagnosticRelated;
+              }
+              diagnostics.push(diagnosticError);
+            });
+            if(this.errorCollection) {
+              this.errorCollection.set(vscode.Uri.parse(doc.fileName), diagnostics);
+            }
+          }
           resolve(resultHTML);
         }
         catch(e) {

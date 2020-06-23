@@ -19,13 +19,14 @@ export class AsciidocEngine {
 
 	public constructor(
 		private readonly extensionPreviewResourceProvider: AsciidocContributions,
-		private readonly slugifier: Slugifier
+		private readonly slugifier: Slugifier,
+		private readonly errorCollection: vscode.DiagnosticCollection = null
 	) { }
 
 
 	private async getEngine(resource: vscode.Uri): Promise<AsciidocParser> {
 	  if (!this.ad) {
-	    this.ad = new AsciidocParser(resource.fsPath);
+	    this.ad = new AsciidocParser(resource.fsPath, this.errorCollection);
 	  }
 
 	  const config = vscode.workspace.getConfiguration('asciidoc', resource);

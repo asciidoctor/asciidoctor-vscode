@@ -24,7 +24,10 @@ export function activate(context: vscode.ExtensionContext) {
   const contributions = getAsciidocExtensionContributions(context);
 
   const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
-  const engine = new AsciidocEngine(contributions, githubSlugifier);
+
+  const errorCollection = vscode.languages.createDiagnosticCollection('asciidoc');
+
+  const engine = new AsciidocEngine(contributions, githubSlugifier, errorCollection);
   const logger = new Logger();
   logger.log("Extension was started");
 
@@ -43,7 +46,6 @@ export function activate(context: vscode.ExtensionContext) {
   // context.subscriptions.push(vscode.languages.registerFoldingRangeProvider(selector, new AsciidocFoldingProvider(engine)));
   context.subscriptions.push(vscode.languages.registerWorkspaceSymbolProvider(new AsciidocWorkspaceSymbolProvider(symbolProvider)));
   context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new AttributeCompleter(), '{'));
-
   const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
 
   const commandManager = new CommandManager();
@@ -66,5 +68,8 @@ export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
     logger.updateConfiguration();
     previewManager.updateConfiguration();
+  }));
+  context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(editor => {
+    errorCollection.clear();
   }));
 }

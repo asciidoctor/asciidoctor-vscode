@@ -421,6 +421,11 @@
 						"%asciidoc.saveDocbook.docbookVersion.docbook45%"
 					]
 				},
+				"asciidoc.enableErrorDiagnostics": {
+					"type": "boolean",
+					"default": true,
+					"description": "%asciidoc.enableErrorDiagnostics.desc%"
+				},
 				"asciidoc.useWorkspaceRoot": {
 					"type": "boolean",
 					"default": false,

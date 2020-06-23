@@ -43,5 +43,6 @@
 	"asciidoc.preview.openAsciiDocLinks.desc": "How should clicking on links to AsciiDoc files be handled in the preview.",
 	"asciidoc.preview.openAsciiDocLinks.inEditor": "Try to open links in the editor",
 	"asciidoc.preview.openAsciiDocLinks.inPreview": "Try to open links in the the AsciiDoc preview",
-	"asciidoc.useWorkspaceRoot.desc": "When in a workspace, use the workspace root path as the base dir."
+	"asciidoc.useWorkspaceRoot.desc": "When in a workspace, use the workspace root path as the base dir.",
+	"asciidoc.enableErrorDiagnostics.desc": "Provide error diagnostics (needs using asciidoctor js)"
 }
