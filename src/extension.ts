@@ -19,7 +19,8 @@ import { githubSlugifier } from './slugify';
 import { AttributeCompleter } from './features/attributeCompleter';
 
 
-export function activate(context: vscode.ExtensionContext) {
+export function activate(context: vscode.ExtensionContext)
+{
 
   const contributions = getAsciidocExtensionContributions(context);
 
@@ -65,11 +66,13 @@ export function activate(context: vscode.ExtensionContext) {
   commandManager.register(new commands.SaveHTML(engine));
   commandManager.register(new commands.SaveDocbook(engine));
 
-  context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
+  context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() =>
+  {
     logger.updateConfiguration();
     previewManager.updateConfiguration();
   }));
-  context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(editor => {
+  context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor((editor) =>
+  {
     errorCollection.clear();
   }));
 }

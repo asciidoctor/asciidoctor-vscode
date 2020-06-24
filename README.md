@@ -243,19 +243,20 @@ All the following people who have contributed to the extension:
 * Garrett D'Amore
 * Gigacee
 * Guillaume Grossetie
-* jacksoncougar
 * Jackson C. Wiebe
+* jacksoncougar
 * João Pinto
 * Johannes Rössel
 * Joshua Stafman
 * Kevin Palmowski
-* larshp
 * Lars Hvam
+* larshp
 * Loïc PÉRON
 * Marcelo Alvim
 * Mark Roszko
 * Masanori Asano
 * Matteo Campinoti
+* MatteoCampinoti94
 * ojn
 * Øyvind Hansen
 * sgn
@@ -263,3 +264,4 @@ All the following people who have contributed to the extension:
 * Stephen Pegoraro
 * Tatsunori Uchino
 * Tilmann Oestreich
+* Waldir Pimenta

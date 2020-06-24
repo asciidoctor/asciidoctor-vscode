@@ -4,6 +4,8 @@
 
 * Add "vsce" as a development dependency
 * Fix problem creating .pdf with v2.7.16 (closes #331)
+* Provide diagnostics information for asciidoctor errors (PR #329)
+
 
 ## 2.7.16
 

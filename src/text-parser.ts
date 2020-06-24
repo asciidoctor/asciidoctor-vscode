@@ -116,7 +116,7 @@ export class AsciidocParser {
           //let result = this.fixLinks(resultHTML);
           if (enableErrorDiagnostics) {
             let diagnostics = [];
-            memoryLogger.getMessages().forEach(error => {
+            memoryLogger.getMessages().forEach((error) => {
               //console.log(error); //Error from asciidoctor.js
               let errorMessage = error.message.text;
               let sourceLine = 0;
@@ -132,7 +132,7 @@ export class AsciidocParser {
                   relatedFile = error.message.source_location.file;
                   relatedLine = error.message.source_location.lineno - 1;
                   //try to find the include responsible from the info provided by asciidoctor.js
-                  sourceLine = doc.getText().split('\n').indexOf(doc.getText().split('\n').find(str => str.startsWith("include") && str.includes(error.message.source_location.path)));
+                  sourceLine = doc.getText().split('\n').indexOf(doc.getText().split('\n').find((str) => str.startsWith("include") && str.includes(error.message.source_location.path)));
                   if (sourceLine!=-1) {
                     sourceRange = doc.lineAt(sourceLine).range;
                   } else {
@@ -159,7 +159,7 @@ export class AsciidocParser {
                     new vscode.Position(0,0)
                     ),
                     errorMessage
-                  )
+                  ),
                 ]
                 errorMessage = "There was an error in an included file";
               }
