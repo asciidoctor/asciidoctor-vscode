@@ -36,10 +36,10 @@ export class ExportAsPDF implements Command
 
     if (doc.isUntitled)
     {
-      pdfPath = path.join(docPath.root, docPath.dir, "untitled.pdf")
+      pdfPath = path.join(docPath.dir, "untitled.pdf")
     } else
     {
-      pdfPath = path.join(docPath.root, docPath.dir, docPath.name + ".pdf")
+      pdfPath = path.join(docPath.dir, docPath.name + ".pdf")
     }
 
     if (vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctorpdf'))

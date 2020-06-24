@@ -3,6 +3,7 @@
 ## 2.7.17
 
 * Add "vsce" as a development dependency
+* Fix problem creating .pdf with v2.7.16 (closes #331)
 
 ## 2.7.16
 
