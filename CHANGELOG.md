@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2.7.18
+
+* Add "vsce" as a development dependency
+* Fix problem creating .pdf with v2.7.16 (closes #332)
+* Move wkhtmltopdf binaries to their own repository
+
+
 ## 2.7.17
 
 * Add "vsce" as a development dependency

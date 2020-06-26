@@ -13,13 +13,15 @@ import * as tmp from "tmp";
 
 import HttpsProxyAgent = require('https-proxy-agent');
 import url = require('url');
+import { Logger } from '../logger';
 
 export class ExportAsPDF implements Command
 {
   public readonly id = 'asciidoc.exportAsPDF';
 
   constructor(
-    private readonly engine: AsciidocEngine
+    private readonly engine: AsciidocEngine,
+    private readonly logger: Logger
   ) { }
 
   public async execute()
@@ -30,16 +32,17 @@ export class ExportAsPDF implements Command
 
     const doc = editor.document
     const text = doc.getText()
-    const docPath = path.parse(path.resolve(doc.fileName))
+    if (vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctorpdf')) {
+      var docPath = path.parse(path.resolve(doc.fileName))
+      var pdfPath = ''
 
-    var pdfPath = ''
-
-    if (doc.isUntitled)
-    {
-      pdfPath = path.join(docPath.dir, "untitled.pdf")
-    } else
-    {
-      pdfPath = path.join(docPath.dir, docPath.name + ".pdf")
+      var pdfUri = await vscode.window.showSaveDialog({ defaultUri: vscode.Uri.file(pdfPath) })
+      if (!isNullOrUndefined(pdfUri)) {
+        pdfPath = pdfUri.fsPath
+      } else {
+        console.error(`ERROR: invalid pdfUri "${pdfUri}"`)
+        return
+      }
     }
 
     if (vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctorpdf'))
@@ -157,7 +160,8 @@ export class ExportAsPDF implements Command
         }, async (progress) =>
         {
           progress.report({ message: 'Downloading wkhtmltopdf...' });
-          const download_url = `https://github.com/asciidoctor/asciidoctor-vscode/raw/master/wkhtmltopdf-bin/wkhtmltopdf-${platform}-${arch}${ext}.gz`
+          const download_url = `https://github.com/joaompinto/wkhtmltopdf/releases/download/v0.0.1/wkhtmltopdf-${platform}-${arch}${ext}.gz`
+          this.logger.log("Downloading " + download_url)
           await download_file(download_url, binary_path + ".gz", progress).then(() =>
           {
             progress.report({ message: 'Unzipping wkhtmltopdf...' })
@@ -177,13 +181,15 @@ export class ExportAsPDF implements Command
         if (isNullOrUndefined(binary_path))
           return;
       }
-      await html2pdf(html, binary_path, cover, footer_center, pdfPath)
-        .then((result) => { offer_open(result) })
-        .catch((reason) =>
-        {
-          console.error("Got error", reason)
-          vscode.window.showErrorMessage("Error converting to PDF, " + reason.toString());
-        })
+      var save_filename = await vscode.window.showSaveDialog({ defaultUri: pdf_filename})
+      if(!isNullOrUndefined(save_filename)) {
+        await html2pdf(html, binary_path, cover, footer_center, save_filename.fsPath)
+          .then((result) => { offer_open(result) })
+          .catch((reason) => {
+            console.error("Got error", reason)
+            vscode.window.showErrorMessage("Error converting to PDF, "+reason.toString());
+          })
+      }
     }
   }
 }

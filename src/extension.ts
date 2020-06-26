@@ -59,7 +59,7 @@ export function activate(context: vscode.ExtensionContext)
   commandManager.register(new commands.MoveCursorToPositionCommand());
   commandManager.register(new commands.ShowPreviewSecuritySelectorCommand(previewSecuritySelector, previewManager));
   commandManager.register(new commands.OpenDocumentLinkCommand(engine));
-  commandManager.register(new commands.ExportAsPDF(engine));
+  commandManager.register(new commands.ExportAsPDF(engine, logger));
   commandManager.register(new commands.PasteImage());
   commandManager.register(new commands.ToggleLockCommand(previewManager));
   commandManager.register(new commands.ShowPreviewCommand(previewManager));
