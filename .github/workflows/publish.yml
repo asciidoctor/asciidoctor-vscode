@@ -21,6 +21,7 @@ jobs:
       with:
         node-version: '12.x'
     - run: npm install
-    - run: node_modules/vsce/out/vsce publish -p secrets.VSCE_TOKEN
-
+    - run: node_modules/vsce/out/vsce publish -p $VSCE_TOKEN
+      env:
+        VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
 
