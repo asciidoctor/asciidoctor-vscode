@@ -1,10 +1,7 @@
-name: Prepare for publishing
+name: Publish to marketplace
 
 on:
   push:
-    branches:
-      - master
-  pull_request:
     branches:
       - master
 
@@ -22,7 +19,6 @@ jobs:
         node-version: '12.x'
     - run: npm install
     - name: Publish package to marketplace
-      if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
       run: node_modules/vsce/out/vsce publish -p $VSCE_TOKEN
       env:
         VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}

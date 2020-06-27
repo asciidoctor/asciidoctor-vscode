@@ -1,4 +1,4 @@
-name: Lint, Build and PrePublish
+name: Lint and Compile
 
 on: [push]
 
