@@ -14,6 +14,6 @@ jobs:
       with:
         node-version: '12.x'
     - run: npm ci
-    - run: npm run Lint
+    - run: npm run lint
     - run: npm run compile
 
