@@ -1,6 +1,6 @@
-name: CI
+name: Lint, Build and PrePublish
 
-on: [push, pull_request]
+on: [push]
 
 jobs:
   build:
@@ -14,4 +14,6 @@ jobs:
       with:
         node-version: '12.x'
     - run: npm ci
-    - run: npm run vscode:prepublish
+    - run: npm run lint
+    - run: npm run compile
+
