@@ -1,6 +1,11 @@
 # CHANGELOG
 
+## 2.8.0
+
+* Provide a safer default and configurable refresh interval (closes #334)
+
 ## 2.7.20
+
 * Replace all references from joaompinto.asciidoctor-vscode to asciidoctor.asciidoctor-vscode
 
 ## 2.7.19

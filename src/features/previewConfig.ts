@@ -47,6 +47,7 @@ export class AsciidocPreviewConfiguration {
 	  this.lineHeight = Math.max(0.6, +asciidocConfig.get<number>('preview.lineHeight', NaN));
 
 	  this.styles = asciidocConfig.get<string[]>('styles', []);
+	  this.refreshInterval = Math.max(0.6, +asciidocConfig.get<number>('preview.refreshInterval', NaN));
 	}
 
 	public isEqualTo(otherConfig: AsciidocPreviewConfiguration) {

@@ -71,8 +71,14 @@ export function activate(context: vscode.ExtensionContext)
     logger.updateConfiguration();
     previewManager.updateConfiguration();
   }));
+
   context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor((editor) =>
   {
     errorCollection.clear();
+  }));
+
+  context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(() =>
+  {
+    previewManager.refresh(true);
   }));
 }
