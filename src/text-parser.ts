@@ -16,7 +16,7 @@ if (use_kroki)
 export class AsciidocParser {
     public html: string = '';
     public document = null;
-    private ext_path = vscode.extensions.getExtension('joaompinto.asciidoctor-vscode').extensionPath;
+    private ext_path = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath;
     private stylesdir = path.join(this.ext_path, 'media')
     
     constructor(private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) {

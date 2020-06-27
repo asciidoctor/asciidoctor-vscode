@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.7.19
+
+* Updated the extension path retrieval to use the new asciidoctor publisher
+
 ## 2.7.18
 
 * Add "vsce" as a development dependency
