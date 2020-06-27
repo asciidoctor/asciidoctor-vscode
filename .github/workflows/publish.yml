@@ -1,4 +1,4 @@
-name: Publish Extension
+name: Prepare for publishing
 
 on:
   push:
