@@ -2,7 +2,7 @@
 	"name": "asciidoctor-vscode",
 	"displayName": "%displayName%",
 	"description": "%description%",
-	"version": "2.7.20",
+	"version": "2.8.0",
 	"publisher": "asciidoctor",
 	"author": "João Pinto <lamego.pinto@gmail.com>",
 	"license": "MIT",
@@ -327,6 +327,12 @@
 					"type": "boolean",
 					"default": true,
 					"description": "%asciidoc.preview.useEditorStyle.desc%"
+				},
+				"asciidoc.preview.refreshInterval": {
+					"type": "number",
+					"default": 2000,
+					"description": "%asciidoc.preview.refreshInterval.desc%",
+					"scope": "resource"
 				},
 				"asciidoc.preview.scrollPreviewWithEditor": {
 					"type": "boolean",

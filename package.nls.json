@@ -27,6 +27,7 @@
 	"asciidoc.preview.lineHeight.desc": "Controls the line height used in the AsciiDoc preview. This number is relative to the font size.",
 	"asciidoc.preview.linkify.desc": "Enable or disable conversion of URL-like text to links in the AsciiDoc preview.",
 	"asciidoc.preview.markEditorSelection.desc": "Mark the current editor selection in the AsciiDoc preview.",
+	"asciidoc.preview.refreshInterval.desc": "Interval (in miliseconds) between preview refreshes (when the document is changed), 0 means refresh only on save",
 	"asciidoc.preview.scrollEditorWithPreview.desc": "When an AsciiDoc preview is scrolled, update the view of the editor.",
 	"asciidoc.preview.scrollPreviewWithEditor.desc": "When an AsciiDoc editor is scrolled, update the view of the preview.",
 	"asciidoc.preview.scrollPreviewWithEditorSelection.desc": "[Deprecated] Scrolls the AsciiDoc preview to reveal the currently selected line from the editor.",

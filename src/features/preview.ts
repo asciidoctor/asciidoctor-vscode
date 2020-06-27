@@ -35,6 +35,9 @@ export class AsciidocPreview
   private isScrolling = false;
   private _disposed: boolean = false;
   private imageInfo: { id: string, width: number, height: number }[] = [];
+  private config: vscode.WorkspaceConfiguration;
+  private refreshInterval: number;
+
 
   public static async revive(
     webview: vscode.WebviewPanel,
@@ -114,6 +117,8 @@ export class AsciidocPreview
     this._resource = resource;
     this._locked = locked;
     this.editor = webview;
+    this.config = vscode.workspace.getConfiguration('asciidoc', this.resource)
+    this.refreshInterval = this.config.get<number>('preview.refreshInterval');
 
     this.editor.onDidDispose(() =>
     {
@@ -235,8 +240,10 @@ export class AsciidocPreview
     disposeAll(this.disposables);
   }
 
+  // This method is invoked evrytime there is a document update
   public update(resource: vscode.Uri)
   {
+
     const editor = vscode.window.activeTextEditor;
     if (editor && editor.document.uri.fsPath === resource.fsPath)
     {
@@ -256,21 +263,22 @@ export class AsciidocPreview
     // Schedule update if none is pending
     if (!this.throttleTimer)
     {
-      if (isResourceChange || this.firstUpdate)
+      if (isResourceChange || this.firstUpdate || this.forceUpdate)
       {
         this.doUpdate();
       } else
       {
-        this.throttleTimer = setTimeout(() => this.doUpdate(), 300);
+        if(this.refreshInterval > 0)
+          this.throttleTimer = setTimeout(() => this.doUpdate(), this.refreshInterval);
       }
     }
 
     this.firstUpdate = false;
   }
 
-  public refresh()
+  public refresh(forceUpdate: boolean = false)
   {
-    this.forceUpdate = true;
+    this.forceUpdate = forceUpdate;
     this.update(this._resource);
   }
 
@@ -278,6 +286,8 @@ export class AsciidocPreview
   {
     if (this._previewConfigurations.hasConfigurationChanged(this._resource))
     {
+      this.config = vscode.workspace.getConfiguration('asciidoc', this.resource)
+      this.refreshInterval = this.config.get<number>('preview.refreshInterval');
       this.refresh();
     }
   }
@@ -360,7 +370,6 @@ export class AsciidocPreview
 
     if (typeof topLine === 'number')
     {
-      this._logger.log('updateForView', { asciidocFile: resource });
       this.line = topLine;
       this.postMessage({
         type: 'updateView',
@@ -378,9 +387,11 @@ export class AsciidocPreview
     }
   }
 
+  // Do the preview content update
   private async doUpdate(): Promise<void>
   {
-    var d = Date().toString();
+    this._logger.log("Updating the preview content");
+
     const resource = this._resource;
 
     clearTimeout(this.throttleTimer);
@@ -483,8 +494,7 @@ export class AsciidocPreview
 
   private async onDidClickPreviewLink(path: string, fragment: string | undefined)
   {
-    const config = vscode.workspace.getConfiguration('asciidoc', this.resource);
-    const openLinks = config.get<string>('preview.openAsciidocLinks', 'inPreview');
+    const openLinks = this.config.get<string>('preview.openAsciidocLinks', 'inPreview');
     if (openLinks === 'inPreview')
     {
       const asciidocLink = await resolveLinkToAsciidocFile(path);

@@ -37,11 +37,11 @@ export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer
     disposeAll(this._previews);
   }
 
-  public refresh()
+  public refresh(forceUpdate: boolean = false)
   {
     for (const preview of this._previews)
     {
-      preview.refresh();
+      preview.refresh(forceUpdate);
     }
   }
 

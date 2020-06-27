@@ -61,8 +61,6 @@ export class AsciidocContentProvider {
       disableSecurityWarnings: this.cspArbiter.shouldDisableSecurityWarnings(),
     };
 
-    this.logger.log('providePreviewHTML', initialData);
-
     // Content Security Policy
     const nonce = new Date().getTime() + '' + new Date().getMilliseconds();
     const csp = this.getCspForResource(sourceUri, nonce);
