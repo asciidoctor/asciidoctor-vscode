@@ -1,8 +1,8 @@
 # AsciiDoc support for Visual Studio Code
 
-[![Version](https://vsmarketplacebadge.apphb.com/version/joaompinto.asciidoctor-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=joaompinto.asciidoctor-vscode)
-[![Installs](https://vsmarketplacebadge.apphb.com/installs/joaompinto.asciidoctor-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=joaompinto.asciidoctor-vscode)
-[![Ratings](https://vsmarketplacebadge.apphb.com/rating/joaompinto.asciidoctor-vscode.svg)](https://vsmarketplacebadge.apphb.com/rating/joaompinto.asciidoctor-vscode.svg)
+[![Version](https://vsmarketplacebadge.apphb.com/version/asciidoctor.asciidoctor-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs/asciidoctor.asciidoctor-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode)
+[![Ratings](https://vsmarketplacebadge.apphb.com/rating/asciidoctor.asciidoctor-vscode.svg)](https://vsmarketplacebadge.apphb.com/rating/asciidoctor.asciidoctor-vscode.svg)
 
 An extension that provides live preview, syntax highlighting and snippets for the AsciiDoc format using Asciidoctor flavor.
 
@@ -31,7 +31,7 @@ An extension that provides live preview, syntax highlighting and snippets for th
 
 Launch VS Code Quick Open (Ctrl+P), paste the following command, and press enter:
 
-`ext install joaompinto.asciidoctor-vscode`
+`ext install asciidoctor.asciidoctor-vscode`
 
 Alternatively you can use the built-in extension browser to find the _AsciiDoc_ by _joaompinto_ extension and install it.
 

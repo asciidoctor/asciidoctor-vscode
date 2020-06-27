@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.7.20
+* Replace all references from joaompinto.asciidoctor-vscode to asciidoctor.asciidoctor-vscode
+
 ## 2.7.19
 
 * Updated the extension path retrieval to use the new asciidoctor publisher
