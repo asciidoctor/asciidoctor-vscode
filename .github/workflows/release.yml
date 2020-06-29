@@ -8,60 +8,46 @@ on:
 jobs:
   publish:
     name: Publish the extension
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: checkout repo
         uses: actions/checkout@v2
 
-      - name: fetch all history and tags from all branches for gitversion
-        run: git fetch --prune --unshallow
+      - name: Set env
+        run: echo ::set-env name=RELEASE_VERSION::${GITHUB_REF#refs/*/}
 
-      - name: install gitversion tool
-        uses: gittools/actions/gitversion/setup@v0.9
-        with:
-            versionSpec: '5.1.x'
-
-      - name: execute gitversion
-        id: gitversion # step id used as reference for output values
-        uses: gittools/actions/gitversion/execute@v0.9
-
-      - name: print gitversion
+      - name: Test
         run: |
-          echo "Major: ${{ steps.gitversion.outputs.major }}"
-          echo "Minor: ${{ steps.gitversion.outputs.minor }}"
-          echo "Patch: ${{ steps.gitversion.outputs.patch }}"
-          echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
-          echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+          echo $RELEASE_VERSION
+          echo ${{ env.RELEASE_VERSION }
 
-      - name: setup node
-        uses: actions/setup-node@v1
-        with:
-          node-version: '12.x'
+      # - name: setup node
+      #   uses: actions/setup-node@v1
+      #   with:
+      #     node-version: '12.x'
 
-      - name: clean install dependencies
-        run: npm ci
+      # - name: clean install dependencies
+      #   run: npm ci
 
-      - name: update metadata in package.json
-        uses: onlyutkarsh/patch-files-action@v1.0.1
-        with:
-          files: '${{github.workspace}}/package.json'
-          patch-syntax: |
-            = /version => "${{ steps.gitversion.outputs.semVer }}"
+      # - name: update metadata in package.json
+      #   uses: onlyutkarsh/patch-files-action@v1.0.1
+      #   with:
+      #     files: '${{github.workspace}}/package.json'
+      #     patch-syntax: |
+      #       = /version => "${{ steps.gitversion.outputs.semVer }}"
 
-      - name: compile and create vsix
-        run: npm run package
+      # - name: compile and create vsix
+      #   run: npm run package
 
-      - name: print vsix path
-        run: |
-          echo "VSIX Path: ${{ env.vsix_path }}"
+      # - name: print vsix path
+      #   run: |
+      #     echo "VSIX Path: ${{ env.vsix_path }}"
 
-
-
-      # package and publish to marketplace
-      - name: Publish package to marketplace
-        run: node_modules/vsce/out/vsce publish -p $VSCE_TOKEN
-        env:
-          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
+      # # package and publish to marketplace
+      # - name: Publish package to marketplace
+      #   run: node_modules/vsce/out/vsce publish -p $VSCE_TOKEN
+      #   env:
+      #     VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
       # # create the GitHub release
       # - name: Create release
       #   id: create_release
