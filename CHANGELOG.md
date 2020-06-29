@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.8.1
+
+* No changes, release/publish using GitHub Actions
+
 ## 2.8.0
 
 * Provide a safer default and configurable refresh interval (closes #334)

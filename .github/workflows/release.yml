@@ -40,7 +40,7 @@ jobs:
       - name: VSIX Package
         run: npm run package
 
-      - name: Create Release
+      - name: Create GitHub Release
         id: create_release
         uses: actions/create-release@v1.0.0
         env:
@@ -61,8 +61,7 @@ jobs:
           asset_name: asciidoctor-vscode-${{ steps.semver_parser.outputs.fullversion }}.vsix
           asset_content_type: application/zip
 
-      # package and publish to marketplace
-      - name: Publish package to marketplace
+      - name: Publish Package to Marketplace
         run: node_modules/vsce/out/vsce publish -p $VSCE_TOKEN
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
