@@ -10,7 +10,7 @@ jobs:
     name: Publish github release / vscode marketplace
     runs-on: ubuntu-latest
     steps:
-      - name: checkout repo
+      - name: Checkout code
         uses: actions/checkout@v2
       - name: Parse semver string
         id: semver_parser
@@ -22,31 +22,25 @@ jobs:
         run: |
             echo "v${{ steps.semver_parser.outputs.fullversion }}"
 
-      - name: setup node
+      - name: Setup Node
         uses: actions/setup-node@v1
         with:
           node-version: '12.x'
 
-      - name: clean install dependencies
+      - name: Clean Install Dependencies
         run: npm ci
 
-      - name: update metadata in package.json
+      - name: Update Version in package.json
         uses: onlyutkarsh/patch-files-action@v1.0.1
         with:
           files: '${{github.workspace}}/package.json'
           patch-syntax: |
             = /version => "${{ steps.semver_parser.outputs.fullversion }}"
 
-      - name: compile and create vsix
+      - name: VSIX Package
         run: npm run package
 
-      # # package and publish to marketplace
-      # - name: Publish package to marketplace
-      #   run: node_modules/vsce/out/vsce publish -p $VSCE_TOKEN
-      #   env:
-      #     VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
-
-      - name: Create release
+      - name: Create Release
         id: create_release
         uses: actions/create-release@v1.0.0
         env:
@@ -57,7 +51,7 @@ jobs:
           draft: false
           prerelease: false
 
-      - name: Upload .vsix to the release
+      - name: Upload Release Asset
         uses: actions/upload-release-asset@v1.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -65,3 +59,10 @@ jobs:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ${{github.workspace}}/asciidoctor-vscode-${{ steps.semver_parser.outputs.fullversion }}.vsix
           asset_name: asciidoctor-vscode-${{ steps.semver_parser.outputs.fullversion }}.vsix
+          asset_content_type: application/zip
+
+      # package and publish to marketplace
+      - name: Publish package to marketplace
+        run: node_modules/vsce/out/vsce publish -p $VSCE_TOKEN
+        env:
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
