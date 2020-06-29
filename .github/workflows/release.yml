@@ -1,4 +1,4 @@
-name: Release
+name: New Version Release
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
 
 jobs:
   release:
-    name: Publish github release / marketplace
+    name: Publish github release / vscode marketplace
     runs-on: ubuntu-latest
     steps:
       - name: checkout repo
@@ -40,12 +40,6 @@ jobs:
       - name: compile and create vsix
         run: npm run package
 
-      - name: upload vsix as artifact
-        uses: actions/upload-artifact@v1
-        with:
-          name: asciidoctor-vscode-${{ steps.semver_parser.outputs.fullversion }}.vsix
-          path: ${{github.workspace}}/asciidoctor-vscode-${{ steps.semver_parser.outputs.fullversion }}.vsix
-
       # # package and publish to marketplace
       # - name: Publish package to marketplace
       #   run: node_modules/vsce/out/vsce publish -p $VSCE_TOKEN
@@ -63,3 +57,11 @@ jobs:
           draft: false
           prerelease: false
 
+      - name: Upload .vsix to the release
+        uses: actions/upload-release-asset@v1.0.1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{github.workspace}}/asciidoctor-vscode-${{ steps.semver_parser.outputs.fullversion }}.vsix
+          asset_name: asciidoctor-vscode-${{ steps.semver_parser.outputs.fullversion }}.vsix
