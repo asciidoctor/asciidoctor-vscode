@@ -38,7 +38,7 @@ jobs:
             = /version => "${{ steps.semver_parser.outputs.fullversion }}"
 
       - name: compile and create vsix
-         run: npm run package
+        run: npm run package
 
       # - name: print vsix path
       #   run: |
