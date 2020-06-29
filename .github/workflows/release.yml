@@ -1,0 +1,90 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Push events to matching v*, i.e. v1.0, v2.1.3
+
+jobs:
+  publish:
+    name: Publish the extension
+    runs-on: windows-latest
+    steps:
+      - name: checkout repo
+        uses: actions/checkout@v2
+
+      - name: fetch all history and tags from all branches for gitversion
+        run: git fetch --prune --unshallow
+
+      - name: install gitversion tool
+        uses: gittools/actions/gitversion/setup@v0.9
+        with:
+            versionSpec: '5.1.x'
+
+      - name: print gitversion
+        run: |
+          echo "Major: ${{ steps.gitversion.outputs.major }}"
+          echo "Minor: ${{ steps.gitversion.outputs.minor }}"
+          echo "Patch: ${{ steps.gitversion.outputs.patch }}"
+          echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
+          echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+
+      - name: setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
+
+      - name: clean install dependencies
+        run: npm ci
+
+      - name: update metadata in package.json
+        uses: onlyutkarsh/patch-files-action@v1.0.1
+        with:
+          files: '${{github.workspace}}/package.json'
+          patch-syntax: |
+            = /version => "${{ steps.gitversion.outputs.semVer }}"
+
+      - name: compile and create vsix
+        run: npm run package
+
+      - name: print vsix path
+        run: |
+          echo "VSIX Path: ${{ env.vsix_path }}"
+
+
+
+      # package and publish to marketplace
+      - name: Publish package to marketplace
+        run: node_modules/vsce/out/vsce publish -p $VSCE_TOKEN
+        env:
+          VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
+      # # create the GitHub release
+      # - name: Create release
+      #   id: create_release
+      #   uses: actions/create-release@v1.0.0
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ github.ref }}
+      #     release_name: ${{ github.ref }}
+      #     draft: false
+      #     prerelease: false
+      # # upload assets
+      # - name: Upload source code as a zip file
+      #   uses: actions/upload-release-asset@v1.0.1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: packages/core/bin/asciidoctor.js.dist.zip
+      #     asset_name: asciidoctor.js.dist.zip
+      #     asset_content_type: application/zip
+      # - name: Upload source code as a tar.gz file
+      #   uses: actions/upload-release-asset@v1.0.1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      #   with:
+      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
+      #     asset_path: packages/core/bin/asciidoctor.js.dist.tar.gz
+      #     asset_name: asciidoctor.js.dist.tar.gz
+      #     asset_content_type: application/tar+gzip
