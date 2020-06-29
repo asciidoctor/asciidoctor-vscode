@@ -20,29 +20,25 @@ jobs:
           version_extractor_regex: '\/v(.*)$'
       - name: Use parsed semver
         run: |
-            echo "v${{ steps.semver_parser.outputs.major }}"
-            echo "v${{ steps.semver_parser.outputs.minor }}"
-            echo "v${{ steps.semver_parser.outputs.patch }}"
-            echo "v${{ steps.semver_parser.outputs.prerelease }}"
-            echo "v${{ steps.semver_parser.outputs.build }}"
             echo "v${{ steps.semver_parser.outputs.fullversion }}"
-      # - name: setup node
-      #   uses: actions/setup-node@v1
-      #   with:
-      #     node-version: '12.x'
 
-      # - name: clean install dependencies
-      #   run: npm ci
+      - name: setup node
+        uses: actions/setup-node@v1
+        with:
+          node-version: '12.x'
 
-      # - name: update metadata in package.json
-      #   uses: onlyutkarsh/patch-files-action@v1.0.1
-      #   with:
-      #     files: '${{github.workspace}}/package.json'
-      #     patch-syntax: |
-      #       = /version => "${{ steps.gitversion.outputs.semVer }}"
+      - name: clean install dependencies
+        run: npm ci
 
-      # - name: compile and create vsix
-      #   run: npm run package
+      - name: update metadata in package.json
+        uses: onlyutkarsh/patch-files-action@v1.0.1
+        with:
+          files: '${{github.workspace}}/package.json'
+          patch-syntax: |
+            = /version => "${{ steps.semver_parser.outputs.fullversion }}"
+
+      - name: compile and create vsix
+         run: npm run package
 
       # - name: print vsix path
       #   run: |
