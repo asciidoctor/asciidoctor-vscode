@@ -13,6 +13,26 @@ jobs:
       - name: checkout repo
         uses: actions/checkout@v2
 
+      - name: fetch all history and tags from all branches for gitversion
+        run: git fetch --prune --unshallow
+
+      - name: install gitversion tool
+        uses: gittools/actions/gitversion/setup@v0.9
+        with:
+            versionSpec: '5.1.x'
+
+      - name: execute gitversion
+        id: gitversion # step id used as reference for output values
+        uses: gittools/actions/gitversion/execute@v0.9
+
+      - name: print gitversion
+        run: |
+          echo "Major: ${{ steps.gitversion.outputs.major }}"
+          echo "Minor: ${{ steps.gitversion.outputs.minor }}"
+          echo "Patch: ${{ steps.gitversion.outputs.patch }}"
+          echo "MajorMinorPatch: ${{ steps.gitversion.outputs.majorMinorPatch }}"
+          echo "SemVer: ${{ steps.gitversion.outputs.semVer }}"
+
       - name: Set env
         run: echo ::set-env name=RELEASE_VERSION::${GITHUB_REF#refs/*/}
 
