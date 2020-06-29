@@ -43,8 +43,8 @@ jobs:
       - name: upload vsix as artifact
         uses: actions/upload-artifact@v1
         with:
-          name: asciidoctor-vscode-${{steps.gitversion.outputs.semVer}}.vsix
-          path: ${{github.workspace}}/asciidoctor-vscode-${{steps.gitversion.outputs.semVer}}.vsix
+          name: asciidoctor-vscode-${{ steps.semver_parser.outputs.fullversion }}.vsix
+          path: ${{github.workspace}}/asciidoctor-vscode-${{ steps.semver_parser.outputs.fullversion }}.vsix
 
       # # package and publish to marketplace
       # - name: Publish package to marketplace
