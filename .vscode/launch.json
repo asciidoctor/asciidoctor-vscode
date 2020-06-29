@@ -1,39 +1,36 @@
 // A launch configuration that compiles the extension and then opens it inside a new window
+// Use IntelliSense to learn about possible attributes.
+// Hover to view descriptions of existing attributes.
+// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
 {
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"configurations": [
 		{
-			"name": "Launch Extension",
+			"name": "Run Extension",
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
-			"preLaunchTask": "build:tsc",
 			"args": [
-				"--extensionDevelopmentPath=${workspaceRoot}",
-				"--disable-extensions" 
+				"--extensionDevelopmentPath=${workspaceFolder}"
 			],
-			"outFiles": ["${workspaceFolder}/out/src/**/*.js"],
-			"stopOnEntry": false,
-			"sourceMaps": true,
+			"outFiles": [
+				"${workspaceFolder}/dist/**/*.js"
+			],
+			"preLaunchTask": "npm: compile"
 		},
 		{
-			"name": "Launch Tests",
+			"name": "Extension Tests",
 			"type": "extensionHost",
 			"request": "launch",
 			"runtimeExecutable": "${execPath}",
-			"args": ["--extensionDevelopmentPath=${workspaceRoot}", "--extensionTestsPath=${workspaceRoot}/dist/test" ],
-			"stopOnEntry": false,
-			"sourceMaps": true,
-			"outFiles": [ 
-				"${workspaceRoot}/out/src/**/*.js",
-			 ],
-			"preLaunchTask": "npm"
-		},
-		{
-			"name": "Attach to Process",
-			"type": "node",
-			"request": "attach",
-			"processId": "${command:PickProcess}"
-		  }
+			"args": [
+				"--extensionDevelopmentPath=${workspaceFolder}",
+				"--extensionTestsPath=${workspaceFolder}/out/test/"
+			],
+			"outFiles": [
+				"${workspaceFolder}/out/test/**/*.js"
+			],
+			"preLaunchTask": "npm: compile"
+		}
 	]
 }

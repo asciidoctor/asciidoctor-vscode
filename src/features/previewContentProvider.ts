@@ -68,6 +68,7 @@ export class AsciidocContentProvider {
     const bodyClassesRegex = /<body(?:(?:\s+(?:id=\".*"\s*)?class(?:\s*=\s*(?:\"(.+?)\"|\'(.+?)\')))+\s*)>/
     const bodyClasses = body.match(bodyClassesRegex)
     const bodyClassesVal = bodyClasses === null ? '' : bodyClasses[1];
+    this.logger.log(`Using CSS ${this.getStyles(sourceUri, nonce, config, state)}`)
 
     return `<!DOCTYPE html>
 			<html>

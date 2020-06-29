@@ -453,14 +453,17 @@
 		]
 	},
 	"scripts": {
-		"compile": "node node_modules/typescript/bin/tsc -p ./",
-		"vscode:prepublish": "npm run lint && npm run compile && npm run webpack",
-		"watch": "npm run webpack-preview-dev && node_modules/typescript/bin/tsc -watch -p ./",
-		"lint": "eslint src/**/*.ts src-preview/**/*.ts test/**/*.ts --format unix",
-		"lint:fix": "eslint --fix src/**/*.ts src-preview/**/*.ts test/**/*.ts --format unix",
+		"vscode:prepublish": "npm run compile && npm run webpack",
 		"webpack": "npm run webpack-preview",
 		"webpack-preview": "webpack --mode production --config webpack.config.preview.js",
 		"webpack-preview-dev": "webpack --config webpack.config.preview.js --mode development",
+		"compile": "tsc -p ./",
+		"package": "vsce package",
+		"deploy": "vsce publish -p",
+		"prune-branches": "git remote prune origin",
+		"clean": "git clean -fdX",
+		"lint": "eslint src/**/*.ts src-preview/**/*.ts test/**/*.ts --format unix",
+		"lint:fix": "eslint --fix src/**/*.ts src-preview/**/*.ts test/**/*.ts --format unix",
 		"test": "node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {
