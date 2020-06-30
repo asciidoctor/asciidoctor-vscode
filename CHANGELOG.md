@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.8.2
+
+* Remove depdendency on "copy-paste" which is never used
+
 ## 2.8.1
 
 * No changes, release/publish using GitHub Actions
