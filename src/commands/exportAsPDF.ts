@@ -27,26 +27,29 @@ export class ExportAsPDF implements Command
   public async execute()
   {
     const editor = vscode.window.activeTextEditor
+
     if (isNullOrUndefined(editor))
       return
 
     const doc = editor.document
+    const source_name = path.parse(path.resolve(doc.fileName))
+    const pdf_filename = vscode.Uri.file(path.join(source_name.root, source_name.dir, source_name.name + '.pdf'))
+
     const text = doc.getText()
-    if (vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctorpdf')) {
+    if (vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctorpdf'))
+    {
       var docPath = path.parse(path.resolve(doc.fileName))
       var pdfPath = ''
 
-      var pdfUri = await vscode.window.showSaveDialog({ defaultUri: vscode.Uri.file(pdfPath) })
-      if (!isNullOrUndefined(pdfUri)) {
+      var pdfUri = await vscode.window.showSaveDialog({ defaultUri: pdf_filename })
+      if (!isNullOrUndefined(pdfUri))
+      {
         pdfPath = pdfUri.fsPath
-      } else {
+      } else
+      {
         console.error(`ERROR: invalid pdfUri "${pdfUri}"`)
         return
       }
-    }
-
-    if (vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctorpdf'))
-    {
       let asciidoctorpdf_command = vscode.workspace
         .getConfiguration('asciidoc', null)
         .get('asciidoctorpdf_command', 'asciidoctor-pdf')
@@ -86,7 +89,8 @@ export class ExportAsPDF implements Command
 
       asciidoctorpdf.stdin.write(text)
       asciidoctorpdf.stdin.end()
-    } else
+    }
+    else
     {
       let wkhtmltopdf_path = vscode.workspace
         .getConfiguration('asciidoc')
@@ -103,7 +107,6 @@ export class ExportAsPDF implements Command
       const doctitle: string | undefined = parser.getAttribute("doctitle");
       const titlepagelogo: string | undefined = parser.getAttribute("titlepagelogo");
       const footer_center: string | undefined = parser.getAttribute("footer-center");
-      const source_name = path.parse(path.resolve(doc.fileName))
       let cover: string | undefined = undefined;
       let img_html: string = '';
       if (!isNullOrUndefined(showtitlepage))
@@ -145,7 +148,6 @@ export class ExportAsPDF implements Command
       if (wkhtmltopdf_path != '')
         binary_path = wkhtmltopdf_path;
 
-      const pdf_filename = vscode.Uri.file(path.join(source_name.root, source_name.dir, source_name.name + '.pdf'))
       if (!fs.existsSync(binary_path))
       {
         var label = await vscode.window.showInformationMessage("This feature requires wkhtmltopdf\ndo you want to download", "Download")
@@ -181,13 +183,15 @@ export class ExportAsPDF implements Command
         if (isNullOrUndefined(binary_path))
           return;
       }
-      var save_filename = await vscode.window.showSaveDialog({ defaultUri: pdf_filename})
-      if(!isNullOrUndefined(save_filename)) {
+      var save_filename = await vscode.window.showSaveDialog({ defaultUri: pdf_filename })
+      if (!isNullOrUndefined(save_filename))
+      {
         await html2pdf(html, binary_path, cover, footer_center, save_filename.fsPath)
           .then((result) => { offer_open(result) })
-          .catch((reason) => {
+          .catch((reason) =>
+          {
             console.error("Got error", reason)
-            vscode.window.showErrorMessage("Error converting to PDF, "+reason.toString());
+            vscode.window.showErrorMessage("Error converting to PDF, " + reason.toString());
           })
       }
     }
