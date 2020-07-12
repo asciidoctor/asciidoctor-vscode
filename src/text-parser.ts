@@ -276,14 +276,14 @@ export class AsciidocParser {
           errorMessage += "Go to `File -> Preferences -> User settings` and adjust the asciidoc.asciidoctor_command</b>"
           resolve(errorMessage);
         })
-        var result_data = ''
+        var result_data = new Buffer('');
         /* with large outputs we can receive multiple calls */
         asciidoctor.stdout.on('data', (data) => {
-          result_data += data.toString();
+          result_data = Buffer.concat([result_data, data as Buffer]);
         });
         asciidoctor.on('close', (code) => {
-          //var result = this.fixLinks(result_data);
-          resolve(result_data);
+          //var result = this.fixLinks(result_data.toString());
+          resolve(result_data.toString());
         })
         asciidoctor.stdin.write(text);
         asciidoctor.stdin.end();
