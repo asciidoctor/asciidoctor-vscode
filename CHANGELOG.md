@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.8.3
+
+* Fix unexpected splitting multibyte chars while chunking (closes #350)
+* Fixed default export PDF filename when using asciidoctorpdf (closes #349)
+
 ## 2.8.2
 
 * Remove depdendency on "copy-paste" which is never used
