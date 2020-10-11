@@ -118,25 +118,25 @@ export class AsciidocParser {
             let diagnostics = [];
             memoryLogger.getMessages().forEach((error) => {
               //console.log(error); //Error from asciidoctor.js
-              let errorMessage = error.message.text;
+              let errorMessage = error.getText()
               let sourceLine = 0;
               let relatedFile = null;
               let relatedLine = 0;
               let diagnosticSource = "asciidoctor.js";
-              let sourceRange = null;
-              if (error.message.source_location) { //There is a source location
-                if (error.message.source_location.path == "<stdin>") { //error is within the file we are parsing
-                  sourceLine = error.message.source_location.lineno - 1;
+              // allocate to line 0 in the absence of information
+              let sourceRange = doc.lineAt(0).range;
+              const location = error.getSourceLocation();
+              if (location) { //There is a source location
+                if (location.getPath() == "<stdin>") { //error is within the file we are parsing
+                  sourceLine = location.getLineNumber() - 1;
                   sourceRange = doc.lineAt(sourceLine).range;
                 } else { //error is coming from an included file
-                  relatedFile = error.message.source_location.file;
-                  relatedLine = error.message.source_location.lineno - 1;
-                  //try to find the include responsible from the info provided by asciidoctor.js
+                  relatedFile = error.getSourceLocation();
+                  relatedLine = sourceLine - 1;
+                  // try to find the include responsible from the info provided by asciidoctor.js
                   sourceLine = doc.getText().split('\n').indexOf(doc.getText().split('\n').find((str) => str.startsWith("include") && str.includes(error.message.source_location.path)));
                   if (sourceLine!=-1) {
                     sourceRange = doc.lineAt(sourceLine).range;
-                  } else {
-                    sourceRange = doc.lineAt(0).range;
                   }
                 }
               } else {
@@ -155,7 +155,7 @@ export class AsciidocParser {
               if(relatedFile) {
                 diagnosticRelated = [
                   new vscode.DiagnosticRelatedInformation(
-                    new vscode.Location(vscode.Uri.file(relatedFile),
+                    new vscode.Location(vscode.Uri.file(relatedFile.file),
                     new vscode.Position(0,0)
                     ),
                     errorMessage
