@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## 2.8.4
+
+- Fix "TypeError: range must be set" when previewing (closes #364)
+- Bump lodash from 4.17.15 to 4.17.19 closes (#354)
+
 ## 2.8.3
 
 * Fix unexpected splitting multibyte chars while chunking (closes #350)
