@@ -35,7 +35,7 @@ export default class AdocDocumentSymbolProvider implements vscode.DocumentSymbol
 
     const nextOKRunTime = this.lastSymbolCall + Math.max(this.lastRunTime * this.RunTimeFactor, 2000);
     const startTime = (new Date()).getTime();
-		
+
     if (this.lastSymbolCall == undefined || startTime > nextOKRunTime) {
 
       const toc = await new TableOfContentsProvider(this.engine, document).getToc();

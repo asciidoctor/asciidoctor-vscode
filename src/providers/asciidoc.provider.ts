@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import * as path from "path";
 import { createContext, Context } from "./createContext";
 
 import { createPathCompletionItem } from "./createCompletionItem";
@@ -28,7 +29,7 @@ export async function provideCompletionItems(
  * @param context
  */
 function shouldProvide(context: Context): boolean {
-  return /(image\:\:|image\:|include\:\:)\S*/gi.test(context.textFullLine)
+  return /(include\:\:|image\:\:|image\:)\S*/gi.test(context.textFullLine)
 }
 
 /**
@@ -37,23 +38,23 @@ function shouldProvide(context: Context): boolean {
 async function provide(
   context: Context
 ): Promise<vscode.CompletionItem[]> {
+  const pathExtractedFromIncludeString = context.textFullLine.replace('include::', '').replace('image::', '').replace('image:', '');
+  const entryDir = pathExtractedFromIncludeString.substr(0, pathExtractedFromIncludeString.lastIndexOf("/"));
   const workspace = vscode.workspace.getWorkspaceFolder(context.document.uri);
-
   const rootPath = workspace?.uri.fsPath;
-
-  const path = getPathOfFolderToLookupFiles(
+  const searchPath = getPathOfFolderToLookupFiles(
     context.document.uri.fsPath,
-    rootPath
+    path.join(rootPath, entryDir)
   );
 
-  const childrenOfPath = await getChildrenOfPath(path);
+  const childrenOfPath = await getChildrenOfPath(searchPath);
 
   const items = sortFilesAndDirectories(childrenOfPath);
 
   return [
     ...items.map((child) => {
       const result = createPathCompletionItem(child);
-      result.insertText = result.kind === vscode.CompletionItemKind.File ? child.file + '[]' : child.file + '/'
+      result.insertText = result.kind === vscode.CompletionItemKind.File ? child.file + '[]' : child.file
       return result;
     }),
   ];
