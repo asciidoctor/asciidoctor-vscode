@@ -51,7 +51,14 @@ async function provide(
 
   const items = sortFilesAndDirectories(childrenOfPath);
 
+  const levelUpCompletionItem: vscode.CompletionItem = {
+    label: '..',
+    kind: vscode.CompletionItemKind.Folder,
+    sortText: '..',
+  }
+
   return [
+    levelUpCompletionItem,
     ...items.map((child) => {
       const result = createPathCompletionItem(child);
       result.insertText = result.kind === vscode.CompletionItemKind.File ? child.file + '[]' : child.file
