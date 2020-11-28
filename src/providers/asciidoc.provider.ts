@@ -38,8 +38,19 @@ function shouldProvide(context: Context): boolean {
 async function provide(
   context: Context
 ): Promise<vscode.CompletionItem[]> {
+  const documentText = context.document.getText();
   const pathExtractedFromIncludeString = context.textFullLine.replace('include::', '').replace('image::', '').replace('image:', '');
-  const entryDir = pathExtractedFromIncludeString.substr(0, pathExtractedFromIncludeString.lastIndexOf("/"));
+  let entryDir = pathExtractedFromIncludeString.substr(0, pathExtractedFromIncludeString.lastIndexOf("/"));
+
+  // use path defined in a variable used
+  if (entryDir.startsWith('{')) {
+    const variableName = entryDir.replace('{', '').replace('}', '')
+    const match = documentText.match(new RegExp(`:${variableName}:.*`, 'g'));
+    if (match && match[0]) {
+      entryDir = match[0].replace(`:${variableName}: `, '');
+    }
+  }
+
   const workspace = vscode.workspace.getWorkspaceFolder(context.document.uri);
   const rootPath = workspace?.uri.fsPath;
   const searchPath = getPathOfFolderToLookupFiles(
@@ -56,9 +67,27 @@ async function provide(
     kind: vscode.CompletionItemKind.Folder,
     sortText: '..',
   }
+  const globalVariableDefinitions = documentText.match(/:\S+:.*/g)
+
+  let variablePathSubstitutions = []
+  // TODO: prevent editor.autoClosingBrackets at this point until finished inserting
+  const editorConfig = vscode.workspace.getConfiguration('editor');
+  const doAutoCloseBrackets = editorConfig.get('autoClosingBrackets') === 'always';
+  if (globalVariableDefinitions) {
+    variablePathSubstitutions = globalVariableDefinitions.map(variableDef => {
+      const label = variableDef.match(/:\S+:/g)[0].replace(/\:/g, '');
+      return {
+        label: `{${label}}`,
+        kind: vscode.CompletionItemKind.Variable,
+        sortText: `a_${label}`,
+        insertText: `{${label}${doAutoCloseBrackets ? '' : '}'}` // } curly bracket will be closed automatically by default
+      }
+    })
+  }
 
   return [
     levelUpCompletionItem,
+    ...variablePathSubstitutions,
     ...items.map((child) => {
       const result = createPathCompletionItem(child);
       result.insertText = result.kind === vscode.CompletionItemKind.File ? child.file + '[]' : child.file
