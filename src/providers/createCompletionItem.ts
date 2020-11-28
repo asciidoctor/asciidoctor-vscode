@@ -6,7 +6,7 @@ export function createPathCompletionItem(
 ): vscode.CompletionItem {
   return {
     label: fileInfo.file,
-    kind: vscode.CompletionItemKind.File,
+    kind: fileInfo.isFile ? vscode.CompletionItemKind.File : vscode.CompletionItemKind.Folder,
     sortText: fileInfo.file,
   };
 }

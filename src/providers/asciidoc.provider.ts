@@ -5,6 +5,7 @@ import { createPathCompletionItem } from "./createCompletionItem";
 import {
   getPathOfFolderToLookupFiles,
   getChildrenOfPath,
+  sortFilesAndDirectories,
 } from "../util/file";
 
 export const AsciidocProvider = {
@@ -27,8 +28,7 @@ export async function provideCompletionItems(
  * @param context
  */
 function shouldProvide(context: Context): boolean {
-  return ['include::', 'image::'].includes(context.textFullLine)
-    || context.textFullLine.endsWith(' image:') // inline images (triggered with a single colon)
+  return /(image\:\:|image\:|include\:\:)\S*/gi.test(context.textFullLine)
 }
 
 /**
@@ -48,10 +48,12 @@ async function provide(
 
   const childrenOfPath = await getChildrenOfPath(path);
 
+  const items = sortFilesAndDirectories(childrenOfPath);
+
   return [
-    ...childrenOfPath.map((child) => {
+    ...items.map((child) => {
       const result = createPathCompletionItem(child);
-      result.insertText = child.file + '[]'
+      result.insertText = result.kind === vscode.CompletionItemKind.File ? child.file + '[]' : child.file + '/'
       return result;
     }),
   ];

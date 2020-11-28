@@ -13,7 +13,7 @@ export class AsciidocFileIncludeAutoCompletionMonitor {
         scheme: "file",
       },
       AsciidocProvider,
-      ...[":"]
+      ...[":", "/"]
     );
 
     this.disposables.push(disposable);

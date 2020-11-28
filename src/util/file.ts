@@ -49,9 +49,16 @@ export function getPathOfFolderToLookupFiles(
 export async function getChildrenOfPath(path: string) {
   try {
     const files: string[] = await readdirAsync(path);
-    return files
+    const filesDbg = files
       .map((f) => new FileInfo(path, f));
+    return filesDbg;
   } catch (error) {
     return [];
   }
 }
+
+export const sortFilesAndDirectories = (filesAndDirs: FileInfo[]): FileInfo[] => {
+  const dirs = filesAndDirs.filter(f => f.isFile !== true);
+  const files = filesAndDirs.filter(f => f.isFile === true);
+  return [...dirs, ...files]
+};
