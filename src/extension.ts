@@ -17,6 +17,7 @@ import { getAsciidocExtensionContributions } from './asciidocExtensions';
 import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security';
 import { githubSlugifier } from './slugify';
 import { AttributeCompleter } from './features/attributeCompleter';
+import { AsciidocFileIncludeAutoCompletionMonitor } from './util/includeAutoCompletion';
 
 
 export function activate(context: vscode.ExtensionContext)
@@ -41,6 +42,8 @@ export function activate(context: vscode.ExtensionContext)
   const symbolProvider = new AdocDocumentSymbolProvider(engine, null, null, null, null);
   const previewManager = new AsciidocPreviewManager(contentProvider, logger, contributions);
   context.subscriptions.push(previewManager);
+  const includeAutoCompletionMonitor = new AsciidocFileIncludeAutoCompletionMonitor();
+  context.subscriptions.push(includeAutoCompletionMonitor);
 
   context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider));
   context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider()));
