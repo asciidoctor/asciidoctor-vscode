@@ -91,6 +91,13 @@ async function provide(
     ...items.map((child) => {
       const result = createPathCompletionItem(child);
       result.insertText = result.kind === vscode.CompletionItemKind.File ? child.file + '[]' : child.file
+      if (result.kind === vscode.CompletionItemKind.Folder) {
+        result.command = {
+          command: 'default:type',
+          title: 'triggerSuggest',
+          arguments: [{ text: '/' }],
+        }
+      }
       return result;
     }),
   ];
