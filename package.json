@@ -490,7 +490,7 @@
 		"@asciidoctor/core": "2.1.0",
 		"@asciidoctor/docbook-converter": "^2.0.0",
 		"@types/vscode": "^1.31.0",
-		"asciidoctor-kroki": "^0.9.1",
+		"asciidoctor-kroki": "^0.11.0",
 		"file-url": "^3.0.0",
 		"follow-redirects": "^1.10.0",
 		"https-proxy-agent": "^4.0.0",

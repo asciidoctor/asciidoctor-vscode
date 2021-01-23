@@ -1,5 +1,8 @@
 # CHANGELOG
 
+## 2.8.5
+
+- updated asciidoc-kroki to v0.11.0
 ## 2.8.4
 
 - Fix "TypeError: range must be set" when previewing (closes #364)
