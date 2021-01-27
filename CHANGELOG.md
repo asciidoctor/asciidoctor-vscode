@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 2.8.5
+## 2.8.6
 
 - update asciidoc-kroki to v0.11.0
 ## 2.8.4
