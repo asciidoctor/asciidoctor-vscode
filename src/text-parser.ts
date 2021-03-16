@@ -86,7 +86,10 @@ export class AsciidocParser {
 
         Object.keys(preview_attributes).forEach((key) => {
           if (typeof preview_attributes[key] === "string") {
-            attributes[key] = preview_attributes[key];
+            attributes[key] = preview_attributes[key]
+            if(workspacePath !== undefined) {
+              attributes[key] = attributes[key].replace("${workspaceFolder}", workspacePath[0].uri.path);
+            }
           }
         })
 
@@ -251,6 +254,9 @@ export class AsciidocParser {
         Object.keys(preview_attributes).forEach((key) => {
           if (typeof preview_attributes[key] === "string") {
             var value: string = preview_attributes[key]
+            if(workspacePath !== undefined) {
+              value = value.replace("${workspaceFolder}", workspacePath[0].uri.path);
+            }
 
             if (value.endsWith('!')) {
               adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', `${value}`])
