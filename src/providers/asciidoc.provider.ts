@@ -74,13 +74,13 @@ async function provide(
   const editorConfig = vscode.workspace.getConfiguration('editor');
   const doAutoCloseBrackets = editorConfig.get('autoClosingBrackets') === 'always';
   if (globalVariableDefinitions) {
-    variablePathSubstitutions = globalVariableDefinitions.map(variableDef => {
+    variablePathSubstitutions = globalVariableDefinitions.map((variableDef) => {
       const label = variableDef.match(/:\S+:/g)[0].replace(/\:/g, '');
       return {
         label: `{${label}}`,
         kind: vscode.CompletionItemKind.Variable,
         sortText: `a_${label}`,
-        insertText: `{${label}${doAutoCloseBrackets ? '' : '}'}` // } curly bracket will be closed automatically by default
+        insertText: `{${label}${doAutoCloseBrackets ? '' : '}'}`, // } curly bracket will be closed automatically by default
       }
     })
   }

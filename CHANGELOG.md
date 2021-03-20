@@ -1,5 +1,15 @@
 # CHANGELOG
 
+## 2.8.8
+
+- updated asciidoc-kroki to 0.12.0
+- allow use of ${workspaceFolder} in attributes
+- updated asciidoc-kroki to 0.12.0
+
+## 2.8.7
+
+- update asciidoc-kroki to v0.11.0
+
 ## 2.8.4
 
 - Fix "TypeError: range must be set" when previewing (closes #364)

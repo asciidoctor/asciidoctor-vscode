@@ -58,7 +58,7 @@ export async function getChildrenOfPath(path: string) {
 }
 
 export const sortFilesAndDirectories = (filesAndDirs: FileInfo[]): FileInfo[] => {
-  const dirs = filesAndDirs.filter(f => f.isFile !== true);
-  const files = filesAndDirs.filter(f => f.isFile === true);
+  const dirs = filesAndDirs.filter((f) => f.isFile !== true);
+  const files = filesAndDirs.filter((f) => f.isFile === true);
   return [...dirs, ...files]
 };
