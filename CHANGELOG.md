@@ -4,7 +4,7 @@
 
 - updated asciidoc-kroki to 0.12.0
 - allow use of ${workspaceFolder} in attributes
-- updated asciidoc-kroki to 0.12.0
+- provide import completion for include and images
 
 ## 2.8.7
 
