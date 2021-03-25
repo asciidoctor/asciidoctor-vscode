@@ -9,6 +9,13 @@
             "-p", "tsconfig.json"
         ],
         "dependsOn": "npm: webpack-preview-dev"
+      },
+      {
+          "label": "adoc-prelaunch",
+          "dependsOn": [
+              "npm: webpack",
+              "npm: compile"
+          ]
       }
     ]
   }
