@@ -7,7 +7,7 @@ export class AttributeCompleter {
   provideCompletionItems(document: vscode.TextDocument, position: vscode.Position) {
 
     const adoc = new AsciidocParser(document.uri.fsPath)
-    adoc.parseText(document.getText())
+    adoc.parseText(document.getText(), document)
     const attributes = adoc.document.getAttributes()
     let attribs = []
         

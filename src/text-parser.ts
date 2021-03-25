@@ -31,10 +31,10 @@ export class AsciidocParser {
       return match;
     }
 
-    private async convert_using_javascript(text: string, forHTMLSave: boolean, backend: string) {
+    private async convert_using_javascript(text: string, doc: vscode.TextDocument, forHTMLSave: boolean, backend: string) {
       return new Promise<string>((resolve) => {
-        const editor = vscode.window.activeTextEditor;
-        const doc = editor.document;
+        // const editor = vscode.window.activeTextEditor; // TODO Bug Right here
+        // const doc = editor.document;
         const documentPath = path.dirname(path.resolve(doc.fileName));
         const workspacePath = vscode.workspace.workspaceFolders
         const contains_style = !isNullOrUndefined(text.match(new RegExp("^\\s*:(stylesheet|stylesdir):", "img")));
@@ -185,9 +185,9 @@ export class AsciidocParser {
       })
     }
 
-    private async convert_using_application(text: string, forHTMLSave: boolean, backend: string) {
-      const editor = vscode.window.activeTextEditor;
-      const doc = editor.document;
+    private async convert_using_application(text: string, doc: vscode.TextDocument, forHTMLSave: boolean, backend: string) {
+      // const editor = vscode.window.activeTextEditor;
+      // const doc = editor.document;
       const documentPath = path.dirname(doc.fileName).replace('"', '\\"');
       const workspacePath = vscode.workspace.workspaceFolders
       const contains_style = !isNullOrUndefined(text.match(new RegExp("^\\s*:(stylesheet|stylesdir):", "img")));
@@ -313,12 +313,12 @@ export class AsciidocParser {
       return result;
     }
 
-    public async parseText(text: string, forHTMLSave: boolean = false, backend: string = 'html'): Promise<string> {
+    public async parseText(text: string, doc: vscode.TextDocument, forHTMLSave: boolean = false, backend: string = 'html'): Promise<string> {
       const use_asciidoctor_js = vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctor_js');
       if (use_asciidoctor_js)
-        return this.convert_using_javascript(text, forHTMLSave, backend)
+        return this.convert_using_javascript(text, doc, forHTMLSave, backend)
       else
-        return this.convert_using_application(text, forHTMLSave, backend)
+        return this.convert_using_application(text, doc, forHTMLSave, backend)
     }
 
 }
