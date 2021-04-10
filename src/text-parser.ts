@@ -33,8 +33,6 @@ export class AsciidocParser {
 
     private async convert_using_javascript(text: string, doc: vscode.TextDocument, forHTMLSave: boolean, backend: string) {
       return new Promise<string>((resolve) => {
-        // const editor = vscode.window.activeTextEditor; // TODO Bug Right here
-        // const doc = editor.document;
         const documentPath = path.dirname(path.resolve(doc.fileName));
         const workspacePath = vscode.workspace.workspaceFolders
         const contains_style = !isNullOrUndefined(text.match(new RegExp("^\\s*:(stylesheet|stylesdir):", "img")));
@@ -186,8 +184,6 @@ export class AsciidocParser {
     }
 
     private async convert_using_application(text: string, doc: vscode.TextDocument, forHTMLSave: boolean, backend: string) {
-      // const editor = vscode.window.activeTextEditor;
-      // const doc = editor.document;
       const documentPath = path.dirname(doc.fileName).replace('"', '\\"');
       const workspacePath = vscode.workspace.workspaceFolders
       const contains_style = !isNullOrUndefined(text.match(new RegExp("^\\s*:(stylesheet|stylesdir):", "img")));
