@@ -140,7 +140,7 @@ document.addEventListener('click', (event) => {
 			let hrefText = node.getAttribute('data-href');
 			if (!hrefText) {
 				// Pass through known schemes
-				if (passThroughLinkSchemes.some(scheme => node.href.startsWith(scheme))) {
+				if (passThroughLinkSchemes.some((scheme) => node.href.startsWith(scheme))) {
 					return;
 				}
 				hrefText = node.getAttribute('href');
