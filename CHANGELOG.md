@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.8.9
+
+- Fix links in preview (closes #397)
+
 ## 2.8.8
 
 - updated asciidoc-kroki to 0.12.0
