@@ -85,9 +85,9 @@ export async function resolveLinkToAsciidocFile(path: string): Promise<vscode.Ur
     // Noop
   }
 
-  // If no extension, try with `.md` extension
+  // If no extension, try with `.adoc` extension
   if (extname(path) === '') {
-    return tryResolveLinkToAsciidocFile(path + '.md');
+    return tryResolveLinkToAsciidocFile(path + '.adoc');
   }
 
   return undefined;

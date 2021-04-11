@@ -120,6 +120,8 @@ document.addEventListener('dblclick', (event) => {
   }
 });
 
+const passThroughLinkSchemes = ['http:', 'https:', 'mailto:', 'vscode:', 'vscode-insiders:'];
+
 document.addEventListener('click', (event) => {
   if (!event) {
     return;
@@ -134,13 +136,31 @@ document.addEventListener('click', (event) => {
           location.hash = "#" + decodeURI(fragment);
         }
       }
-      if (node.href.startsWith('file://') || node.href.startsWith('vscode-resource:')) {
-        const [path, fragment] = node.href.replace(/^(file:\/\/|vscode-resource:)/i, '').split('#');
-        messaging.postMessage('clickLink', { path, fragment });
-        event.preventDefault();
-        event.stopPropagation();
-        break;
-      }
+      // Like VSCode Markdown extension, pass through some known schemes
+			let hrefText = node.getAttribute('data-href');
+			if (!hrefText) {
+				// Pass through known schemes
+				if (passThroughLinkSchemes.some((scheme) => node.href.startsWith(scheme))) {
+					return;
+				}
+				hrefText = node.getAttribute('href');
+			}
+
+			// If original link doesn't look like a url, delegate back to VS Code to resolve
+			if (!/^[a-z\-]+:/i.test(hrefText)) {
+				messaging.postMessage('clickLink', { href: hrefText });
+				event.preventDefault();
+				event.stopPropagation();
+				return;
+			}
+      // Like how VSCode Markdown, pass link to backend and let it resolve it
+      // if (node.href.startsWith('file://') || node.href.startsWith('vscode-resource:')) {
+      //   const [path, fragment] = node.href.replace(/^(file:\/\/|vscode-resource:)/i, '').split('#');
+      //   messaging.postMessage('clickLink', { path, fragment });
+      //   event.preventDefault();
+      //   event.stopPropagation();
+      //   break;
+      // }
       break;
     }
     node = node.parentNode;

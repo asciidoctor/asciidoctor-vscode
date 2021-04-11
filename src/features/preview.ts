@@ -152,7 +152,7 @@ export class AsciidocPreview
           break;
 
         case 'clickLink':
-          this.onDidClickPreviewLink(e.body.path, e.body.fragement);
+          this.onDidClickPreviewLink(e.body.href);
           break;
 
         case 'showPreviewSecuritySelector':
@@ -492,12 +492,20 @@ export class AsciidocPreview
     vscode.workspace.openTextDocument(this._resource).then(vscode.window.showTextDocument);
   }
 
-  private async onDidClickPreviewLink(path: string, fragment: string | undefined)
+  private async onDidClickPreviewLink(href: string)
   {
+    let [hrefPath, fragment] = decodeURIComponent(href).split('#');
+    // From Markdown plugin
+    if (hrefPath[0] !== '/') {
+			hrefPath = path.join(path.dirname(this.resource.fsPath), hrefPath);
+		} else {
+			// Handle any normalized file paths
+			hrefPath = vscode.Uri.parse(hrefPath.replace('/file', '')).fsPath;
+		}
     const openLinks = this.config.get<string>('preview.openAsciidocLinks', 'inPreview');
     if (openLinks === 'inPreview')
     {
-      const asciidocLink = await resolveLinkToAsciidocFile(path);
+      const asciidocLink = await resolveLinkToAsciidocFile(hrefPath);
       if (asciidocLink)
       {
         this.update(asciidocLink);

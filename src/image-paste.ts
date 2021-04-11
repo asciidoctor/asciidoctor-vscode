@@ -326,7 +326,7 @@ export namespace Import {
       if (dir === '') {
         const thisDocument = vscode.window.activeTextEditor.document
         const adoc = new AsciidocParser(thisDocument.uri.fsPath)
-        adoc.parseText(thisDocument.getText())
+        adoc.parseText(thisDocument.getText(), thisDocument)
         dir = adoc.document.getAttribute('imagesdir')
       }
 
