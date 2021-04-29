@@ -24,10 +24,10 @@ function shouldProvide(context: Context): boolean {
   return /(citenp\:)\S*/gi.test(context.textFullLine);
 }
 
-function getCitationKeys(): string[] {
-  const files = readdirSync(".").filter((fn) => fn.endsWith(".bib"));
+async function getCitationKeys(): Promise<string[]> {
+  const files = await vscode.workspace.findFiles("*.bib");
   const filesContent = files.map((file) =>
-    readFileSync(file).toString("utf-8")
+    readFileSync(file.path).toString("utf-8")
   );
   const bibtexJson = filesContent.map((content) => bibtexParse.toJSON(content));
   const flatMap = (f, xs) => xs.reduce((r, x) => r.concat(f(x)), []);
@@ -42,7 +42,7 @@ function getCitationKeys(): string[] {
  */
 async function provide(context: Context): Promise<vscode.CompletionItem[]> {
   const bibtexSearch = context.textFullLine.replace("citenp:", "");
-  const citationKeys = getCitationKeys();
+  const citationKeys = await getCitationKeys();
 
   return citationKeys
     .filter((citationKeys) => citationKeys.match(bibtexSearch))
