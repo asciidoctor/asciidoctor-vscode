@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { AsciidocProvider } from '../providers/asciidoc.provider';
+import { BibtexProvider } from "../providers/bibtex.provider";
 import { disposeAll } from '../util/dispose';
 
 export class AsciidocFileIncludeAutoCompletionMonitor {
@@ -16,7 +17,17 @@ export class AsciidocFileIncludeAutoCompletionMonitor {
       ...[":", "/"]
     );
 
+    const bibtexDisposable = vscode.languages.registerCompletionItemProvider(
+      {
+        language: "asciidoc",
+        scheme: "file",
+      },
+      BibtexProvider,
+      ...[":", "/"]
+    );
+
     this.disposables.push(disposable);
+    this.disposables.push(bibtexDisposable);
 	}
 
 	dispose() {
