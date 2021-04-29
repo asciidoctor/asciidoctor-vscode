@@ -206,6 +206,9 @@
           "include": "#characters"
         },
         {
+          "include": "#bibtex-macro"
+        },
+        {
           "include": "#bibliography-anchor"
         }
       ]
@@ -1167,6 +1170,24 @@
         {
           "name": "markup.macro.inline.stem.asciidoc",
           "begin": "(?<!\\\\)(stem|(?:latex|ascii)math):([a-z,]*)(\\[)",
+          "beginCaptures": {
+            "1": {
+              "name": "entity.name.function.asciidoc"
+            },
+            "2": {
+              "name": "markup.meta.attribute-list.asciidoc"
+            }
+          },
+          "contentName": "string.unquoted.asciidoc",
+          "end": "\\]|^$"
+        }
+      ]
+    },
+    "bibtex-macro": {
+      "patterns": [
+        {
+          "name": "markup.macro.inline.bibtex.asciidoc",
+          "begin": "(?<!\\\\)(citenp:)([a-z,]*)(\\[)",
           "beginCaptures": {
             "1": {
               "name": "entity.name.function.asciidoc"
