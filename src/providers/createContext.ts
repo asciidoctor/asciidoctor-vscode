@@ -4,6 +4,7 @@ export interface Context {
   textFullLine: string;
   document: vscode.TextDocument;
   documentExtension: string | undefined;
+  position: vscode.Position;
 }
 
 export function createContext(
@@ -16,6 +17,7 @@ export function createContext(
     textFullLine,
     document,
     documentExtension,
+    position,
   };
 }
 

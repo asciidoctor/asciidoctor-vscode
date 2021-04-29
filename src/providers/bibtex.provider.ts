@@ -21,7 +21,13 @@ export async function provideCompletionItems(
  * @param context
  */
 function shouldProvide(context: Context): boolean {
-  return /(citenp\:)\S*/gi.test(context.textFullLine);
+  const keyword = "citenp:";
+  // Check if cursor is after citenp:
+  const occurence = context.textFullLine.indexOf(
+    keyword,
+    context.position.character - keyword.length
+  );
+  return occurence === context.position.character - keyword.length;
 }
 
 async function getCitationKeys(): Promise<string[]> {
@@ -41,7 +47,15 @@ async function getCitationKeys(): Promise<string[]> {
  * Provide Completion Items
  */
 async function provide(context: Context): Promise<vscode.CompletionItem[]> {
-  const bibtexSearch = context.textFullLine.replace("citenp:", "");
+  const { textFullLine, position } = context;
+  const indexOfNextWhiteSpace = textFullLine.includes(" ", position.character)
+    ? textFullLine.indexOf(" ", position.character)
+    : textFullLine.length;
+  //Find the text between citenp: and the next whitespace character
+  const bibtexSearch = textFullLine.substring(
+    textFullLine.lastIndexOf(":", position.character + 1) + 1,
+    indexOfNextWhiteSpace
+  );
   const citationKeys = await getCitationKeys();
 
   return citationKeys
