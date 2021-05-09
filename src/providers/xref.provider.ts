@@ -1,7 +1,6 @@
 import { readFileSync } from "fs";
 import * as vscode from "vscode";
 import { createContext, Context } from "./createContext";
-const bibtexParse = require("@orcid/bibtex-parse-js");
 
 export const xrefProvider = {
   provideCompletionItems,
@@ -55,12 +54,12 @@ async function provide(context: Context): Promise<vscode.CompletionItem[]> {
     textFullLine.lastIndexOf(":", position.character + 1) + 1,
     indexOfNextWhiteSpace
   );
-  const citationKeys = await getLabels();
+  const xrefLabels = await getLabels();
 
-  return citationKeys
-    .filter((citationKeys) => citationKeys.match(search))
-    .map((citationKey) => ({
-      label: `${citationKey}[]`,
+  return xrefLabels
+    .filter((label) => label.match(search))
+    .map((label) => ({
+      label: `${label}[]`,
       kind: vscode.CompletionItemKind.Reference,
     }));
 }
