@@ -63,7 +63,7 @@ The extension provides a quick command to export your AsciiDoc file as PDF.
 * Choose the folder and filename for the generated PDF
 
 By default a separate binary is downloaded and used to render the document in PDF format. To use Asciidoctor PDF set option `asciidoc.use_asciidoctorpdf` to `true`.<br/>
-(See more details under [Options](#user-settings))
+(See more details under [User Settings](#user-settings))
 
 ### Save as HTML
 
