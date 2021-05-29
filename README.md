@@ -52,7 +52,7 @@ The preview supports setting attributes through the `asciidoc.preview.attributes
 
 By default the preview style follows the VSCode theme (`workbench.colorTheme`). To use Asciidoctor's style set option `asciidoc.preview.useEditorStyle` to `false`. It is also possible to set your own preview stylesheet with the `asciidoc.preview.style` option.
 
-(See more details under [Options](#user-settings))
+(See more details under [User Settings](#user-settings))
 
 ### Export as PDF
 
