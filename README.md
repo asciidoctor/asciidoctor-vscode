@@ -52,7 +52,7 @@ The preview supports setting attributes through the `asciidoc.preview.attributes
 
 By default the preview style follows the VSCode theme (`workbench.colorTheme`). To use Asciidoctor's style set option `asciidoc.preview.useEditorStyle` to `false`. It is also possible to set your own preview stylesheet with the `asciidoc.preview.style` option.
 
-(See more details under [Options](#options))
+(See more details under [Options](#user-settings))
 
 ### Export as PDF
 
@@ -63,7 +63,7 @@ The extension provides a quick command to export your AsciiDoc file as PDF.
 * Choose the folder and filename for the generated PDF
 
 By default a separate binary is downloaded and used to render the document in PDF format. To use Asciidoctor PDF set option `asciidoc.use_asciidoctorpdf` to `true`.<br/>
-(See more details under [Options](#options))
+(See more details under [Options](#user-settings))
 
 ### Save as HTML
 
