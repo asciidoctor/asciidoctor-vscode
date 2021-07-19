@@ -498,7 +498,7 @@
         {
           "comment": "Diagram",
           "name": "entity.name.function.asciidoc",
-          "match": "(actdiag|blockdiag|ditaa|graphviz|meme|mermaid|nwdiag|packetdiag|plantuml|rackdiag|seqdiag|shaape|wavedrom)"
+          "match": "(actdiag|blockdiag|ditaa|graphviz|meme|mermaid|nwdiag|packetdiag|pikchr|plantuml|rackdiag|seqdiag|shaape|wavedrom)"
         },
         {
           "comment": "Others",
