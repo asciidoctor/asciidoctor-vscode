@@ -18,7 +18,7 @@ export class AsciidocParser {
     public document = null;
     private ext_path = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath;
     private stylesdir = path.join(this.ext_path, 'media')
-    
+
     constructor(private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) {
     }
 
@@ -41,7 +41,7 @@ export class AsciidocParser {
         const preview_style = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', "");
         const useWorkspaceAsBaseDir = vscode.workspace.getConfiguration('asciidoc', null).get('useWorkspaceRoot');
         const enableErrorDiagnostics = vscode.workspace.getConfiguration('asciidoc', null).get('enableErrorDiagnostics');
-        
+
         let base_dir = documentPath;
         if (useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined') {
           base_dir = vscode.workspace.rootPath;
@@ -49,7 +49,7 @@ export class AsciidocParser {
         if(this.errorCollection) {
           this.errorCollection.clear();
         }
-        
+
         const memoryLogger = asciidoctor.MemoryLogger.create();
         asciidoctor.LoggerManager.setLogger(memoryLogger);
 
@@ -98,7 +98,6 @@ export class AsciidocParser {
 
         const options = {
           safe: 'unsafe',
-          doctype: 'article',
           attributes: attributes,
           header_footer: true,
           to_file: false,
