@@ -33,28 +33,8 @@ export class AsciidocEngine {
 	  return this.ad;
 	}
 
-	private stripFrontmatter(text: string): { text: string, offset: number } {
-	  let offset = 0;
-	  const frontMatterMatch = FrontMatterRegex.exec(text);
-	  if (frontMatterMatch) {
-	    const frontMatter = frontMatterMatch[0];
-	    offset = frontMatter.split(/\r\n|\n|\r/g).length - 1;
-	    text = text.substr(frontMatter.length);
-	  }
-	  return { text, offset };
-	}
-
-	public async render(document: vscode.Uri, stripFrontmatter: boolean, text: string, 
+	public async render(document: vscode.Uri, text: string, 
 	  forHTML: boolean = false, backend: string = 'html5'): Promise<string> {
-	  let offset = 0;
-	  if (stripFrontmatter) {
-	    const asciidocContent = this.stripFrontmatter(text);
-	    offset = asciidocContent.offset;
-	    text = asciidocContent.text;
-	  }
-
-	  this.currentDocument = document;
-	  this.firstLine = offset;
 	  const engine = await this.getEngine(document);
 	  const doc = await vscode.workspace.openTextDocument(document);
 	  let ascii_doc = engine.parseText(text, doc, forHTML, backend)

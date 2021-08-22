@@ -30,7 +30,7 @@ export class SaveHTML implements Command {
         htmlPath = path.join(docPath.dir, docPath.name+".html")
       }
 
-      const html = await this.engine.render(doc.uri, true, text, true, 'html5')
+      const html = await this.engine.render(doc.uri, text, true, 'html5')
 
       fs.writeFile(htmlPath, html, function(err) {
         if(err) {

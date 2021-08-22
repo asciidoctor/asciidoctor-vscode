@@ -3,7 +3,7 @@
 	"description": "Provides rich language support for AsciiDoc.",
 
 	"asciidoc.exportAsPDF.title": "Export document as PDF",
-	"asciidoc.pasteImage.title" : "Paste Image",
+	"asciidoc.pasteImage.title": "Paste Image",
 	"asciidoc.preview.title": "Open Preview",
 	"asciidoc.preview.refresh.title": "Refresh Preview",
 	"asciidoc.preview.toggleLock.title": "Toggle Preview Locking",
@@ -39,7 +39,7 @@
 	"asciidoc.use_asciidoctor_js.desc": "Use asciidoctor js instead of the 'asciidoctor_command'",
 	"asciidoc.use_asciidoctorpdf.desc": "Use asciidoctor-pdf instead of the integrated renderer",
 	"asciidoc.use_kroki.desc": "Enable kroki integration to generate diagrams.",
-	"asciidoc.wkhtmltopdf_path.desc": "Full path for the wkhtmltopdf binary/executable",
+	"asciidoc.asciidoctorWebPdfPath.desc": "Full path for the asciidoctor-web-pdf binary/executable",
 	"asciidoc.forceUnixStyleSeparator.desc": "Force set the file separator style to unix style. If set false, separator style will follow the system style.",
 	"asciidoc.preview.openAsciiDocLinks.desc": "How should clicking on links to AsciiDoc files be handled in the preview.",
 	"asciidoc.preview.openAsciiDocLinks.inEditor": "Try to open links in the editor",

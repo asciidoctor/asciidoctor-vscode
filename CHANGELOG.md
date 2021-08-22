@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unreleased
+
+- Replace wkhtmltopdf with asciidoctor-web-pdf (closes #433)
+
 ## 2.8.9
 
 - Fix links in preview (closes #397)

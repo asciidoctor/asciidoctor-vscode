@@ -41,6 +41,7 @@ export class AsciidocParser {
         const preview_style = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', "");
         const useWorkspaceAsBaseDir = vscode.workspace.getConfiguration('asciidoc', null).get('useWorkspaceRoot');
         const enableErrorDiagnostics = vscode.workspace.getConfiguration('asciidoc', null).get('enableErrorDiagnostics');
+        const previewFrontMatter = vscode.workspace.getConfiguration('asciidoc', null).get('previewFrontMatter');
 
         let base_dir = documentPath;
         if (useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined') {
@@ -80,6 +81,10 @@ export class AsciidocParser {
         } else {
           // TODO: decide whether to use the included css or let ascidoctor.js decide
           // attributes = { 'copycss': true, 'stylesdir': this.stylesdir, 'stylesheet': 'asciidoctor-default.css@' }
+        }
+
+        if (previewFrontMatter === 'hide') {
+          attributes['skip-front-matter'] = true
         }
 
         Object.keys(preview_attributes).forEach((key) => {
@@ -190,6 +195,7 @@ export class AsciidocParser {
       const preview_attributes = vscode.workspace.getConfiguration('asciidoc', null).get('preview.attributes', {});
       const preview_style = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', "");
       const useWorkspaceAsBaseDir = vscode.workspace.getConfiguration('asciidoc', null).get('useWorkspaceRoot');
+      const previewFrontMatter = vscode.workspace.getConfiguration('asciidoc', null).get('previewFrontMatter');
       this.document = null;
 
       let base_dir = documentPath;
@@ -242,6 +248,10 @@ export class AsciidocParser {
           // TODO: decide whether to use the included css or let ascidoctor decide
           // adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', `stylesdir=${this.stylesdir}@`])
           // adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', 'stylesheet=asciidoctor-default.css@'])
+        }
+
+        if (previewFrontMatter === 'hide') {
+          adoc_cmd_args.push.apply(adoc_cmd_args, ['-a', 'skip-front-matter']) 
         }
 
         adoc_cmd_args.push.apply(adoc_cmd_args, ['-b', backend])

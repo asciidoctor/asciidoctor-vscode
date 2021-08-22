@@ -403,12 +403,12 @@
 					"default": false,
 					"description": "%asciidoc.use_kroki.desc%"
 				},
-				"asciidoc.wkhtmltopdf_path": {
-					"type": "string",
-					"default": "",
-					"description": "%asciidoc.wkhtmltopdf_path.desc%",
-					"scope": "resource"
-				},
+				"asciidoc.asciidoctorWebPdfPath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "%asciidoc.asciidoctorWebPdfPath.desc%",
+                    "scope": "resource"
+                },
 				"asciidoc.forceUnixStyleSeparator": {
 					"type": "boolean",
 					"default": true,
@@ -492,8 +492,10 @@
 		"@orcid/bibtex-parse-js": "^0.0.25",
 		"@types/vscode": "^1.31.0",
 		"asciidoctor-kroki": "^0.13.0",
+		"extract-zip": "^2.0.1",
 		"file-url": "^3.0.0",
 		"follow-redirects": "^1.10.0",
+		"fs-extra": "^10.0.0",
 		"https-proxy-agent": "^4.0.0",
 		"moment": "^2.14.1",
 		"tmp": "0.1.0",
