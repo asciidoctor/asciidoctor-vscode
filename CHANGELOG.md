@@ -1,9 +1,5 @@
 # CHANGELOG
 
-## Unreleased
-
-- Update Asciidoctor.js to 2.2.5 (closes #431)
-
 ## 2.8.9
 
 - Fix links in preview (closes #397)
