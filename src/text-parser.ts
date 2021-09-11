@@ -8,10 +8,13 @@ const fileUrl = require('file-url');
 const asciidoctor = require('@asciidoctor/core')()
 const docbook = require('@asciidoctor/docbook-converter')
 const kroki = require('asciidoctor-kroki')
+const highlightjsAdapter = require('./highlightjs-adapter')
+highlightjsAdapter.register(asciidoctor)
 
 const use_kroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki');
-if (use_kroki)
+if (use_kroki) {
   kroki.register(asciidoctor.Extensions);
+}
 
 export class AsciidocParser {
     public html: string = '';
