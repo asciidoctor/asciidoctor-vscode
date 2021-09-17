@@ -13,13 +13,13 @@ const highlightjsAdapter = require('./highlightjs-adapter')
 export class AsciidocParser {
     public html: string = '';
     public document = null;
-    public adProcessor = null
+    public processor = null
     public registry = null
     private ext_path = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath;
     private stylesdir = path.join(this.ext_path, 'media')
 
     constructor(private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) {
-      this.adProcessor = asciidoctor()
+      this.processor = asciidoctor()
     }
 
     public getAttribute(name: string) {
@@ -50,16 +50,16 @@ export class AsciidocParser {
           this.errorCollection.clear();
         }
 
-        const memoryLogger = this.adProcessor.MemoryLogger.create()
-        this.adProcessor.LoggerManager.setLogger(memoryLogger)
+        const memoryLogger = this.processor.MemoryLogger.create()
+        this.processor.LoggerManager.setLogger(memoryLogger)
 
-        this.registry = this.adProcessor.Extensions.create()
+        this.registry = this.processor.Extensions.create()
 
-        highlightjsAdapter.register(this.registry)
+        // highlightjsAdapter.register(this.processor)
 
-        const use_kroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
+        const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('useKroki')
 
-        if (use_kroki) {
+        if (useKroki) {
           kroki.register(this.registry)
         }
 
@@ -117,7 +117,7 @@ export class AsciidocParser {
           extension_registry: this.registry
         }
         try {
-          this.document = this.adProcessor.load(text, options)
+          this.document = this.processor.load(text, options)
           const blocksWithLineNumber = this.document.findBy(function (b) { return typeof b.getLineNumber() !== 'undefined'; })
           blocksWithLineNumber.forEach(function (block, key, myArray) {
             block.addRole("data-line-" + block.getLineNumber());
@@ -276,7 +276,7 @@ export class AsciidocParser {
         adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-B', '"' + base_dir + '"', '-o', '-', '-'])
         var asciidoctor = spawn(adoc_cmd, adoc_cmd_args, options);
 
-        this.adProcessor.stderr.on('data', (data) => {
+        this.processor.stderr.on('data', (data) => {
           let errorMessage = data.toString();
           console.error(errorMessage);
           errorMessage += errorMessage.replace("\n", '<br><br>');
@@ -289,15 +289,15 @@ export class AsciidocParser {
         })
         var result_data = new Buffer('');
         /* with large outputs we can receive multiple calls */
-        this.adProcessor.stdout.on('data', (data) => {
+        this.processor.stdout.on('data', (data) => {
           result_data = Buffer.concat([result_data, data as Buffer]);
         });
-        this.adProcessor.on('close', (code) => {
+        this.processor.on('close', (code) => {
           //var result = this.fixLinks(result_data.toString());
           resolve(result_data.toString());
         })
-        this.adProcessor.stdin.write(text);
-        this.adProcessor.stdin.end();
+        this.processor.stdin.write(text);
+        this.processor.stdin.end();
       });
     }
 
