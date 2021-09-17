@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Next Version
+
+- Make `use_kroki` setting change effective without VS code restart (closes #444)
+
 ## 2.8.9
 
 - Fix links in preview (closes #397)
