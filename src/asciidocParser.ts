@@ -57,8 +57,7 @@ export class AsciidocParser {
       this.processor.LoggerManager.setLogger(memoryLogger)
 
       this.registry = this.processor.Extensions.create()
-
-      // highlightjsAdapter.register(this.processor)
+      this.processor.SyntaxHighlighter.for('highlight.js')
 
       const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
 

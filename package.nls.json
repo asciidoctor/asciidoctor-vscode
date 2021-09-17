@@ -38,7 +38,7 @@
 	"asciidoc.trace.desc": "Enable debug logging for the AsciiDoc extension.",
 	"asciidoc.use_asciidoctor_js.desc": "Use asciidoctor js instead of the 'asciidoctor_command'",
 	"asciidoc.use_asciidoctorpdf.desc": "Use asciidoctor-pdf instead of the integrated renderer",
-	"asciidoc.useKroki.desc": "Enable kroki integration to generate diagrams.",
+	"asciidoc.use_kroki.desc": "Enable kroki integration to generate diagrams.",
 	"asciidoc.wkhtmltopdf_path.desc": "Full path for the wkhtmltopdf binary/executable",
 	"asciidoc.forceUnixStyleSeparator.desc": "Force set the file separator style to unix style. If set false, separator style will follow the system style.",
 	"asciidoc.preview.openAsciiDocLinks.desc": "How should clicking on links to AsciiDoc files be handled in the preview.",

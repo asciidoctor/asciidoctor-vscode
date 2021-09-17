@@ -398,10 +398,10 @@
 					"default": false,
 					"description": "%asciidoc.use_asciidoctorpdf.desc%"
 				},
-				"asciidoc.useKroki": {
+				"asciidoc.use_kroki": {
 					"type": "boolean",
 					"default": false,
-					"description": "%asciidoc.useKroki.desc%"
+					"description": "%asciidoc.use_kroki.desc%"
 				},
 				"asciidoc.wkhtmltopdf_path": {
 					"type": "string",

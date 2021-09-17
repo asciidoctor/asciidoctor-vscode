@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- Make `useKroki` setting change effective without VS code restart (closes #444)
+- Make `use_kroki` setting change effective without VS code restart (closes #444)
 
 ## 2.8.9
 
