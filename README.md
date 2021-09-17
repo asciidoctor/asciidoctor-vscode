@@ -133,7 +133,7 @@ The following list contains all the options and their default value.
 | `asciidoc.trace: "off"` | Enable debug logging for the AsciiDoc extension. |
 | `asciidoc.use_asciidoctor_js: true` | Use Asciidoctor.js instead of the 'asciidoctor_command' to render the preview. |
 | `asciidoc.use_asciidoctorpdf: false` | Use Asciidoctor PDF instead of the integrated renderer for the _Export as PDF_ command. |
-| `asciidoc.useKroki: false` | Enable kroki integration to generate diagrams. |
+| `asciidoc.use_kroki: false` | Enable kroki integration to generate diagrams. |
 
 ## Identifying the VS Code Environment
 
@@ -153,7 +153,7 @@ You can [see the full range](https://kroki.io/#support) on the kroki website.
 
 Note that this extension will send graph information to https://kroki.io. If this is an issue it is also possible to use your own kroki instance (see [the instructions](https://github.com/Mogztter/asciidoctor-kroki#using-your-own-kroki) for further information).
 
-To enable diagram support, set the `useKroki` parameter in your User Settings to `true`.
+To enable diagram support, set the `use_kroki` parameter in your User Settings to `true`.
 
 To cache and save diagrams locally set the `kroki-fetch-diagram` attribute in your document header:
 
