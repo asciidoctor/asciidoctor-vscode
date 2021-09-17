@@ -7,8 +7,7 @@ module.exports = {
     "sourceType": "module"
   },
   "extends": [
-    //    "eslint:recommended",
-    //    "plugin:@typescript-eslint/recommended",
+    "standard"
   ],
   "rules": {
     "arrow-parens": ["error", "always"],
