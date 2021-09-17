@@ -2,7 +2,7 @@
   *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { getSettings } from './settings';
+import { getSettings } from './settings'
 
 export interface MessagePoster {
 	/**
@@ -13,12 +13,12 @@ export interface MessagePoster {
 
 export const createPosterForVsCode = (vscode: any) => {
   return new class implements MessagePoster {
-    postMessage(type: string, body: object): void {
+    postMessage (type: string, body: object): void {
       vscode.postMessage({
         type,
         source: getSettings().source,
         body,
-      });
+      })
     }
-  };
-};
+  }()
+}

@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
   *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { MessagePoster } from './messaging';
+import { MessagePoster } from './messaging'
 
 export class StyleLoadingMonitor {
 	private unloadedStyles: string[] = [];
@@ -9,36 +9,36 @@ export class StyleLoadingMonitor {
 
 	private poster?: MessagePoster;
 
-	constructor() {
+	constructor () {
 	  const onStyleLoadError = (event: any) => {
-	    const source = event.target.dataset.source;
-	    this.unloadedStyles.push(source);
-	  };
+	    const source = event.target.dataset.source
+	    this.unloadedStyles.push(source)
+	  }
 
 	  window.addEventListener('DOMContentLoaded', () => {
 	    // @ts-ignore TS2488
 	    for (const link of document.getElementsByClassName('code-user-style') as HTMLCollectionOf<HTMLElement>) {
 	      if (link.dataset.source) {
-	        link.onerror = onStyleLoadError;
+	        link.onerror = onStyleLoadError
 	      }
 	    }
-	  });
+	  })
 
 	  window.addEventListener('load', () => {
 	    if (!this.unloadedStyles.length) {
-	      return;
+	      return
 	    }
-	    this.finishedLoading = true;
+	    this.finishedLoading = true
 	    if (this.poster) {
-	      this.poster.postMessage('previewStyleLoadError', { unloadedStyles: this.unloadedStyles });
+	      this.poster.postMessage('previewStyleLoadError', { unloadedStyles: this.unloadedStyles })
 	    }
-	  });
+	  })
 	}
 
-	public setPoster(poster: MessagePoster): void {
-	  this.poster = poster;
+	public setPoster (poster: MessagePoster): void {
+	  this.poster = poster
 	  if (this.finishedLoading) {
-	    poster.postMessage('previewStyleLoadError', { unloadedStyles: this.unloadedStyles });
+	    poster.postMessage('previewStyleLoadError', { unloadedStyles: this.unloadedStyles })
 	  }
 	}
 }

@@ -2,22 +2,22 @@
   *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import { Command } from '../commandManager';
-import { AsciidocPreviewManager } from '../features/previewManager';
+import * as vscode from 'vscode'
+import { Command } from '../commandManager'
+import { AsciidocPreviewManager } from '../features/previewManager'
 
 export class ShowSourceCommand implements Command {
 	public readonly id = 'asciidoc.showSource';
 
-	public constructor(
+	public constructor (
 		private readonly previewManager: AsciidocPreviewManager
 	) { }
 
-	public execute() {
+	public execute () {
 	  if (this.previewManager.activePreviewResource) {
 	    return vscode.workspace.openTextDocument(this.previewManager.activePreviewResource)
-	      .then((document) => vscode.window.showTextDocument(document));
+	      .then((document) => vscode.window.showTextDocument(document))
 	  }
-	  return undefined;
+	  return undefined
 	}
 }

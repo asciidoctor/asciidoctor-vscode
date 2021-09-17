@@ -2,18 +2,16 @@
   *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import { Logger } from '../logger';
-import { AsciidocContributions } from '../asciidocExtensions';
-import { disposeAll } from '../util/dispose';
-import { AsciidocFileTopmostLineMonitor } from '../util/topmostLineMonitor';
-import { AsciidocPreview, PreviewSettings } from './preview';
-import { AsciidocPreviewConfigurationManager } from './previewConfig';
-import { AsciidocContentProvider } from './previewContentProvider';
+import * as vscode from 'vscode'
+import { Logger } from '../logger'
+import { AsciidocContributions } from '../asciidocExtensions'
+import { disposeAll } from '../util/dispose'
+import { AsciidocFileTopmostLineMonitor } from '../util/topmostLineMonitor'
+import { AsciidocPreview, PreviewSettings } from './preview'
+import { AsciidocPreviewConfigurationManager } from './previewConfig'
+import { AsciidocContentProvider } from './previewContentProvider'
 
-
-export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer
-{
+export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer {
   private static readonly asciidocPreviewActiveContextKey = 'asciidocPreviewFocus';
 
   private readonly _topmostLineMonitor = new AsciidocFileTopmostLineMonitor();
@@ -22,82 +20,67 @@ export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer
   private _activePreview: AsciidocPreview | undefined = undefined;
   private readonly _disposables: vscode.Disposable[] = [];
 
-  public constructor(
+  public constructor (
     private readonly _contentProvider: AsciidocContentProvider,
     private readonly _logger: Logger,
     private readonly _contributions: AsciidocContributions
-  )
-  {
-    this._disposables.push(vscode.window.registerWebviewPanelSerializer(AsciidocPreview.viewType, this));
+  ) {
+    this._disposables.push(vscode.window.registerWebviewPanelSerializer(AsciidocPreview.viewType, this))
   }
 
-  public dispose(): void
-  {
-    disposeAll(this._disposables);
-    disposeAll(this._previews);
+  public dispose (): void {
+    disposeAll(this._disposables)
+    disposeAll(this._previews)
   }
 
-  public refresh(forceUpdate: boolean = false)
-  {
-    for (const preview of this._previews)
-    {
-      preview.refresh(forceUpdate);
+  public refresh (forceUpdate: boolean = false) {
+    for (const preview of this._previews) {
+      preview.refresh(forceUpdate)
     }
   }
 
-  public updateConfiguration()
-  {
-    for (const preview of this._previews)
-    {
-      preview.updateConfiguration();
+  public updateConfiguration () {
+    for (const preview of this._previews) {
+      preview.updateConfiguration()
     }
   }
 
-  public preview(
+  public preview (
     resource: vscode.Uri,
     previewSettings: PreviewSettings
-  ): void
-  {
-    let preview = this.getExistingPreview(resource, previewSettings);
-    if (preview)
-    {
-      preview.reveal(previewSettings.previewColumn);
-    } else
-    {
-      preview = this.createNewPreview(resource, previewSettings);
+  ): void {
+    let preview = this.getExistingPreview(resource, previewSettings)
+    if (preview) {
+      preview.reveal(previewSettings.previewColumn)
+    } else {
+      preview = this.createNewPreview(resource, previewSettings)
     }
 
-    preview.update(resource);
+    preview.update(resource)
   }
 
-  public get activePreviewResource()
-  {
-    return this._activePreview && this._activePreview.resource;
+  public get activePreviewResource () {
+    return this._activePreview && this._activePreview.resource
   }
 
-  public toggleLock()
-  {
-    const preview = this._activePreview;
-    if (preview)
-    {
-      preview.toggleLock();
+  public toggleLock () {
+    const preview = this._activePreview
+    if (preview) {
+      preview.toggleLock()
 
       // Close any previews that are now redundant, such as having two dynamic previews in the same editor group
-      for (const otherPreview of this._previews)
-      {
-        if (otherPreview !== preview && preview.matches(otherPreview))
-        {
-          otherPreview.dispose();
+      for (const otherPreview of this._previews) {
+        if (otherPreview !== preview && preview.matches(otherPreview)) {
+          otherPreview.dispose()
         }
       }
     }
   }
 
-  public async deserializeWebviewPanel(
+  public async deserializeWebviewPanel (
     webview: vscode.WebviewPanel,
     state: any
-  ): Promise<void>
-  {
+  ): Promise<void> {
     const preview = await AsciidocPreview.revive(
       webview,
       state,
@@ -105,25 +88,23 @@ export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer
       this._previewConfigurations,
       this._logger,
       this._topmostLineMonitor,
-      this._contributions);
+      this._contributions)
 
-    this.registerPreview(preview);
+    this.registerPreview(preview)
   }
 
-  private getExistingPreview(
+  private getExistingPreview (
     resource: vscode.Uri,
     previewSettings: PreviewSettings
-  ): AsciidocPreview | undefined
-  {
+  ): AsciidocPreview | undefined {
     return this._previews.find((preview) =>
-      preview.matchesResource(resource, previewSettings.previewColumn, previewSettings.locked));
+      preview.matchesResource(resource, previewSettings.previewColumn, previewSettings.locked))
   }
 
-  private createNewPreview(
+  private createNewPreview (
     resource: vscode.Uri,
     previewSettings: PreviewSettings
-  ): AsciidocPreview
-  {
+  ): AsciidocPreview {
     const preview = AsciidocPreview.create(
       resource,
       previewSettings.previewColumn,
@@ -132,47 +113,41 @@ export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer
       this._previewConfigurations,
       this._logger,
       this._topmostLineMonitor,
-      this._contributions);
+      this._contributions)
 
-    this.setPreviewActiveContext(true);
-    this._activePreview = preview;
-    return this.registerPreview(preview);
+    this.setPreviewActiveContext(true)
+    this._activePreview = preview
+    return this.registerPreview(preview)
   }
 
-  private registerPreview(
+  private registerPreview (
     preview: AsciidocPreview
-  ): AsciidocPreview
-  {
-    this._previews.push(preview);
+  ): AsciidocPreview {
+    this._previews.push(preview)
 
-    preview.onDispose(() =>
-    {
-      const existing = this._previews.indexOf(preview);
-      if (existing === -1)
-      {
-        return;
+    preview.onDispose(() => {
+      const existing = this._previews.indexOf(preview)
+      if (existing === -1) {
+        return
       }
 
-      this._previews.splice(existing, 1);
-      if (this._activePreview === preview)
-      {
-        this.setPreviewActiveContext(false);
-        this._activePreview = undefined;
+      this._previews.splice(existing, 1)
+      if (this._activePreview === preview) {
+        this.setPreviewActiveContext(false)
+        this._activePreview = undefined
       }
-    });
+    })
 
-    preview.onDidChangeViewState(({ webviewPanel }) =>
-    {
-      disposeAll(this._previews.filter((otherPreview) => preview !== otherPreview && preview!.matches(otherPreview)));
-      this.setPreviewActiveContext(webviewPanel.active);
-      this._activePreview = webviewPanel.active ? preview : undefined;
-    });
+    preview.onDidChangeViewState(({ webviewPanel }) => {
+      disposeAll(this._previews.filter((otherPreview) => preview !== otherPreview && preview!.matches(otherPreview)))
+      this.setPreviewActiveContext(webviewPanel.active)
+      this._activePreview = webviewPanel.active ? preview : undefined
+    })
 
-    return preview;
+    return preview
   }
 
-  private setPreviewActiveContext(value: boolean)
-  {
-    vscode.commands.executeCommand('setContext', AsciidocPreviewManager.asciidocPreviewActiveContextKey, value);
+  private setPreviewActiveContext (value: boolean) {
+    vscode.commands.executeCommand('setContext', AsciidocPreviewManager.asciidocPreviewActiveContextKey, value)
   }
 }
