@@ -5,24 +5,21 @@ import { isNullOrUndefined } from 'util';
 
 const fileUrl = require('file-url');
 
-const asciidoctor = require('@asciidoctor/core')()
+const asciidoctor = require('@asciidoctor/core')
 const docbook = require('@asciidoctor/docbook-converter')
 const kroki = require('asciidoctor-kroki')
 const highlightjsAdapter = require('./highlightjs-adapter')
-highlightjsAdapter.register(asciidoctor)
-
-const use_kroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki');
-if (use_kroki) {
-  kroki.register(asciidoctor.Extensions);
-}
 
 export class AsciidocParser {
     public html: string = '';
     public document = null;
+    public adProcessor = null
+    public registry = null
     private ext_path = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath;
     private stylesdir = path.join(this.ext_path, 'media')
 
     constructor(private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) {
+      this.adProcessor = asciidoctor()
     }
 
     public getAttribute(name: string) {
@@ -53,8 +50,18 @@ export class AsciidocParser {
           this.errorCollection.clear();
         }
 
-        const memoryLogger = asciidoctor.MemoryLogger.create();
-        asciidoctor.LoggerManager.setLogger(memoryLogger);
+        const memoryLogger = this.adProcessor.MemoryLogger.create()
+        this.adProcessor.LoggerManager.setLogger(memoryLogger)
+
+        this.registry = this.adProcessor.Extensions.create()
+
+        highlightjsAdapter.register(this.registry)
+
+        const use_kroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
+
+        if (use_kroki) {
+          kroki.register(this.registry)
+        }
 
         var attributes = {};
 
@@ -107,15 +114,15 @@ export class AsciidocParser {
           base_dir: base_dir,
           sourcemap: true,
           backend: backend,
+          extension_registry: this.registry
         }
         try {
-          let ascii_doc = asciidoctor.load(text, options);
-          this.document = ascii_doc;
-          const blocksWithLineNumber = ascii_doc.findBy(function (b) { return typeof b.getLineNumber() !== 'undefined'; });
+          this.document = this.adProcessor.load(text, options)
+          const blocksWithLineNumber = this.document.findBy(function (b) { return typeof b.getLineNumber() !== 'undefined'; })
           blocksWithLineNumber.forEach(function (block, key, myArray) {
             block.addRole("data-line-" + block.getLineNumber());
           })
-          let resultHTML = ascii_doc.convert(options);
+          let resultHTML = this.document.convert(options);
           //let result = this.fixLinks(resultHTML);
           if (enableErrorDiagnostics) {
             let diagnostics = [];
@@ -269,7 +276,7 @@ export class AsciidocParser {
         adoc_cmd_args.push.apply(adoc_cmd_args, ['-q', '-B', '"' + base_dir + '"', '-o', '-', '-'])
         var asciidoctor = spawn(adoc_cmd, adoc_cmd_args, options);
 
-        asciidoctor.stderr.on('data', (data) => {
+        this.adProcessor.stderr.on('data', (data) => {
           let errorMessage = data.toString();
           console.error(errorMessage);
           errorMessage += errorMessage.replace("\n", '<br><br>');
@@ -282,15 +289,15 @@ export class AsciidocParser {
         })
         var result_data = new Buffer('');
         /* with large outputs we can receive multiple calls */
-        asciidoctor.stdout.on('data', (data) => {
+        this.adProcessor.stdout.on('data', (data) => {
           result_data = Buffer.concat([result_data, data as Buffer]);
         });
-        asciidoctor.on('close', (code) => {
+        this.adProcessor.on('close', (code) => {
           //var result = this.fixLinks(result_data.toString());
           resolve(result_data.toString());
         })
-        asciidoctor.stdin.write(text);
-        asciidoctor.stdin.end();
+        this.adProcessor.stdin.write(text);
+        this.adProcessor.stdin.end();
       });
     }
 

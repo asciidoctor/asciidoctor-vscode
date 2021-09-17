@@ -6,7 +6,7 @@ import * as zlib from 'zlib';
 import { https } from 'follow-redirects'
 import { isNullOrUndefined } from 'util'
 import { spawn } from "child_process";
-import { AsciidocParser } from '../text-parser';
+import { AsciidocParser } from '../asciidocParser'
 import { Command } from '../commandManager';
 import { AsciidocEngine } from '../asciidocEngine';
 import * as tmp from "tmp";
