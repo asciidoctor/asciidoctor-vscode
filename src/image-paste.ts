@@ -4,7 +4,7 @@ import { spawn } from 'child_process'
 import * as moment from 'moment'
 import * as fs from 'fs'
 
-import { AsciidocParser } from './text-parser'
+import { AsciidocParser } from './asciidocParser'
 
 export namespace Import {
 

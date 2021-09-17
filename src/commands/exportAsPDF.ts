@@ -2,14 +2,15 @@ import * as vscode from 'vscode'
 import * as fs from 'fs'
 import * as path from 'path'
 import { exec, spawn } from 'child_process'
+import * as tmp from 'tmp'
 import * as zlib from 'zlib'
 import { https } from 'follow-redirects'
-import { AsciidocParser } from '../text-parser'
-import { Command } from '../commandManager'
-import { AsciidocEngine } from '../asciidocEngine'
-import * as tmp from 'tmp'
 
-import url = require('url');
+import { AsciidocParser } from '../asciidocParser'
+import { AsciidocEngine } from '../asciidocEngine'
+import { Command } from '../commandManager'
+
+import url = require('url')
 import { Logger } from '../logger'
 
 export class ExportAsPDF implements Command {

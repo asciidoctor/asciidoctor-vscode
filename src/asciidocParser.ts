@@ -2,26 +2,22 @@ import * as vscode from 'vscode'
 import * as path from 'path'
 import { spawn } from 'child_process'
 
-const asciidoctor = require('@asciidoctor/core')()
+const asciidoctor = require('@asciidoctor/core')
 const docbook = require('@asciidoctor/docbook-converter')
 const kroki = require('asciidoctor-kroki')
 const highlightjsBuiltInSyntaxHighlighter = asciidoctor.SyntaxHighlighter.for('highlight.js')
 const highlightjsAdapter = require('./highlightjs-adapter')
 
-const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
-if (useKroki) {
-  kroki.register(asciidoctor.Extensions)
-}
-
 export class AsciidocParser {
   public html: string = ''
   public document = null
+  public adProcessor = null
+  public registry = null
   private extPath = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath
   private stylesdir = path.join(this.extPath, 'media')
 
   constructor (private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) {
-    this.filename = filename
-    this.errorCollection = errorCollection
+    this.adProcessor = asciidoctor()
   }
 
   public getAttribute (name: string) {
@@ -57,8 +53,18 @@ export class AsciidocParser {
         this.errorCollection.clear()
       }
 
-      const memoryLogger = asciidoctor.MemoryLogger.create()
-      asciidoctor.LoggerManager.setLogger(memoryLogger)
+      const memoryLogger = this.adProcessor.MemoryLogger.create()
+      this.adProcessor.LoggerManager.setLogger(memoryLogger)
+
+      this.registry = this.adProcessor.Extensions.create()
+
+      highlightjsAdapter.register(this.registry)
+
+      const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
+
+      if (useKroki) {
+        kroki.register(this.registry)
+      }
 
       if (context && editor) {
         highlightjsAdapter.register(highlightjsBuiltInSyntaxHighlighter, context, editor)
@@ -120,18 +126,15 @@ export class AsciidocParser {
         baseDir: baseDir,
         sourcemap: true,
         backend: backend,
+        extension_registry: this.registry,
       }
       try {
-        const asciiDoc = asciidoctor.load(text, options)
-        this.document = asciiDoc
-        const blocksWithLineNumber = asciiDoc.findBy(function (b) {
-          return typeof b.getLineNumber() !== 'undefined'
-        })
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        blocksWithLineNumber.forEach(function (block, key, myArray) {
+        this.document = this.adProcessor.load(text, options)
+        const blocksWithLineNumber = this.document.findBy(function (b) { return typeof b.getLineNumber() !== 'undefined' })
+        blocksWithLineNumber.forEach(function (block) {
           block.addRole('data-line-' + block.getLineNumber())
         })
-        const resultHTML = asciiDoc.convert(options)
+        const resultHTML = this.document.convert(options)
         //let result = this.fixLinks(resultHTML);
         if (enableErrorDiagnostics) {
           const diagnostics = []
@@ -284,9 +287,9 @@ export class AsciidocParser {
       adocCmdArgs.push('-a', 'env-vscode')
 
       adocCmdArgs.push('-q', '-B', '"' + baseDir + '"', '-o', '-', '-')
-      const asciidoctor = spawn(adocCmd, adocCmdArgs, options)
+      spawn(adocCmd, adocCmdArgs, options)
 
-      asciidoctor.stderr.on('data', (data) => {
+      this.adProcessor.stderr.on('data', (data) => {
         let errorMessage = data.toString()
         console.error(errorMessage)
         errorMessage += errorMessage.replace('\n', '<br><br>')
@@ -299,15 +302,15 @@ export class AsciidocParser {
       })
       let resultData = Buffer.from('')
       /* with large outputs we can receive multiple calls */
-      asciidoctor.stdout.on('data', (data) => {
+      this.adProcessor.stdout.on('data', (data) => {
         resultData = Buffer.concat([resultData, data as Buffer])
       })
-      asciidoctor.on('close', (_code) => {
+      this.adProcessor.on('close', () => {
         //var result = this.fixLinks(result_data.toString());
         resolve(resultData.toString())
       })
-      asciidoctor.stdin.write(text)
-      asciidoctor.stdin.end()
+      this.adProcessor.stdin.write(text)
+      this.adProcessor.stdin.end()
     })
   }
 

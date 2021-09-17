@@ -5,7 +5,7 @@
 import * as vscode from 'vscode'
 import { AsciidocContributions } from './asciidocExtensions'
 import { Slugifier } from './slugify'
-import { AsciidocParser } from './text-parser'
+import { AsciidocParser } from './asciidocParser'
 
 const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/
 
