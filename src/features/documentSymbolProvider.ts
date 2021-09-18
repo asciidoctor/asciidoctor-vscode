@@ -7,22 +7,22 @@ import { AsciidocEngine } from '../asciidocEngine'
 import { TableOfContentsProvider, SkinnyTextDocument, TocEntry } from '../tableOfContentsProvider'
 
 interface AsciidocSymbol {
-	readonly level: number;
-	readonly parent: AsciidocSymbol | undefined;
-	readonly children: vscode.DocumentSymbol[];
+  readonly level: number;
+  readonly parent: AsciidocSymbol | undefined;
+  readonly children: vscode.DocumentSymbol[];
 }
 
 export default class AdocDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
   constructor (
-		private readonly engine: AsciidocEngine,
-		private root: AsciidocSymbol = {
-		  level: -Infinity,
-		  children: [],
-		  parent: undefined,
-		},
-		private lastSymbolCall: number,
-		private lastRunTime: number = 1000,
-		private RunTimeFactor: number = 1.5
+    private readonly engine: AsciidocEngine,
+    private root: AsciidocSymbol = {
+      level: -Infinity,
+      children: [],
+      parent: undefined,
+    },
+    private lastSymbolCall: number,
+    private lastRunTime: number = 1000,
+    private RunTimeFactor: number = 1.5
   ) { }
 
   public async provideDocumentSymbolInformation (document: SkinnyTextDocument): Promise<vscode.SymbolInformation[]> {

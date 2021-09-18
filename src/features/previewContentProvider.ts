@@ -36,11 +36,11 @@ const previewStrings = {
 
 export class AsciidocContentProvider {
   constructor (
-		private readonly engine: AsciidocEngine,
-		private readonly context: vscode.ExtensionContext,
-		private readonly cspArbiter: ContentSecurityPolicyArbiter,
-		private readonly contributions: AsciidocContributions,
-		private readonly logger: Logger
+    private readonly engine: AsciidocEngine,
+    private readonly context: vscode.ExtensionContext,
+    private readonly cspArbiter: ContentSecurityPolicyArbiter,
+    private readonly contributions: AsciidocContributions,
+    private readonly logger: Logger
   ) { }
 
   public async providePreviewHTML (
@@ -71,24 +71,24 @@ export class AsciidocContentProvider {
     this.logger.log(`Using CSS ${this.getStyles(sourceUri, nonce, config, state)}`)
 
     return `<!DOCTYPE html>
-			<html>
-			<head>
-				<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-				${csp}
-				<meta id="vscode-asciidoc-preview-data"
-					data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}"
-					data-strings="${JSON.stringify(previewStrings).replace(/"/g, '&quot;')}"
-					data-state="${JSON.stringify(state || {}).replace(/"/g, '&quot;')}">
-				<script src="${this.extensionScriptPath('pre.js')}" nonce="${nonce}"></script>
-				${this.getStyles(sourceUri, nonce, config, state)}
-				<base href="${asciidocDocument.uri.with({ scheme: 'vscode-resource' }).toString(true)}">
-			</head>
-			<body class="${bodyClassesVal} vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.markEditorSelection ? 'showEditorSelection' : ''}">
-				${body}
-				<div class="code-line" data-line="${asciidocDocument.lineCount}"></div>
-				<script async src="${this.extensionScriptPath('index.js')}" nonce="${nonce}" charset="UTF-8"></script>
-			</body>
-			</html>`
+      <html>
+      <head>
+        <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+        ${csp}
+        <meta id="vscode-asciidoc-preview-data"
+          data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}"
+          data-strings="${JSON.stringify(previewStrings).replace(/"/g, '&quot;')}"
+          data-state="${JSON.stringify(state || {}).replace(/"/g, '&quot;')}">
+        <script src="${this.extensionScriptPath('pre.js')}" nonce="${nonce}"></script>
+        ${this.getStyles(sourceUri, nonce, config, state)}
+        <base href="${asciidocDocument.uri.with({ scheme: 'vscode-resource' }).toString(true)}">
+      </head>
+      <body class="${bodyClassesVal} vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.markEditorSelection ? 'showEditorSelection' : ''}">
+        ${body}
+        <div class="code-line" data-line="${asciidocDocument.lineCount}"></div>
+        <script async src="${this.extensionScriptPath('index.js')}" nonce="${nonce}" charset="UTF-8"></script>
+      </body>
+      </html>`
   }
 
   private extensionScriptPath (mediaFile: string): string {
@@ -140,12 +140,12 @@ export class AsciidocContentProvider {
 
   private getSettingsOverrideStyles (nonce: string, config: AsciidocPreviewConfiguration): string {
     return `<style nonce="${nonce}">
-			body {
-				${config.fontFamily ? `font-family: ${config.fontFamily};` : ''}
-				${isNaN(config.fontSize) ? '' : `font-size: ${config.fontSize}px;`}
-				${isNaN(config.lineHeight) ? '' : `line-height: ${config.lineHeight};`}
-			}
-		</style>`
+      body {
+        ${config.fontFamily ? `font-family: ${config.fontFamily};` : ''}
+        ${isNaN(config.fontSize) ? '' : `font-size: ${config.fontSize}px;`}
+        ${isNaN(config.lineHeight) ? '' : `line-height: ${config.lineHeight};`}
+      }
+    </style>`
   }
 
   private getImageStabilizerStyles (state?: any) {
@@ -153,9 +153,9 @@ export class AsciidocContentProvider {
     if (state && state.imageInfo) {
       state.imageInfo.forEach((imgInfo: any) => {
         ret += `#${imgInfo.id}.loading {
-					height: ${imgInfo.height}px;
-					width: ${imgInfo.width}px;
-				}\n`
+          height: ${imgInfo.height}px;
+          width: ${imgInfo.width}px;
+        }\n`
       })
     }
     ret += '</style>\n'
@@ -177,9 +177,9 @@ export class AsciidocContentProvider {
     }
 
     return `${baseStyles}
-			${this.getSettingsOverrideStyles(nonce, config)}
-			${this.computeCustomStyleSheetIncludes(resource, config)}
-			${this.getImageStabilizerStyles(state)}`
+      ${this.getSettingsOverrideStyles(nonce, config)}
+      ${this.computeCustomStyleSheetIncludes(resource, config)}
+      ${this.getImageStabilizerStyles(state)}`
   }
 
   private getCspForResource (resource: vscode.Uri, nonce: string): string {

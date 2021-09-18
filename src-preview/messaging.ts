@@ -5,10 +5,10 @@
 import { getSettings } from './settings'
 
 export interface MessagePoster {
-	/**
-	 * Post a message to the asciidoc extension
-	 */
-	postMessage(type: string, body: object): void;
+  /**
+   * Post a message to the asciidoc extension
+   */
+  postMessage(type: string, body: object): void;
 }
 
 export const createPosterForVsCode = (vscode: any) => {

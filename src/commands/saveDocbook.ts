@@ -10,7 +10,7 @@ export class SaveDocbook implements Command {
     public readonly id = 'asciidoc.saveDocbook'
 
     constructor (
-		private readonly engine: AsciidocEngine
+    private readonly engine: AsciidocEngine
     ) { }
 
     public async execute () {

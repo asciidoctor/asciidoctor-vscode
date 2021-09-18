@@ -4,7 +4,7 @@
 
 export class Slug {
   public constructor(
-		public readonly value: string
+    public readonly value: string
   ) { }
 
   public equals(other: Slug): boolean {
@@ -13,7 +13,7 @@ export class Slug {
 }
 
 export interface Slugifier {
-	fromHeading(heading: string): Slug;
+  fromHeading(heading: string): Slug;
 }
 
 export const githubSlugifier: Slugifier = new class implements Slugifier {

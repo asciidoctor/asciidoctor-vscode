@@ -3,13 +3,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 export interface PreviewSettings {
-	source: string;
-	line: number;
-	lineCount: number;
-	scrollPreviewWithEditor?: boolean;
-	scrollEditorWithPreview: boolean;
-	disableSecurityWarnings: boolean;
-	doubleClickToSwitchToEditor: boolean;
+  source: string;
+  line: number;
+  lineCount: number;
+  scrollPreviewWithEditor?: boolean;
+  scrollEditorWithPreview: boolean;
+  disableSecurityWarnings: boolean;
+  doubleClickToSwitchToEditor: boolean;
 }
 
 let cachedSettings: PreviewSettings | undefined

@@ -10,7 +10,7 @@ const rangeLimit = 5000
 
 export default class AsciidocFoldingProvider implements vscode.FoldingRangeProvider {
   constructor (
-		private readonly engine: AsciidocEngine
+    private readonly engine: AsciidocEngine
   ) { }
 
   private async getRegions (document: vscode.TextDocument): Promise<vscode.FoldingRange[]> {
@@ -18,7 +18,7 @@ export default class AsciidocFoldingProvider implements vscode.FoldingRangeProvi
     const isEndRegion = (t: string) => /^\s*<!--\s*#?endregion\b.*-->/.test(t)
 
     const isRegionMarker = (token: any) => token.type === 'html_block' &&
-			(isStartRegion(token.content) || isEndRegion(token.content))
+      (isStartRegion(token.content) || isEndRegion(token.content))
 
     const tokens = await this.engine.parse(document.uri, document.getText())
     const regionMarkers = tokens.filter(isRegionMarker)

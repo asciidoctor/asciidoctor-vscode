@@ -4,41 +4,41 @@
 import { MessagePoster } from './messaging'
 
 export class StyleLoadingMonitor {
-	private unloadedStyles: string[] = [];
-	private finishedLoading: boolean = false;
+  private unloadedStyles: string[] = [];
+  private finishedLoading: boolean = false;
 
-	private poster?: MessagePoster;
+  private poster?: MessagePoster;
 
-	constructor () {
-	  const onStyleLoadError = (event: any) => {
-	    const source = event.target.dataset.source
-	    this.unloadedStyles.push(source)
-	  }
+  constructor () {
+    const onStyleLoadError = (event: any) => {
+      const source = event.target.dataset.source
+      this.unloadedStyles.push(source)
+    }
 
-	  window.addEventListener('DOMContentLoaded', () => {
-	    // @ts-ignore TS2488
-	    for (const link of document.getElementsByClassName('code-user-style') as HTMLCollectionOf<HTMLElement>) {
-	      if (link.dataset.source) {
-	        link.onerror = onStyleLoadError
-	      }
-	    }
-	  })
+    window.addEventListener('DOMContentLoaded', () => {
+      // @ts-ignore TS2488
+      for (const link of document.getElementsByClassName('code-user-style') as HTMLCollectionOf<HTMLElement>) {
+        if (link.dataset.source) {
+          link.onerror = onStyleLoadError
+        }
+      }
+    })
 
-	  window.addEventListener('load', () => {
-	    if (!this.unloadedStyles.length) {
-	      return
-	    }
-	    this.finishedLoading = true
-	    if (this.poster) {
-	      this.poster.postMessage('previewStyleLoadError', { unloadedStyles: this.unloadedStyles })
-	    }
-	  })
-	}
+    window.addEventListener('load', () => {
+      if (!this.unloadedStyles.length) {
+        return
+      }
+      this.finishedLoading = true
+      if (this.poster) {
+        this.poster.postMessage('previewStyleLoadError', { unloadedStyles: this.unloadedStyles })
+      }
+    })
+  }
 
-	public setPoster (poster: MessagePoster): void {
-	  this.poster = poster
-	  if (this.finishedLoading) {
-	    poster.postMessage('previewStyleLoadError', { unloadedStyles: this.unloadedStyles })
-	  }
-	}
+  public setPoster (poster: MessagePoster): void {
+    this.poster = poster
+    if (this.finishedLoading) {
+      poster.postMessage('previewStyleLoadError', { unloadedStyles: this.unloadedStyles })
+    }
+  }
 }

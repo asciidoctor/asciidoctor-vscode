@@ -11,10 +11,10 @@ import { InMemoryDocument } from './inMemoryDocument'
 const testFileName = vscode.Uri.file('test.md')
 
 const noopToken = new class implements vscode.CancellationToken {
-	private _onCancellationRequestedEmitter = new vscode.EventEmitter<void>();
-	public onCancellationRequested = this._onCancellationRequestedEmitter.event;
+  private _onCancellationRequestedEmitter = new vscode.EventEmitter<void>();
+  public onCancellationRequested = this._onCancellationRequestedEmitter.event;
 
-	get isCancellationRequested () { return false }
+  get isCancellationRequested () { return false }
 }()
 
 function getLinksForFile (fileContents: string) {

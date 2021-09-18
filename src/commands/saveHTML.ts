@@ -10,7 +10,7 @@ export class SaveHTML implements Command {
     public readonly id = 'asciidoc.saveHTML'
 
     constructor (
-		private readonly engine: AsciidocEngine
+    private readonly engine: AsciidocEngine
     ) { }
 
     public async execute () {

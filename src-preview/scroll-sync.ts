@@ -13,8 +13,8 @@ function clampLine (line: number) {
 }
 
 export interface CodeLineElement {
-	element: HTMLElement;
-	line: number;
+  element: HTMLElement;
+  line: number;
 }
 
 const getCodeLineElements = (() => {

@@ -167,7 +167,7 @@ a`)
   test('Should fold html blocks', async () => {
     const folds = await getFoldsForDocument(`x
 <div>
-	fa
+  fa
 </div>`)
     assert.strictEqual(folds.length, 1)
     const firstFold = folds[0]
