@@ -35,13 +35,11 @@ const previewStrings = {
 }
 
 export class AsciidocContentProvider {
-  constructor (
-    private readonly engine: AsciidocEngine,
-    private readonly context: vscode.ExtensionContext,
-    private readonly cspArbiter: ContentSecurityPolicyArbiter,
-    private readonly contributions: AsciidocContributions,
-    private readonly logger: Logger
-  ) { }
+  private readonly engine: AsciidocEngine
+  private readonly context: vscode.ExtensionContext
+  private readonly cspArbiter: ContentSecurityPolicyArbiter
+  private readonly contributions: AsciidocContributions
+  private readonly logger: Logger
 
   public async providePreviewHTML (
     asciidocDocument: vscode.TextDocument,
@@ -65,7 +63,7 @@ export class AsciidocContentProvider {
     const nonce = new Date().getTime() + '' + new Date().getMilliseconds()
     const csp = this.getCspForResource(sourceUri, nonce)
     const body = await this.engine.render(sourceUri, config.previewFrontMatter === 'hide', asciidocDocument.getText())
-    const bodyClassesRegex = /<body(?:(?:\s+(?:id=\".*"\s*)?class(?:\s*=\s*(?:\"(.+?)\"|\'(.+?)\')))+\s*)>/
+    const bodyClassesRegex = /<body(?:(?:\s+(?:id=".*"\s*)?class(?:\s*=\s*(?:"(.+?)"|'(.+?)')))+\s*)>/
     const bodyClasses = body.match(bodyClassesRegex)
     const bodyClassesVal = bodyClasses === null ? '' : bodyClasses[1]
     this.logger.log(`Using CSS ${this.getStyles(sourceUri, nonce, config, state)}`)

@@ -8,10 +8,7 @@ import { AsciidocPreviewManager } from '../features/previewManager'
 
 export class ShowSourceCommand implements Command {
   public readonly id = 'asciidoc.showSource';
-
-  public constructor (
-    private readonly previewManager: AsciidocPreviewManager
-  ) { }
+  private readonly previewManager: AsciidocPreviewManager
 
   public execute () {
     if (this.previewManager.activePreviewResource) {

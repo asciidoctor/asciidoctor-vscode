@@ -11,10 +11,7 @@ export interface Lazy<T> {
 class LazyValue<T> implements Lazy<T> {
   private _hasValue: boolean = false;
   private _value?: T;
-
-  constructor (
-    private readonly _getValue: () => T
-  ) { }
+  private readonly _getValue: () => T
 
   get value (): T {
     if (!this._hasValue) {

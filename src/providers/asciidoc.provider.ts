@@ -29,7 +29,7 @@ export async function provideCompletionItems (
  * @param context
  */
 function shouldProvide (context: Context): boolean {
-  return /(include\:\:|image\:\:|image\:)\S*/gi.test(context.textFullLine)
+  return /(include::|image::|image:)\S*/gi.test(context.textFullLine)
 }
 
 /**
@@ -75,7 +75,7 @@ async function provide (
   const doAutoCloseBrackets = editorConfig.get('autoClosingBrackets') === 'always'
   if (globalVariableDefinitions) {
     variablePathSubstitutions = globalVariableDefinitions.map((variableDef) => {
-      const label = variableDef.match(/:\S+:/g)[0].replace(/\:/g, '')
+      const label = variableDef.match(/:\S+:/g)[0].replace(/:/g, '')
       return {
         label: `{${label}}`,
         kind: vscode.CompletionItemKind.Variable,

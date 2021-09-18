@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 import { createContext, Context } from './createContext'
-import { readdirSync, readFileSync } from 'fs'
+import { readFileSync } from 'fs'
 const bibtexParse = require('@orcid/bibtex-parse-js')
 
 export const BibtexProvider = {

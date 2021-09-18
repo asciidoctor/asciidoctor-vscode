@@ -11,13 +11,14 @@ import { TableOfContentsProvider } from '../tableOfContentsProvider'
 import { isAsciidocFile } from '../util/file'
 
 export interface OpenDocumentLinkArgs {
-  path: string;
-  fragment: string;
+  path: string
+  fragment: string
 }
 
 export class OpenDocumentLinkCommand implements Command {
-  private static readonly id = '_asciidoc.openDocumentLink';
-  public readonly id = OpenDocumentLinkCommand.id;
+  private static readonly id = '_asciidoc.openDocumentLink'
+  public readonly id = OpenDocumentLinkCommand.id
+  private readonly engine: AsciidocEngine
 
   public static createCommandUri (
     path: string,
@@ -25,10 +26,6 @@ export class OpenDocumentLinkCommand implements Command {
   ): vscode.Uri {
     return vscode.Uri.parse(`command:${OpenDocumentLinkCommand.id}?${encodeURIComponent(JSON.stringify({ path, fragment }))}`)
   }
-
-  public constructor (
-    private readonly engine: AsciidocEngine
-  ) { }
 
   public execute (args: OpenDocumentLinkArgs) {
     const p = decodeURIComponent(args.path)

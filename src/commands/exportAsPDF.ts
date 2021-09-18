@@ -10,17 +10,13 @@ import { Command } from '../commandManager'
 import { AsciidocEngine } from '../asciidocEngine'
 import * as tmp from 'tmp'
 
-import HttpsProxyAgent = require('https-proxy-agent');
 import url = require('url');
 import { Logger } from '../logger'
 
 export class ExportAsPDF implements Command {
-  public readonly id = 'asciidoc.exportAsPDF';
-
-  constructor (
-    private readonly engine: AsciidocEngine,
-    private readonly logger: Logger
-  ) { }
+  public readonly id = 'asciidoc.exportAsPDF'
+  private readonly engine: AsciidocEngine
+  private readonly logger: Logger
 
   public async execute () {
     const editor = vscode.window.activeTextEditor
@@ -28,80 +24,78 @@ export class ExportAsPDF implements Command {
     if (isNullOrUndefined(editor)) { return }
 
     const doc = editor.document
-    const source_name = path.parse(path.resolve(doc.fileName))
-    const pdf_filename = vscode.Uri.file(path.join(source_name.root, source_name.dir, source_name.name + '.pdf'))
+    const sourceName = path.parse(path.resolve(doc.fileName))
+    const pdfFilename = vscode.Uri.file(path.join(sourceName.root, sourceName.dir, sourceName.name + '.pdf'))
 
     const text = doc.getText()
-    if (vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctorpdf')) {
+    if (vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctorPDF')) {
       const docPath = path.parse(path.resolve(doc.fileName))
       let pdfPath = ''
 
-      const pdfUri = await vscode.window.showSaveDialog({ defaultUri: pdf_filename })
+      const pdfUri = await vscode.window.showSaveDialog({ defaultUri: pdfFilename })
       if (!isNullOrUndefined(pdfUri)) {
         pdfPath = pdfUri.fsPath
       } else {
         console.error(`ERROR: invalid pdfUri "${pdfUri}"`)
         return
       }
-      const asciidoctorpdf_command = vscode.workspace
+      const asciidoctorPDFCommand = vscode.workspace
         .getConfiguration('asciidoc', null)
-        .get('asciidoctorpdf_command', 'asciidoctor-pdf')
+        .get('asciidoctorPDFCommand', 'asciidoctor-pdf')
 
-      const adocpdf_cmd_array = asciidoctorpdf_command
+      const adocPDFCmdArray = asciidoctorPDFCommand
         .split(/(\s+)/)
         .filter(function (e) { return e.trim().length > 0 })
 
-      const adocpdf_cmd = adocpdf_cmd_array[0]
+      const adocPDFCmd = adocPDFCmdArray[0]
 
-      const adocpdf_cmd_args = adocpdf_cmd_array.slice(1)
-      adocpdf_cmd_args.push.apply(adocpdf_cmd_args, ['-q',
-        '-B', '"' + docPath.dir.replace('"', '\\"') + '"',
-        '-o', '"' + pdfPath.replace('"', '\\"') + '"', '-',
-      ])
+      const adocPDFCmdArgs = adocPDFCmdArray.slice(1)
+      adocPDFCmdArgs.push('-q', '-B', '"' + docPath.dir.replace('"', '\\"') + '"',
+        '-o', '"' + pdfPath.replace('"', '\\"') + '"', '-')
 
       const options = { shell: true, cwd: docPath.dir }
 
-      const asciidoctorpdf = spawn(adocpdf_cmd, adocpdf_cmd_args, options)
+      const asciidoctorPDF = spawn(adocPDFCmd, adocPDFCmdArgs, options)
 
-      asciidoctorpdf.stderr.on('data', (data) => {
+      asciidoctorPDF.stderr.on('data', (data) => {
         let errorMessage = data.toString()
         errorMessage += '\n'
-        errorMessage += 'command: ' + adocpdf_cmd + ' ' + adocpdf_cmd_args.join(' ')
+        errorMessage += 'command: ' + adocPDFCmd + ' ' + adocPDFCmdArgs.join(' ')
         errorMessage += '\n'
         errorMessage += 'If the asciidoctor-pdf binary is not in your PATH, you can set the full path.'
-        errorMessage += 'Go to `File -> Preferences -> User settings` and adjust the asciidoc.asciidoctorpdf_command'
+        errorMessage += 'Go to `File -> Preferences -> User settings` and adjust the asciidoc.asciidoctorPDFCommand'
         console.error(errorMessage)
         vscode.window.showErrorMessage(errorMessage)
       })
 
-      asciidoctorpdf.on('close', (code) => {
-        offer_open(pdfPath)
+      asciidoctorPDF.on('close', (code) => {
+        offerOpen(pdfPath)
       })
 
-      asciidoctorpdf.stdin.write(text)
-      asciidoctorpdf.stdin.end()
+      asciidoctorPDF.stdin.write(text)
+      asciidoctorPDF.stdin.end()
     } else {
-      const wkhtmltopdf_path = vscode.workspace
+      const wkHTMLtoPDFPath = vscode.workspace
         .getConfiguration('asciidoc')
-        .get('wkhtmltopdf_path', '')
+        .get('wkHTMLtoPDFPath', '')
 
       const parser = new AsciidocParser(path.resolve(doc.fileName))
       //const body =  await parser.parseText()
       const body = await this.engine.render(doc.uri, true, text, false, 'html5')
-      const ext_path = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath
+      const extPath = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath
       const html = body
       const showtitlepage = parser.getAttribute('showtitlepage')
       const author = parser.getAttribute('author')
       const email = parser.getAttribute('email')
       const doctitle: string | undefined = parser.getAttribute('doctitle')
       const titlepagelogo: string | undefined = parser.getAttribute('titlepagelogo')
-      const footer_center: string | undefined = parser.getAttribute('footer-center')
+      const footerCenter: string | undefined = parser.getAttribute('footer-center')
       let cover: string | undefined
-      let img_html: string = ''
+      let imageHTML: string = ''
       if (!isNullOrUndefined(showtitlepage)) {
         if (!isNullOrUndefined(titlepagelogo)) {
-          const image_url = titlepagelogo.startsWith('http') ? titlepagelogo : path.join(source_name.dir, titlepagelogo)
-          img_html = isNullOrUndefined(titlepagelogo) ? '' : `<img src="${image_url}">`
+          const imageURL = titlepagelogo.startsWith('http') ? titlepagelogo : path.join(sourceName.dir, titlepagelogo)
+          imageHTML = isNullOrUndefined(titlepagelogo) ? '' : `<img src="${imageURL}">`
         }
         const tmpobj = tmp.fileSync({ postfix: '.html' })
         const html = `\
@@ -109,13 +103,13 @@ export class ExportAsPDF implements Command {
                 <html>
                     <head>
                     <meta charset="UTF-8">
-                    <link rel="stylesheet" type="text/css" href="${ext_path + '/media/all-centered.css'}">
+                    <link rel="stylesheet" type="text/css" href="${extPath + '/media/all-centered.css'}">
                     </head>
                     <body>
                     <div class="outer">
                         <div class="middle">
                             <div class="inner">
-                                ${img_html}
+                                ${imageHTML}
                                 <h1>${doctitle}</h1>
                                 <p>${author} &lt;${email}&gt;</p>
                             </div>
@@ -128,16 +122,15 @@ export class ExportAsPDF implements Command {
         cover = `cover ${tmpobj.name}`
       }
       const platform = process.platform
-      const ext = platform == 'win32' ? '.exe' : ''
+      const ext = platform === 'win32' ? '.exe' : ''
       const arch = process.arch
-      let binary_path = path.resolve(path.join(__dirname, 'wkhtmltopdf-' + platform + '-' + arch + ext))
+      let binaryPath = path.resolve(path.join(__dirname, 'wkhtmltopdf-' + platform + '-' + arch + ext))
 
-      if (wkhtmltopdf_path != '') { binary_path = wkhtmltopdf_path }
+      if (wkHTMLtoPDFPath !== '') { binaryPath = wkHTMLtoPDFPath }
 
-      if (!fs.existsSync(binary_path)) {
+      if (!fs.existsSync(binaryPath)) {
         const label = await vscode.window.showInformationMessage('This feature requires wkhtmltopdf\ndo you want to download', 'Download')
-        if (label != 'Download') { return }
-        const error_msg = null
+        if (label !== 'Download') { return }
 
         await vscode.window.withProgress({
           location: vscode.ProgressLocation.Window,
@@ -145,27 +138,27 @@ export class ExportAsPDF implements Command {
           // cancellable: true
         }, async (progress) => {
           progress.report({ message: 'Downloading wkhtmltopdf...' })
-          const download_url = `https://github.com/joaompinto/wkhtmltopdf/releases/download/v0.0.1/wkhtmltopdf-${platform}-${arch}${ext}.gz`
-          this.logger.log('Downloading ' + download_url)
-          await download_file(download_url, binary_path + '.gz', progress).then(() => {
+          const downloadURL = `https://github.com/joaompinto/wkhtmltopdf/releases/download/v0.0.1/wkhtmltopdf-${platform}-${arch}${ext}.gz`
+          this.logger.log('Downloading ' + downloadURL)
+          await downloadFile(downloadURL, binaryPath + '.gz', progress).then(() => {
             progress.report({ message: 'Unzipping wkhtmltopdf...' })
             const ungzip = zlib.createGunzip()
-            const inp = fs.createReadStream(binary_path + '.gz')
-            const out = fs.createWriteStream(binary_path)
+            const inp = fs.createReadStream(binaryPath + '.gz')
+            const out = fs.createWriteStream(binaryPath)
             inp.pipe(ungzip).pipe(out)
-            fs.chmodSync(binary_path, 0x755)
+            fs.chmodSync(binaryPath, 0x755)
           }).catch(async (reason) => {
-            binary_path = null
-            console.error('Error downloading', download_url, ' ', reason)
+            binaryPath = null
+            console.error('Error downloading', downloadURL, ' ', reason)
             await vscode.window.showErrorMessage('Error installing wkhtmltopdf, ' + reason.toString())
           })
         })
-        if (isNullOrUndefined(binary_path)) { return }
+        if (isNullOrUndefined(binaryPath)) { return }
       }
-      const save_filename = await vscode.window.showSaveDialog({ defaultUri: pdf_filename })
-      if (!isNullOrUndefined(save_filename)) {
-        await html2pdf(html, binary_path, cover, footer_center, save_filename.fsPath)
-          .then((result) => { offer_open(result) })
+      const saveFilename = await vscode.window.showSaveDialog({ defaultUri: pdfFilename })
+      if (!isNullOrUndefined(saveFilename)) {
+        await html2pdf(html, binaryPath, cover, footerCenter, saveFilename.fsPath)
+          .then((result) => { offerOpen(result) })
           .catch((reason) => {
             console.error('Got error', reason)
             vscode.window.showErrorMessage('Error converting to PDF, ' + reason.toString())
@@ -175,9 +168,9 @@ export class ExportAsPDF implements Command {
   }
 }
 
-async function download_file (download_url: string, filename: string, progress) {
+async function downloadFile (downloadURL: string, filename: string, progress) {
   return new Promise((resolve, reject) => {
-    const download_options = url.parse(download_url)
+    const downloadOptions = url.parse(downloadURL)
     const wstream = fs.createWriteStream(filename)
     let totalDownloaded = 0
     // Proxy support needs to be reworked
@@ -186,12 +179,12 @@ async function download_file (download_url: string, filename: string, progress) 
     // if (proxy != '')
     // {
     //   var agent = new HttpsProxyAgent(proxy);
-    //   download_options.agent = agent
-    //   download_options.rejectUnauthorized = proxyStrictSSL
+    //   downloadOptions.agent = agent
+    //   downloadOptions.rejectUnauthorized = proxyStrictSSL
     // }
-    https.get(download_options, (resp) => {
+    https.get(downloadOptions, (resp) => {
       const contentSize = resp.headers['content-length']
-      if (resp.statusCode != 200) {
+      if (resp.statusCode !== 200) {
         wstream.end()
         fs.unlinkSync(filename)
         return reject('http error' + resp.statusCode)
@@ -216,10 +209,10 @@ async function download_file (download_url: string, filename: string, progress) 
   })
 }
 
-function offer_open (destination) {
+function offerOpen (destination) {
   // Saving the JSON that represents the document to a temporary JSON-file.
   vscode.window.showInformationMessage(('Successfully converted to ' + path.basename(destination)), 'Open File').then((label: string) => {
-    if (label == 'Open File') {
+    if (label === 'Open File') {
       switch (process.platform) {
         // Use backticks for unix systems to run the open command directly
         // This avoids having to wrap the command AND path in quotes which
@@ -241,28 +234,28 @@ function offer_open (destination) {
   })
 }
 
-export async function html2pdf (html: string, binary_path: string, cover: string, footer_center: string, filename: string) {
+export async function html2pdf (html: string, binaryPath: string, cover: string, footerCenter: string, filename: string) {
   const documentPath = path.dirname(filename)
 
   return new Promise((resolve, reject) => {
     const options = { cwdir: documentPath, stdio: ['pipe', 'ignore', 'pipe'] }
-    let cmd_arguments = ['--encoding', ' utf-8', '--javascript-delay', '1000']
-    if (!isNullOrUndefined(footer_center)) {
-      cmd_arguments = cmd_arguments.concat(['--footer-center', footer_center])
+    let cmdArguments = ['--encoding', ' utf-8', '--javascript-delay', '1000']
+    if (!isNullOrUndefined(footerCenter)) {
+      cmdArguments = cmdArguments.concat(['--footer-center', footerCenter])
     }
     if (!isNullOrUndefined(cover)) {
-      cmd_arguments = cmd_arguments.concat(cover.split(' '))
+      cmdArguments = cmdArguments.concat(cover.split(' '))
     }
-    cmd_arguments = cmd_arguments.concat(['-', filename])
-    const command = spawn(binary_path, cmd_arguments, options)
-    let error_data = ''
+    cmdArguments = cmdArguments.concat(['-', filename])
+    const command = spawn(binaryPath, cmdArguments, options)
+    let errorData = ''
     command.stdin.write(html)
     command.stdin.end()
     command.stderr.on('data', (data) => {
-      error_data += data
+      errorData += data
     })
     command.on('close', (code) => {
-      if (code == 0) { resolve(filename) } else { reject(error_data) }
+      if (code === 0) { resolve(filename) } else { reject(errorData) }
     })
   })
 }

@@ -45,10 +45,7 @@ async function showPreview (
 
 export class ShowPreviewCommand implements Command {
   public readonly id = 'asciidoc.showPreview';
-
-  public constructor (
-    private readonly webviewManager: AsciidocPreviewManager
-  ) { }
+  private readonly webviewManager: AsciidocPreviewManager
 
   public execute (mainUri?: vscode.Uri, allUris?: vscode.Uri[], previewSettings?: PreviewSettings) {
     for (const uri of Array.isArray(allUris) ? allUris : [mainUri]) {
@@ -62,10 +59,7 @@ export class ShowPreviewCommand implements Command {
 
 export class ShowPreviewToSideCommand implements Command {
   public readonly id = 'asciidoc.showPreviewToSide';
-
-  public constructor (
-    private readonly webviewManager: AsciidocPreviewManager
-  ) { }
+  private readonly webviewManager: AsciidocPreviewManager
 
   public execute (uri?: vscode.Uri, previewSettings?: PreviewSettings) {
     showPreview(this.webviewManager, uri, {
@@ -77,10 +71,7 @@ export class ShowPreviewToSideCommand implements Command {
 
 export class ShowLockedPreviewToSideCommand implements Command {
   public readonly id = 'asciidoc.showLockedPreviewToSide';
-
-  public constructor (
-    private readonly webviewManager: AsciidocPreviewManager
-  ) { }
+  private readonly webviewManager: AsciidocPreviewManager
 
   public execute (uri?: vscode.Uri) {
     showPreview(this.webviewManager, uri, {

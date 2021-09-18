@@ -7,8 +7,6 @@ import { disposeAll } from '../util/dispose'
 export class AsciidocFileIncludeAutoCompletionMonitor {
   private readonly disposables: vscode.Disposable[] = [];
   constructor () {
-    vscode.languages.registerReferenceProvider
-
     const disposable = vscode.languages.registerCompletionItemProvider(
       {
         language: 'asciidoc',

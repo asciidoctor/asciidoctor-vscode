@@ -130,12 +130,12 @@ document.addEventListener('click', (event) => {
   let node: any = event.target
   while (node) {
     if (node.tagName && node.tagName === 'A' && node.href) {
-      if (node.getAttribute('href').startsWith('#')) {
-        const fragment = node.href.split('#')[1]
-        if (fragment) {
-          location.hash = '#' + decodeURI(fragment)
-        }
-      }
+      // if (node.getAttribute('href').startsWith('#')) {
+      //   // const fragment = node.href.split('#')[1]
+      //   // if (fragment) {
+      //   //   location.hash = '#' + decodeURI(fragment)
+      //   // }
+      // }
       // Like VSCode Markdown extension, pass through some known schemes
       let hrefText = node.getAttribute('data-href')
       if (!hrefText) {
@@ -147,7 +147,7 @@ document.addEventListener('click', (event) => {
       }
 
       // If original link doesn't look like a url, delegate back to VS Code to resolve
-      if (!/^[a-z\-]+:/i.test(hrefText)) {
+      if (!/^[a-z-]+:/i.test(hrefText)) {
         messaging.postMessage('clickLink', { href: hrefText })
         event.preventDefault()
         event.stopPropagation()

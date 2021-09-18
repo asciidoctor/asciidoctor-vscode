@@ -8,10 +8,7 @@ import { AsciidocEngine } from '../asciidocEngine'
 
 export class SaveHTML implements Command {
     public readonly id = 'asciidoc.saveHTML'
-
-    constructor (
     private readonly engine: AsciidocEngine
-    ) { }
 
     public async execute () {
       const editor = vscode.window.activeTextEditor

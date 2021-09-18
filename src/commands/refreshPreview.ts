@@ -6,11 +6,8 @@ import { Command } from '../commandManager'
 import { AsciidocPreviewManager } from '../features/previewManager'
 
 export class RefreshPreviewCommand implements Command {
-  public readonly id = 'asciidoc.preview.refresh';
-
-  public constructor (
-    private readonly webviewManager: AsciidocPreviewManager
-  ) { }
+  public readonly id = 'asciidoc.preview.refresh'
+  private readonly webviewManager: AsciidocPreviewManager
 
   public execute () {
     this.webviewManager.refresh()
