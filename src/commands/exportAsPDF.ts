@@ -4,7 +4,6 @@ import * as path from 'path'
 import { exec, spawn } from 'child_process'
 import * as zlib from 'zlib'
 import { https } from 'follow-redirects'
-import { isNullOrUndefined } from 'util'
 import { AsciidocParser } from '../text-parser'
 import { Command } from '../commandManager'
 import { AsciidocEngine } from '../asciidocEngine'
@@ -21,7 +20,7 @@ export class ExportAsPDF implements Command {
   public async execute () {
     const editor = vscode.window.activeTextEditor
 
-    if (isNullOrUndefined(editor)) { return }
+    if (editor === null || editor === undefined) { return }
 
     const doc = editor.document
     const sourceName = path.parse(path.resolve(doc.fileName))
@@ -33,7 +32,7 @@ export class ExportAsPDF implements Command {
       let pdfPath = ''
 
       const pdfUri = await vscode.window.showSaveDialog({ defaultUri: pdfFilename })
-      if (!isNullOrUndefined(pdfUri)) {
+      if (!(pdfUri === null || pdfUri === undefined)) {
         pdfPath = pdfUri.fsPath
       } else {
         console.error(`ERROR: invalid pdfUri "${pdfUri}"`)
@@ -84,18 +83,18 @@ export class ExportAsPDF implements Command {
       const body = await this.engine.render(doc.uri, true, text, false, 'html5')
       const extPath = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath
       const html = body
-      const showtitlepage = parser.getAttribute('showtitlepage')
+      const showTitlePage = parser.getAttribute('showTitlePage')
       const author = parser.getAttribute('author')
       const email = parser.getAttribute('email')
       const doctitle: string | undefined = parser.getAttribute('doctitle')
-      const titlepagelogo: string | undefined = parser.getAttribute('titlepagelogo')
+      const titlePageLogo: string | undefined = parser.getAttribute('titlePageLogo')
       const footerCenter: string | undefined = parser.getAttribute('footer-center')
       let cover: string | undefined
       let imageHTML: string = ''
-      if (!isNullOrUndefined(showtitlepage)) {
-        if (!isNullOrUndefined(titlepagelogo)) {
-          const imageURL = titlepagelogo.startsWith('http') ? titlepagelogo : path.join(sourceName.dir, titlepagelogo)
-          imageHTML = isNullOrUndefined(titlepagelogo) ? '' : `<img src="${imageURL}">`
+      if (!(showTitlePage === undefined)) {
+        if (!(titlePageLogo === undefined)) {
+          const imageURL = titlePageLogo.startsWith('http') ? titlePageLogo : path.join(sourceName.dir, titlePageLogo)
+          imageHTML = (titlePageLogo === undefined) ? '' : `<img src="${imageURL}">`
         }
         const tmpobj = tmp.fileSync({ postfix: '.html' })
         const html = `\
@@ -153,10 +152,10 @@ export class ExportAsPDF implements Command {
             await vscode.window.showErrorMessage('Error installing wkhtmltopdf, ' + reason.toString())
           })
         })
-        if (isNullOrUndefined(binaryPath)) { return }
+        if (binaryPath === null || binaryPath === undefined) { return }
       }
       const saveFilename = await vscode.window.showSaveDialog({ defaultUri: pdfFilename })
-      if (!isNullOrUndefined(saveFilename)) {
+      if (!(saveFilename === null || saveFilename === undefined)) {
         await html2pdf(html, binaryPath, cover, footerCenter, saveFilename.fsPath)
           .then((result) => { offerOpen(result) })
           .catch((reason) => {
@@ -187,7 +186,7 @@ async function downloadFile (downloadURL: string, filename: string, progress) {
       if (resp.statusCode !== 200) {
         wstream.end()
         fs.unlinkSync(filename)
-        return reject('http error' + resp.statusCode)
+        return reject(new Error('http error' + resp.statusCode))
       }
 
       // A chunk of data has been recieved.
@@ -240,10 +239,10 @@ export async function html2pdf (html: string, binaryPath: string, cover: string,
   return new Promise((resolve, reject) => {
     const options = { cwdir: documentPath, stdio: ['pipe', 'ignore', 'pipe'] }
     let cmdArguments = ['--encoding', ' utf-8', '--javascript-delay', '1000']
-    if (!isNullOrUndefined(footerCenter)) {
+    if (footerCenter !== undefined) {
       cmdArguments = cmdArguments.concat(['--footer-center', footerCenter])
     }
-    if (!isNullOrUndefined(cover)) {
+    if (cover !== undefined) {
       cmdArguments = cmdArguments.concat(cover.split(' '))
     }
     cmdArguments = cmdArguments.concat(['-', filename])

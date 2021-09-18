@@ -2,7 +2,6 @@ import * as vscode from 'vscode'
 import * as fs from 'fs'
 import * as path from 'path'
 import { exec } from 'child_process'
-import { isNullOrUndefined } from 'util'
 import { Command } from '../commandManager'
 import { AsciidocEngine } from '../asciidocEngine'
 
@@ -12,7 +11,7 @@ export class SaveHTML implements Command {
 
     public async execute () {
       const editor = vscode.window.activeTextEditor
-      if (isNullOrUndefined(editor)) { return }
+      if (editor === null || editor === undefined) { return }
 
       const doc = editor.document
       const text = doc.getText()

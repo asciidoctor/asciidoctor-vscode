@@ -22,6 +22,7 @@ export class AsciidocPreviewConfiguration {
   public readonly fontSize: number;
   public readonly fontFamily: string | undefined;
   public readonly styles: string[];
+  public readonly refreshInterval: number;
 
   private constructor (resource: vscode.Uri) {
     const editorConfig = vscode.workspace.getConfiguration('editor', resource)
@@ -52,7 +53,7 @@ export class AsciidocPreviewConfiguration {
 
   public isEqualTo (otherConfig: AsciidocPreviewConfiguration) {
     for (const key in this) {
-      if (this.hasOwnProperty(key) && key !== 'styles') {
+      if (Object.prototype.hasOwnProperty.call(this, key) && key !== 'styles') {
         if (this[key] !== otherConfig[key]) {
           return false
         }
@@ -71,8 +72,6 @@ export class AsciidocPreviewConfiguration {
 
     return true
   }
-
-  [key: string]: any;
 }
 
 export class AsciidocPreviewConfigurationManager {

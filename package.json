@@ -462,8 +462,8 @@
 		"deploy": "vsce publish -p",
 		"prune-branches": "git remote prune origin",
 		"clean": "git clean -fdX",
-		"lint": "eslint src/**/*.ts src-preview/**/*.ts --format unix",
-		"lint:fix": "eslint --fix src/**/*.ts src-preview/**/*.ts --format unix",
+		"lint": "eslint 'src/**/*.ts' 'src-preview/**/*.ts' --format unix ",
+		"lint:fix": "eslint --fix 'src/**/*.ts' 'src-preview/**/*.ts' --format unix",
 		"test": "node ./node_modules/vscode/bin/test"
 	},
 	"devDependencies": {

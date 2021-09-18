@@ -2,13 +2,13 @@
   *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
+import * as vscode from 'vscode'
 
-import { AsciidocPreviewManager } from './features/previewManager';
+import { AsciidocPreviewManager } from './features/previewManager'
 
-import * as nls from 'vscode-nls';
+import * as nls from 'vscode-nls'
 
-const localize = nls.loadMessageBundle();
+const localize = nls.loadMessageBundle()
 
 export const enum AsciidocPreviewSecurityLevel {
   Strict = 0,
@@ -30,55 +30,52 @@ export interface ContentSecurityPolicyArbiter {
 }
 
 export class ExtensionContentSecurityPolicyArbiter implements ContentSecurityPolicyArbiter {
-  private readonly old_trusted_workspace_key = 'trusted_preview_workspace:';
-  private readonly security_level_key = 'preview_security_level:';
-  private readonly should_disable_security_warning_key = 'preview_should_show_security_warning:';
+  private readonly oldTrustedWorkspaceKey = 'trusted_preview_workspace:'
+  private readonly securityLevelKey = 'preview_security_level:'
+  private readonly shouldDisableSecurityWarningKey = 'preview_should_show_security_warning:'
+  private readonly globalState: vscode.Memento
+  private readonly workspaceState: vscode.Memento
 
-  constructor(
-    private readonly globalState: vscode.Memento,
-    private readonly workspaceState: vscode.Memento
-  ) { }
-
-  public getSecurityLevelForResource(resource: vscode.Uri): AsciidocPreviewSecurityLevel {
+  public getSecurityLevelForResource (resource: vscode.Uri): AsciidocPreviewSecurityLevel {
     // Use new security level setting first
-    const level = this.globalState.get<AsciidocPreviewSecurityLevel | undefined>(this.security_level_key + this.getRoot(resource), undefined);
+    const level = this.globalState.get<AsciidocPreviewSecurityLevel | undefined>(this.securityLevelKey + this.getRoot(resource), undefined)
     if (typeof level !== 'undefined') {
-      return level;
+      return level
     }
 
     // Fallback to old trusted workspace setting
-    if (this.globalState.get<boolean>(this.old_trusted_workspace_key + this.getRoot(resource), false)) {
-      return AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent;
+    if (this.globalState.get<boolean>(this.oldTrustedWorkspaceKey + this.getRoot(resource), false)) {
+      return AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent
     }
-    return AsciidocPreviewSecurityLevel.Strict;
+    return AsciidocPreviewSecurityLevel.Strict
   }
 
-  public setSecurityLevelForResource(resource: vscode.Uri, level: AsciidocPreviewSecurityLevel): Thenable<void> {
-    return this.globalState.update(this.security_level_key + this.getRoot(resource), level);
+  public setSecurityLevelForResource (resource: vscode.Uri, level: AsciidocPreviewSecurityLevel): Thenable<void> {
+    return this.globalState.update(this.securityLevelKey + this.getRoot(resource), level)
   }
 
-  public shouldAllowSvgsForResource(resource: vscode.Uri) {
-    const securityLevel = this.getSecurityLevelForResource(resource);
-    return securityLevel === AsciidocPreviewSecurityLevel.AllowInsecureContent || securityLevel === AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent;
+  public shouldAllowSvgsForResource (resource: vscode.Uri) {
+    const securityLevel = this.getSecurityLevelForResource(resource)
+    return securityLevel === AsciidocPreviewSecurityLevel.AllowInsecureContent || securityLevel === AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent
   }
 
-  public shouldDisableSecurityWarnings(): boolean {
-    return this.workspaceState.get<boolean>(this.should_disable_security_warning_key, false);
+  public shouldDisableSecurityWarnings (): boolean {
+    return this.workspaceState.get<boolean>(this.shouldDisableSecurityWarningKey, false)
   }
 
-  public setShouldDisableSecurityWarning(disabled: boolean): Thenable<void> {
-    return this.workspaceState.update(this.should_disable_security_warning_key, disabled);
+  public setShouldDisableSecurityWarning (disabled: boolean): Thenable<void> {
+    return this.workspaceState.update(this.shouldDisableSecurityWarningKey, disabled)
   }
 
-  private getRoot(resource: vscode.Uri): vscode.Uri {
+  private getRoot (resource: vscode.Uri): vscode.Uri {
     if (vscode.workspace.workspaceFolders) {
-      const folderForResource = vscode.workspace.getWorkspaceFolder(resource);
+      const folderForResource = vscode.workspace.getWorkspaceFolder(resource)
       if (folderForResource) {
-        return folderForResource.uri;
+        return folderForResource.uri
       }
 
       if (vscode.workspace.workspaceFolders.length) {
-        return vscode.workspace.workspaceFolders[0].uri;
+        return vscode.workspace.workspaceFolders[0].uri
       }
     }
 
@@ -90,16 +87,16 @@ export class PreviewSecuritySelector {
   private readonly cspArbiter: ContentSecurityPolicyArbiter
   private readonly webviewManager: AsciidocPreviewManager
 
-  public async showSecuritySelectorForResource(resource: vscode.Uri): Promise<void> {
+  public async showSecuritySelectorForResource (resource: vscode.Uri): Promise<void> {
     interface PreviewSecurityPickItem extends vscode.QuickPickItem {
       readonly type: 'moreinfo' | 'toggle' | AsciidocPreviewSecurityLevel;
     }
 
-    function markActiveWhen(when: boolean): string {
-      return when ? '• ' : '';
+    function markActiveWhen (when: boolean): string {
+      return when ? '• ' : ''
     }
 
-    const currentSecurityLevel = this.cspArbiter.getSecurityLevelForResource(resource);
+    const currentSecurityLevel = this.cspArbiter.getSecurityLevelForResource(resource)
     const selection = await vscode.window.showQuickPick<PreviewSecurityPickItem>(
       [
         {
@@ -125,30 +122,30 @@ export class PreviewSecuritySelector {
         }, {
           type: 'toggle',
           label: this.cspArbiter.shouldDisableSecurityWarnings()
-            ? localize('enableSecurityWarning.title', "Enable preview security warnings in this workspace")
-            : localize('disableSecurityWarning.title', "Disable preview security warning in this workspace"),
+            ? localize('enableSecurityWarning.title', 'Enable preview security warnings in this workspace')
+            : localize('disableSecurityWarning.title', 'Disable preview security warning in this workspace'),
           description: localize('toggleSecurityWarning.description', 'Does not affect the content security level'),
         },
       ], {
         placeHolder: localize(
           'preview.showPreviewSecuritySelector.title',
           'Select security settings for Asciidoc previews in this workspace'),
-      });
+      })
     if (!selection) {
-      return;
+      return
     }
 
     if (selection.type === 'moreinfo') {
-      vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://go.microsoft.com/fwlink/?linkid=854414'));
-      return;
+      vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://go.microsoft.com/fwlink/?linkid=854414'))
+      return
     }
 
     if (selection.type === 'toggle') {
-      this.cspArbiter.setShouldDisableSecurityWarning(!this.cspArbiter.shouldDisableSecurityWarnings());
-      return;
+      this.cspArbiter.setShouldDisableSecurityWarning(!this.cspArbiter.shouldDisableSecurityWarnings())
+      return
     } else {
-      await this.cspArbiter.setSecurityLevelForResource(resource, selection.type);
+      await this.cspArbiter.setSecurityLevelForResource(resource, selection.type)
     }
-    this.webviewManager.refresh();
+    this.webviewManager.refresh()
   }
 }
