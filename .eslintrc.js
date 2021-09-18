@@ -24,6 +24,7 @@ module.exports = {
       "ignoreTemplateLiterals": true
     }],
     //"indent": ["error", 4],
+    "semi": ["error", "never"],
     "spaced-comment": "off"
   }
 };

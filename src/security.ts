@@ -82,18 +82,15 @@ export class ExtensionContentSecurityPolicyArbiter implements ContentSecurityPol
       }
     }
 
-    return resource;
+    return resource
   }
 }
 
 export class PreviewSecuritySelector {
+  private readonly cspArbiter: ContentSecurityPolicyArbiter
+  private readonly webviewManager: AsciidocPreviewManager
 
-  public constructor(
-    private readonly cspArbiter: ContentSecurityPolicyArbiter,
-    private readonly webviewManager: AsciidocPreviewManager
-  ) { }
-
-  public async showSecutitySelectorForResource(resource: vscode.Uri): Promise<void> {
+  public async showSecuritySelectorForResource(resource: vscode.Uri): Promise<void> {
     interface PreviewSecurityPickItem extends vscode.QuickPickItem {
       readonly type: 'moreinfo' | 'toggle' | AsciidocPreviewSecurityLevel;
     }
