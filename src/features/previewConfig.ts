@@ -52,7 +52,8 @@ export class AsciidocPreviewConfiguration {
   }
 
   public isEqualTo (otherConfig: AsciidocPreviewConfiguration) {
-    for (const key in this) {
+    // eslint-disable-next-line prefer-const
+    for (let key in this) {
       if (Object.prototype.hasOwnProperty.call(this, key) && key !== 'styles') {
         if (this[key] !== otherConfig[key]) {
           return false
@@ -72,6 +73,9 @@ export class AsciidocPreviewConfiguration {
 
     return true
   }
+
+  // eslint-disable-next-line no-undef
+  [key: string]: any;
 }
 
 export class AsciidocPreviewConfigurationManager {

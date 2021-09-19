@@ -90,8 +90,12 @@ export class ExtensionContentSecurityPolicyArbiter implements ContentSecurityPol
 }
 
 export class PreviewSecuritySelector {
-  private readonly cspArbiter: ContentSecurityPolicyArbiter
-  private readonly webviewManager: AsciidocPreviewManager
+  public constructor (private readonly cspArbiter: ContentSecurityPolicyArbiter,
+    private readonly webviewManager: AsciidocPreviewManager
+  ) {
+    this.cspArbiter = cspArbiter
+    this.webviewManager = webviewManager
+  }
 
   public async showSecuritySelectorForResource (resource: vscode.Uri): Promise<void> {
     interface PreviewSecurityPickItem extends vscode.QuickPickItem {
