@@ -9,10 +9,9 @@ const highlightjsBuiltInSyntaxHighlighter = asciidoctor.SyntaxHighlighter.for('h
 const highlightjsAdapter = require('./highlightjs-adapter')
 
 export class AsciidocParser {
-  public html: string = '';
-  public document = null;
+  public html: string = ''
+  public document = null
   public processor = null
-  public registry = null
   private extPath = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath
   private stylesdir = path.join(this.extPath, 'media')
 
@@ -56,13 +55,12 @@ export class AsciidocParser {
       const memoryLogger = this.processor.MemoryLogger.create()
       this.processor.LoggerManager.setLogger(memoryLogger)
 
-      this.registry = this.processor.Extensions.create()
-      this.processor.SyntaxHighlighter.for('highlight.js')
+      const registry = this.processor.Extensions.create()
 
       const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
 
       if (useKroki) {
-        kroki.register(this.registry)
+        kroki.register(registry)
       }
 
       if (context && editor) {
@@ -125,11 +123,13 @@ export class AsciidocParser {
         baseDir: baseDir,
         sourcemap: true,
         backend: backend,
-        extension_registry: this.registry,
+        extension_registry: registry,
       }
       try {
         this.document = this.processor.load(text, options)
-        const blocksWithLineNumber = this.document.findBy(function (b) { return typeof b.getLineNumber() !== 'undefined' })
+        const blocksWithLineNumber = this.document.findBy(function (b) {
+          return typeof b.getLineNumber() !== 'undefined'
+        })
         blocksWithLineNumber.forEach(function (block) {
           block.addRole('data-line-' + block.getLineNumber())
         })
