@@ -356,13 +356,14 @@ export class AsciidocPreview {
 
     this.currentVersion = { resource, version: document.version }
 
-    const content = await this._contentProvider.providePreviewHTML(document, this._previewConfigurations, this.line, this.state)
+    // add webView
     if (this._resource === resource) {
       this.editor.title = AsciidocPreview.getPreviewTitle(this._resource, this._locked)
-      this.editor.iconPath = this.iconPath
-      this.editor.webview.options = AsciidocPreview.getWebviewOptions(resource, this._contributions)
-      this.editor.webview.html = content
     }
+    this.editor.iconPath = this.iconPath
+    this.editor.webview.options = AsciidocPreview.getWebviewOptions(resource, this._contributions)
+    const content = await this._contentProvider.providePreviewHTML(document, this._previewConfigurations, this.line, this.state, this.editor)
+    this.editor.webview.html = content
   }
 
   private static getWebviewOptions (
