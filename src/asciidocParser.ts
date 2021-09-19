@@ -14,12 +14,12 @@ export class AsciidocParser {
     public html: string = '';
     public document = null;
     public processor = null
-    public registry = null
     private ext_path = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath;
     private stylesdir = path.join(this.ext_path, 'media')
 
     constructor(private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) {
       this.processor = asciidoctor()
+      highlightjsAdapter.register(this.processor)
     }
 
     public getAttribute(name: string) {
@@ -53,14 +53,12 @@ export class AsciidocParser {
         const memoryLogger = this.processor.MemoryLogger.create()
         this.processor.LoggerManager.setLogger(memoryLogger)
 
-        this.registry = this.processor.Extensions.create()
-
-        this.processor.SyntaxHighlighter.for('highlight.js')
+        let registry = this.processor.Extensions.create()
 
         const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
 
         if (useKroki) {
-          kroki.register(this.registry)
+          kroki.register(registry)
         }
 
         var attributes = {};
@@ -114,7 +112,7 @@ export class AsciidocParser {
           base_dir: base_dir,
           sourcemap: true,
           backend: backend,
-          extension_registry: this.registry
+          extension_registry: registry,
         }
         try {
           this.document = this.processor.load(text, options)
