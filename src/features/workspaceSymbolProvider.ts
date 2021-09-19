@@ -99,8 +99,12 @@ export default class AsciidocWorkspaceSymbolProvider implements vscode.Workspace
   private _symbolCache = new Map<string, Lazy<Thenable<vscode.SymbolInformation[]>>>();
   private _symbolCachePopulated: boolean = false
   private _disposables: vscode.Disposable[] = []
-  private _symbolProvider: AdocDocumentSymbolProvider
-  private _workspaceAsciidocDocumentProvider: WorkspaceAsciidocDocumentProvider = new VSCodeWorkspaceAsciidocDocumentProvider()
+
+  public constructor (private _symbolProvider: AdocDocumentSymbolProvider,
+    private _workspaceAsciidocDocumentProvider: WorkspaceAsciidocDocumentProvider = new VSCodeWorkspaceAsciidocDocumentProvider()) {
+    this._symbolProvider = _symbolProvider
+    this._workspaceAsciidocDocumentProvider = _workspaceAsciidocDocumentProvider
+  }
 
   public async provideWorkspaceSymbols (query: string): Promise<vscode.SymbolInformation[]> {
     if (!this._symbolCachePopulated) {

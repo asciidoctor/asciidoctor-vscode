@@ -2,86 +2,80 @@
   *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import { CommandManager } from './commandManager';
-import * as commands from './commands/index';
-import LinkProvider from './features/documentLinkProvider';
-import AdocDocumentSymbolProvider from './features/documentSymbolProvider';
+import * as vscode from 'vscode'
+import { CommandManager } from './commandManager'
+import * as commands from './commands/index'
+import LinkProvider from './features/documentLinkProvider'
+import AdocDocumentSymbolProvider from './features/documentSymbolProvider'
 // import AsciidocFoldingProvider from './features/foldingProvider';
-import { AsciidocContentProvider } from './features/previewContentProvider';
-import { AsciidocPreviewManager } from './features/previewManager';
-import AsciidocWorkspaceSymbolProvider from './features/workspaceSymbolProvider';
-import { Logger } from './logger';
-import { AsciidocEngine } from './asciidocEngine';
-import { getAsciidocExtensionContributions } from './asciidocExtensions';
-import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security';
-import { githubSlugifier } from './slugify';
-import { AttributeCompleter } from './features/attributeCompleter';
-import { AsciidocFileIncludeAutoCompletionMonitor } from './util/includeAutoCompletion';
+import { AsciidocContentProvider } from './features/previewContentProvider'
+import { AsciidocPreviewManager } from './features/previewManager'
+import AsciidocWorkspaceSymbolProvider from './features/workspaceSymbolProvider'
+import { Logger } from './logger'
+import { AsciidocEngine } from './asciidocEngine'
+import { getAsciidocExtensionContributions } from './asciidocExtensions'
+import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security'
+import { githubSlugifier } from './slugify'
+import { AttributeCompleter } from './features/attributeCompleter'
+import { AsciidocFileIncludeAutoCompletionMonitor } from './util/includeAutoCompletion'
 
+export function activate (context: vscode.ExtensionContext) {
+  const contributions = getAsciidocExtensionContributions(context)
 
-export function activate(context: vscode.ExtensionContext)
-{
+  const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState)
 
-  const contributions = getAsciidocExtensionContributions(context);
+  const errorCollection = vscode.languages.createDiagnosticCollection('asciidoc')
 
-  const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState);
-
-  const errorCollection = vscode.languages.createDiagnosticCollection('asciidoc');
-
-  const engine = new AsciidocEngine(contributions, githubSlugifier, errorCollection);
-  const logger = new Logger();
-  logger.log("Extension was started");
+  const engine = new AsciidocEngine(contributions, githubSlugifier, errorCollection)
+  const logger = new Logger()
+  logger.log('Extension was started')
 
   const selector: vscode.DocumentSelector = [
     { language: 'asciidoc', scheme: 'file' },
     { language: 'asciidoc', scheme: 'untitled' },
-  ];
+  ]
 
-  const contentProvider = new AsciidocContentProvider(engine, context, cspArbiter, contributions, logger);
-  const symbolProvider = new AdocDocumentSymbolProvider(engine, null, null, null, null);
-  const previewManager = new AsciidocPreviewManager(contentProvider, logger, contributions);
-  context.subscriptions.push(previewManager);
-  const includeAutoCompletionMonitor = new AsciidocFileIncludeAutoCompletionMonitor();
-  context.subscriptions.push(includeAutoCompletionMonitor);
+  const contentProvider = new AsciidocContentProvider(engine, context, cspArbiter, contributions, logger)
+  const symbolProvider = new AdocDocumentSymbolProvider(engine, null, null, null, null)
+  const previewManager = new AsciidocPreviewManager(contentProvider, logger, contributions)
+  context.subscriptions.push(previewManager)
+  const includeAutoCompletionMonitor = new AsciidocFileIncludeAutoCompletionMonitor()
+  context.subscriptions.push(includeAutoCompletionMonitor)
 
-  context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider));
-  context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider()));
+  context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider))
+  context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider()))
   // context.subscriptions.push(vscode.languages.registerFoldingRangeProvider(selector, new AsciidocFoldingProvider(engine)));
-  context.subscriptions.push(vscode.languages.registerWorkspaceSymbolProvider(new AsciidocWorkspaceSymbolProvider(symbolProvider)));
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new AttributeCompleter(), '{'));
-  const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager);
+  context.subscriptions.push(vscode.languages.registerWorkspaceSymbolProvider(new AsciidocWorkspaceSymbolProvider(symbolProvider)))
+  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new AttributeCompleter(), '{'))
+  const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager)
 
-  const commandManager = new CommandManager();
-  context.subscriptions.push(commandManager);
-  commandManager.register(new commands.ShowPreviewCommand(previewManager));
-  commandManager.register(new commands.ShowPreviewToSideCommand(previewManager));
-  commandManager.register(new commands.ShowLockedPreviewToSideCommand(previewManager));
-  commandManager.register(new commands.ShowSourceCommand(previewManager));
-  commandManager.register(new commands.RefreshPreviewCommand(previewManager));
-  commandManager.register(new commands.MoveCursorToPositionCommand());
-  commandManager.register(new commands.ShowPreviewSecuritySelectorCommand(previewSecuritySelector, previewManager));
-  commandManager.register(new commands.OpenDocumentLinkCommand(engine));
-  commandManager.register(new commands.ExportAsPDF(engine, logger));
-  commandManager.register(new commands.PasteImage());
-  commandManager.register(new commands.ToggleLockCommand(previewManager));
-  commandManager.register(new commands.ShowPreviewCommand(previewManager));
-  commandManager.register(new commands.SaveHTML(engine));
-  commandManager.register(new commands.SaveDocbook(engine));
+  const commandManager = new CommandManager()
+  context.subscriptions.push(commandManager)
+  commandManager.register(new commands.ShowPreviewCommand(previewManager))
+  commandManager.register(new commands.ShowPreviewToSideCommand(previewManager))
+  commandManager.register(new commands.ShowLockedPreviewToSideCommand(previewManager))
+  commandManager.register(new commands.ShowSourceCommand(previewManager))
+  commandManager.register(new commands.RefreshPreviewCommand(previewManager))
+  commandManager.register(new commands.MoveCursorToPositionCommand())
+  commandManager.register(new commands.ShowPreviewSecuritySelectorCommand(previewSecuritySelector, previewManager))
+  commandManager.register(new commands.OpenDocumentLinkCommand(engine))
+  commandManager.register(new commands.ExportAsPDF(engine, logger))
+  commandManager.register(new commands.PasteImage())
+  commandManager.register(new commands.ToggleLockCommand(previewManager))
+  commandManager.register(new commands.ShowPreviewCommand(previewManager))
+  commandManager.register(new commands.SaveHTML(engine))
+  commandManager.register(new commands.SaveDocbook(engine))
 
-  context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() =>
-  {
-    logger.updateConfiguration();
-    previewManager.updateConfiguration();
-  }));
+  context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
+    logger.updateConfiguration()
+    previewManager.updateConfiguration()
+  }))
 
-  context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor((editor) =>
-  {
-    errorCollection.clear();
-  }));
+  context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => {
+    errorCollection.clear()
+  }))
 
-  context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(() =>
-  {
-    previewManager.refresh(true);
-  }));
+  context.subscriptions.push(vscode.workspace.onDidSaveTextDocument(() => {
+    previewManager.refresh(true)
+  }))
 }

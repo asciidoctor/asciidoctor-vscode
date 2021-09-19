@@ -14,8 +14,11 @@ import { Logger } from '../logger'
 
 export class ExportAsPDF implements Command {
   public readonly id = 'asciidoc.exportAsPDF'
-  private readonly engine: AsciidocEngine
-  private readonly logger: Logger
+
+  constructor (private readonly engine: AsciidocEngine, private readonly logger: Logger) {
+    this.engine = engine
+    this.logger = logger
+  }
 
   public async execute () {
     const editor = vscode.window.activeTextEditor
@@ -67,6 +70,7 @@ export class ExportAsPDF implements Command {
         vscode.window.showErrorMessage(errorMessage)
       })
 
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       asciidoctorPDF.on('close', (code) => {
         offerOpen(pdfPath)
       })

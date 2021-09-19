@@ -7,7 +7,10 @@ import { AsciidocPreviewManager } from '../features/previewManager'
 
 export class ToggleLockCommand implements Command {
   public readonly id = 'asciidoc.preview.toggleLock'
-  private readonly previewManager: AsciidocPreviewManager
+
+  public constructor (private readonly previewManager: AsciidocPreviewManager) {
+    this.previewManager = previewManager
+  }
 
   public execute () {
     this.previewManager.toggleLock()

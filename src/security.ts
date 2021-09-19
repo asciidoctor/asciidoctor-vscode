@@ -33,8 +33,14 @@ export class ExtensionContentSecurityPolicyArbiter implements ContentSecurityPol
   private readonly oldTrustedWorkspaceKey = 'trusted_preview_workspace:'
   private readonly securityLevelKey = 'preview_security_level:'
   private readonly shouldDisableSecurityWarningKey = 'preview_should_show_security_warning:'
-  private readonly globalState: vscode.Memento
-  private readonly workspaceState: vscode.Memento
+
+  constructor (
+    private readonly globalState: vscode.Memento,
+    private readonly workspaceState: vscode.Memento
+  ) {
+    this.globalState = globalState
+    this.workspaceState = workspaceState
+  }
 
   public getSecurityLevelForResource (resource: vscode.Uri): AsciidocPreviewSecurityLevel {
     // Use new security level setting first

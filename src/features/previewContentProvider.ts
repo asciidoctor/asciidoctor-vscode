@@ -35,11 +35,18 @@ const previewStrings = {
 }
 
 export class AsciidocContentProvider {
-  private readonly engine: AsciidocEngine
-  private readonly context: vscode.ExtensionContext
-  private readonly cspArbiter: ContentSecurityPolicyArbiter
-  private readonly contributions: AsciidocContributions
-  private readonly logger: Logger
+  constructor (
+      private readonly engine: AsciidocEngine,
+      private readonly context: vscode.ExtensionContext,
+      private readonly cspArbiter: ContentSecurityPolicyArbiter,
+      private readonly contributions: AsciidocContributions,
+      private readonly logger: Logger) {
+    this.engine = engine
+    this.context = context
+    this.cspArbiter = cspArbiter
+    this.contributions = contributions
+    this.logger = logger
+  }
 
   public async providePreviewHTML (
     asciidocDocument: vscode.TextDocument,

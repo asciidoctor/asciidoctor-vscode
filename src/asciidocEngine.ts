@@ -16,9 +16,15 @@ export class AsciidocEngine {
 
   private currentDocument?: vscode.Uri;
 
-  private readonly extensionPreviewResourceProvider: AsciidocContributions
-  private readonly slugifier: Slugifier
-  private readonly errorCollection: vscode.DiagnosticCollection = null
+  public constructor (
+    private readonly extensionPreviewResourceProvider: AsciidocContributions,
+    private readonly slugifier: Slugifier,
+    private readonly errorCollection: vscode.DiagnosticCollection = null
+  ) {
+    this.extensionPreviewResourceProvider = extensionPreviewResourceProvider
+    this.slugifier = slugifier
+    this.errorCollection = errorCollection
+  }
 
   private async getEngine (resource: vscode.Uri): Promise<AsciidocParser> {
     if (!this.ad) {
@@ -39,7 +45,7 @@ export class AsciidocEngine {
     return { text, offset }
   }
 
-  public async render (document: vscode.Uri, stripFrontmatter: boolean, text: string, 
+  public async render (document: vscode.Uri, stripFrontmatter: boolean, text: string,
     forHTML: boolean = false, backend: string = 'html5'): Promise<string> {
     let offset = 0
     if (stripFrontmatter) {

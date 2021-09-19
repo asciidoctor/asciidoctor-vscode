@@ -13,16 +13,18 @@ interface AsciidocSymbol {
 }
 
 export default class AdocDocumentSymbolProvider implements vscode.DocumentSymbolProvider {
-  private readonly engine: AsciidocEngine
-  private root: AsciidocSymbol = {
-    level: -Infinity,
-    children: [],
-    parent: undefined,
-  }
-
   private lastSymbolCall: number
   private lastRunTime: number = 1000
   private RunTimeFactor: number = 1.5
+
+  constructor (private readonly engine: AsciidocEngine, private root: AsciidocSymbol = {
+    level: -Infinity,
+    children: [],
+    parent: undefined,
+  }) {
+    this.engine = engine
+    this.root = root
+  }
 
   public async provideDocumentSymbolInformation (document: SkinnyTextDocument): Promise<vscode.SymbolInformation[]> {
     const toc = await new TableOfContentsProvider(this.engine, document).getToc()

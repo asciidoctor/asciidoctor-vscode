@@ -18,7 +18,10 @@ export interface OpenDocumentLinkArgs {
 export class OpenDocumentLinkCommand implements Command {
   private static readonly id = '_asciidoc.openDocumentLink'
   public readonly id = OpenDocumentLinkCommand.id
-  private readonly engine: AsciidocEngine
+
+  public constructor (private readonly engine: AsciidocEngine) {
+    this.engine = engine
+  }
 
   public static createCommandUri (
     path: string,

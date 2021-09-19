@@ -6,6 +6,7 @@ module.exports = {
     "tsconfigRootDir": __dirname,
     "sourceType": "module"
   },
+  "plugins": ["@typescript-eslint"],
   "extends": [
     "standard"
   ],
@@ -25,6 +26,9 @@ module.exports = {
     }],
     //"indent": ["error", 4],
     "semi": ["error", "never"],
-    "spaced-comment": "off"
+    "spaced-comment": "off",
+    // https://github.com/typescript-eslint/typescript-eslint/issues/2621
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
   }
 };

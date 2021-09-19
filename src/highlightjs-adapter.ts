@@ -1,6 +1,6 @@
 // from https://github.com/cdnjs/SRIs/blob/master/highlight.js/9.18.3.json
 import * as sri from './highlightjs-sri-9.18.3.json'
-const {Opal} = require('asciidoctor-opal-runtime')
+const { Opal } = require('asciidoctor-opal-runtime')
 
 module.exports.register = (asciidoctor) => {
   const HighlightjsSyntaxHighlighter = asciidoctor.SyntaxHighlighter.for('highlight.js')
@@ -8,8 +8,9 @@ module.exports.register = (asciidoctor) => {
   customHighlightJsAdapter.$register_for('highlight.js', 'highlightjs')
   let $docinfo
   const baseUrl = 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.3'
-  Opal.def(customHighlightJsAdapter, '$docinfo', $docinfo = function $$docinfo(location, doc, opts) {
-    const self = this;
+  Opal.def(customHighlightJsAdapter, '$docinfo', $docinfo = function $$docinfo (location, doc, _opts) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const self = this
     if (location === 'head') {
       const theme = doc.$attr('highlightjs-theme', 'github')
       const integrityValue = sri[`styles/${theme}.min.css`]
@@ -32,5 +33,5 @@ if (!hljs.initHighlighting.called) {
   ;[].slice.call(document.querySelectorAll("pre.highlight > code")).forEach(function (el) { hljs.highlightBlock(el) })
 }
 </script>`
-  }, $docinfo.$$arity = 3);
+  }, $docinfo.$$arity = 3)
 }

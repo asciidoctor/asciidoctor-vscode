@@ -9,7 +9,9 @@ import { TableOfContentsProvider } from '../tableOfContentsProvider'
 const rangeLimit = 5000
 
 export default class AsciidocFoldingProvider implements vscode.FoldingRangeProvider {
-  private readonly engine: AsciidocEngine
+  constructor (private readonly engine: AsciidocEngine) {
+    this.engine = engine
+  }
 
   private async getRegions (document: vscode.TextDocument): Promise<vscode.FoldingRange[]> {
     const isStartRegion = (t: string) => /^\s*<!--\s*#?region\b.*-->/.test(t)
@@ -39,7 +41,9 @@ export default class AsciidocFoldingProvider implements vscode.FoldingRangeProvi
 
   public async provideFoldingRanges (
     document: vscode.TextDocument,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _: vscode.FoldingContext,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     _token: vscode.CancellationToken
   ): Promise<vscode.FoldingRange[]> {
     const foldables = await Promise.all([

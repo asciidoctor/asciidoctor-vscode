@@ -10,8 +10,12 @@ import { AsciidocPreviewManager } from '../features/previewManager'
 
 export class ShowPreviewSecuritySelectorCommand implements Command {
   public readonly id = 'asciidoc.showPreviewSecuritySelector'
-  private readonly previewSecuritySelector: PreviewSecuritySelector
-  private readonly previewManager: AsciidocPreviewManager
+
+  constructor (private readonly previewSecuritySelector: PreviewSecuritySelector,
+    private readonly previewManager: AsciidocPreviewManager) {
+    this.previewManager = previewManager
+    this.previewSecuritySelector = previewSecuritySelector
+  }
 
   public execute (resource: string | undefined) {
     if (this.previewManager.activePreviewResource) {
