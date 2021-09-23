@@ -30,16 +30,15 @@ export class OpenDocumentLinkCommand implements Command {
     return vscode.Uri.parse(`command:${OpenDocumentLinkCommand.id}?${encodeURIComponent(JSON.stringify({ path, fragment }))}`)
   }
 
-  public execute (args: OpenDocumentLinkArgs) {
+  public async execute (args: OpenDocumentLinkArgs) {
     const p = decodeURIComponent(args.path)
     return this.tryOpen(p, args).catch(() => {
       if (extname(p) === '') {
         return this.tryOpen(p + '.md', args)
       }
       const resource = vscode.Uri.file(p)
-      return Promise.resolve(void 0)
-        .then(() => vscode.commands.executeCommand('vscode.open', resource))
-        .then(() => void 0)
+      await vscode.commands.executeCommand('vscode.open', resource)
+      return undefined
     })
   }
 

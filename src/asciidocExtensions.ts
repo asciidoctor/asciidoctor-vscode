@@ -3,6 +3,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
+import type { Thenable } from 'vscode'
 
 export interface AsciidocContributions {
   readonly extensionPath: string;

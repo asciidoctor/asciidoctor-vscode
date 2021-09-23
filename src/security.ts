@@ -3,6 +3,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
+import type { Thenable } from 'vscode'
 
 import { AsciidocPreviewManager } from './features/previewManager'
 

@@ -3,6 +3,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
+import type { Thenable } from 'vscode'
 import { disposeAll } from '../util/dispose'
 import { isAsciidocFile } from '../util/file'
 import { Lazy, lazy } from '../util/lazy'
