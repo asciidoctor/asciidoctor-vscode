@@ -7,3 +7,4 @@ media/*.js
 test/samples/playground.*
 dist/
 .DS_Store
+.vscode-test/
