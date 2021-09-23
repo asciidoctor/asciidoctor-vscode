@@ -3,7 +3,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
-import type { Thenable } from 'vscode'
 
 import { AsciidocPreviewManager } from './features/previewManager'
 
@@ -21,13 +20,13 @@ export const enum AsciidocPreviewSecurityLevel {
 export interface ContentSecurityPolicyArbiter {
   getSecurityLevelForResource(resource: vscode.Uri): AsciidocPreviewSecurityLevel;
 
-  setSecurityLevelForResource(resource: vscode.Uri, level: AsciidocPreviewSecurityLevel): Thenable<void>;
+  setSecurityLevelForResource(resource: vscode.Uri, level: AsciidocPreviewSecurityLevel): Promise<void>;
 
   shouldAllowSvgsForResource(resource: vscode.Uri): void;
 
   shouldDisableSecurityWarnings(): boolean;
 
-  setShouldDisableSecurityWarning(shouldShow: boolean): Thenable<void>;
+  setShouldDisableSecurityWarning(shouldShow: boolean): Promise<void>;
 }
 
 export class ExtensionContentSecurityPolicyArbiter implements ContentSecurityPolicyArbiter {
@@ -57,7 +56,7 @@ export class ExtensionContentSecurityPolicyArbiter implements ContentSecurityPol
     return AsciidocPreviewSecurityLevel.Strict
   }
 
-  public setSecurityLevelForResource (resource: vscode.Uri, level: AsciidocPreviewSecurityLevel): Thenable<void> {
+  public async setSecurityLevelForResource (resource: vscode.Uri, level: AsciidocPreviewSecurityLevel): Promise<void> {
     return this.globalState.update(this.securityLevelKey + this.getRoot(resource), level)
   }
 
@@ -70,7 +69,7 @@ export class ExtensionContentSecurityPolicyArbiter implements ContentSecurityPol
     return this.workspaceState.get<boolean>(this.shouldDisableSecurityWarningKey, false)
   }
 
-  public setShouldDisableSecurityWarning (disabled: boolean): Thenable<void> {
+  public async setShouldDisableSecurityWarning (disabled: boolean): Promise<void> {
     return this.workspaceState.update(this.shouldDisableSecurityWarningKey, disabled)
   }
 
@@ -152,11 +151,10 @@ export class PreviewSecuritySelector {
     }
 
     if (selection.type === 'toggle') {
-      this.cspArbiter.setShouldDisableSecurityWarning(!this.cspArbiter.shouldDisableSecurityWarnings())
+      await this.cspArbiter.setShouldDisableSecurityWarning(!this.cspArbiter.shouldDisableSecurityWarnings())
       return
-    } else {
-      await this.cspArbiter.setSecurityLevelForResource(resource, selection.type)
     }
+    await this.cspArbiter.setSecurityLevelForResource(resource, selection.type)
     this.webviewManager.refresh()
   }
 }

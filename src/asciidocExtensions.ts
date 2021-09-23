@@ -3,14 +3,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
-import type { Thenable } from 'vscode'
 
 export interface AsciidocContributions {
   readonly extensionPath: string;
   readonly previewScripts: vscode.Uri[];
   readonly previewStylesEditor: vscode.Uri[];
   readonly previewStylesDefault: vscode.Uri[];
-  readonly asciidocItPlugins: Thenable<(md: any) => any>[];
+  readonly asciidocItPlugins: Promise<(md: any) => any>[];
   readonly previewResourceRoots: vscode.Uri[];
 }
 
@@ -19,7 +18,7 @@ class AsciidocExtensionContributions implements AsciidocContributions {
   private readonly _stylesEditor: vscode.Uri[] = [];
   private readonly _stylesDefault: vscode.Uri[] = [];
   private readonly _previewResourceRoots: vscode.Uri[] = [];
-  private readonly _plugins: Thenable<(md: any) => any>[] = [];
+  private readonly _plugins: Promise<(md: any) => any>[] = [];
 
   private _loaded = false;
 
@@ -49,7 +48,7 @@ class AsciidocExtensionContributions implements AsciidocContributions {
     return this._previewResourceRoots
   }
 
-  public get asciidocItPlugins (): Thenable<(md: any) => any>[] {
+  public get asciidocItPlugins (): Promise<(md: any) => any>[] {
     this.ensureLoaded()
     return this._plugins
   }
