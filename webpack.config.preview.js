@@ -5,8 +5,8 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    index: './src-preview/index.ts',
-    pre: './src-preview/pre.ts',
+    index: './preview-src/index.ts',
+    pre: './preview-src/pre.ts',
   },
   module: {
     rules: [

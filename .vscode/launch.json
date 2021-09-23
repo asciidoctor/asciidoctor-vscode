@@ -25,10 +25,10 @@
       "runtimeExecutable": "${execPath}",
       "args": [
         "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionTestsPath=${workspaceFolder}/dist/test/"
+        "--extensionTestsPath=${workspaceFolder}/dist/src/test/suite"
       ],
       "outFiles": [
-        "${workspaceFolder}/dist/test/**/*.js"
+        "${workspaceFolder}/dist/src/test/**/*.js"
       ],
       "preLaunchTask": "npm: pretest"
     }
