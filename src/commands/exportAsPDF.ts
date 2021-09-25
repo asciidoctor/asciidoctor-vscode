@@ -30,7 +30,7 @@ export class ExportAsPDF implements Command {
     const pdfFilename = vscode.Uri.file(path.join(sourceName.root, sourceName.dir, sourceName.name + '.pdf'))
 
     const text = doc.getText()
-    if (vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctorPDF')) {
+    if (vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctorpdf')) {
       const docPath = path.parse(path.resolve(doc.fileName))
       let pdfPath = ''
 
@@ -95,10 +95,10 @@ export class ExportAsPDF implements Command {
       const footerCenter: string | undefined = parser.getAttribute('footer-center')
       let cover: string | undefined
       let imageHTML: string = ''
-      if (!(showTitlePage === undefined)) {
-        if (!(titlePageLogo === undefined)) {
+      if (!(showTitlePage === null)) {
+        if (!(titlePageLogo === null)) {
           const imageURL = titlePageLogo.startsWith('http') ? titlePageLogo : path.join(sourceName.dir, titlePageLogo)
-          imageHTML = (titlePageLogo === undefined) ? '' : `<img src="${imageURL}">`
+          imageHTML = (titlePageLogo === null) ? '' : `<img src="${imageURL}">`
         }
         const tmpobj = tmp.fileSync({ postfix: '.html' })
         const html = `\
@@ -243,10 +243,10 @@ export async function html2pdf (html: string, binaryPath: string, cover: string,
   return new Promise((resolve, reject) => {
     const options = { cwdir: documentPath, stdio: ['pipe', 'ignore', 'pipe'] }
     let cmdArguments = ['--encoding', ' utf-8', '--javascript-delay', '1000']
-    if (footerCenter !== undefined) {
+    if (footerCenter !== null) {
       cmdArguments = cmdArguments.concat(['--footer-center', footerCenter])
     }
-    if (cover !== undefined) {
+    if (cover !== null && cover !== undefined) {
       cmdArguments = cmdArguments.concat(cover.split(' '))
     }
     cmdArguments = cmdArguments.concat(['-', filename])
