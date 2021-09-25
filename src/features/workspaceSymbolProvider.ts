@@ -10,7 +10,7 @@ import AdocDocumentSymbolProvider from './documentSymbolProvider'
 import { SkinnyTextDocument } from '../tableOfContentsProvider'
 
 export interface WorkspaceAsciidocDocumentProvider {
-  getAllAsciidocDocuments(): Thenable<Iterable<SkinnyTextDocument>>;
+  getAllAsciidocDocuments(): Promise<Iterable<SkinnyTextDocument>>;
 
   readonly onDidChangeAsciidocDocument: vscode.Event<SkinnyTextDocument>;
   readonly onDidCreateAsciidocDocument: vscode.Event<SkinnyTextDocument>;
@@ -96,7 +96,7 @@ class VSCodeWorkspaceAsciidocDocumentProvider implements WorkspaceAsciidocDocume
 }
 
 export default class AsciidocWorkspaceSymbolProvider implements vscode.WorkspaceSymbolProvider {
-  private _symbolCache = new Map<string, Lazy<Thenable<vscode.SymbolInformation[]>>>();
+  private _symbolCache = new Map<string, Lazy<Promise<vscode.SymbolInformation[]>>>();
   private _symbolCachePopulated: boolean = false
   private _disposables: vscode.Disposable[] = []
 
@@ -132,7 +132,7 @@ export default class AsciidocWorkspaceSymbolProvider implements vscode.Workspace
     disposeAll(this._disposables)
   }
 
-  private getSymbols (document: SkinnyTextDocument): Lazy<Thenable<vscode.SymbolInformation[]>> {
+  private getSymbols (document: SkinnyTextDocument): Lazy<Promise<vscode.SymbolInformation[]>> {
     return lazy(async () => {
       return this._symbolProvider.provideDocumentSymbolInformation(document)
     })
