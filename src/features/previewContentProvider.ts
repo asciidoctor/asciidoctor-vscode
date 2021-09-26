@@ -2,17 +2,17 @@
   *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode';
-import * as path from 'path';
-import { AsciidocEngine } from '../asciidocEngine';
+import * as vscode from 'vscode'
+import * as path from 'path'
+import { AsciidocEngine } from '../asciidocEngine'
 
-import * as nls from 'vscode-nls';
-const localize = nls.loadMessageBundle();
+import * as nls from 'vscode-nls'
 
-import { Logger } from '../logger';
-import { ContentSecurityPolicyArbiter, AsciidocPreviewSecurityLevel } from '../security';
-import { AsciidocPreviewConfigurationManager, AsciidocPreviewConfiguration } from './previewConfig';
-import { AsciidocContributions } from '../asciidocExtensions';
+import { Logger } from '../logger'
+import { ContentSecurityPolicyArbiter, AsciidocPreviewSecurityLevel } from '../security'
+import { AsciidocPreviewConfigurationManager, AsciidocPreviewConfiguration } from './previewConfig'
+import { AsciidocContributions } from '../asciidocExtensions'
+const localize = nls.loadMessageBundle()
 
 /**
  * Strings used inside the asciidoc preview.
@@ -32,25 +32,30 @@ const previewStrings = {
   cspAlertMessageLabel: localize(
     'preview.securityMessage.label',
     'Content Disabled Security Warning'),
-};
+}
 
 export class AsciidocContentProvider {
-  constructor(
-		private readonly engine: AsciidocEngine,
-		private readonly context: vscode.ExtensionContext,
-		private readonly cspArbiter: ContentSecurityPolicyArbiter,
-		private readonly contributions: AsciidocContributions,
-		private readonly logger: Logger
-  ) { }
+  constructor (
+      private readonly engine: AsciidocEngine,
+      private readonly context: vscode.ExtensionContext,
+      private readonly cspArbiter: ContentSecurityPolicyArbiter,
+      private readonly contributions: AsciidocContributions,
+      private readonly logger: Logger) {
+    this.engine = engine
+    this.context = context
+    this.cspArbiter = cspArbiter
+    this.contributions = contributions
+    this.logger = logger
+  }
 
-  public async providePreviewHTML(
+  public async providePreviewHTML (
     asciidocDocument: vscode.TextDocument,
     previewConfigurations: AsciidocPreviewConfigurationManager,
     initialLine: number | undefined = undefined,
     state?: any
   ): Promise<string> {
-    const sourceUri = asciidocDocument.uri;
-    const config = previewConfigurations.loadAndCacheConfiguration(sourceUri);
+    const sourceUri = asciidocDocument.uri
+    const config = previewConfigurations.loadAndCacheConfiguration(sourceUri)
     const initialData = {
       source: sourceUri.toString(),
       line: initialLine,
@@ -59,143 +64,143 @@ export class AsciidocContentProvider {
       scrollEditorWithPreview: config.scrollEditorWithPreview,
       doubleClickToSwitchToEditor: config.doubleClickToSwitchToEditor,
       disableSecurityWarnings: this.cspArbiter.shouldDisableSecurityWarnings(),
-    };
+    }
 
     // Content Security Policy
-    const nonce = new Date().getTime() + '' + new Date().getMilliseconds();
-    const csp = this.getCspForResource(sourceUri, nonce);
-    const body = await this.engine.render(sourceUri, config.previewFrontMatter === 'hide', asciidocDocument.getText());
-    const bodyClassesRegex = /<body(?:(?:\s+(?:id=\".*"\s*)?class(?:\s*=\s*(?:\"(.+?)\"|\'(.+?)\')))+\s*)>/
+    const nonce = new Date().getTime() + '' + new Date().getMilliseconds()
+    const csp = this.getCspForResource(sourceUri, nonce)
+    const body = await this.engine.render(sourceUri, config.previewFrontMatter === 'hide', asciidocDocument.getText())
+    const bodyClassesRegex = /<body(?:(?:\s+(?:id=".*"\s*)?class(?:\s*=\s*(?:"(.+?)"|'(.+?)')))+\s*)>/
     const bodyClasses = body.match(bodyClassesRegex)
-    const bodyClassesVal = bodyClasses === null ? '' : bodyClasses[1];
+    const bodyClassesVal = bodyClasses === null ? '' : bodyClasses[1]
     this.logger.log(`Using CSS ${this.getStyles(sourceUri, nonce, config, state)}`)
 
     return `<!DOCTYPE html>
-			<html>
-			<head>
-				<meta http-equiv="Content-type" content="text/html;charset=UTF-8">
-				${csp}
-				<meta id="vscode-asciidoc-preview-data"
-					data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}"
-					data-strings="${JSON.stringify(previewStrings).replace(/"/g, '&quot;')}"
-					data-state="${JSON.stringify(state || {}).replace(/"/g, '&quot;')}">
-				<script src="${this.extensionScriptPath('pre.js')}" nonce="${nonce}"></script>
-				${this.getStyles(sourceUri, nonce, config, state)}
-				<base href="${asciidocDocument.uri.with({ scheme: 'vscode-resource' }).toString(true)}">
-			</head>
-			<body class="${bodyClassesVal} vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.markEditorSelection ? 'showEditorSelection' : ''}">
-				${body}
-				<div class="code-line" data-line="${asciidocDocument.lineCount}"></div>
-				<script async src="${this.extensionScriptPath('index.js')}" nonce="${nonce}" charset="UTF-8"></script>
-			</body>
-			</html>`;
+      <html>
+      <head>
+        <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
+        ${csp}
+        <meta id="vscode-asciidoc-preview-data"
+          data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}"
+          data-strings="${JSON.stringify(previewStrings).replace(/"/g, '&quot;')}"
+          data-state="${JSON.stringify(state || {}).replace(/"/g, '&quot;')}">
+        <script src="${this.extensionScriptPath('pre.js')}" nonce="${nonce}"></script>
+        ${this.getStyles(sourceUri, nonce, config, state)}
+        <base href="${asciidocDocument.uri.with({ scheme: 'vscode-resource' }).toString(true)}">
+      </head>
+      <body class="${bodyClassesVal} vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.markEditorSelection ? 'showEditorSelection' : ''}">
+        ${body}
+        <div class="code-line" data-line="${asciidocDocument.lineCount}"></div>
+        <script async src="${this.extensionScriptPath('index.js')}" nonce="${nonce}" charset="UTF-8"></script>
+      </body>
+      </html>`
   }
 
-  private extensionScriptPath(mediaFile: string): string {
+  private extensionScriptPath (mediaFile: string): string {
     return vscode.Uri.file(this.context.asAbsolutePath(path.join('dist', mediaFile)))
       .with({ scheme: 'vscode-resource' })
-      .toString();
+      .toString()
   }
 
-  private fixHref(resource: vscode.Uri, href: string): string {
+  private fixHref (resource: vscode.Uri, href: string): string {
     if (!href) {
-      return href;
+      return href
     }
 
     // Use href if it is already an URL
-    const hrefUri = vscode.Uri.parse(href);
+    const hrefUri = vscode.Uri.parse(href)
     if (['http', 'https'].indexOf(hrefUri.scheme) >= 0) {
-      return hrefUri.toString();
+      return hrefUri.toString()
     }
 
     // Use href as file URI if it is absolute
     if (path.isAbsolute(href) || hrefUri.scheme === 'file') {
       return vscode.Uri.file(href)
         .with({ scheme: 'vscode-resource' })
-        .toString();
+        .toString()
     }
 
     // Use a workspace relative path if there is a workspace
-    let root = vscode.workspace.getWorkspaceFolder(resource);
+    const root = vscode.workspace.getWorkspaceFolder(resource)
     if (root) {
       return vscode.Uri.file(path.join(root.uri.fsPath, href))
         .with({ scheme: 'vscode-resource' })
-        .toString();
+        .toString()
     }
 
     // Otherwise look relative to the asciidoc file
     return vscode.Uri.file(path.join(path.dirname(resource.fsPath), href))
       .with({ scheme: 'vscode-resource' })
-      .toString();
+      .toString()
   }
 
-  private computeCustomStyleSheetIncludes(resource: vscode.Uri, config: AsciidocPreviewConfiguration): string {
+  private computeCustomStyleSheetIncludes (resource: vscode.Uri, config: AsciidocPreviewConfiguration): string {
     if (Array.isArray(config.styles)) {
       return config.styles.map((style) => {
-        return `<link rel="stylesheet" class="code-user-style" data-source="${style.replace(/"/g, '&quot;')}" href="${this.fixHref(resource, style)}" type="text/css" media="screen">`;
-      }).join('\n');
+        return `<link rel="stylesheet" class="code-user-style" data-source="${style.replace(/"/g, '&quot;')}" href="${this.fixHref(resource, style)}" type="text/css" media="screen">`
+      }).join('\n')
     }
-    return '';
+    return ''
   }
 
-  private getSettingsOverrideStyles(nonce: string, config: AsciidocPreviewConfiguration): string {
+  private getSettingsOverrideStyles (nonce: string, config: AsciidocPreviewConfiguration): string {
     return `<style nonce="${nonce}">
-			body {
-				${config.fontFamily ? `font-family: ${config.fontFamily};` : ''}
-				${isNaN(config.fontSize) ? '' : `font-size: ${config.fontSize}px;`}
-				${isNaN(config.lineHeight) ? '' : `line-height: ${config.lineHeight};`}
-			}
-		</style>`;
+      body {
+        ${config.fontFamily ? `font-family: ${config.fontFamily};` : ''}
+        ${isNaN(config.fontSize) ? '' : `font-size: ${config.fontSize}px;`}
+        ${isNaN(config.lineHeight) ? '' : `line-height: ${config.lineHeight};`}
+      }
+    </style>`
   }
 
-  private getImageStabilizerStyles(state?: any) {
-    let ret = '<style>\n';
+  private getImageStabilizerStyles (state?: any) {
+    let ret = '<style>\n'
     if (state && state.imageInfo) {
       state.imageInfo.forEach((imgInfo: any) => {
         ret += `#${imgInfo.id}.loading {
-					height: ${imgInfo.height}px;
-					width: ${imgInfo.width}px;
-				}\n`;
-      });
+          height: ${imgInfo.height}px;
+          width: ${imgInfo.width}px;
+        }\n`
+      })
     }
-    ret += '</style>\n';
+    ret += '</style>\n'
 
-    return ret;
+    return ret
   }
 
-  private getStyles(resource: vscode.Uri, nonce: string, config: AsciidocPreviewConfiguration, state?: any): string {
+  private getStyles (resource: vscode.Uri, nonce: string, config: AsciidocPreviewConfiguration, state?: any): string {
     const useEditorStyle = vscode.workspace.getConfiguration('asciidoc', null).get('preview.useEditorStyle')
-    var baseStyles;
+    let baseStyles
     if (useEditorStyle) {
       baseStyles = this.contributions.previewStylesEditor
         .map((resource) => `<link rel="stylesheet" type="text/css" href="${resource.toString()}">`)
-        .join('\n');
+        .join('\n')
     } else {
       baseStyles = this.contributions.previewStylesDefault
         .map((resource) => `<link rel="stylesheet" type="text/css" href="${resource.toString()}">`)
-        .join('\n');
+        .join('\n')
     }
 
     return `${baseStyles}
-			${this.getSettingsOverrideStyles(nonce, config)}
-			${this.computeCustomStyleSheetIncludes(resource, config)}
-			${this.getImageStabilizerStyles(state)}`;
+      ${this.getSettingsOverrideStyles(nonce, config)}
+      ${this.computeCustomStyleSheetIncludes(resource, config)}
+      ${this.getImageStabilizerStyles(state)}`
   }
 
-  private getCspForResource(resource: vscode.Uri, nonce: string): string {
+  private getCspForResource (resource: vscode.Uri, nonce: string): string {
     switch (this.cspArbiter.getSecurityLevelForResource(resource)) {
-    case AsciidocPreviewSecurityLevel.AllowInsecureContent:
-      return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: http: https: data:; media-src vscode-resource: http: https: data:; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' http: https: data:; font-src vscode-resource: http: https: data:;">`;
+      case AsciidocPreviewSecurityLevel.AllowInsecureContent:
+        return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: http: https: data:; media-src vscode-resource: http: https: data:; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' http: https: data:; font-src vscode-resource: http: https: data:;">`
 
-    case AsciidocPreviewSecurityLevel.AllowInsecureLocalContent:
-      return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*; media-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' https: data: http://localhost:* http://127.0.0.1:*; font-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*;">`;
+      case AsciidocPreviewSecurityLevel.AllowInsecureLocalContent:
+        return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*; media-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' https: data: http://localhost:* http://127.0.0.1:*; font-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*;">`
 
-    case AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent:
-      return '';
+      case AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent:
+        return ''
 
-    case AsciidocPreviewSecurityLevel.Strict:
-    default:
-      return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https: data:; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' https: data:; font-src vscode-resource: https: data:;">`;
+      case AsciidocPreviewSecurityLevel.Strict:
+      default:
+        return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https: data:; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' https: data:; font-src vscode-resource: https: data:;">`
     }
   }
 }

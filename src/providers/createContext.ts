@@ -1,4 +1,4 @@
-import * as vscode from "vscode";
+import * as vscode from 'vscode'
 
 export interface Context {
   textFullLine: string;
@@ -7,31 +7,31 @@ export interface Context {
   position: vscode.Position;
 }
 
-export function createContext(
+export function createContext (
   document: vscode.TextDocument,
   position: vscode.Position
 ): Context {
-  const textFullLine = document.getText(document.lineAt(position).range);
-  const documentExtension = extractExtension(document);
+  const textFullLine = document.getText(document.lineAt(position).range)
+  const documentExtension = extractExtension(document)
   return {
     textFullLine,
     document,
     documentExtension,
     position,
-  };
+  }
 }
 
-export function extractExtension(document: vscode.TextDocument) {
+export function extractExtension (document: vscode.TextDocument) {
   if (document.isUntitled) {
-    return undefined;
+    return undefined
   }
 
-  const fragments = document.fileName.split(".");
-  const extension = fragments[fragments.length - 1];
+  const fragments = document.fileName.split('.')
+  const extension = fragments[fragments.length - 1]
 
   if (!extension || extension.length > 3) {
-    return undefined;
+    return undefined
   }
 
-  return extension;
+  return extension
 }
