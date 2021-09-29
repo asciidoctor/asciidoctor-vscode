@@ -434,16 +434,15 @@ export class AsciidocPreview {
       // Handle any normalized file paths
       hrefPath = vscode.Uri.parse(hrefPath.replace('/file', '')).fsPath
     }
-    const openLinks = this.config.get<string>('preview.openAsciidocLinks', 'inPreview')
-    if (openLinks === 'inPreview') {
+    const openLinks = this.config.get<string>('preview.openAsciiDocLinks', 'inPreview')
+    if (openLinks === 'inPreview' || openLinks === 'both') {
       const asciidocLink = await resolveLinkToAsciidocFile(hrefPath)
       if (asciidocLink) {
         this.update(asciidocLink)
-        return
       }
+    } else if (openLinks === 'inEditor' || openLinks === 'both') {
+      vscode.commands.executeCommand('asciidoc.openDocumentLink', { hrefPath, fragment })
     }
-
-    vscode.commands.executeCommand('_asciidoc.openDocumentLink', { path, fragment })
   }
 
   private async onCacheImageSizes (imageInfo: { id: string, width: number, height: number }[]) {

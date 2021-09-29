@@ -371,7 +371,8 @@
 					"scope": "resource",
 					"enum": [
 						"inPreview",
-						"inEditor"
+						"inEditor",
+						"both"
 					],
 					"enumDescriptions": [
 						"%asciidoc.preview.openAsciiDocLinks.inPreview%",

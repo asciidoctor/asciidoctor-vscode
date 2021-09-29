@@ -11,30 +11,41 @@ import { TableOfContentsProvider } from '../tableOfContentsProvider'
 import { isAsciidocFile } from '../util/file'
 
 export interface OpenDocumentLinkArgs {
-  path: string
-  fragment: string
+  hrefPath: string;
+  fragment: string;
 }
 
 export class OpenDocumentLinkCommand implements Command {
-  private static readonly id = '_asciidoc.openDocumentLink'
-  public readonly id = OpenDocumentLinkCommand.id
+  public readonly id = 'asciidoc.openDocumentLink'
 
   public constructor (private readonly engine: AsciidocEngine) {
     this.engine = engine
   }
 
-  public static createCommandUri (
-    path: string,
-    fragment: string
-  ): vscode.Uri {
-    return vscode.Uri.parse(`command:${OpenDocumentLinkCommand.id}?${encodeURIComponent(JSON.stringify({ path, fragment }))}`)
+  public static createCommandUri (hrefPath: string, fragment: string): vscode.Uri {
+    // TODO: why can I not reference the class property id below without a tsc error?
+    return vscode.Uri.parse(`command:asciidoc.openDocumentLink${encodeURIComponent(JSON.stringify({ hrefPath, fragment }))}`)
   }
 
-  public execute (args: OpenDocumentLinkArgs) {
-    const p = decodeURIComponent(args.path)
+  public async execute (args: OpenDocumentLinkArgs) {
+    const p = decodeURIComponent(args.hrefPath)
+
+    // It is currently not easy to iterate over all editors, visibleTextEditors are those which are open on the
+    // screen, not behind any others, see:
+    // https://github.com/microsoft/vscode/issues/133532 https://github.com/microsoft/vscode/issues/15178
+    // TODO: Iterate across all open editors instead of visibleTextEditors when API becomes stable
+    for (const visibleEditor of vscode.window.visibleTextEditors) {
+      if (p === visibleEditor.document.uri.path) {
+        const editor = await vscode.window.showTextDocument(visibleEditor.document, visibleEditor.viewColumn)
+        const position = new vscode.Position(0, 0)
+        editor.selection = new vscode.Selection(position, position)
+        return
+      }
+    }
+
     return this.tryOpen(p, args).catch(async () => {
       if (extname(p) === '') {
-        return this.tryOpen(p + '.md', args)
+        return this.tryOpen(p + '.adoc', args)
       }
       const resource = vscode.Uri.file(p)
       await vscode.commands.executeCommand('vscode.open', resource)
@@ -96,8 +107,8 @@ async function tryResolveLinkToAsciidocFile (path: string): Promise<vscode.Uri |
   let document: vscode.TextDocument
   try {
     document = await vscode.workspace.openTextDocument(resource)
-  } catch {
-    return undefined
+  } catch (e) {
+    vscode.window.showErrorMessage(e.toString())
   }
   if (isAsciidocFile(document)) {
     return document.uri
