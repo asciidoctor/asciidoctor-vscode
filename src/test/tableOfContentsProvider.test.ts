@@ -40,9 +40,7 @@ suite('asciidoc.TableOfContentsProvider', () => {
       assert.ok(entry)
       assert.strictEqual(entry!.line, 0)
     }
-    {
-      assert.strictEqual(await provider.lookup('x'), undefined)
-    }
+    assert.strictEqual(await provider.lookup('x'), undefined)
     {
       const entry = await provider.lookup('c')
       assert.ok(entry)

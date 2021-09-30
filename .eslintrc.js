@@ -10,6 +10,9 @@ module.exports = {
   "extends": [
     "standard"
   ],
+  "env": {
+    "mocha": true
+  },
   "rules": {
     "arrow-parens": ["error", "always"],
     "comma-dangle": ["error", {

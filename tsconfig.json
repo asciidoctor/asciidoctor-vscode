@@ -11,6 +11,10 @@
         "sourceMap": true,
         "rootDir": "."
     },
+    "include": [
+        "src/**/*",
+        "preview-src/**/*"
+    ],
     "exclude": [
         "node_modules",
         ".vscode-test"
