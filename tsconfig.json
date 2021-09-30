@@ -12,7 +12,8 @@
         "rootDir": "."
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
+        "preview-src/**/*"
     ],
     "exclude": [
         "node_modules",

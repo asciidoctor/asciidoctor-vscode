@@ -457,8 +457,8 @@
 		"compile": "tsc -p ./",
 		"package": "webpack --config webpack.config.preview.js --mode production && npm run compile && vsce package",
 		"deploy": "vsce publish -p",
-		"lint": "eslint 'src/**/*.ts' 'preview-src/**/*.ts' 'test/**/*.ts' --format unix",
-		"lint:fix": "eslint --fix 'src/**/*.ts 'preview-src/**/*.ts' 'test/**/*.ts' --format unix",
+		"lint": "eslint 'src/**/*.ts' 'preview-src/**/*.ts' --format unix",
+		"lint:fix": "eslint --fix 'src/**/*.ts 'preview-src/**/*.ts' --format unix",
 		"pretest": "npm run compile",
 		"test": "node ./dist/src/test/runTest.js"
 	},
