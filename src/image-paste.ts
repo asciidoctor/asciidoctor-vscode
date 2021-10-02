@@ -13,19 +13,19 @@ export namespace Import {
    *
    * e.g. image::filename[alt-text]
    */
-   enum SelectionRole {
+  enum SelectionRole {
     Filename,
     AltText,
     None
   }
 
-   /**
+  /**
    * Controls how the image filename should be encoded, if at all.
    */
-    enum FilenameEncoding {
-      None,
-      URIEncoding
-    }
+  enum FilenameEncoding {
+    None,
+    URIEncoding
+  }
 
   /**
    * Controls if the selection is to be replaced with the image macro, or the
@@ -251,13 +251,13 @@ export namespace Import {
         config.mode === SelectionMode.Replace
           ? editor.selection.active.isAfter(editor.selection.anchor)
             ? {
-                first: editor.selection.anchor,
-                second: editor.selection.active,
-              }
+              first: editor.selection.anchor,
+              second: editor.selection.active,
+            }
             : {
-                first: editor.selection.active,
-                second: editor.selection.anchor,
-              }
+              first: editor.selection.active,
+              second: editor.selection.anchor,
+            }
           : { first: editor.selection.active, second: editor.selection.active }
       const selection = editor.document.getText(
         new vscode.Range(

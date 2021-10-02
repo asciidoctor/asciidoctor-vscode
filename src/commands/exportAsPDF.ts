@@ -217,9 +217,9 @@ function offerOpen (destination) {
   vscode.window.showInformationMessage(('Successfully converted to ' + path.basename(destination)), 'Open File').then((label: string) => {
     if (label === 'Open File') {
       switch (process.platform) {
-        // Use backticks for unix systems to run the open command directly
-        // This avoids having to wrap the command AND path in quotes which
-        // breaks if there is a single quote (') in the path
+      // Use backticks for unix systems to run the open command directly
+      // This avoids having to wrap the command AND path in quotes which
+      // breaks if there is a single quote (') in the path
         case 'win32':
           exec(`"${destination.replace('"', '\\"')}"`)
           break

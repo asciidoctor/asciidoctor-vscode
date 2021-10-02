@@ -10,7 +10,7 @@ import { AsciidocParser } from './text-parser'
 const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/
 
 export class AsciidocEngine {
-    private ad?: AsciidocParser;
+  private ad?: AsciidocParser;
 
   private firstLine?: number;
 
