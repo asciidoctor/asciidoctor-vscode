@@ -20,7 +20,7 @@ export default class AsciidocFoldingProvider implements vscode.FoldingRangeProvi
     const isRegionMarker = (token: any) => token.type === 'html_block' &&
       (isStartRegion(token.content) || isEndRegion(token.content))
 
-    const tokens = await this.engine.parse(document.uri, document.getText())
+    const tokens = await this.engine.load(document.uri, document.getText())
     const regionMarkers = tokens.filter(isRegionMarker)
       .map((token) => ({ line: token.map[0], isStart: isStartRegion(token.content) }))
 
@@ -80,7 +80,7 @@ export default class AsciidocFoldingProvider implements vscode.FoldingRangeProvi
       }
     }
 
-    const tokens = await this.engine.parse(document.uri, document.getText())
+    const tokens = await this.engine.load(document.uri, document.getText())
     const multiLineListItems = tokens.filter(isFoldableToken)
     return multiLineListItems.map((listItem) => {
       const start = listItem.map[0]

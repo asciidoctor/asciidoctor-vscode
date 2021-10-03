@@ -453,16 +453,20 @@
 		]
 	},
 	"scripts": {
-		"dev": "webpack --config webpack.config.preview.js --mode development && npm run compile",
-		"compile": "tsc -p ./",
-		"package": "webpack --config webpack.config.preview.js --mode production && npm run compile && vsce package",
+		"copy-assets": "cp node_modules/@highlightjs/cdn-assets/highlight.min.js media/highlightjs && cp -r node_modules/@highlightjs/cdn-assets/languages media/highlightjs && cp -r node_modules/@highlightjs/cdn-assets/styles media/highlightjs",
+		"dev": "npm run build",
+		"build": "npm run copy-assets && npm run build-ext && npm run build-preview",
+		"build-preview": "webpack --config webpack.config.preview.js --mode production",
+		"build-ext": "tsc -p ./",
+		"package": "npm run build && vsce package",
 		"deploy": "vsce publish -p",
 		"lint": "eslint 'src/**/*.ts' 'preview-src/**/*.ts' --format unix",
 		"lint:fix": "npm run lint -- --fix",
-		"pretest": "npm run compile",
+		"pretest": "npm run build",
 		"test": "node ./dist/src/test/runTest.js"
 	},
 	"devDependencies": {
+		"@highlightjs/cdn-assets": "11.2.0",
 		"@types/highlight.js": "9.1.10",
 		"@types/lodash.throttle": "^4.1.3",
 		"@types/mocha": "^9.0.0",

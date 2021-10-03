@@ -9,9 +9,10 @@ import { AsciidocEngine } from '../asciidocEngine'
 import * as nls from 'vscode-nls'
 
 import { Logger } from '../logger'
-import { ContentSecurityPolicyArbiter, AsciidocPreviewSecurityLevel } from '../security'
-import { AsciidocPreviewConfigurationManager, AsciidocPreviewConfiguration } from './previewConfig'
+import { AsciidocPreviewSecurityLevel, ContentSecurityPolicyArbiter } from '../security'
+import { AsciidocPreviewConfiguration, AsciidocPreviewConfigurationManager } from './previewConfig'
 import { AsciidocContributions } from '../asciidocExtensions'
+
 const localize = nls.loadMessageBundle()
 
 /**
@@ -52,7 +53,8 @@ export class AsciidocContentProvider {
     asciidocDocument: vscode.TextDocument,
     previewConfigurations: AsciidocPreviewConfigurationManager,
     initialLine: number | undefined = undefined,
-    state?: any
+    state?: any,
+    editor?: vscode.WebviewPanel
   ): Promise<string> {
     const sourceUri = asciidocDocument.uri
     const config = previewConfigurations.loadAndCacheConfiguration(sourceUri)
@@ -69,7 +71,7 @@ export class AsciidocContentProvider {
     // Content Security Policy
     const nonce = new Date().getTime() + '' + new Date().getMilliseconds()
     const csp = this.getCspForResource(sourceUri, nonce)
-    const body = await this.engine.render(sourceUri, config.previewFrontMatter === 'hide', asciidocDocument.getText())
+    const body = await this.engine.render(sourceUri, config.previewFrontMatter === 'hide', asciidocDocument.getText(), false, 'html5', this.context, editor)
     const bodyClassesRegex = /<body(?:(?:\s+(?:id=".*"\s*)?class(?:\s*=\s*(?:"(.+?)"|'(.+?)')))+\s*)>/
     const bodyClasses = body.match(bodyClassesRegex)
     const bodyClassesVal = bodyClasses === null ? '' : bodyClasses[1]
@@ -188,19 +190,20 @@ export class AsciidocContentProvider {
   }
 
   private getCspForResource (resource: vscode.Uri, nonce: string): string {
+    const highlightjsInlineScriptHash = 'sha256-ZrDBcrmObbqhVV/Mag2fT/y08UJGejdW7UWyEsi4DXw='
     switch (this.cspArbiter.getSecurityLevelForResource(resource)) {
       case AsciidocPreviewSecurityLevel.AllowInsecureContent:
-        return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: http: https: data:; media-src vscode-resource: http: https: data:; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' http: https: data:; font-src vscode-resource: http: https: data:;">`
+        return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: http: https: data:; media-src vscode-resource: http: https: data:; script-src vscode-resource: 'nonce-${nonce}' '${highlightjsInlineScriptHash}'; style-src vscode-resource: 'unsafe-inline' http: https: data:; font-src vscode-resource: http: https: data:;">`
 
       case AsciidocPreviewSecurityLevel.AllowInsecureLocalContent:
-        return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*; media-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' https: data: http://localhost:* http://127.0.0.1:*; font-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*;">`
+        return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*; media-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*; script-src vscode-resource: 'nonce-${nonce}' '${highlightjsInlineScriptHash}'; style-src vscode-resource: 'unsafe-inline' https: data: http://localhost:* http://127.0.0.1:*; font-src vscode-resource: https: data: http://localhost:* http://127.0.0.1:*;">`
 
       case AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent:
         return ''
 
       case AsciidocPreviewSecurityLevel.Strict:
       default:
-        return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https: data:; media-src vscode-resource: https: data:; script-src 'nonce-${nonce}'; style-src vscode-resource: 'unsafe-inline' https: data:; font-src vscode-resource: https: data:;">`
+        return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https: data:; media-src vscode-resource: https: data:; script-src vscode-resource: 'nonce-${nonce}' '${highlightjsInlineScriptHash}'; style-src vscode-resource: 'unsafe-inline' https: data:; font-src vscode-resource: https: data:;">`
     }
   }
 }

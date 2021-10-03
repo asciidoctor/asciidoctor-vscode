@@ -5,8 +5,8 @@ import { spawn } from 'child_process'
 const asciidoctor = require('@asciidoctor/core')()
 const docbook = require('@asciidoctor/docbook-converter')
 const kroki = require('asciidoctor-kroki')
+const highlightjsBuiltInSyntaxHighlighter = asciidoctor.SyntaxHighlighter.for('highlight.js')
 const highlightjsAdapter = require('./highlightjs-adapter')
-highlightjsAdapter.register(asciidoctor)
 
 const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
 if (useKroki) {
@@ -33,8 +33,13 @@ export class AsciidocParser {
     return match
   }
 
-  private async convertUsingJavascript (text: string, doc: vscode.TextDocument, forHTMLSave: boolean, backend: string) {
-    return new Promise<string>((resolve) => {
+  private async convertUsingJavascript (text: string,
+    doc: vscode.TextDocument,
+    forHTMLSave: boolean,
+    backend: string,
+    context?: vscode.ExtensionContext,
+    editor?: vscode.WebviewPanel) {
+    return new Promise<string>((resolve, reject) => {
       const documentPath = path.dirname(path.resolve(doc.fileName))
       const workspacePath = vscode.workspace.workspaceFolders
       const containsStyle = !(text.match(/'^\\s*:(stylesheet|stylesdir)/img) == null)
@@ -54,6 +59,12 @@ export class AsciidocParser {
 
       const memoryLogger = asciidoctor.MemoryLogger.create()
       asciidoctor.LoggerManager.setLogger(memoryLogger)
+
+      if (context && editor) {
+        highlightjsAdapter.register(highlightjsBuiltInSyntaxHighlighter, context, editor)
+      } else {
+        highlightjsBuiltInSyntaxHighlighter.$register_for('highlight.js', 'highlightjs')
+      }
 
       let attributes = {}
 
@@ -183,6 +194,7 @@ export class AsciidocParser {
         resolve(resultHTML)
       } catch (e) {
         vscode.window.showErrorMessage(e.toString())
+        reject(e)
       }
     })
   }
@@ -299,12 +311,17 @@ export class AsciidocParser {
     })
   }
 
-  public async parseText (text: string, doc: vscode.TextDocument, forHTMLSave: boolean = false, backend: string = 'html'): Promise<string> {
-    const useAsciidoctorJS = vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctor_js')
-    if (useAsciidoctorJS) {
-      return this.convertUsingJavascript(text, doc, forHTMLSave, backend)
-    } else {
-      return this.convertUsingApplication(text, doc, forHTMLSave, backend)
+  public async parseText (text: string,
+    doc: vscode.TextDocument,
+    forHTMLSave: boolean = false,
+    backend: string = 'html',
+    context?: vscode.ExtensionContext,
+    editor?: vscode.WebviewPanel): Promise<string> {
+    const useAsciidoctorJs = vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctor_js')
+    if (useAsciidoctorJs) {
+      return this.convertUsingJavascript(text, doc, forHTMLSave, backend, context, editor)
     }
+
+    return this.convertUsingApplication(text, doc, forHTMLSave, backend)
   }
 }

@@ -45,8 +45,12 @@ export class AsciidocEngine {
     return { text, offset }
   }
 
-  public async render (document: vscode.Uri, stripFrontmatter: boolean, text: string,
-    forHTML: boolean = false, backend: string = 'html5'): Promise<string> {
+  public async render (document: vscode.Uri,
+    stripFrontmatter: boolean,
+    text: string, forHTML: boolean = false,
+    backend: string = 'html5',
+    context?: vscode.ExtensionContext,
+    editor?: vscode.WebviewPanel): Promise<string> {
     let offset = 0
     if (stripFrontmatter) {
       const asciidocContent = this.stripFrontmatter(text)
@@ -58,11 +62,10 @@ export class AsciidocEngine {
     this.firstLine = offset
     const engine = await this.getEngine(document)
     const doc = await vscode.workspace.openTextDocument(document)
-    const asciiDoc = engine.parseText(text, doc, forHTML, backend)
-    return asciiDoc
+    return await engine.parseText(text, doc, forHTML, backend, context, editor)
   }
 
-  public async parse (document: vscode.Uri, source: string): Promise<any> {
+  public async load (document: vscode.Uri, source: string): Promise<any> {
     this.currentDocument = document
     const engine = await this.getEngine(document)
     const doc = await vscode.workspace.openTextDocument(document)

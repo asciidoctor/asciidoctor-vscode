@@ -4,7 +4,7 @@
 
 import * as vscode from 'vscode'
 import { AsciidocEngine } from './asciidocEngine'
-import { Slug, githubSlugifier } from './slugify'
+import { githubSlugifier, Slug } from './slugify'
 
 export interface TocEntry {
   readonly slug: Slug;
@@ -17,7 +17,9 @@ export interface TocEntry {
 export interface SkinnyTextDocument {
   readonly uri: vscode.Uri;
   readonly lineCount: number;
+
   getText(): string;
+
   lineAt(line: number): vscode.TextLine;
 }
 
@@ -48,7 +50,7 @@ export class TableOfContentsProvider {
 
   private async buildToc (document: SkinnyTextDocument): Promise<TocEntry[]> {
     const toc: TocEntry[] = []
-    const adoc = await this.engine.parse(document.uri, document.getText())
+    const adoc = await this.engine.load(document.uri, document.getText())
 
     adoc.findBy({ context: 'section' }, function (section) {
       toc.push({
