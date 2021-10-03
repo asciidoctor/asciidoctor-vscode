@@ -16,7 +16,8 @@ export class AsciidocParser {
   private stylesdir = path.join(this.extPath, 'media')
 
   constructor (private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) {
-    this.processor = asciidoctor()
+    this.filename = filename
+    this.errorCollection = errorCollection
   }
 
   public getAttribute (name: string) {
@@ -52,6 +53,7 @@ export class AsciidocParser {
         this.errorCollection.clear()
       }
 
+      this.processor = asciidoctor()
       const memoryLogger = this.processor.MemoryLogger.create()
       this.processor.LoggerManager.setLogger(memoryLogger)
 
@@ -286,9 +288,9 @@ export class AsciidocParser {
       adocCmdArgs.push('-a', 'env-vscode')
 
       adocCmdArgs.push('-q', '-B', '"' + baseDir + '"', '-o', '-', '-')
-      spawn(adocCmd, adocCmdArgs, options)
+      const asciidoctorProcess = spawn(adocCmd, adocCmdArgs, options)
 
-      this.processor.stderr.on('data', (data) => {
+      asciidoctorProcess.stderr.on('data', (data) => {
         let errorMessage = data.toString()
         console.error(errorMessage)
         errorMessage += errorMessage.replace('\n', '<br><br>')
@@ -301,15 +303,15 @@ export class AsciidocParser {
       })
       let resultData = Buffer.from('')
       /* with large outputs we can receive multiple calls */
-      this.processor.stdout.on('data', (data) => {
+      asciidoctorProcess.stdout.on('data', (data) => {
         resultData = Buffer.concat([resultData, data as Buffer])
       })
-      this.processor.on('close', () => {
+      asciidoctorProcess.on('close', () => {
         //var result = this.fixLinks(result_data.toString());
         resolve(resultData.toString())
       })
-      this.processor.stdin.write(text)
-      this.processor.stdin.end()
+      asciidoctorProcess.stdin.write(text)
+      asciidoctorProcess.stdin.end()
     })
   }
 
