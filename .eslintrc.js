@@ -27,7 +27,9 @@ module.exports = {
       "ignoreUrls": true,
       "ignoreTemplateLiterals": true
     }],
-    //"indent": ["error", 4],
+    // https://github.com/typescript-eslint/typescript-eslint/blob/02c6ff3c5a558f9308d7166d524156dc12e32759/packages/eslint-plugin/docs/rules/indent.md
+    "indent": "off",
+    "@typescript-eslint/indent": ["error", 2, { "SwitchCase": 1 }],
     "semi": ["error", "never"],
     "spaced-comment": "off",
     // https://github.com/typescript-eslint/typescript-eslint/issues/2621

@@ -37,11 +37,11 @@ const previewStrings = {
 
 export class AsciidocContentProvider {
   constructor (
-      private readonly engine: AsciidocEngine,
-      private readonly context: vscode.ExtensionContext,
-      private readonly cspArbiter: ContentSecurityPolicyArbiter,
-      private readonly contributions: AsciidocContributions,
-      private readonly logger: Logger) {
+    private readonly engine: AsciidocEngine,
+    private readonly context: vscode.ExtensionContext,
+    private readonly cspArbiter: ContentSecurityPolicyArbiter,
+    private readonly contributions: AsciidocContributions,
+    private readonly logger: Logger) {
     this.engine = engine
     this.context = context
     this.cspArbiter = cspArbiter
