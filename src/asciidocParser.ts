@@ -5,7 +5,7 @@ import { spawn } from 'child_process'
 const asciidoctor = require('@asciidoctor/core')
 const docbook = require('@asciidoctor/docbook-converter')
 const kroki = require('asciidoctor-kroki')
-const highlightjsBuiltInSyntaxHighlighter = asciidoctor.SyntaxHighlighter.for('highlight.js')
+const highlightjsBuiltInSyntaxHighlighter = asciidoctor().SyntaxHighlighter.for('highlight.js')
 const highlightjsAdapter = require('./highlightjs-adapter')
 
 export class AsciidocParser {
