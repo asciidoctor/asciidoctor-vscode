@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 
-import { AsciidocParser } from '../text-parser'
+import { AsciidocParser } from '../asciidocParser'
 
 export class AttributeCompleter {
   provideCompletionItems (document: vscode.TextDocument, _position: vscode.Position) {
