@@ -7,6 +7,7 @@ const docbook = require('@asciidoctor/docbook-converter')
 const kroki = require('asciidoctor-kroki')
 const highlightjsBuiltInSyntaxHighlighter = asciidoctor().SyntaxHighlighter.for('highlight.js')
 const highlightjsAdapter = require('./highlightjs-adapter')
+const processor = asciidoctor()
 
 export class AsciidocParser {
   public html: string = ''
@@ -15,10 +16,7 @@ export class AsciidocParser {
   private extPath = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath
   private stylesdir = path.join(this.extPath, 'media')
 
-  constructor (private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) {
-    this.filename = filename
-    this.errorCollection = errorCollection
-  }
+  constructor (private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) { }
 
   public getAttribute (name: string) {
     return (this.document == null) ? null : this.document.getAttribute(name)
@@ -53,11 +51,10 @@ export class AsciidocParser {
         this.errorCollection.clear()
       }
 
-      this.processor = asciidoctor()
-      const memoryLogger = this.processor.MemoryLogger.create()
-      this.processor.LoggerManager.setLogger(memoryLogger)
+      const memoryLogger = processor.MemoryLogger.create()
+      processor.LoggerManager.setLogger(memoryLogger)
 
-      const registry = this.processor.Extensions.create()
+      const registry = processor.Extensions.create()
 
       const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
 
@@ -128,7 +125,7 @@ export class AsciidocParser {
         extension_registry: registry,
       }
       try {
-        this.document = this.processor.load(text, options)
+        this.document = processor.load(text, options)
         const blocksWithLineNumber = this.document.findBy(function (b) {
           return typeof b.getLineNumber() !== 'undefined'
         })

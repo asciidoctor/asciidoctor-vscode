@@ -35,5 +35,7 @@ module.exports = {
     // https://github.com/typescript-eslint/typescript-eslint/issues/2621
     "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
+    "no-useless-constructor": "off",
+    "@typescript-eslint/no-useless-constructor": ["error"]
   }
 };
