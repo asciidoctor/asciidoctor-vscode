@@ -88,7 +88,7 @@ export class AsciidocContentProvider {
           data-state="${JSON.stringify(state || {}).replace(/"/g, '&quot;')}">
         <script src="${this.extensionScriptPath('pre.js')}" nonce="${nonce}"></script>
         ${this.getStyles(sourceUri, nonce, config, state)}
-        <base href="${asciidocDocument.uri.with({ scheme: 'vscode-resource' }).toString(true)}">
+        <base href="${editor.webview.asWebviewUri(asciidocDocument.uri).toString(true)}">
       </head>
       <body class="${bodyClassesVal} vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.markEditorSelection ? 'showEditorSelection' : ''}">
         ${body}

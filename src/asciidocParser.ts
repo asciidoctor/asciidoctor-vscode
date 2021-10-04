@@ -1,6 +1,7 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
 import { spawn } from 'child_process'
+import { WebviewAsciidocConverter } from './webviewAsciidocConverter'
 
 const asciidoctor = require('@asciidoctor/core')
 const docbook = require('@asciidoctor/docbook-converter')
@@ -125,6 +126,8 @@ export class AsciidocParser {
         extension_registry: registry,
       }
       try {
+        this.processor.ConverterFactory.register(new WebviewAsciidocConverter(), ['html5'])
+
         this.document = processor.load(text, options)
         const blocksWithLineNumber = this.document.findBy(function (b) {
           return typeof b.getLineNumber() !== 'undefined'
