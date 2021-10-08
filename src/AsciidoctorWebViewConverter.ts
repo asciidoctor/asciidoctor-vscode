@@ -1,14 +1,15 @@
 const processor = require('@asciidoctor/core')()
 
-export class WebviewAsciidocConverter {
+export class AsciidoctorWebViewConverter {
   baseConverter: any
 
   constructor () {
-    this.baseConverter = processor.Html5Converter.$new()
+    this.baseConverter = processor.Html5Converter.create()
   }
 
   convert (node, transform) {
-    if (node.getNodeName() === 'inline_anchor' && node.type === 'link') {
+    const nodeName = transform || node.getNodeName()
+    if (nodeName === 'inline_anchor' && node.type === 'link') {
       const id = node.id ? ` id="${node.id}"` : ''
       const role = node.role ? ` class="${node.role}"` : ''
       const title = node.title ? ` title="${node.title}"` : ''
