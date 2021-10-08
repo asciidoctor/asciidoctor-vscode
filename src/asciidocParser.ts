@@ -5,7 +5,8 @@ import { spawn } from 'child_process'
 const asciidoctor = require('@asciidoctor/core')
 const docbook = require('@asciidoctor/docbook-converter')
 const kroki = require('asciidoctor-kroki')
-const highlightjsBuiltInSyntaxHighlighter = asciidoctor().SyntaxHighlighter.for('highlight.js')
+const processor = asciidoctor()
+const highlightjsBuiltInSyntaxHighlighter = processor.SyntaxHighlighter.for('highlight.js')
 const highlightjsAdapter = require('./highlightjs-adapter')
 
 export class AsciidocParser {
@@ -15,9 +16,7 @@ export class AsciidocParser {
   private extPath = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath
   private stylesdir = path.join(this.extPath, 'media')
 
-  constructor (private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) {
-    this.processor = asciidoctor()
-  }
+  constructor (private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) { }
 
   public getAttribute (name: string) {
     return (this.document == null) ? null : this.document.getAttribute(name)
@@ -52,10 +51,10 @@ export class AsciidocParser {
         this.errorCollection.clear()
       }
 
-      const memoryLogger = this.processor.MemoryLogger.create()
-      this.processor.LoggerManager.setLogger(memoryLogger)
+      const memoryLogger = processor.MemoryLogger.create()
+      processor.LoggerManager.setLogger(memoryLogger)
 
-      const registry = this.processor.Extensions.create()
+      const registry = processor.Extensions.create()
 
       const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
 
@@ -126,7 +125,7 @@ export class AsciidocParser {
         extension_registry: registry,
       }
       try {
-        this.document = this.processor.load(text, options)
+        this.document = processor.load(text, options)
         const blocksWithLineNumber = this.document.findBy(function (b) {
           return typeof b.getLineNumber() !== 'undefined'
         })
@@ -286,9 +285,9 @@ export class AsciidocParser {
       adocCmdArgs.push('-a', 'env-vscode')
 
       adocCmdArgs.push('-q', '-B', '"' + baseDir + '"', '-o', '-', '-')
-      spawn(adocCmd, adocCmdArgs, options)
+      const asciidoctorProcess = spawn(adocCmd, adocCmdArgs, options)
 
-      this.processor.stderr.on('data', (data) => {
+      asciidoctorProcess.stderr.on('data', (data) => {
         let errorMessage = data.toString()
         console.error(errorMessage)
         errorMessage += errorMessage.replace('\n', '<br><br>')
@@ -301,15 +300,15 @@ export class AsciidocParser {
       })
       let resultData = Buffer.from('')
       /* with large outputs we can receive multiple calls */
-      this.processor.stdout.on('data', (data) => {
+      asciidoctorProcess.stdout.on('data', (data) => {
         resultData = Buffer.concat([resultData, data as Buffer])
       })
-      this.processor.on('close', () => {
+      asciidoctorProcess.on('close', () => {
         //var result = this.fixLinks(result_data.toString());
         resolve(resultData.toString())
       })
-      this.processor.stdin.write(text)
-      this.processor.stdin.end()
+      asciidoctorProcess.stdin.write(text)
+      asciidoctorProcess.stdin.end()
     })
   }
 
