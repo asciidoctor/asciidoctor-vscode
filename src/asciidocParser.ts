@@ -126,8 +126,7 @@ export class AsciidocParser {
         extension_registry: registry,
       }
       try {
-        this.processor.ConverterFactory.register(new AsciidoctorWebViewConverter(), ['html5'])
-
+        processor.ConverterFactory.register(new AsciidoctorWebViewConverter(), ['html5'])
         this.document = processor.load(text, options)
         const blocksWithLineNumber = this.document.findBy(function (b) {
           return typeof b.getLineNumber() !== 'undefined'
