@@ -2,7 +2,15 @@
 
 ## Unreleased
 
+- Ensure Asciidoctor.js error reporting is displayed on Windows (closes #466)
+- Provide offline and integrated code syntax highlighting with highlight.js (closes #459)
+- Enforce code style (closes #446)
 - Make `use_kroki` setting change effective without VS code restart (closes #444)
+- Allow links to work in the preview pane (closes #435)
+- Update Asciidoctor.js to 2.2.5 (closes #431)
+- Upgrade asciidoctor-kroki to allow use of pikchr diagrams (closes #419)
+- Allow chapter to start from zero (closes #415)
+- Fix options link in README.md (closes #405)
 
 ## 2.8.9
 
