@@ -11,7 +11,14 @@ const GOOD_DATA_RE = /^data:image\/(gif|png|jpeg|webp);/i
  */
 function isSchemeBlacklisted (href: string): boolean {
   const hrefCheck = href.trim()
-  return !(BAD_PROTO_RE.test(hrefCheck) ? GOOD_DATA_RE.test(hrefCheck) : true)
+  if (BAD_PROTO_RE.test(hrefCheck)) {
+    if (GOOD_DATA_RE.test(hrefCheck)) {
+      return false
+    }
+    return true
+  } else {
+    return false
+  }
 }
 
 /**
@@ -33,7 +40,7 @@ export class AsciidoctorWebViewConverter {
   convert (node, transform) {
     const nodeName = transform || node.getNodeName()
     if (nodeName === 'inline_anchor' && node.type === 'link') {
-      const href = isSchemeBlacklisted(node.target) ? '' : node.target
+      const href = isSchemeBlacklisted(node.target) ? '#' : node.target
       const id = node.hasAttribute('id') ? ` id="${node.id}"` : ''
       const role = node.hasAttribute('role') ? ` class="${node.role}"` : ''
       const title = node.hasAttribute('title') ? ` title="${node.title}"` : ''
