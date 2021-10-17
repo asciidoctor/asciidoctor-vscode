@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## 2.8.10
 
 - Ensure Asciidoctor.js error reporting is displayed on Windows (closes #466)
 - Provide offline and integrated code syntax highlighting with highlight.js (closes #459)
