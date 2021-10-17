@@ -119,7 +119,7 @@ export class AsciidocParser {
         attributes: attributes,
         header_footer: true,
         to_file: false,
-        baseDir: baseDir,
+        base_dir: baseDir,
         sourcemap: true,
         backend: backend,
         extension_registry: registry,
