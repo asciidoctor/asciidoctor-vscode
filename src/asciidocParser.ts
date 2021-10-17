@@ -189,7 +189,7 @@ export class AsciidocParser {
             diagnostics.push(diagnosticError)
           })
           if (this.errorCollection) {
-            this.errorCollection.set(vscode.Uri.parse(doc.fileName), diagnostics)
+            this.errorCollection.set(doc.uri, diagnostics)
           }
         }
         resolve(resultHTML)
