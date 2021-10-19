@@ -12,13 +12,10 @@ const GOOD_DATA_RE = /^data:image\/(gif|png|jpeg|webp);/i
 function isSchemeBlacklisted (href: string): boolean {
   const hrefCheck = href.trim()
   if (BAD_PROTO_RE.test(hrefCheck)) {
-    if (GOOD_DATA_RE.test(hrefCheck)) {
-      return false
-    }
-    return true
-  } else {
-    return false
+    // we still allow safe "data:image/" URI
+    return GOOD_DATA_RE.test(hrefCheck) ? false : true
   }
+  return false
 }
 
 /**

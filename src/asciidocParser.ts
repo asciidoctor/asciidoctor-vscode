@@ -9,7 +9,7 @@ const kroki = require('asciidoctor-kroki')
 const processor = asciidoctor()
 const highlightjsBuiltInSyntaxHighlighter = processor.SyntaxHighlighter.for('highlight.js')
 const highlightjsAdapter = require('./highlightjs-adapter')
-asciidoctor().ConverterFactory.register(new AsciidoctorWebViewConverter(), ['html5'])
+processor.ConverterFactory.register(new AsciidoctorWebViewConverter(), ['html5'])
 
 export class AsciidocParser {
   public html: string = ''
@@ -127,7 +127,6 @@ export class AsciidocParser {
         extension_registry: registry,
       }
       try {
-        processor.ConverterFactory.register(new AsciidoctorWebViewConverter(), ['html5'])
         this.document = processor.load(text, options)
         const blocksWithLineNumber = this.document.findBy(function (b) {
           return typeof b.getLineNumber() !== 'undefined'
