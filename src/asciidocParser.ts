@@ -1,6 +1,7 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
 import { spawn } from 'child_process'
+import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
 
 const asciidoctor = require('@asciidoctor/core')
 const docbook = require('@asciidoctor/docbook-converter')
@@ -8,6 +9,7 @@ const kroki = require('asciidoctor-kroki')
 const processor = asciidoctor()
 const highlightjsBuiltInSyntaxHighlighter = processor.SyntaxHighlighter.for('highlight.js')
 const highlightjsAdapter = require('./highlightjs-adapter')
+processor.ConverterFactory.register(new AsciidoctorWebViewConverter(), ['html5'])
 
 export class AsciidocParser {
   public html: string = ''

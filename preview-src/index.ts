@@ -130,13 +130,9 @@ document.addEventListener('click', (event) => {
   let node: any = event.target
   while (node) {
     if (node.tagName && node.tagName === 'A' && node.href) {
-      // if (node.getAttribute('href').startsWith('#')) {
-      //   // const fragment = node.href.split('#')[1]
-      //   // if (fragment) {
-      //   //   location.hash = '#' + decodeURI(fragment)
-      //   // }
-      // }
-      // Like VSCode Markdown extension, pass through some known schemes
+      if (node.getAttribute('href').startsWith('#')) {
+        return
+      }
       let hrefText = node.getAttribute('data-href')
       if (!hrefText) {
         // Pass through known schemes
@@ -153,15 +149,7 @@ document.addEventListener('click', (event) => {
         event.stopPropagation()
         return
       }
-      // Like how VSCode Markdown, pass link to backend and let it resolve it
-      // if (node.href.startsWith('file://') || node.href.startsWith('vscode-resource:')) {
-      //   const [path, fragment] = node.href.replace(/^(file:\/\/|vscode-resource:)/i, '').split('#');
-      //   messaging.postMessage('clickLink', { path, fragment });
-      //   event.preventDefault();
-      //   event.stopPropagation();
-      //   break;
-      // }
-      break
+      return
     }
     node = node.parentNode
   }
