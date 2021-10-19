@@ -1,7 +1,8 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
 import { spawn } from 'child_process'
-import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
+import { AsciidoctorWebViewConverter, LinkItems } from './asciidoctorWebViewConverter'
+const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcessor')
 
 const asciidoctor = require('@asciidoctor/core')
 const docbook = require('@asciidoctor/docbook-converter')
@@ -9,7 +10,6 @@ const kroki = require('asciidoctor-kroki')
 const processor = asciidoctor()
 const highlightjsBuiltInSyntaxHighlighter = processor.SyntaxHighlighter.for('highlight.js')
 const highlightjsAdapter = require('./highlightjs-adapter')
-processor.ConverterFactory.register(new AsciidoctorWebViewConverter(), ['html5'])
 
 export class AsciidocParser {
   public html: string = ''
@@ -17,6 +17,8 @@ export class AsciidocParser {
   public processor = null
   private extPath = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath
   private stylesdir = path.join(this.extPath, 'media')
+  public linkItems:LinkItems = null
+  public baseDocumentIncludeItems = null
 
   constructor (private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) { }
 
@@ -29,10 +31,11 @@ export class AsciidocParser {
     return match
   }
 
-  private async convertUsingJavascript (text: string,
+  public async convertUsingJavascript (text: string,
     doc: vscode.TextDocument,
     forHTMLSave: boolean,
     backend: string,
+    getDocumentInformation: boolean,
     context?: vscode.ExtensionContext,
     editor?: vscode.WebviewPanel) {
     return new Promise<string>((resolve, reject) => {
@@ -57,11 +60,21 @@ export class AsciidocParser {
       processor.LoggerManager.setLogger(memoryLogger)
 
       const registry = processor.Extensions.create()
+      // registry for processing document differently to find AST/metadata otherwise not available
+      const registryForDocumentInfo = processor.Extensions.create()
 
+      const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter()
+      processor.ConverterFactory.register(asciidoctorWebViewConverter, ['html5'])
       const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
 
       if (useKroki) {
         kroki.register(registry)
+      }
+
+      // the include processor is only run to identify includes, not to process them
+      if (getDocumentInformation) {
+        asciidoctorFindIncludeProcessor.register(registryForDocumentInfo)
+        asciidoctorFindIncludeProcessor.resetIncludes()
       }
 
       if (context && editor) {
@@ -117,17 +130,18 @@ export class AsciidocParser {
       }
 
       const options = {
-        safe: 'unsafe',
         attributes: attributes,
-        header_footer: true,
-        to_file: false,
-        base_dir: baseDir,
-        sourcemap: true,
         backend: backend,
-        extension_registry: registry,
+        base_dir: baseDir,
+        extension_registry: getDocumentInformation ? registryForDocumentInfo : registry,
+        header_footer: true,
+        safe: 'unsafe',
+        sourcemap: true,
+        to_file: false,
       }
       try {
         this.document = processor.load(text, options)
+        this.baseDocumentIncludeItems = asciidoctorFindIncludeProcessor.getBaseDocIncludes()
         const blocksWithLineNumber = this.document.findBy(function (b) {
           return typeof b.getLineNumber() !== 'undefined'
         })
@@ -135,6 +149,7 @@ export class AsciidocParser {
           block.addRole('data-line-' + block.getLineNumber())
         })
         const resultHTML = this.document.convert(options)
+        this.linkItems = asciidoctorWebViewConverter.linkItems
         //let result = this.fixLinks(resultHTML);
         if (enableErrorDiagnostics) {
           const diagnostics = []
@@ -322,7 +337,7 @@ export class AsciidocParser {
     editor?: vscode.WebviewPanel): Promise<string> {
     const useAsciidoctorJs = vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctor_js')
     if (useAsciidoctorJs) {
-      return this.convertUsingJavascript(text, doc, forHTMLSave, backend, context, editor)
+      return this.convertUsingJavascript(text, doc, forHTMLSave, backend, false, context, editor)
     }
 
     return this.convertUsingApplication(text, doc, forHTMLSave, backend)

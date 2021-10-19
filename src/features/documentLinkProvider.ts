@@ -6,6 +6,11 @@ import * as path from 'path'
 import * as vscode from 'vscode'
 import { OpenDocumentLinkCommand } from '../commands/openDocumentLink'
 import { getUriForLinkWithKnownExternalScheme } from '../util/links'
+import { AsciidocParser } from '../asciidocParser'
+import { similarArrayMatch } from '../similarArrayMatch'
+import { isSchemeBlacklisted } from '../linkSanitizer'
+
+const processor = require('@asciidoctor/core')()
 
 function normalizeLink (
   document: vscode.TextDocument,
@@ -32,28 +37,11 @@ function normalizeLink (
   } else {
     resourcePath = path.join(base, tempUri.path)
   }
-
+  resourcePath = isSchemeBlacklisted(link) ? '#' : resourcePath
   return OpenDocumentLinkCommand.createCommandUri(resourcePath, tempUri.fragment)
 }
 
-function matchAll (
-  pattern: RegExp,
-  text: string
-): Array<RegExpMatchArray> {
-  const out: RegExpMatchArray[] = []
-  pattern.lastIndex = 0
-  let match: RegExpMatchArray | null
-  while ((match = pattern.exec(text))) {
-    out.push(match)
-  }
-  return out
-}
-
 export default class LinkProvider implements vscode.DocumentLinkProvider {
-  private readonly linkPattern = /(\[[^\]]*\]\(\s*)((([^\s()]|\(\S*?\))+))\s*(".*?")?\)/g;
-  private readonly referenceLinkPattern = /(\[([^\]]+)\]\[\s*?)([^\s\]]*?)\]/g;
-  private readonly definitionPattern = /^([\t ]*\[([^\]]+)\]:\s*)(\S+)/gm;
-
   public provideDocumentLinks (
     document: vscode.TextDocument,
     _token: vscode.CancellationToken
@@ -61,101 +49,83 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
     const base = path.dirname(document.uri.fsPath)
     const text = document.getText()
 
-    return this.providerInlineLinks(text, document, base)
-      .concat(this.provideReferenceLinks(text, document, base))
-  }
-
-  private providerInlineLinks (
-    text: string,
-    document: vscode.TextDocument,
-    base: string
-  ): vscode.DocumentLink[] {
-    const results: vscode.DocumentLink[] = []
-    for (const match of matchAll(this.linkPattern, text)) {
-      const pre = match[1]
-      const link = match[2]
-      const offset = (match.index || 0) + pre.length
-      const linkStart = document.positionAt(offset)
-      const linkEnd = document.positionAt(offset + link.length)
-      try {
-        results.push(new vscode.DocumentLink(
-          new vscode.Range(linkStart, linkEnd),
-          normalizeLink(document, link, base)))
-      } catch (e) {
-        // noop
-      }
+    // first handle inline links
+    const adParser = new AsciidocParser(document.uri.fsPath)
+    adParser.convertUsingJavascript(text, document, false, 'html', true)
+    const linkItems = adParser.linkItems
+    const asciidoctorRegexLinks = {
+      inlineLinkRx: new RegExp(processor.InlineLinkRx.source, processor.InlineLinkRx.flags + 'g'),
+      inlineLinkMacroRx: new RegExp(processor.InlineLinkMacroRx.source, processor.InlineLinkMacroRx.flags + 'g'),
     }
 
-    return results
-  }
-
-  private provideReferenceLinks (
-    text: string,
-    document: vscode.TextDocument,
-    base: string
-  ): vscode.DocumentLink[] {
     const results: vscode.DocumentLink[] = []
-
-    const definitions = this.getDefinitions(text, document)
-    for (const match of matchAll(this.referenceLinkPattern, text)) {
-      let linkStart: vscode.Position
-      let linkEnd: vscode.Position
-      let reference = match[3]
-      if (reference) { // [text][ref]
-        const pre = match[1]
-        const offset = (match.index || 0) + pre.length
-        linkStart = document.positionAt(offset)
-        linkEnd = document.positionAt(offset + reference.length)
-      } else if (match[2]) { // [ref][]
-        reference = match[2]
-        const offset = (match.index || 0) + 1
-        linkStart = document.positionAt(offset)
-        linkEnd = document.positionAt(offset + match[2].length)
-      } else {
-        continue
-      }
-
-      try {
-        const link = definitions.get(reference)
-        if (link) {
-          results.push(new vscode.DocumentLink(
-            new vscode.Range(linkStart, linkEnd),
-            vscode.Uri.parse(`command:_asciidoc.moveCursorToPosition?${encodeURIComponent(JSON.stringify([link.linkRange.start.line, link.linkRange.start.character]))}`)))
+    Object.entries(linkItems).forEach(([lineNo, links]) => {
+      const lineAsNumber = parseInt(lineNo) - 1
+      const lineLinks = []
+      Object.values(asciidoctorRegexLinks).forEach((linkRegex) => {
+        const linksFound = adParser.document.getSourceLines()[lineAsNumber].matchAll(linkRegex)
+        for (const match of linksFound) {
+          lineLinks.push([match.index, match.index + match[0].length])
         }
-      } catch (e) {
-        // noop
-      }
-    }
+      })
+      const sortedLineLinks = lineLinks.sort((first, second) => first[0] - second[0])
+      links.forEach((link, index) => {
+        link.match = sortedLineLinks[index]
+      })
 
-    for (const definition of Array.from(definitions.values())) {
-      try {
+      links.forEach((link) => {
+        try {
+          if (link.match) {
+            results.push(new vscode.DocumentLink(
+              new vscode.Range(new vscode.Position(lineAsNumber, link.match[0]),
+                new vscode.Position(lineAsNumber, link.match[1])),
+              normalizeLink(document, link.target, base)))
+          }
+        } catch (err) {
+          // ignore unmatchable links but something is going wrong if this occurs
+          console.log(err)
+        }
+      })
+    })
+
+    // then handle includes
+    // includes from the reader are resolved correctly but the line numbers may be offset and not exactly match the document
+    let baseDocumentIncludeItems = adParser.baseDocumentIncludeItems
+    const includeDirectives = new RegExp(processor.IncludeDirectiveRx.source, processor.IncludeDirectiveRx.flags + 'g')
+    // get includes from document text. These may be inside ifeval or ifdef but the line numbers are correct.
+    // the length is used to match the line correctly
+    const lines = adParser.document.getSourceLines()
+    const includeCandidates = new Map()
+    lines.forEach((line, index) => {
+      if (includeDirectives.test(line)) {
+        includeCandidates.set(index, line.length)
+      }
+    })
+
+    // find a corrected mapping for line numbers
+    const betterMatching = similarArrayMatch(
+      Array.from(includeCandidates.keys()),
+      baseDocumentIncludeItems.map((elem) => {
+        return elem[1]
+      }))
+
+    // update line items in reader results
+    baseDocumentIncludeItems = baseDocumentIncludeItems.map((elem, index) => {
+      elem[1] = betterMatching[index]
+      return elem
+    })
+
+    // create document links
+    if (baseDocumentIncludeItems) {
+      baseDocumentIncludeItems.forEach((include) => {
+        const lineNo = include[1]
         results.push(new vscode.DocumentLink(
-          definition.linkRange,
-          normalizeLink(document, definition.link, base)))
-      } catch (e) {
-        // noop
-      }
-    }
-
-    return results
-  }
-
-  private getDefinitions (text: string, document: vscode.TextDocument) {
-    const out = new Map<string, { link: string, linkRange: vscode.Range }>()
-    for (const match of matchAll(this.definitionPattern, text)) {
-      const pre = match[1]
-      const reference = match[2]
-      const link = match[3].trim()
-
-      const offset = (match.index || 0) + pre.length
-      const linkStart = document.positionAt(offset)
-      const linkEnd = document.positionAt(offset + link.length)
-
-      out.set(reference, {
-        link: link,
-        linkRange: new vscode.Range(linkStart, linkEnd),
+          new vscode.Range(
+            new vscode.Position(lineNo, 0),
+            new vscode.Position(lineNo, include[2] + includeCandidates.get(lineNo))),
+          normalizeLink(document, include[0], base)))
       })
     }
-    return out
+    return results
   }
 }
