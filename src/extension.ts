@@ -69,6 +69,7 @@ export function activate (context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(() => {
     logger.updateConfiguration()
     previewManager.updateConfiguration()
+    previewManager.refresh(true)
   }))
 
   context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(() => {
