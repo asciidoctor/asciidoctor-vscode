@@ -1,5 +1,4 @@
 import * as vscode from 'vscode'
-import * as path from 'path'
 const { Opal } = require('asciidoctor-opal-runtime')
 
 module.exports.register = (highlightjsBuiltInSyntaxHighlighter, context: vscode.ExtensionContext, webviewPanel: vscode.WebviewPanel) => {
@@ -12,18 +11,18 @@ module.exports.register = (highlightjsBuiltInSyntaxHighlighter, context: vscode.
     const self = this
     if (location === 'head') {
       const theme = doc.$attr('highlightjs-theme', 'github')
-      const themeStyleSheetResource = vscode.Uri.file(path.join(context.extensionPath, 'media', 'highlightjs', 'styles', `${theme}.min.css`))
+      const themeStyleSheetResource = vscode.Uri.joinPath(context.extensionUri, 'media', 'highlightjs', 'styles', `${theme}.min.css`)
       return `<link rel="stylesheet" href="${webviewPanel.webview.asWebviewUri(themeStyleSheetResource)}">`
     }
     // footer
     let languageScripts = ''
     if (doc['$attr?']('highlightjs-languages')) {
       languageScripts = doc.$attr('highlightjs-languages').split(',').map((lang) => {
-        const languageScriptResource = vscode.Uri.file(path.join(context.extensionPath, 'media', 'highlightjs', 'languages', `${lang.trim()}.min.js`))
+        const languageScriptResource = vscode.Uri.joinPath(context.extensionUri, 'media', 'highlightjs', 'languages', `${lang.trim()}.min.js`)
         return `<script src="${webviewPanel.webview.asWebviewUri(languageScriptResource)}"></script>`
       }).join('\n')
     }
-    const highlightjsScriptResource = vscode.Uri.file(path.join(context.extensionPath, 'media', 'highlightjs', 'highlight.min.js'))
+    const highlightjsScriptResource = vscode.Uri.joinPath(context.extensionUri, 'media', 'highlightjs', 'highlight.min.js')
     return `<script src="${webviewPanel.webview.asWebviewUri(highlightjsScriptResource)}"></script>
 ${languageScripts}
 <script>

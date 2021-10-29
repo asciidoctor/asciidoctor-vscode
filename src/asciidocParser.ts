@@ -15,10 +15,12 @@ export class AsciidocParser {
   public html: string = ''
   public document = null
   public processor = null
-  private extPath = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath
-  private stylesdir = path.join(this.extPath, 'media')
+  private stylesdir: string
 
-  constructor (private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) { }
+  constructor (private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) {
+    const extensionContext = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode')
+    this.stylesdir = vscode.Uri.joinPath(extensionContext.extensionUri, 'media').toString()
+  }
 
   public getAttribute (name: string) {
     return (this.document == null) ? null : this.document.getAttribute(name)
@@ -91,9 +93,18 @@ export class AsciidocParser {
           stylesheet = path.basename(previewStyle)
         }
 
-        attributes = { copycss: true, stylesdir: stylesdir, stylesheet: stylesheet }
+        attributes = {
+          copycss: true,
+          stylesdir: stylesdir,
+          stylesheet: stylesheet,
+        }
       } else if (useEditorStylesheet && !forHTMLSave) {
-        attributes = { copycss: true, stylesdir: this.stylesdir, stylesheet: 'asciidoctor-editor.css' }
+        attributes = {
+          'allow-uri-read': true,
+          copycss: false,
+          stylesdir: this.stylesdir,
+          stylesheet: 'asciidoctor-editor.css',
+        }
       } else {
         // TODO: decide whether to use the included css or let ascidoctor.js decide
         // attributes = { 'copycss': true, 'stylesdir': this.stylesdir, 'stylesheet': 'asciidoctor-default.css@' }
@@ -126,6 +137,7 @@ export class AsciidocParser {
         backend: backend,
         extension_registry: registry,
       }
+      console.log(options)
       try {
         this.document = processor.load(text, options)
         const blocksWithLineNumber = this.document.findBy(function (b) {

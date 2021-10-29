@@ -12,6 +12,7 @@ import { Logger } from '../logger'
 import { AsciidocPreviewSecurityLevel, ContentSecurityPolicyArbiter } from '../security'
 import { AsciidocPreviewConfiguration, AsciidocPreviewConfigurationManager } from './previewConfig'
 import { AsciidocContributions } from '../asciidocExtensions'
+import { Webview } from 'vscode'
 
 const localize = nls.loadMessageBundle()
 
@@ -86,22 +87,22 @@ export class AsciidocContentProvider {
           data-settings="${JSON.stringify(initialData).replace(/"/g, '&quot;')}"
           data-strings="${JSON.stringify(previewStrings).replace(/"/g, '&quot;')}"
           data-state="${JSON.stringify(state || {}).replace(/"/g, '&quot;')}">
-        <script src="${this.extensionScriptPath('pre.js')}" nonce="${nonce}"></script>
+        <script src="${this.extensionResourcePath(editor.webview, 'pre.js')}" nonce="${nonce}"></script>
         ${this.getStyles(sourceUri, nonce, config, state)}
         <base href="${editor.webview.asWebviewUri(asciidocDocument.uri).toString(true)}">
       </head>
       <body class="${bodyClassesVal} vscode-body ${config.scrollBeyondLastLine ? 'scrollBeyondLastLine' : ''} ${config.wordWrap ? 'wordWrap' : ''} ${config.markEditorSelection ? 'showEditorSelection' : ''}">
         ${body}
         <div class="code-line" data-line="${asciidocDocument.lineCount}"></div>
-        <script async src="${this.extensionScriptPath('index.js')}" nonce="${nonce}" charset="UTF-8"></script>
+        <script async src="${this.extensionResourcePath(editor.webview, 'index.js')}" nonce="${nonce}" charset="UTF-8"></script>
       </body>
       </html>`
   }
 
-  private extensionScriptPath (mediaFile: string): string {
-    return vscode.Uri.file(this.context.asAbsolutePath(path.join('dist', mediaFile)))
-      .with({ scheme: 'vscode-resource' })
-      .toString()
+  private extensionResourcePath (webview: Webview, mediaFile: string): string {
+    const webviewResource = webview.asWebviewUri(
+      vscode.Uri.joinPath(this.context.extensionUri, 'media', mediaFile))
+    return webviewResource.toString()
   }
 
   private fixHref (resource: vscode.Uri, href: string): string {

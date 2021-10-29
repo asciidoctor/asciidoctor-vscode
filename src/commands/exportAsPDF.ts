@@ -1,11 +1,10 @@
 import * as vscode from 'vscode'
+import * as os from 'os'
 import * as fs from 'fs'
 import * as path from 'path'
 import { exec, spawn } from 'child_process'
-import * as tmp from 'tmp'
+import { uuidv4 } from 'uuid'
 import * as zlib from 'zlib'
-import { https } from 'follow-redirects'
-
 import { AsciidocParser } from '../asciidocParser'
 import { AsciidocEngine } from '../asciidocEngine'
 import { Command } from '../commandManager'
@@ -84,9 +83,7 @@ export class ExportAsPDF implements Command {
         .get('wkHTMLtoPDFPath', '')
 
       const parser = new AsciidocParser(path.resolve(doc.fileName))
-      //const body =  await parser.parseText()
       const body = await this.engine.render(doc.uri, true, text, false, 'html5')
-      const extPath = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath
       const html = body
       const showTitlePage = parser.getAttribute('showTitlePage')
       const author = parser.getAttribute('author')
@@ -101,13 +98,15 @@ export class ExportAsPDF implements Command {
           const imageURL = titlePageLogo.startsWith('http') ? titlePageLogo : path.join(sourceName.dir, titlePageLogo)
           imageHTML = (titlePageLogo === null) ? '' : `<img src="${imageURL}">`
         }
-        const tmpobj = tmp.fileSync({ postfix: '.html' })
+        const tmpFilePath = path.join(os.tmpdir(), uuidv4() + '.html')
+        const extensionContext = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode')
+        const styleHref = vscode.Uri.joinPath(extensionContext.extensionUri, 'media', 'all-centered.css')
         const html = `\
                 <!DOCTYPE html>
                 <html>
                     <head>
                     <meta charset="UTF-8">
-                    <link rel="stylesheet" type="text/css" href="${extPath + '/media/all-centered.css'}">
+                    <link rel="stylesheet" type="text/css" href="${styleHref}">
                     </head>
                     <body>
                     <div class="outer">
@@ -122,8 +121,9 @@ export class ExportAsPDF implements Command {
                     </body>
                 </html>
                 `
-        fs.writeFileSync(tmpobj.name, html, 'utf-8')
-        cover = `cover ${tmpobj.name}`
+
+        fs.writeFileSync(tmpFilePath, html, 'utf-8')
+        cover = `cover ${tmpFilePath}`
       }
       const platform = process.platform
       const ext = platform === 'win32' ? '.exe' : ''
@@ -173,6 +173,8 @@ export class ExportAsPDF implements Command {
 }
 
 async function downloadFile (downloadURL: string, filename: string, progress) {
+  // load "follow-redirects" only when needed (because this module cannot be loaded in a browser environment)
+  const followRedirects = await import('follow-redirects')
   return new Promise((resolve, reject) => {
     const downloadOptions = url.parse(downloadURL)
     const wstream = fs.createWriteStream(filename)
@@ -186,7 +188,7 @@ async function downloadFile (downloadURL: string, filename: string, progress) {
     //   downloadOptions.agent = agent
     //   downloadOptions.rejectUnauthorized = proxyStrictSSL
     // }
-    https.get(downloadOptions, (resp) => {
+    followRedirects.https.get(downloadOptions, (resp) => {
       const contentSize = resp.headers['content-length']
       if (resp.statusCode !== 200) {
         wstream.end()

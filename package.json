@@ -18,6 +18,7 @@
 	"bugs": "https://github.com/asciidoctor/asciidoctor-vscode/issues",
 	"homepage": "https://github.com/asciidoctor/asciidoctor-vscode/blob/master/README.md",
 	"icon": "images/icon.png",
+	"browser": "./dist/browser/extension",
 	"main": "./dist/src/extension.js",
 	"engines": {
 		"vscode": "^1.31.0"
@@ -71,15 +72,16 @@
 				"icon": {
 					"light": "./media/Preview.svg",
 					"dark": "./media/Preview_inverse.svg"
-				}
+				},
+				"when": "!virtualWorkspace && shellExecutionSupported"
 			},
 			{
 				"command": "asciidoc.pasteImage",
 				"title": "%asciidoc.pasteImage.title%",
 				"category": "AsciiDoc",
 				"icon": {
-					"light": "./media/Preview.svg",
-					"dark": "./media/Preview_inverse.svg"
+					"light": "./media/preview-light.svg",
+					"dark": "./media/preview-dark.svg"
 				}
 			},
 			{
@@ -87,8 +89,8 @@
 				"title": "%asciidoc.preview.title%",
 				"category": "AsciiDoc",
 				"icon": {
-					"light": "./media/Preview.svg",
-					"dark": "./media/Preview_inverse.svg"
+					"light": "./media/preview-light.svg",
+					"dark": "./media/preview-dark.svg"
 				}
 			},
 			{
@@ -456,7 +458,8 @@
 		"copy-assets": "cp node_modules/@highlightjs/cdn-assets/highlight.min.js media/highlightjs && cp -r node_modules/@highlightjs/cdn-assets/languages media/highlightjs && cp -r node_modules/@highlightjs/cdn-assets/styles media/highlightjs",
 		"dev": "npm run build",
 		"build": "npm run copy-assets && npm run build-ext && npm run build-preview",
-		"build-preview": "webpack --config webpack.config.preview.js --mode production",
+		"build-web": "webpack --config extension-browser.webpack.config --mode none",
+		"build-preview": "webpack --config extension-preview.webpack.config --mode production",
 		"build-ext": "tsc -p ./",
 		"package": "npm run build && vsce package",
 		"deploy": "vsce publish -p",
@@ -470,24 +473,27 @@
 		"@types/highlight.js": "9.1.10",
 		"@types/lodash.throttle": "^4.1.3",
 		"@types/mocha": "^9.0.0",
-		"@types/node": "^8.10.25",
+		"@types/node": "^8.10.66",
 		"@typescript-eslint/eslint-plugin": "^4.31.1",
 		"@typescript-eslint/parser": "^4.31.1",
+		"copy-webpack-plugin": "^9.0.1",
 		"eslint": "^7.32.0",
 		"eslint-plugin-import": "^2.20.2",
 		"eslint-plugin-node": "^11.1.0",
 		"eslint-plugin-promise": "^5.1.0",
 		"json-schema": "^0.2.5",
 		"lodash.throttle": "^4.1.1",
-		"mocha": "^9.1.1",
+		"mocha": "^9.1.3",
 		"mocha-junit-reporter": "^1.23.3",
 		"mocha-multi-reporters": "^1.5.1",
+		"path-browserify": "^1.0.1",
 		"ts-loader": "^4.0.1",
 		"typescript": "^3.9.10",
+		"util": "^0.12.4",
 		"vsce": "^1.77.0",
 		"vscode-test": "^1.4.0",
-		"webpack": "^4.41.5",
-		"webpack-cli": "^3.1.1"
+		"webpack": "^5.60.0",
+		"webpack-cli": "^4.9.1"
 	},
 	"dependencies": {
 		"@asciidoctor/core": "2.2.5",
@@ -500,7 +506,7 @@
 		"follow-redirects": "^1.10.0",
 		"https-proxy-agent": "^4.0.0",
 		"moment": "^2.14.1",
-		"tmp": "0.1.0",
+		"uuid": "^8.3.2",
 		"vscode-nls": "^4.1.1",
 		"vscode-test": "^1.4.0"
 	}
