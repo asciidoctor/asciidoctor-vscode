@@ -50,23 +50,25 @@ export class AsciidoctorWebViewConverter {
    */
   convert (node, transform): any {
     const nodeName = transform || node.getNodeName()
-    if (nodeName === 'inline_anchor' && node.type === 'link') {
-      const href = isSchemeBlacklisted(node.target) ? '#' : node.target
-      const id = node.hasAttribute('id') ? ` id="${node.id}"` : ''
-      const role = node.hasAttribute('role') ? ` class="${node.role}"` : ''
-      const title = node.hasAttribute('title') ? ` title="${node.title}"` : ''
-      const sourceInfo = this.getBlockLocation(node)
-      const lineNo = sourceInfo.lineno
-      const nearestLine = node.document.getSourceLines()[lineNo - 1]
-      // information for linkProvider
-      const linkObj: LinkItem = {
-        target: node.target,
-        text: node.text,
-        filePath: sourceInfo.path,
-        lineText: nearestLine,
-      }
-      if (sourceInfo.path === '<stdin>') {
-        this.linkItems[lineNo] = this.linkItems[lineNo] ? [...this.linkItems[lineNo], linkObj] : [linkObj]
+    const href = isSchemeBlacklisted(node.target) ? '#' : node.target
+    const id = node.hasAttribute('id') ? ` id="${node.id}"` : ''
+    const role = node.hasAttribute('role') ? ` class="${node.role}"` : ''
+    const title = node.hasAttribute('title') ? ` title="${node.title}"` : ''
+    const sourceInfo = this.getBlockLocation(node)
+    if (nodeName === 'inline_anchor' && (node.type === 'link' || node.type === 'xref')) {
+      if (sourceInfo !== null) {
+        const lineNo = sourceInfo.lineno
+        const nearestLine = node.document.getSourceLines()[lineNo - 1]
+        // information for linkProvider
+        const linkObj: LinkItem = {
+          target: node.target.endsWith('.html') ? node.target.slice(0, -5) + '.adoc' : node.target,
+          text: node.text,
+          filePath: sourceInfo.path,
+          lineText: nearestLine,
+        }
+        if (sourceInfo.path === '<stdin>') {
+          this.linkItems[lineNo] = this.linkItems[lineNo] ? [...this.linkItems[lineNo], linkObj] : [linkObj]
+        }
       }
       // converted element
       return `<a href="${href}"${id}${role}${title} data-href="${href}">${node.text}</a>`

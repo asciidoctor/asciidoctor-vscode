@@ -33,8 +33,8 @@ export class OpenDocumentLinkCommand implements Command {
   public execute (args: OpenDocumentLinkArgs) {
     const p = decodeURIComponent(args.path)
     return this.tryOpen(p, args).catch(async () => {
-      if (extname(p) === '') {
-        return this.tryOpen(p + '.md', args)
+      if (extname(p) === 'adoc') {
+        return this.tryOpen(p, args)
       }
       const resource = vscode.Uri.file(p)
       await vscode.commands.executeCommand('vscode.open', resource)

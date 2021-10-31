@@ -31,6 +31,19 @@ export class AsciidocParser {
     return match
   }
 
+  public get IdsByLineNo () {
+    const idsByLineNumber = new Map()
+    if (this.document && this.document.hasBlocks()) {
+      const blocks = this.document.getBlocks()
+      blocks.forEach((block) => {
+        if (block.getId() !== undefined && block.source_location.path === '<stdin>') {
+          idsByLineNumber.set(block.source_location.lineno, block.id)
+        }
+      })
+    }
+    return idsByLineNumber
+  }
+
   public async convertUsingJavascript (text: string,
     doc: vscode.TextDocument,
     forHTMLSave: boolean,
