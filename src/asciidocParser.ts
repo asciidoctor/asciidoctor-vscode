@@ -137,7 +137,6 @@ export class AsciidocParser {
         backend: backend,
         extension_registry: registry,
       }
-      console.log(options)
       try {
         this.document = processor.load(text, options)
         const blocksWithLineNumber = this.document.findBy(function (b) {
