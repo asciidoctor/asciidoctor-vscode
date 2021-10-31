@@ -1,16 +1,16 @@
-interface includeEntry {
+interface IncludeEntry {
   name: string
   position: number
   length: string
 }
 
-interface includeItem {
-  [index: number]: includeEntry
+interface IncludeItem {
+  [index: number]: IncludeEntry
 }
 
-interface includeItems extends Array<includeItem>{}
+interface IncludeItems extends Array<IncludeItem>{}
 
-let baseDocIncludes: includeItems[] = []
+let baseDocIncludes: IncludeItems[] = []
 
 function findIncludeProcessor () {
   const self = this
