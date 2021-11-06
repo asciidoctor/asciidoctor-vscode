@@ -6,7 +6,7 @@ import { ActiveLineMarker } from './activeLineMarker'
 import { onceDocumentLoaded } from './events'
 import { createPosterForVsCode } from './messaging'
 import { getEditorLineNumberForPageOffset, scrollToRevealSourceLine } from './scroll-sync'
-import { getSettings, getData } from './settings'
+import { getData, getSettings } from './settings'
 import throttle = require('lodash.throttle');
 
 declare let acquireVsCodeApi: any
@@ -89,7 +89,6 @@ window.addEventListener('message', (event) => {
     return
   }
 
-  //console.log("GOT MESSAGE", event.data);
   switch (event.data.type) {
     case 'onDidChangeTextEditorSelection':
       marker.onDidChangeTextEditorSelection(event.data.line)
@@ -161,7 +160,10 @@ if (settings.scrollEditorWithPreview) {
       scrollDisabled = false
     } else {
       const line = getEditorLineNumberForPageOffset(window.scrollY)
-      if (typeof line === 'number' && !isNaN(line)) {
+      if (window.scrollY === 0) {
+        // scroll to top, document title does not have a data-line attribute
+        messaging.postMessage('revealLine', { line: 0 })
+      } else if (typeof line === 'number' && !isNaN(line)) {
         messaging.postMessage('revealLine', { line })
       }
     }
