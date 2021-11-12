@@ -7,11 +7,8 @@ interface LinkItem {
   text: string,
   filePath: string,
   lineText: string,
+  lineNo: number,
   match?: any
-}
-
-export interface LinkItems {
-  [key: number]: Array<LinkItem>
 }
 
 /**
@@ -19,11 +16,11 @@ export interface LinkItems {
  */
 export class AsciidoctorWebViewConverter {
   baseConverter: any
-  linkItems: LinkItems
+  linkItems: LinkItem[]
 
   constructor () {
     this.baseConverter = processor.Html5Converter.create()
-    this.linkItems = {} as LinkItems
+    this.linkItems = []
   }
 
   /**
@@ -59,15 +56,15 @@ export class AsciidoctorWebViewConverter {
       if (sourceInfo !== null) {
         const lineNo = sourceInfo.lineno
         const nearestLine = node.document.getSourceLines()[lineNo - 1]
-        // information for linkProvider
         const linkObj: LinkItem = {
           target: node.target.endsWith('.html') ? node.target.slice(0, -5) + '.adoc' : node.target,
           text: node.text,
           filePath: sourceInfo.path,
           lineText: nearestLine,
+          lineNo: lineNo,
         }
         if (sourceInfo.path === '<stdin>') {
-          this.linkItems[lineNo] = this.linkItems[lineNo] ? [...this.linkItems[lineNo], linkObj] : [linkObj]
+          this.linkItems.push(linkObj)
         }
       }
       // converted element

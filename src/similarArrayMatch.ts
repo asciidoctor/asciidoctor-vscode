@@ -26,10 +26,15 @@ function calculateAdjacency (haystack, similarNeedles) {
  * @param {Array} col
  * @returns
  */
-function columnMin (adjacency, col) {
+function columnMin (adjacency, col, removals) {
   const colValues = []
-  adjacency.forEach((row) => {
-    colValues.push(row[col])
+  adjacency.forEach((row, rowIndex) => {
+    if (rowIndex <= Math.max(...removals)) {
+      // values must be strictly increasing
+      colValues.push(Infinity)
+    } else {
+      colValues.push(row[col])
+    }
   })
   // We just return the value. Ideally we'd eliminate the row
   // to avoid producing incorrect later matches but this may
@@ -47,9 +52,11 @@ function columnMin (adjacency, col) {
  */
 function findNearest (haystack, adjacency) {
   const selectedEntries = []
+  const removals = []
   adjacency[0].forEach((_entry, idx) => {
-    const removedEntry = columnMin(adjacency, idx)
+    const removedEntry = columnMin(adjacency, idx, removals)
     selectedEntries.push(haystack[removedEntry])
+    removals.push(removedEntry)
   })
   return selectedEntries
 }
@@ -75,3 +82,9 @@ export function similarArrayMatch (candidateItems, matchableItems) {
     return findNearest(candidateItems, adj)
   }
 }
+
+// let candidateItems = [1,3,11,14,29,32,40]
+// let matchableItems = [2,4,12,13,28,32]
+// let result = similarArrayMatch(candidateItems, matchableItems)
+// console.log(result)
+// (5) [1, 3, 11, 29, 32]

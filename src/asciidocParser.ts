@@ -1,7 +1,7 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
 import { spawn } from 'child_process'
-import { AsciidoctorWebViewConverter, LinkItems } from './asciidoctorWebViewConverter'
+import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
 const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcessor')
 
 const asciidoctor = require('@asciidoctor/core')
@@ -17,7 +17,7 @@ export class AsciidocParser {
   public processor = null
   private extPath = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath
   private stylesdir = path.join(this.extPath, 'media')
-  public linkItems:LinkItems = null
+  public linkItems = null
   public baseDocumentIncludeItems = null
 
   constructor (private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) { }
@@ -163,7 +163,6 @@ export class AsciidocParser {
         })
         const resultHTML = this.document.convert(options)
         this.linkItems = asciidoctorWebViewConverter.linkItems
-        //let result = this.fixLinks(resultHTML);
         if (enableErrorDiagnostics) {
           const diagnostics = []
           memoryLogger.getMessages().forEach((error) => {
@@ -178,6 +177,7 @@ export class AsciidocParser {
             if (location) { //There is a source location
               if (location.getPath() === '<stdin>') { //error is within the file we are parsing
                 sourceLine = location.getLineNumber() - 1
+                sourceLine = sourceLine >= doc.lineCount ? doc.lineCount - 1 : sourceLine
                 sourceRange = doc.lineAt(sourceLine).range
               } else { //error is coming from an included file
                 relatedFile = error.getSourceLocation()
@@ -334,7 +334,6 @@ export class AsciidocParser {
         resultData = Buffer.concat([resultData, data as Buffer])
       })
       asciidoctorProcess.on('close', () => {
-        //var result = this.fixLinks(result_data.toString());
         resolve(resultData.toString())
       })
       asciidoctorProcess.stdin.write(text)
