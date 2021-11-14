@@ -146,6 +146,7 @@ export class AsciidocParser {
         attributes: attributes,
         backend: backend,
         base_dir: baseDir,
+        catalog_assets: true,
         extension_registry: getDocumentInformation ? registryForDocumentInfo : registry,
         header_footer: true,
         safe: 'unsafe',

@@ -1,3 +1,5 @@
+import { range } from './util/range'
+
 /**
  * Calculate the cost for mapping between two different arrays
  * @param {Array} haystack        an array of numbers contained but with offsets
@@ -7,7 +9,7 @@
  *                                against each other item in the array.
  */
 function calculateAdjacency (haystack, similarNeedles) {
-  // Calculate adjacency using a  cost function
+  // Calculate adjacency using a cost function
   const rows = []
   haystack.forEach((v1) => {
     const row = []
@@ -22,9 +24,9 @@ function calculateAdjacency (haystack, similarNeedles) {
 
 /**
  * Returns the indexes in the adjacency matrix of lowest cost
- * @param {Array} adjacency     Cost mapppings between arrays
+ * @param {Array} adjacency     Cost mappings between arrays
  * @param {Array} col
- * @returns
+ * @returns {Array}             Returns the index and the error term
  */
 function columnMin (adjacency, col, removals) {
   const colValues = []
@@ -36,10 +38,8 @@ function columnMin (adjacency, col, removals) {
       colValues.push(row[col])
     }
   })
-  // We just return the value. Ideally we'd eliminate the row
-  // to avoid producing incorrect later matches but this may
-  // be unlikely anyway...
-  return colValues.indexOf(Math.min(...colValues))
+  const chosenIndex = colValues.indexOf(Math.min(...colValues))
+  return [chosenIndex, colValues[chosenIndex]]
 }
 
 /**
@@ -48,17 +48,22 @@ function columnMin (adjacency, col, removals) {
  * @param {Array} haystack  list of items from which lowest cost
  *                          array will be provided
  * @param {Array} adjacency list of costs of selecting items
- * @returns {Array}         matched items
+ * @returns {Array}         returns a match and as an error term
+ *                          the differences in lines
  */
 function findNearest (haystack, adjacency) {
   const selectedEntries = []
   const removals = []
+  let errorSum = 0
   adjacency[0].forEach((_entry, idx) => {
-    const removedEntry = columnMin(adjacency, idx, removals)
+    const [removedEntry, errorTerm] = columnMin(adjacency, idx, removals)
     selectedEntries.push(haystack[removedEntry])
     removals.push(removedEntry)
+    if (errorTerm !== Infinity) {
+      errorSum += errorTerm
+    }
   })
-  return selectedEntries
+  return [selectedEntries, errorSum]
 }
 
 /**
@@ -78,13 +83,17 @@ export function similarArrayMatch (candidateItems, matchableItems) {
   if (candidateItems.length === matchableItems.length) {
     return candidateItems
   } else {
-    const adj = calculateAdjacency(candidateItems, matchableItems)
-    return findNearest(candidateItems, adj)
+    // we assume a maximum error between lines and converter of 5 lines
+    // We sum the error term over all matchableItems and choose the lowest
+    // value
+    const offsets = range(-5, 5)
+    const options = new Map()
+    offsets.forEach((offset) => {
+      const newMatchableItems = matchableItems.map((x) => x + offset)
+      const adj = calculateAdjacency(candidateItems, newMatchableItems)
+      const [result, error] = findNearest(candidateItems, adj)
+      options.set(error, result)
+    })
+    return options.get(Math.min(...options.keys()))
   }
 }
-
-// let candidateItems = [1,3,11,14,29,32,40]
-// let matchableItems = [2,4,12,13,28,32]
-// let result = similarArrayMatch(candidateItems, matchableItems)
-// console.log(result)
-// (5) [1, 3, 11, 29, 32]
