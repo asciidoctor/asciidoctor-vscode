@@ -53,15 +53,14 @@ export class AsciidoctorWebViewConverter {
     const role = node.hasAttribute('role') ? ` class="${node.role}"` : ''
     const title = node.hasAttribute('title') ? ` title="${node.title}"` : ''
     const sourceInfo = this.getBlockLocation(node)
-    if (nodeName === 'inline_anchor' && (node.type === 'link')) {
-      // || node.type === 'xref'
+    if ((nodeName === 'inline_anchor' && (node.type === 'link')) || node.type === 'xref') {
       if (sourceInfo !== null) {
         const lineNo = sourceInfo.lineno
         const nearestLine = node.document.getSourceLines()[lineNo - 1]
         const linkObj: LinkItem = {
           target: node.target.endsWith('.html') ? node.target.slice(0, -5) + '.adoc' : node.target,
           text: node.text,
-          filePath: sourceInfo.path,
+          filePath: sourceInfo.path, // not needed
           lineText: nearestLine,
           lineNo: lineNo,
           type: node.type,
