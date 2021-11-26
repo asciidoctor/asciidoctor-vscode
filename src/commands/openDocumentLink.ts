@@ -7,7 +7,6 @@ import { extname } from 'path'
 
 import { Command } from '../commandManager'
 import { AsciidocEngine } from '../asciidocEngine'
-import { TableOfContentsProvider } from '../tableOfContentsProvider'
 import { isAsciidocFile } from '../util/file'
 
 export interface OpenDocumentLinkArgs {
@@ -20,7 +19,6 @@ export class OpenDocumentLinkCommand implements Command {
   public readonly id = OpenDocumentLinkCommand.id
 
   public constructor (private readonly engine: AsciidocEngine) {
-    this.engine = engine
   }
 
   public static createCommandUri (
@@ -56,16 +54,10 @@ export class OpenDocumentLinkCommand implements Command {
 
   private async tryRevealLine (editor: vscode.TextEditor, fragment?: string) {
     if (editor && fragment) {
-      const toc = new TableOfContentsProvider(this.engine, editor.document)
-      const entry = await toc.lookup(fragment)
-      if (entry) {
-        return editor.revealRange(new vscode.Range(entry.line, 0, entry.line, 0), vscode.TextEditorRevealType.AtTop)
-      }
-      const lineNumberFragment = fragment.match(/^L(\d+)$/i)
-      if (lineNumberFragment) {
-        const line = +lineNumberFragment[1] - 1
-        if (!isNaN(line)) {
-          return editor.revealRange(new vscode.Range(line, 0, line, 0), vscode.TextEditorRevealType.AtTop)
+      if (this.engine.ad) {
+        const entryLineInfo = this.engine.ad.idsByLineNo.get(fragment)
+        if (entryLineInfo !== undefined) {
+          return editor.revealRange(new vscode.Range(entryLineInfo[0] - 1, 0, entryLineInfo[0] - 1, 0), vscode.TextEditorRevealType.AtTop)
         }
       }
     }

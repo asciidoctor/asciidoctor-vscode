@@ -70,7 +70,12 @@ export class AsciidoctorWebViewConverter {
         }
       }
       // converted element
-      return `<a href="${href}"${id}${role}${title} data-href="${href}">${node.text}</a>`
+      if (node.type !== 'xref') {
+        return `<a href="${href}"${id}${role}${title} data-href="${href}">${node.text}</a>`
+      } else {
+        // for now don't do specialised converting of links in xrefs
+        return this.baseConverter.convert(node, transform)
+      }
     }
     return this.baseConverter.convert(node, transform)
   }

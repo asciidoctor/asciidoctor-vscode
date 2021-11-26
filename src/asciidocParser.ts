@@ -31,14 +31,15 @@ export class AsciidocParser {
     return match
   }
 
-  public get IdsByLineNo () {
+  public get idsByLineNo () {
     const idsByLineNumber = new Map()
-    if (this.document && this.document.hasBlocks()) {
-      const blocks = this.document.getBlocks()
-      blocks.forEach((block) => {
-        if (block.getId() !== undefined && block.source_location.path === '<stdin>') {
-          idsByLineNumber.set(block.source_location.lineno, block.id)
-        }
+    if (this.document) {
+      const blocksWithId = this.document.findBy((block) => {
+        return block.getId() !== undefined
+      })
+
+      blocksWithId.forEach((block) => {
+        idsByLineNumber.set(block.id, [block.source_location.lineno, block.source_location.path])
       })
     }
     return idsByLineNumber
