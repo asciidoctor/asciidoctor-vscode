@@ -11,6 +11,7 @@ const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/
 
 export class AsciidocEngine {
   public ad?: AsciidocParser;
+  private readonly slugifier: Slugifier
 
   private firstLine?: number;
 
@@ -18,11 +19,10 @@ export class AsciidocEngine {
 
   public constructor (
     private readonly extensionPreviewResourceProvider: AsciidocContributions,
-    private readonly slugifier: Slugifier,
+
     private readonly errorCollection: vscode.DiagnosticCollection = null
   ) {
     this.extensionPreviewResourceProvider = extensionPreviewResourceProvider
-    this.slugifier = slugifier
     this.errorCollection = errorCollection
   }
 
