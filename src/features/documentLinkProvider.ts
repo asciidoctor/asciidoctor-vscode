@@ -164,11 +164,16 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
         }
         let documentLink
         if (link.type === 'xref') {
+          if (link.target.slice(1) === link.fragment) {
+            // links without a document reference are only a fragment
+            link.target = ''
+          }
+          const linkName = link.fragment ? `${link.target}#${link.fragment}` : link.target
           documentLink = new vscode.DocumentLink(
             new vscode.Range(
               new vscode.Position(lineNumber, startPos),
               new vscode.Position(lineNumber, endPos)),
-            normalizeLink(document, link.target, base))
+            normalizeLink(document, linkName, base))
         } else {
           documentLink = new vscode.DocumentLink(
             new vscode.Range(
@@ -211,7 +216,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
       return elem
     })
 
-    // create document links
+    // create include links
     if (baseDocumentProcessorIncludes) {
       baseDocumentProcessorIncludes.forEach((include) => {
         const lineNo = include[1]

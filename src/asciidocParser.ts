@@ -20,7 +20,7 @@ export class AsciidocParser {
   public linkItems = null
   public baseDocumentIncludeItems = null
 
-  constructor (private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) { }
+  constructor (public filename: string, private errorCollection: vscode.DiagnosticCollection = null) { }
 
   public getAttribute (name: string) {
     return (this.document == null) ? null : this.document.getAttribute(name)
@@ -259,7 +259,7 @@ export class AsciidocParser {
       } else {
         RUBYOPT = '-E UTF-8:UTF-8'
       }
-      const options = { shell: true, cwd: path.dirname(this.filename), env: { ...process.env, RUBYOPT } }
+      const options = { shell: true, cwd: path.dirname(doc.fileName), env: { ...process.env, RUBYOPT } }
 
       const adocCmdArray = asciidoctorCommand.split(/(\s+)/).filter(function (e) {
         return e.trim().length > 0
@@ -350,6 +350,7 @@ export class AsciidocParser {
     context?: vscode.ExtensionContext,
     editor?: vscode.WebviewPanel): Promise<string> {
     const useAsciidoctorJs = vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctor_js')
+    this.filename = doc.fileName
     if (useAsciidoctorJs) {
       return this.convertUsingJavascript(text, doc, forHTMLSave, backend, false, context, editor)
     }

@@ -66,6 +66,19 @@ function findNearest (haystack, adjacency) {
   return [selectedEntries, errorSum]
 }
 
+function arrIsIncreasing (num) {
+  if (num.length === 1) {
+    return true
+  }
+  const numDirection = num[1] - num[0]
+  for (let i = 0; i < num.length - 1; i++) {
+    if (numDirection * (num[i + 1] - num[i]) <= 0) {
+      return false
+    }
+  }
+  return true
+}
+
 /**
  * Given a set of `matchableItems` known to be contained in
  * `candidateItems` but potentially with offsets return a reasonable
@@ -86,7 +99,7 @@ export function similarArrayMatch (candidateItems, matchableItems) {
     // we assume a maximum error between lines and converter of 5 lines
     // We sum the error term over all matchableItems and choose the lowest
     // value
-    const offsets = range(-5, 5)
+    const offsets = range(-10, 10)
     const options = new Map()
     offsets.forEach((offset) => {
       const newMatchableItems = matchableItems.map((x) => x + offset)
@@ -94,6 +107,13 @@ export function similarArrayMatch (candidateItems, matchableItems) {
       const [result, error] = findNearest(candidateItems, adj)
       options.set(error, result)
     })
+
+    // options.forEach((lines, key) => {
+    //   if (!arrIsIncreasing(lines)) {
+    //     options.delete(key)
+    //   }
+    // })
+
     return options.get(Math.min(...options.keys()))
   }
 }

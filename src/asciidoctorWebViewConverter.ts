@@ -6,6 +6,7 @@ interface LinkItem {
   target: string,
   text: string,
   filePath: string,
+  fragment?: string,
   lineText: string,
   lineNo: number,
   match?: any,
@@ -57,12 +58,14 @@ export class AsciidoctorWebViewConverter {
       if (sourceInfo !== null) {
         const lineNo = sourceInfo.lineno
         const nearestLine = node.document.getSourceLines()[lineNo - 1]
+        const target = node.target.split('#')[0]
         const linkObj: LinkItem = {
-          target: node.target.endsWith('.html') ? node.target.slice(0, -5) + '.adoc' : node.target,
-          text: node.text,
           filePath: sourceInfo.path, // not needed
+          fragment: node.target.split('#')[1],
           lineText: nearestLine,
           lineNo: lineNo,
+          target: target.endsWith('.html') ? target.slice(0, -5) + '.adoc' : node.target,
+          text: node.text,
           type: node.type,
         }
         if (sourceInfo.path === '<stdin>') {

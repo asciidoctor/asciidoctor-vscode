@@ -15,7 +15,7 @@ export class AsciidocEngine {
 
   private firstLine?: number;
 
-  private currentDocument?: vscode.Uri;
+  public currentDocument?: vscode.Uri;
 
   public constructor (
     private readonly extensionPreviewResourceProvider: AsciidocContributions,
@@ -70,6 +70,5 @@ export class AsciidocEngine {
     const engine = await this.getEngine(document)
     const doc = await vscode.workspace.openTextDocument(document)
     await engine.parseText(source, doc)
-    return engine.document
   }
 }

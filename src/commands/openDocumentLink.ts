@@ -53,12 +53,12 @@ export class OpenDocumentLinkCommand implements Command {
   }
 
   private async tryRevealLine (editor: vscode.TextEditor, fragment?: string) {
-    if (editor && fragment) {
-      if (this.engine.ad) {
-        const entryLineInfo = this.engine.ad.idsByLineNo.get(fragment)
-        if (entryLineInfo !== undefined) {
-          return editor.revealRange(new vscode.Range(entryLineInfo[0] - 1, 0, entryLineInfo[0] - 1, 0), vscode.TextEditorRevealType.AtTop)
-        }
+    // editor.document.uri.path === this.engine.currentDocument.path &&  (needed?)
+    if (this.engine.ad && isAsciidocFile(editor.document)) {
+      await this.engine.load(editor.document.uri, editor.document.getText())
+      const entryLineInfo = await this.engine.ad.idsByLineNo.get(fragment)
+      if (entryLineInfo !== undefined) {
+        return editor.revealRange(new vscode.Range(entryLineInfo[0] - 1, 0, entryLineInfo[0] - 1, 0), vscode.TextEditorRevealType.AtTop)
       }
     }
   }
