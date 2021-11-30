@@ -10,19 +10,19 @@ import { AsciidocParser } from './asciidocParser'
 const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/
 
 export class AsciidocEngine {
-  public ad?: AsciidocParser;
-  private readonly slugifier: Slugifier
+  private ad?: AsciidocParser;
 
   private firstLine?: number;
 
-  public currentDocument?: vscode.Uri;
+  private currentDocument?: vscode.Uri;
 
   public constructor (
     private readonly extensionPreviewResourceProvider: AsciidocContributions,
-
+    private readonly slugifier: Slugifier,
     private readonly errorCollection: vscode.DiagnosticCollection = null
   ) {
     this.extensionPreviewResourceProvider = extensionPreviewResourceProvider
+    this.slugifier = slugifier
     this.errorCollection = errorCollection
   }
 
@@ -70,5 +70,6 @@ export class AsciidocEngine {
     const engine = await this.getEngine(document)
     const doc = await vscode.workspace.openTextDocument(document)
     await engine.parseText(source, doc)
+    return engine.document
   }
 }

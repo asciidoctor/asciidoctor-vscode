@@ -17,7 +17,6 @@ export class AsciidocParser {
   public processor = null
   private extPath = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath
   private stylesdir = path.join(this.extPath, 'media')
-  public linkItems = null
   public baseDocumentIncludeItems = null
 
   constructor (public filename: string, private errorCollection: vscode.DiagnosticCollection = null) { }
@@ -29,20 +28,6 @@ export class AsciidocParser {
   public async getMediaDir (text) {
     const match = text.match(/^\\s*:mediadir:/)
     return match
-  }
-
-  public get idsByLineNo () {
-    const idsByLineNumber = new Map()
-    if (this.document) {
-      const blocksWithId = this.document.findBy((block) => {
-        return block.getId() !== undefined
-      })
-
-      blocksWithId.forEach((block) => {
-        idsByLineNumber.set(block.id, [block.source_location.lineno, block.source_location.path])
-      })
-    }
-    return idsByLineNumber
   }
 
   public async convertUsingJavascript (text: string,
@@ -147,7 +132,6 @@ export class AsciidocParser {
         attributes: attributes,
         backend: backend,
         base_dir: baseDir,
-        catalog_assets: true,
         extension_registry: getDocumentInformation ? registryForDocumentInfo : registry,
         header_footer: true,
         safe: 'unsafe',
@@ -156,7 +140,9 @@ export class AsciidocParser {
       }
       try {
         this.document = processor.load(text, options)
-        this.baseDocumentIncludeItems = asciidoctorFindIncludeProcessor.getBaseDocIncludes()
+        if (getDocumentInformation) {
+          this.baseDocumentIncludeItems = asciidoctorFindIncludeProcessor.getBaseDocIncludes()
+        }
         const blocksWithLineNumber = this.document.findBy(function (b) {
           return typeof b.getLineNumber() !== 'undefined'
         })
@@ -164,7 +150,6 @@ export class AsciidocParser {
           block.addRole('data-line-' + block.getLineNumber())
         })
         const resultHTML = this.document.convert(options)
-        this.linkItems = asciidoctorWebViewConverter.linkItems
         if (enableErrorDiagnostics) {
           const diagnostics = []
           memoryLogger.getMessages().forEach((error) => {
@@ -179,6 +164,7 @@ export class AsciidocParser {
             if (location) { //There is a source location
               if (location.getPath() === '<stdin>') { //error is within the file we are parsing
                 sourceLine = location.getLineNumber() - 1
+                // ensure errors are always associated with a valid line
                 sourceLine = sourceLine >= doc.lineCount ? doc.lineCount - 1 : sourceLine
                 sourceRange = doc.lineAt(sourceLine).range
               } else { //error is coming from an included file

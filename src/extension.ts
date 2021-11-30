@@ -15,6 +15,7 @@ import { Logger } from './logger'
 import { AsciidocEngine } from './asciidocEngine'
 import { getAsciidocExtensionContributions } from './asciidocExtensions'
 import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security'
+import { githubSlugifier } from './slugify'
 import { AttributeCompleter } from './features/attributeCompleter'
 import { AsciidocFileIncludeAutoCompletionMonitor } from './util/includeAutoCompletion'
 
@@ -25,7 +26,7 @@ export function activate (context: vscode.ExtensionContext) {
 
   const errorCollection = vscode.languages.createDiagnosticCollection('asciidoc')
 
-  const engine = new AsciidocEngine(contributions, errorCollection)
+  const engine = new AsciidocEngine(contributions, githubSlugifier, errorCollection)
   const logger = new Logger()
   logger.log('Extension was started')
 
@@ -42,7 +43,7 @@ export function activate (context: vscode.ExtensionContext) {
   context.subscriptions.push(includeAutoCompletionMonitor)
 
   context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider))
-  context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider()))
+  context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider(engine)))
   // context.subscriptions.push(vscode.languages.registerFoldingRangeProvider(selector, new AsciidocFoldingProvider(engine)));
   context.subscriptions.push(vscode.languages.registerWorkspaceSymbolProvider(new AsciidocWorkspaceSymbolProvider(symbolProvider)))
   context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new AttributeCompleter(), '{'))

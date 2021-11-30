@@ -1,44 +1,31 @@
-import { isSchemeBlacklisted } from './linkSanitizer'
-
 const processor = require('@asciidoctor/core')()
 
-interface LinkItem {
-  target: string,
-  text: string,
-  filePath: string,
-  fragment?: string,
-  lineText: string,
-  lineNo: number,
-  match?: any,
-  type: string
+const BAD_PROTO_RE = /^(vbscript|javascript|data):/i
+const GOOD_DATA_RE = /^data:image\/(gif|png|jpeg|webp);/i
+
+/**
+ * Disallow blacklisted URL types following MarkdownIt and the
+ * VS Code Markdown extension
+ * @param   {String}  href   The link address
+ * @returns {boolean}        Whether the link is valid
+ */
+function isSchemeBlacklisted (href: string): boolean {
+  const hrefCheck = href.trim()
+  if (BAD_PROTO_RE.test(hrefCheck)) {
+    // we still allow specific safe "data:image/" URIs
+    return !GOOD_DATA_RE.test(hrefCheck)
+  }
+  return false
 }
 
 /**
- * Custom converter to support VS Code WebView security and extract document metadata
+ * Custom converter to support VS Code WebView security
  */
 export class AsciidoctorWebViewConverter {
   baseConverter: any
-  linkItems: LinkItem[]
 
   constructor () {
     this.baseConverter = processor.Html5Converter.create()
-    this.linkItems = []
-  }
-
-  /**
-   * Ascend the Asciidoctor AST looking for source information until it is found
-   * @param node    Asciidoctor node
-   * @returns       Source Location
-   */
-  getBlockLocation (node) {
-    try {
-      return node.getSourceLocation()
-    } catch (err) {
-      if (err instanceof TypeError) {
-        return this.getBlockLocation(node.parent)
-      }
-    }
-    return null
   }
 
   /**
@@ -47,38 +34,14 @@ export class AsciidoctorWebViewConverter {
    * @param transform   An optional string transform that hints at which transformation should be applied to this node
    * @returns           Converted node
    */
-  convert (node, transform): any {
+  convert (node, transform) {
     const nodeName = transform || node.getNodeName()
-    const href = isSchemeBlacklisted(node.target) ? '#' : node.target
-    const id = node.hasAttribute('id') ? ` id="${node.id}"` : ''
-    const role = node.hasAttribute('role') ? ` class="${node.role}"` : ''
-    const title = node.hasAttribute('title') ? ` title="${node.title}"` : ''
-    const sourceInfo = this.getBlockLocation(node)
-    if ((nodeName === 'inline_anchor' && (node.type === 'link')) || node.type === 'xref') {
-      if (sourceInfo !== null) {
-        const lineNo = sourceInfo.lineno
-        const nearestLine = node.document.getSourceLines()[lineNo - 1]
-        const target = node.target.split('#')[0]
-        const linkObj: LinkItem = {
-          filePath: sourceInfo.path, // not needed
-          fragment: node.target.split('#')[1],
-          lineText: nearestLine,
-          lineNo: lineNo,
-          target: target.endsWith('.html') ? target.slice(0, -5) + '.adoc' : node.target,
-          text: node.text,
-          type: node.type,
-        }
-        if (sourceInfo.path === '<stdin>') {
-          this.linkItems.push(linkObj)
-        }
-      }
-      // converted element
-      if (node.type !== 'xref') {
-        return `<a href="${href}"${id}${role}${title} data-href="${href}">${node.text}</a>`
-      } else {
-        // for now don't do specialised converting of links in xrefs
-        return this.baseConverter.convert(node, transform)
-      }
+    if (nodeName === 'inline_anchor' && node.type === 'link') {
+      const href = isSchemeBlacklisted(node.target) ? '#' : node.target
+      const id = node.hasAttribute('id') ? ` id="${node.id}"` : ''
+      const role = node.hasAttribute('role') ? ` class="${node.role}"` : ''
+      const title = node.hasAttribute('title') ? ` title="${node.title}"` : ''
+      return `<a href="${href}"${id}${role}${title} data-href="${href}">${node.text}</a>`
     }
     return this.baseConverter.convert(node, transform)
   }

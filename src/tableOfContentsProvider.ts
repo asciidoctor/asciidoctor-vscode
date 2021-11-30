@@ -4,7 +4,7 @@
 
 import * as vscode from 'vscode'
 import { AsciidocEngine } from './asciidocEngine'
-import { Slug } from './slugify'
+import { githubSlugifier, Slug } from './slugify'
 
 export interface TocEntry {
   readonly slug: Slug;
@@ -44,8 +44,8 @@ export class TableOfContentsProvider {
 
   public async lookup (fragment: string): Promise<TocEntry | undefined> {
     const toc = await this.getToc()
-    const fragmentSlug = new Slug(fragment)
-    return toc.find((entry) => entry.slug.equals(fragmentSlug))
+    const slug = githubSlugifier.fromHeading(fragment)
+    return toc.find((entry) => entry.slug.equals(slug))
   }
 
   private async buildToc (document: SkinnyTextDocument): Promise<TocEntry[]> {
@@ -54,7 +54,7 @@ export class TableOfContentsProvider {
 
     adoc.findBy({ context: 'section' }, function (section) {
       toc.push({
-        slug: new Slug(section.getId()),
+        slug: section.getId(),
         text: section.getTitle(),
         level: section.getLevel(),
         line: section.getLineNumber() - 1,
@@ -64,7 +64,6 @@ export class TableOfContentsProvider {
     })
 
     // Get full range of section
-    // FIXME: Does not function correctly with include-ed documents because line numbers overlap
     return toc.map((entry, startIndex): TocEntry => {
       let end: number | undefined
       for (let i = startIndex + 1; i < toc.length; ++i) {

@@ -107,13 +107,12 @@ export function similarArrayMatch (candidateItems, matchableItems) {
       const [result, error] = findNearest(candidateItems, adj)
       options.set(error, result)
     })
-
-    // options.forEach((lines, key) => {
-    //   if (!arrIsIncreasing(lines)) {
-    //     options.delete(key)
-    //   }
-    // })
-
+    // Enforce that options have strictly ascending arrays
+    options.forEach((lines, key) => {
+      if (!arrIsIncreasing(lines)) {
+        options.delete(key)
+      }
+    })
     return options.get(Math.min(...options.keys()))
   }
 }
