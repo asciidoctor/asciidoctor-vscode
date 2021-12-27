@@ -511,7 +511,7 @@
 		"@asciidoctor/docbook-converter": "^2.0.0",
 		"@orcid/bibtex-parse-js": "^0.0.25",
 		"@types/vscode": "^1.31.0",
-		"asciidoctor-kroki": "^0.13.0",
+		"asciidoctor-kroki": "^0.15.4",
 		"eslint-config-standard": "^16.0.3",
 		"file-url": "^3.0.0",
 		"follow-redirects": "^1.10.0",
