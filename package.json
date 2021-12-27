@@ -73,7 +73,7 @@
 					"light": "./media/Preview.svg",
 					"dark": "./media/Preview_inverse.svg"
 				},
-				"when": "!virtualWorkspace && shellExecutionSupported"
+				"when": "!web"
 			},
 			{
 				"command": "asciidoc.pasteImage",
@@ -82,7 +82,8 @@
 				"icon": {
 					"light": "./media/preview-light.svg",
 					"dark": "./media/preview-dark.svg"
-				}
+				},
+				"when": "!web"
 			},
 			{
 				"command": "asciidoc.showPreview",
@@ -142,7 +143,8 @@
 				"icon": {
 					"light": "./media/SaveHTML.svg",
 					"dark": "./media/SaveHTML_inverse.svg"
-				}
+				},
+				"when": "!web"
 			},
 			{
 				"command": "asciidoc.saveDocbook",
@@ -151,7 +153,8 @@
 				"icon": {
 					"light": "./media/SaveDocbook.svg",
 					"dark": "./media/SaveDocbook_inverse.svg"
-				}
+				},
+				"when": "!web"
 			}
 		],
 		"menus": {
