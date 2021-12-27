@@ -101,7 +101,7 @@ export class AsciidocContentProvider {
 
   private extensionResourcePath (webview: Webview, mediaFile: string): string {
     const webviewResource = webview.asWebviewUri(
-      vscode.Uri.joinPath(this.context.extensionUri, 'media', mediaFile))
+      vscode.Uri.joinPath(this.context.extensionUri, 'dist', mediaFile))
     return webviewResource.toString()
   }
 
