@@ -128,7 +128,7 @@ export class AsciidocParser {
         docbook.register()
       }
 
-      let options = {
+      let options: { [key: string]: any } = {
         safe: 'unsafe',
         attributes: attributes,
         header_footer: true,
