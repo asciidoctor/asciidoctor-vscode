@@ -38,7 +38,6 @@ export class AsciidocParser {
     context?: vscode.ExtensionContext,
     editor?: vscode.WebviewPanel) {
     return new Promise<string>((resolve, reject) => {
-      const documentPath = path.dirname(path.resolve(doc.fileName))
       const workspacePath = vscode.workspace.workspaceFolders
       const containsStyle = !(text.match(/'^\\s*:(stylesheet|stylesdir)/img) == null)
       const useEditorStylesheet = vscode.workspace.getConfiguration('asciidoc', null).get('preview.useEditorStyle', false)
@@ -46,12 +45,14 @@ export class AsciidocParser {
       const previewStyle = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', '')
       const useWorkspaceAsBaseDir = vscode.workspace.getConfiguration('asciidoc', null).get('useWorkspaceRoot')
       const enableErrorDiagnostics = vscode.workspace.getConfiguration('asciidoc', null).get('enableErrorDiagnostics')
+      const documentPath = process.env.BROWSER_ENV
+        ? undefined
+        : path.dirname(path.resolve(doc.fileName))
+      const baseDir = useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined'
+        ? vscode.workspace.rootPath
+        : documentPath
 
-      let baseDir = documentPath
-      if (useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined') {
-        baseDir = vscode.workspace.rootPath
-      }
-      if (this.errorCollection) {
+      if (this.errorCollection) {src/features/previewContentProvider.ts
         this.errorCollection.clear()
       }
 
@@ -84,7 +85,7 @@ export class AsciidocParser {
           stylesheet = path.basename(previewStyle)
         } else {
           if (workspacePath === undefined) {
-            stylesdir = documentPath
+            stylesdir = ''
           } else if (workspacePath.length > 0) {
             stylesdir = workspacePath[0].uri.path
           }
@@ -127,16 +128,19 @@ export class AsciidocParser {
         docbook.register()
       }
 
-      const options = {
+      let options = {
         safe: 'unsafe',
         attributes: attributes,
         header_footer: true,
         to_file: false,
-        base_dir: baseDir,
         sourcemap: true,
         backend: backend,
         extension_registry: registry,
       }
+      if (baseDir) {
+        options = {...options, base_dir: baseDir}
+      }
+
       try {
         this.document = processor.load(text, options)
         const blocksWithLineNumber = this.document.findBy(function (b) {
