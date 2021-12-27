@@ -72,8 +72,7 @@
 				"icon": {
 					"light": "./media/Preview.svg",
 					"dark": "./media/Preview_inverse.svg"
-				},
-				"when": "!web"
+				}
 			},
 			{
 				"command": "asciidoc.pasteImage",
@@ -82,8 +81,7 @@
 				"icon": {
 					"light": "./media/preview-light.svg",
 					"dark": "./media/preview-dark.svg"
-				},
-				"when": "!web"
+				}
 			},
 			{
 				"command": "asciidoc.showPreview",
@@ -143,8 +141,7 @@
 				"icon": {
 					"light": "./media/SaveHTML.svg",
 					"dark": "./media/SaveHTML_inverse.svg"
-				},
-				"when": "!web"
+				}
 			},
 			{
 				"command": "asciidoc.saveDocbook",
@@ -153,8 +150,7 @@
 				"icon": {
 					"light": "./media/SaveDocbook.svg",
 					"dark": "./media/SaveDocbook_inverse.svg"
-				},
-				"when": "!web"
+				}
 			}
 		],
 		"menus": {
@@ -202,6 +198,22 @@
 			],
 			"commandPalette": [
 				{
+					"command": "asciidoc.exportAsPDF",
+					"when": "editorLangId == asciidoc && !isWeb"
+				},
+				{
+					"command": "asciidoc.pasteImage",
+					"when": "editorLangId == asciidoc && !isWeb"
+				},
+				{
+					"command": "asciidoc.saveHTML",
+					"when": "editorLangId == asciidoc && !isWeb"
+				},
+				{
+					"command": "asciidoc.saveDocbook",
+					"when": "editorLangId == asciidoc && !isWeb"
+				},
+				{
 					"command": "asciidoc.showPreview",
 					"when": "editorLangId == asciidoc",
 					"group": "navigation"
@@ -223,11 +235,7 @@
 				},
 				{
 					"command": "asciidoc.showPreviewSecuritySelector",
-					"when": "editorLangId == asciidoc"
-				},
-				{
-					"command": "asciidoc.showPreviewSecuritySelector",
-					"when": "asciidocPreviewFocus"
+					"when": "editorLangId == asciidoc || asciidocPreviewFocus"
 				},
 				{
 					"command": "asciidoc.preview.toggleLock",
