@@ -52,7 +52,7 @@ export class AsciidocParser {
         ? vscode.workspace.rootPath
         : documentPath
 
-      if (this.errorCollection) {src/features/previewContentProvider.ts
+      if (this.errorCollection) {
         this.errorCollection.clear()
       }
 
@@ -138,7 +138,7 @@ export class AsciidocParser {
         extension_registry: registry,
       }
       if (baseDir) {
-        options = {...options, base_dir: baseDir}
+        options = { ...options, base_dir: baseDir }
       }
 
       try {
