@@ -93,8 +93,8 @@ To use Docbook 4.5, the following is known to work on Debian based systems:
 
 1. From the command line, install the `specific_install` gem: `gem install specific_install`
 2. Then install the [community supported Docbook 4.5 converter](https://github.com/asciidoctor/asciidoctor-docbook45) from the command line: `gem specific_install -l https://github.com/asciidoctor/asciidoctor-docbook45`
-3. Then change the User setting `asciidoc.asciidoctor_command` to: `asciidoctor -r asciidoctor-docbook45`
-4. Finally, untick (disable) `asciidoc.use_asciidoctor_js`
+3. Then change the User setting: `asciidoc.asciidoctor_command` to: `asciidoctor -r asciidoctor-docbook45`
+4. Finally, untick (disable): `asciidoc.use_asciidoctor_js`
 
 ### Snippets
 
@@ -211,16 +211,16 @@ If your issue only appeared after updating to a new version of the extension, yo
 
 ## Contributing
 
-To contribute simply clone the repository and then commit your changes. When you do a pull requests please clearly highlight what you changed in the pull comment.
+To contribute simply clone the repository and then commit your changes. When you do a pull request please clearly highlight what you changed in the pull comment.
 
 Do not update the extension version or changelog, it will be done by the maintainers when a new version is released.
 
-If you want to update the readme, you are free to fix typos, errors, add or improve descriptions, but if you have a style change in mind please use an issue (or specific pull request) so that it can be discussed.
+If you want to update the readme, you are free to fix typos, errors, and add or improve descriptions; but, if you have a style change in mind please use an issue (or specific pull request) so that it can be discussed.
 
 ## Credits
 
 * [AsciiDoc](http://asciidoc.org/) by Stuart Rackham
-* [Asciidoctor](https://asciidoctor.org/) organization for the the language flavor
+* [Asciidoctor](https://asciidoctor.org/) organization for the language flavor
 * [Asciidoctor.js](https://asciidoctor.org/docs/asciidoctor.js/) for the preview
 * [Asciidoctor PDF](https://asciidoctor.org/docs/asciidoctor-pdf/) for the _Export to PDF_ function
 * [wkhtmltopdf](https://wkhtmltopdf.org/) for the _Export to PDF_ function
