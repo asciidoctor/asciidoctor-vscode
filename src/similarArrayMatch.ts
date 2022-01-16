@@ -96,7 +96,7 @@ export function similarArrayMatch (candidateItems, matchableItems) {
   if (candidateItems.length === matchableItems.length) {
     return candidateItems
   } else {
-    // we assume a maximum error between lines and converter of 5 lines
+    // we assume a maximum error between lines and converter of +/- 10 lines
     // We sum the error term over all matchableItems and choose the lowest
     // value
     const offsets = range(-10, 10)
