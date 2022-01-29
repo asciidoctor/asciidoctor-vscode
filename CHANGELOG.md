@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 2.9.0
+## 2.9.1
 
 - Initial work to make the extension available as a Web Extension (#473)
 - Scroll to the first line when the preview hits top (closes #348)
