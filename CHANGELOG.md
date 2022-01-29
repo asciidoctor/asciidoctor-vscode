@@ -1,5 +1,11 @@
 # CHANGELOG
 
+## 2.9.0
+
+- Initial work to make the extension available as a Web Extension (#473)
+- Scroll to the first line when the preview hits top (closes #348)
+- Removed a double word, add some colons for clarity, and puctuation in README.md (#483)
+
 ## 2.8.10
 
 - Ensure Asciidoctor.js error reporting is displayed on Windows (closes #466)
