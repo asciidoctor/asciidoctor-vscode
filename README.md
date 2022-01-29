@@ -4,7 +4,7 @@
 [![Installs](https://vsmarketplacebadge.apphb.com/installs/asciidoctor.asciidoctor-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode)
 [![Ratings](https://vsmarketplacebadge.apphb.com/rating/asciidoctor.asciidoctor-vscode.svg)](https://vsmarketplacebadge.apphb.com/rating/asciidoctor.asciidoctor-vscode.svg)
 
-An extension that provides live preview, syntax highlighting and snippets for the AsciiDoc format using Asciidoctor flavor.
+An extension that provides live preview, syntax highlighting and snippets for the AsciiDoc format using Asciidoctor.
 
 ![demo](images/simple.gif)
 
@@ -19,7 +19,10 @@ An extension that provides live preview, syntax highlighting and snippets for th
     - [Save as HTML](#save-as-html)
     - [Save to Docbook](#save-to-docbook)
     - [Snippets](#snippets)
+    - [Identifying the VS Code Environment](#identifying-the-vs-code-environment)
+    - [Diagram Integration](#diagram-integration)
   - [User Settings](#user-settings)
+  - [Visual Studio Code for the Web](#visual-studio-code-for-the-web)
   - [Build and Install from Source](#build-and-install-from-source)
     - [Manual](#manual)
     - [Script](#script)
@@ -29,11 +32,26 @@ An extension that provides live preview, syntax highlighting and snippets for th
 
 ## How to Install
 
-Launch VS Code Quick Open (Ctrl+P), paste the following command, and press enter:
+Launch Visual Studio Code "Quick Open" (`Ctrl+P`), paste the following command, and press `Enter`:
 
 `ext install asciidoctor.asciidoctor-vscode`
 
-Alternatively you can use the built-in extension browser to find the _AsciiDoc_ by _joaompinto_ extension and install it.
+Alternatively, you can use the built-in extension browser to find the _AsciiDoc_ by _asciidoctor_ extension and install it.
+
+This extension is also available as a pre-version (alpha) in [Visual Studio Code for the Web](https://code.visualstudio.com/docs/editor/vscode-web) and can be installed using the same procedure.
+
+|Feature|Desktop|Web|
+|--|--|--|
+|Document Outline and Symbols|✔️|✔️|
+|Equations (via Mathjax)|✔️|✔️ (requires security to be disabled)|
+|Export as PDF|✔️|⛔|
+|Kroki Integration for Diagrams|✔️|✔️|
+|Paste Image |✔️|⛔|
+|Save as HTML|✔️|⛔|
+|Save as Docbook|✔️|⛔|
+|Snippets|✔️|✔️|
+|Syntax Highlighting|✔️|✔️ (requires security to be disabled)|
+|Sync scrolling between the editor and the preview|✔️|✔️|
 
 ## How to Use
 
@@ -102,6 +120,41 @@ Several code snippets are provided including but not limited to: include stateme
 
 For a full list open the command palette and select _Insert Snippet_.
 
+### Identifying the VS Code Environment
+
+The `env-vscode` attribute is set on all output documents. If you need to identify or handle the VS Code environment you can use an `ifdef` expression similar to the following:
+
+```asciidoc
+ifdef::env-vscode[]
+This is for vscode only
+endif::[]
+```
+
+### Diagram Integration
+
+This extension supports a wide range of diagrams from BPMN to Graphviz to PlantUML and Vega graphs using [kroki](https://kroki.io/) and [asciidoctor-kroki](https://github.com/Mogztter/asciidoctor-kroki).
+
+You can [see the full range](https://kroki.io/#support) on the kroki website.
+
+Note that this extension will send graph information to https://kroki.io. If this is an issue it is also possible to use your own kroki instance (see [the instructions](https://github.com/Mogztter/asciidoctor-kroki#using-your-own-kroki) for further information).
+
+To enable diagram support, set the `use_kroki` parameter in your User Settings to `true`.
+
+To cache and save diagrams locally set the `kroki-fetch-diagram` attribute in your document header:
+
+```asciidoc
+= My Amazing Document
+:kroki-fetch-diagram:
+```
+
+This will store images by default in your document folder, however you may also set `imagesdir` to store them elsewhere:
+
+```asciidoc
+= My Amazing Document
+:kroki-fetch-diagram:
+:imagesdir: media
+```
+
 ## User Settings
 
 This extension is controlled by a multitude of user settings.
@@ -134,41 +187,6 @@ The following list contains all the options and their default value.
 | `asciidoc.use_asciidoctor_js: true` | Use Asciidoctor.js instead of the 'asciidoctor_command' to render the preview. |
 | `asciidoc.use_asciidoctorpdf: false` | Use Asciidoctor PDF instead of the integrated renderer for the _Export as PDF_ command. |
 | `asciidoc.use_kroki: false` | Enable kroki integration to generate diagrams. |
-
-## Identifying the VS Code Environment
-
-The `env-vscode` attribute is set on all output documents. If you need to identify or handle the VS Code environment you can use an `ifdef` expression similar to the following:
-
-```asciidoc
-ifdef::env-vscode[]
-This is for vscode only
-endif::[]
-```
-
-## Diagram Integration
-
-This extension supports a wide range of diagrams from BPMN to Graphviz to PlantUML and Vega graphs using [kroki](https://kroki.io/) and [asciidoctor-kroki](https://github.com/Mogztter/asciidoctor-kroki).
-
-You can [see the full range](https://kroki.io/#support) on the kroki website.
-
-Note that this extension will send graph information to https://kroki.io. If this is an issue it is also possible to use your own kroki instance (see [the instructions](https://github.com/Mogztter/asciidoctor-kroki#using-your-own-kroki) for further information).
-
-To enable diagram support, set the `use_kroki` parameter in your User Settings to `true`.
-
-To cache and save diagrams locally set the `kroki-fetch-diagram` attribute in your document header:
-
-```asciidoc
-= My Amazing Document
-:kroki-fetch-diagram:
-```
-
-This will store images by default in your document folder, however you may also set `imagesdir` to store them elsewhere:
-
-```asciidoc
-= My Amazing Document
-:kroki-fetch-diagram:
-:imagesdir: media
-```
 
 ## Build and Install from Source
 

@@ -5,7 +5,7 @@
 import * as vscode from 'vscode'
 
 export interface AsciidocContributions {
-  readonly extensionPath: string;
+  readonly extensionUri: vscode.Uri;
   readonly previewScripts: vscode.Uri[];
   readonly previewStylesEditor: vscode.Uri[];
   readonly previewStylesDefault: vscode.Uri[];
@@ -22,11 +22,9 @@ class AsciidocExtensionContributions implements AsciidocContributions {
 
   private _loaded = false;
 
-  public constructor (
-    public readonly extensionPath: string
-  ) {
-    this.extensionPath = extensionPath
-  }
+  public constructor (private readonly _extensionContext: vscode.ExtensionContext) {}
+
+  public get extensionUri () { return this._extensionContext.extensionUri }
 
   public get previewScripts (): vscode.Uri[] {
     this.ensureLoaded()
@@ -69,5 +67,5 @@ class AsciidocExtensionContributions implements AsciidocContributions {
 }
 
 export function getAsciidocExtensionContributions (context: vscode.ExtensionContext): AsciidocContributions {
-  return new AsciidocExtensionContributions(context.extensionPath)
+  return new AsciidocExtensionContributions(context)
 }

@@ -1,7 +1,6 @@
-/*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-const path = require('path');
+'use strict'
+
+const path = require('path')
 
 module.exports = {
   entry: {
@@ -25,4 +24,4 @@ module.exports = {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
   },
-};
+}

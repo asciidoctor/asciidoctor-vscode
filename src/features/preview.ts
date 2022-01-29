@@ -10,11 +10,12 @@ import { AsciidocContentProvider } from './previewContentProvider'
 import { disposeAll } from '../util/dispose'
 
 import * as nls from 'vscode-nls'
-import { getVisibleLine, AsciidocFileTopmostLineMonitor } from '../util/topmostLineMonitor'
+import { AsciidocFileTopmostLineMonitor, getVisibleLine } from '../util/topmostLineMonitor'
 import { AsciidocPreviewConfigurationManager } from './previewConfig'
 import { AsciidocContributions } from '../asciidocExtensions'
 import { isAsciidocFile } from '../util/file'
 import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink'
+
 const localize = nls.loadMessageBundle()
 
 export class AsciidocPreview {
@@ -291,10 +292,10 @@ export class AsciidocPreview {
   }
 
   private get iconPath () {
-    const root = path.join(this._contributions.extensionPath, 'media')
+    const root = vscode.Uri.joinPath(this._contributions.extensionUri, 'media')
     return {
-      light: vscode.Uri.file(path.join(root, 'Preview.svg')),
-      dark: vscode.Uri.file(path.join(root, 'Preview_inverse.svg')),
+      light: vscode.Uri.joinPath(root, 'preview-light.svg'),
+      dark: vscode.Uri.joinPath(root, 'preview-dark.svg'),
     }
   }
 
@@ -377,12 +378,11 @@ export class AsciidocPreview {
     }
   }
 
-  private static getLocalResourceRoots (
-    resource: vscode.Uri,
-    contributions: AsciidocContributions
-  ): vscode.Uri[] {
-    const baseRoots: vscode.Uri[] = [vscode.Uri.file(path.join(contributions.extensionPath, 'media')),
-      vscode.Uri.file(path.join(contributions.extensionPath, 'dist'))]
+  private static getLocalResourceRoots (resource: vscode.Uri, contributions: AsciidocContributions): vscode.Uri[] {
+    const baseRoots: vscode.Uri[] = [
+      vscode.Uri.joinPath(contributions.extensionUri, 'media'),
+      vscode.Uri.joinPath(contributions.extensionUri, 'dist'),
+    ]
     const folder = vscode.workspace.getWorkspaceFolder(resource)
     if (folder) {
       return baseRoots.concat(folder.uri)

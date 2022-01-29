@@ -15,10 +15,12 @@ export class AsciidocParser {
   public html: string = ''
   public document = null
   public processor = null
-  private extPath = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode').extensionPath
-  private stylesdir = path.join(this.extPath, 'media')
+  private stylesdir: string
 
-  constructor (private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) { }
+  constructor (private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) {
+    const extensionContext = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode')
+    this.stylesdir = vscode.Uri.joinPath(extensionContext.extensionUri, 'media').toString()
+  }
 
   public getAttribute (name: string) {
     return (this.document == null) ? null : this.document.getAttribute(name)
@@ -36,7 +38,6 @@ export class AsciidocParser {
     context?: vscode.ExtensionContext,
     editor?: vscode.WebviewPanel) {
     return new Promise<string>((resolve, reject) => {
-      const documentPath = path.dirname(path.resolve(doc.fileName))
       const workspacePath = vscode.workspace.workspaceFolders
       const containsStyle = !(text.match(/'^\\s*:(stylesheet|stylesdir)/img) == null)
       const useEditorStylesheet = vscode.workspace.getConfiguration('asciidoc', null).get('preview.useEditorStyle', false)
@@ -44,11 +45,13 @@ export class AsciidocParser {
       const previewStyle = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', '')
       const useWorkspaceAsBaseDir = vscode.workspace.getConfiguration('asciidoc', null).get('useWorkspaceRoot')
       const enableErrorDiagnostics = vscode.workspace.getConfiguration('asciidoc', null).get('enableErrorDiagnostics')
+      const documentPath = process.env.BROWSER_ENV
+        ? undefined
+        : path.dirname(path.resolve(doc.fileName))
+      const baseDir = useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined'
+        ? vscode.workspace.rootPath
+        : documentPath
 
-      let baseDir = documentPath
-      if (useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined') {
-        baseDir = vscode.workspace.rootPath
-      }
       if (this.errorCollection) {
         this.errorCollection.clear()
       }
@@ -82,7 +85,7 @@ export class AsciidocParser {
           stylesheet = path.basename(previewStyle)
         } else {
           if (workspacePath === undefined) {
-            stylesdir = documentPath
+            stylesdir = ''
           } else if (workspacePath.length > 0) {
             stylesdir = workspacePath[0].uri.path
           }
@@ -91,9 +94,18 @@ export class AsciidocParser {
           stylesheet = path.basename(previewStyle)
         }
 
-        attributes = { copycss: true, stylesdir: stylesdir, stylesheet: stylesheet }
+        attributes = {
+          copycss: true,
+          stylesdir: stylesdir,
+          stylesheet: stylesheet,
+        }
       } else if (useEditorStylesheet && !forHTMLSave) {
-        attributes = { copycss: true, stylesdir: this.stylesdir, stylesheet: 'asciidoctor-editor.css' }
+        attributes = {
+          'allow-uri-read': true,
+          copycss: false,
+          stylesdir: this.stylesdir,
+          stylesheet: 'asciidoctor-editor.css',
+        }
       } else {
         // TODO: decide whether to use the included css or let ascidoctor.js decide
         // attributes = { 'copycss': true, 'stylesdir': this.stylesdir, 'stylesheet': 'asciidoctor-default.css@' }
@@ -116,16 +128,19 @@ export class AsciidocParser {
         docbook.register()
       }
 
-      const options = {
+      let options: { [key: string]: any } = {
         safe: 'unsafe',
         attributes: attributes,
         header_footer: true,
         to_file: false,
-        base_dir: baseDir,
         sourcemap: true,
         backend: backend,
         extension_registry: registry,
       }
+      if (baseDir) {
+        options = { ...options, base_dir: baseDir }
+      }
+
       try {
         this.document = processor.load(text, options)
         const blocksWithLineNumber = this.document.findBy(function (b) {

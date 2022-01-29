@@ -3,11 +3,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
-import * as path from 'path'
-import { join } from 'path'
-import { readdir, statSync } from 'fs'
-const { promisify } = require('util')
-const readdirAsync = promisify(readdir)
+import * as ospath from 'path'
+import * as fs from 'fs'
 
 export function isAsciidocFile (document: vscode.TextDocument) {
   return document.languageId === 'asciidoc'
@@ -19,7 +16,7 @@ export class FileInfo {
 
   constructor (path: string, file: string) {
     this.file = file
-    this.isFile = statSync(join(path, file)).isFile()
+    this.isFile = fs.statSync(ospath.join(path, file)).isFile()
   }
 }
 
@@ -32,23 +29,31 @@ export function getPathOfFolderToLookupFiles (
   text: string | undefined,
   rootPath?: string
 ): string {
-  const normalizedText = path.normalize(text || '')
+  const normalizedText = ospath.normalize(text || '')
 
-  const isPathAbsolute = normalizedText.startsWith(path.sep)
+  const isPathAbsolute = normalizedText.startsWith(ospath.sep)
 
-  let rootFolder = path.dirname(fileName)
+  let rootFolder = ospath.dirname(fileName)
   const pathEntered = normalizedText
 
   if (isPathAbsolute) {
     rootFolder = rootPath || ''
   }
 
-  return path.join(rootFolder, pathEntered)
+  return ospath.join(rootFolder, pathEntered)
 }
 
 export async function getChildrenOfPath (path: string) {
   try {
-    const files: string[] = await readdirAsync(path)
+    const files: string[] = await new Promise((resolve, reject) => {
+      fs.readdir(path, (err, files) => {
+        if (err) {
+          reject(err)
+        } else {
+          resolve(files)
+        }
+      })
+    })
     const filesDbg = files
       .map((f) => new FileInfo(path, f))
     return filesDbg

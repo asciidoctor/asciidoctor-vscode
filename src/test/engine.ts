@@ -8,7 +8,7 @@ import { AsciidocContributions } from '../asciidocExtensions'
 import { githubSlugifier } from '../slugify'
 
 const emptyContributions = new class implements AsciidocContributions {
-  readonly extensionPath = '';
+  readonly extensionUri = vscode.Uri.parse('');
   readonly previewScripts: vscode.Uri[] = [];
   readonly previewStylesEditor: vscode.Uri[] = [];
   readonly previewStylesDefault: vscode.Uri[] = [];
