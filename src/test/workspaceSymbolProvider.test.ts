@@ -8,7 +8,6 @@ import * as vscode from 'vscode'
 import AdocDocumentSymbolProvider from '../features/documentSymbolProvider'
 import AsciidocWorkspaceSymbolProvider, { WorkspaceAsciidocDocumentProvider } from '../features/workspaceSymbolProvider'
 import { createNewAsciidocEngine } from './engine'
-import { InMemoryDocument } from './inMemoryDocument'
 
 const symbolProvider = new AdocDocumentSymbolProvider(createNewAsciidocEngine(), null)
 

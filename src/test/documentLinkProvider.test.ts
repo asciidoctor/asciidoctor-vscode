@@ -23,13 +23,6 @@ function getLinksForFile (fileContents: string) {
   return provider.provideDocumentLinks(doc, noopToken)
 }
 
-function assertRangeEqual (expected: vscode.Range, actual: vscode.Range) {
-  assert.strictEqual(expected.start.line, actual.start.line)
-  assert.strictEqual(expected.start.character, actual.start.character)
-  assert.strictEqual(expected.end.line, actual.end.line)
-  assert.strictEqual(expected.end.character, actual.end.character)
-}
-
 suite('asciidoc.DocumentLinkProvider', () => {
   test('Should not return anything for empty document', () => {
     const links = getLinksForFile('')
