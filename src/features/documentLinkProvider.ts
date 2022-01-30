@@ -49,20 +49,17 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
   }
 
   public async provideDocumentLinks (
-    document: vscode.TextDocument,
+    textDocument: vscode.TextDocument,
     _token: vscode.CancellationToken
   ): Promise<vscode.DocumentLink[]> {
-    const base = path.dirname(document.uri.fsPath)
-    const text = document.getText()
-
-    const adParser = await this.engine.getEngine(document.uri)
-    adParser.convertUsingJavascript(text, document, false, 'html', true)
+    const asciidocParser = this.engine.getEngine()
+    const {document} = await asciidocParser.convertUsingJavascript(textDocument.getText(), textDocument, false, 'html', true)
 
     const results: vscode.DocumentLink[] = []
-    const lines = adParser.document.getSourceLines()
+    const lines = document.getSourceLines()
 
     // includes from the reader are resolved correctly but the line numbers may be offset and not exactly match the document
-    let baseDocumentProcessorIncludes = adParser.baseDocumentIncludeItems
+    let baseDocumentProcessorIncludes = asciidocParser.baseDocumentIncludeItems
     const includeDirective = /^(\\)?include::([^[][^[]*)\[([^\n]+)?\]$/
     // get includes from document text. These may be inside ifeval or ifdef but the line numbers are correct.
     const baseDocumentRegexIncludes = new Map()
@@ -89,6 +86,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 
     // create include links
     if (baseDocumentProcessorIncludes) {
+      const base = path.dirname(textDocument.uri.fsPath)
       baseDocumentProcessorIncludes.forEach((include) => {
         const lineNo = include[1]
         const documentLink = new vscode.DocumentLink(

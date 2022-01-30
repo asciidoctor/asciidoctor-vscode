@@ -2,6 +2,8 @@ import * as vscode from 'vscode'
 import * as path from 'path'
 import { spawn } from 'child_process'
 import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
+import { Asciidoctor } from "@asciidoctor/core";
+
 const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcessor')
 
 const asciidoctor = require('@asciidoctor/core')
@@ -12,25 +14,15 @@ const highlightjsBuiltInSyntaxHighlighter = processor.SyntaxHighlighter.for('hig
 const highlightjsAdapter = require('./highlightjs-adapter')
 
 export class AsciidocParser {
-  public html: string = ''
-  public document = null
-  public processor = null
-
   private stylesdir: string
   public baseDocumentIncludeItems = null
 
-  constructor (public filename: string, private errorCollection: vscode.DiagnosticCollection = null) {
-    const extensionContext = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode')
-    this.stylesdir = vscode.Uri.joinPath(extensionContext.extensionUri, 'media').toString()
+  constructor (extensionUri: vscode.Uri, private errorCollection: vscode.DiagnosticCollection = null) {
+    this.stylesdir = vscode.Uri.joinPath(extensionUri, 'media').toString()
   }
 
-  public getAttribute (name: string) {
-    return (this.document == null) ? null : this.document.getAttribute(name)
-  }
-
-  public async getMediaDir (text) {
-    const match = text.match(/^\\s*:mediadir:/)
-    return match
+  public getMediaDir (text) {
+    return text.match(/^\\s*:mediadir:/)
   }
 
   public async convertUsingJavascript (text: string,
@@ -40,7 +32,7 @@ export class AsciidocParser {
     getDocumentInformation: boolean,
     context?: vscode.ExtensionContext,
     editor?: vscode.WebviewPanel) {
-    return new Promise<string>((resolve, reject) => {
+    return new Promise<{html: string, document: Asciidoctor.Document}>((resolve, reject) => {
       const workspacePath = vscode.workspace.workspaceFolders
       const containsStyle = !(text.match(/'^\\s*:(stylesheet|stylesdir)/img) == null)
       const useEditorStylesheet = vscode.workspace.getConfiguration('asciidoc', null).get('preview.useEditorStyle', false)
@@ -157,17 +149,17 @@ export class AsciidocParser {
       }
 
       try {
-        this.document = processor.load(text, options)
+        const document = processor.load(text, options)
         if (getDocumentInformation) {
           this.baseDocumentIncludeItems = asciidoctorFindIncludeProcessor.getBaseDocIncludes()
         }
-        const blocksWithLineNumber = this.document.findBy(function (b) {
+        const blocksWithLineNumber = document.findBy(function (b) {
           return typeof b.getLineNumber() !== 'undefined'
         })
         blocksWithLineNumber.forEach(function (block) {
           block.addRole('data-line-' + block.getLineNumber())
         })
-        const resultHTML = this.document.convert(options)
+        const resultHTML = document.convert(options)
         if (enableErrorDiagnostics) {
           const diagnostics = []
           memoryLogger.getMessages().forEach((error) => {
@@ -228,7 +220,7 @@ export class AsciidocParser {
             this.errorCollection.set(doc.uri, diagnostics)
           }
         }
-        resolve(resultHTML)
+        resolve({html: resultHTML, document})
       } catch (e) {
         vscode.window.showErrorMessage(e.toString())
         reject(e)
@@ -236,7 +228,7 @@ export class AsciidocParser {
     })
   }
 
-  private async convertUsingApplication (text: string, doc: vscode.TextDocument, forHTMLSave: boolean, backend: string) {
+  private async convertUsingApplication (text: string, doc: vscode.TextDocument, forHTMLSave: boolean, backend: string): Promise<string> {
     const documentPath = path.dirname(doc.fileName).replace('"', '\\"')
     const workspacePath = vscode.workspace.workspaceFolders
     const containsStyle = !(text.match(/'^\\s*:(stylesheet|stylesdir):/img) == null)
@@ -244,7 +236,6 @@ export class AsciidocParser {
     const previewAttributes = vscode.workspace.getConfiguration('asciidoc', null).get('preview.attributes', {})
     const previewStyle = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', '')
     const useWorkspaceAsBaseDir = vscode.workspace.getConfiguration('asciidoc', null).get('useWorkspaceRoot')
-    this.document = null
 
     let baseDir = documentPath
     if (useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined') {
@@ -352,13 +343,13 @@ export class AsciidocParser {
     forHTMLSave: boolean = false,
     backend: string = 'html',
     context?: vscode.ExtensionContext,
-    editor?: vscode.WebviewPanel): Promise<string> {
+    editor?: vscode.WebviewPanel): Promise<{html: string, document?: Asciidoctor.Document}> {
     const useAsciidoctorJs = vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctor_js')
-    this.filename = doc.fileName
     if (useAsciidoctorJs) {
       return this.convertUsingJavascript(text, doc, forHTMLSave, backend, false, context, editor)
     }
 
-    return this.convertUsingApplication(text, doc, forHTMLSave, backend)
+    const html = await this.convertUsingApplication(text, doc, forHTMLSave, backend)
+    return {html}
   }
 }

@@ -72,7 +72,7 @@ export class AsciidocContentProvider {
     // Content Security Policy
     const nonce = new Date().getTime() + '' + new Date().getMilliseconds()
     const csp = this.getCspForResource(sourceUri, nonce)
-    const body = await this.engine.render(sourceUri, config.previewFrontMatter === 'hide', asciidocDocument.getText(), false, 'html5', this.context, editor)
+    const {output: body} = await this.engine.render(sourceUri, config.previewFrontMatter === 'hide', asciidocDocument.getText(), false, 'html5', this.context, editor)
     const bodyClassesRegex = /<body(?:(?:\s+(?:id=".*"\s*)?class(?:\s*=\s*(?:"(.+?)"|'(.+?)')))+\s*)>/
     const bodyClasses = body.match(bodyClassesRegex)
     const bodyClassesVal = bodyClasses === null ? '' : bodyClasses[1]

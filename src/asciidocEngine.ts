@@ -6,6 +6,8 @@ import * as vscode from 'vscode'
 import { AsciidocContributions } from './asciidocExtensions'
 import { Slugifier } from './slugify'
 import { AsciidocParser } from './asciidocParser'
+import { ExtensionContext } from "vscode";
+import { Asciidoctor } from "@asciidoctor/core";
 
 const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/
 
@@ -14,10 +16,8 @@ export class AsciidocEngine {
 
   private firstLine?: number;
 
-  private currentDocument?: vscode.Uri;
-
   public constructor (
-    private readonly extensionPreviewResourceProvider: AsciidocContributions,
+    readonly extensionPreviewResourceProvider: AsciidocContributions,
     private readonly slugifier: Slugifier,
     private readonly errorCollection: vscode.DiagnosticCollection = null
   ) {
@@ -26,9 +26,10 @@ export class AsciidocEngine {
     this.errorCollection = errorCollection
   }
 
-  private async getEngine (resource: vscode.Uri): Promise<AsciidocParser> {
+  private getEngine (): AsciidocParser {
+    // singleton
     if (!this.ad) {
-      this.ad = new AsciidocParser(resource.fsPath, this.errorCollection)
+      this.ad = new AsciidocParser(this.extensionPreviewResourceProvider.extensionUri, this.errorCollection)
     }
 
     return this.ad
@@ -45,12 +46,12 @@ export class AsciidocEngine {
     return { text, offset }
   }
 
-  public async render (document: vscode.Uri,
+  public async render (documentUri: vscode.Uri,
     stripFrontmatter: boolean,
     text: string, forHTML: boolean = false,
     backend: string = 'html5',
     context?: vscode.ExtensionContext,
-    editor?: vscode.WebviewPanel): Promise<string> {
+    editor?: vscode.WebviewPanel): Promise<{output: string, document?: Asciidoctor.Document}> {
     let offset = 0
     if (stripFrontmatter) {
       const asciidocContent = this.stripFrontmatter(text)
@@ -58,18 +59,15 @@ export class AsciidocEngine {
       text = asciidocContent.text
     }
 
-    this.currentDocument = document
     this.firstLine = offset
-    const engine = await this.getEngine(document)
-    const doc = await vscode.workspace.openTextDocument(document)
-    return await engine.parseText(text, doc, forHTML, backend, context, editor)
+    const textDocument = await vscode.workspace.openTextDocument(documentUri)
+    const {html: output, document} = await this.getEngine().parseText(text, textDocument, forHTML, backend, context, editor)
+    return {output, document}
   }
 
-  public async load (document: vscode.Uri, source: string): Promise<any> {
-    this.currentDocument = document
-    const engine = await this.getEngine(document)
-    const doc = await vscode.workspace.openTextDocument(document)
-    await engine.parseText(source, doc)
-    return engine.document
+  public async load (documentUri: vscode.Uri, source: string): Promise<any> {
+    const textDocument = await vscode.workspace.openTextDocument(documentUri)
+    const {document} = await this.getEngine().parseText(source, textDocument)
+    return document
   }
 }
