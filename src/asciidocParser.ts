@@ -2,6 +2,7 @@ import * as vscode from 'vscode'
 import * as path from 'path'
 import { spawn } from 'child_process'
 import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
+const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcessor')
 
 const asciidoctor = require('@asciidoctor/core')
 const docbook = require('@asciidoctor/docbook-converter')
@@ -9,15 +10,16 @@ const kroki = require('asciidoctor-kroki')
 const processor = asciidoctor()
 const highlightjsBuiltInSyntaxHighlighter = processor.SyntaxHighlighter.for('highlight.js')
 const highlightjsAdapter = require('./highlightjs-adapter')
-processor.ConverterFactory.register(new AsciidoctorWebViewConverter(), ['html5'])
 
 export class AsciidocParser {
   public html: string = ''
   public document = null
   public processor = null
-  private stylesdir: string
 
-  constructor (private readonly filename: string, private errorCollection: vscode.DiagnosticCollection = null) {
+  private stylesdir: string
+  public baseDocumentIncludeItems = null
+
+  constructor (public filename: string, private errorCollection: vscode.DiagnosticCollection = null) {
     const extensionContext = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode')
     this.stylesdir = vscode.Uri.joinPath(extensionContext.extensionUri, 'media').toString()
   }
@@ -31,10 +33,11 @@ export class AsciidocParser {
     return match
   }
 
-  private async convertUsingJavascript (text: string,
+  public async convertUsingJavascript (text: string,
     doc: vscode.TextDocument,
     forHTMLSave: boolean,
     backend: string,
+    getDocumentInformation: boolean,
     context?: vscode.ExtensionContext,
     editor?: vscode.WebviewPanel) {
     return new Promise<string>((resolve, reject) => {
@@ -60,11 +63,21 @@ export class AsciidocParser {
       processor.LoggerManager.setLogger(memoryLogger)
 
       const registry = processor.Extensions.create()
+      // registry for processing document differently to find AST/metadata otherwise not available
+      const registryForDocumentInfo = processor.Extensions.create()
 
+      const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter()
+      processor.ConverterFactory.register(asciidoctorWebViewConverter, ['html5'])
       const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
 
       if (useKroki) {
         kroki.register(registry)
+      }
+
+      // the include processor is only run to identify includes, not to process them
+      if (getDocumentInformation) {
+        asciidoctorFindIncludeProcessor.register(registryForDocumentInfo)
+        asciidoctorFindIncludeProcessor.resetIncludes()
       }
 
       if (context && editor) {
@@ -129,20 +142,25 @@ export class AsciidocParser {
       }
 
       let options: { [key: string]: any } = {
-        safe: 'unsafe',
         attributes: attributes,
-        header_footer: true,
-        to_file: false,
-        sourcemap: true,
         backend: backend,
-        extension_registry: registry,
+        base_dir: baseDir,
+        extension_registry: getDocumentInformation ? registryForDocumentInfo : registry,
+        header_footer: true,
+        safe: 'unsafe',
+        sourcemap: true,
+        to_file: false,
       }
+
       if (baseDir) {
         options = { ...options, base_dir: baseDir }
       }
 
       try {
         this.document = processor.load(text, options)
+        if (getDocumentInformation) {
+          this.baseDocumentIncludeItems = asciidoctorFindIncludeProcessor.getBaseDocIncludes()
+        }
         const blocksWithLineNumber = this.document.findBy(function (b) {
           return typeof b.getLineNumber() !== 'undefined'
         })
@@ -150,7 +168,6 @@ export class AsciidocParser {
           block.addRole('data-line-' + block.getLineNumber())
         })
         const resultHTML = this.document.convert(options)
-        //let result = this.fixLinks(resultHTML);
         if (enableErrorDiagnostics) {
           const diagnostics = []
           memoryLogger.getMessages().forEach((error) => {
@@ -165,6 +182,8 @@ export class AsciidocParser {
             if (location) { //There is a source location
               if (location.getPath() === '<stdin>') { //error is within the file we are parsing
                 sourceLine = location.getLineNumber() - 1
+                // ensure errors are always associated with a valid line
+                sourceLine = sourceLine >= doc.lineCount ? doc.lineCount - 1 : sourceLine
                 sourceRange = doc.lineAt(sourceLine).range
               } else { //error is coming from an included file
                 relatedFile = error.getSourceLocation()
@@ -244,7 +263,7 @@ export class AsciidocParser {
       } else {
         RUBYOPT = '-E UTF-8:UTF-8'
       }
-      const options = { shell: true, cwd: path.dirname(this.filename), env: { ...process.env, RUBYOPT } }
+      const options = { shell: true, cwd: path.dirname(doc.fileName), env: { ...process.env, RUBYOPT } }
 
       const adocCmdArray = asciidoctorCommand.split(/(\s+)/).filter(function (e) {
         return e.trim().length > 0
@@ -321,7 +340,6 @@ export class AsciidocParser {
         resultData = Buffer.concat([resultData, data as Buffer])
       })
       asciidoctorProcess.on('close', () => {
-        //var result = this.fixLinks(result_data.toString());
         resolve(resultData.toString())
       })
       asciidoctorProcess.stdin.write(text)
@@ -336,8 +354,9 @@ export class AsciidocParser {
     context?: vscode.ExtensionContext,
     editor?: vscode.WebviewPanel): Promise<string> {
     const useAsciidoctorJs = vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctor_js')
+    this.filename = doc.fileName
     if (useAsciidoctorJs) {
-      return this.convertUsingJavascript(text, doc, forHTMLSave, backend, context, editor)
+      return this.convertUsingJavascript(text, doc, forHTMLSave, backend, false, context, editor)
     }
 
     return this.convertUsingApplication(text, doc, forHTMLSave, backend)

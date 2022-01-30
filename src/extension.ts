@@ -42,7 +42,7 @@ export function activate (context: vscode.ExtensionContext) {
   context.subscriptions.push(includeAutoCompletionMonitor)
 
   context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider))
-  context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider()))
+  context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider(engine)))
   context.subscriptions.push(vscode.languages.registerWorkspaceSymbolProvider(new AsciidocWorkspaceSymbolProvider(symbolProvider)))
   context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new AttributeCompleter(), '{'))
   const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager)
