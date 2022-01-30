@@ -74,28 +74,26 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
     // find a corrected mapping for line numbers
     const betterIncludeMatching = similarArrayMatch(
       Array.from(baseDocumentRegexIncludes.keys()),
-      baseDocumentProcessorIncludes.map((elem) => {
-        return elem[1]
-      }))
+      baseDocumentProcessorIncludes.map((entry) => { return entry.position })
+    )
 
     // update line items in reader results
-    baseDocumentProcessorIncludes = baseDocumentProcessorIncludes.map((elem, index) => {
-      elem[1] = betterIncludeMatching[index]
-      return elem
+    baseDocumentProcessorIncludes = baseDocumentProcessorIncludes.map((entry) => {
+      return { ...entry, index: betterIncludeMatching[entry.index] }
     })
 
     // create include links
     if (baseDocumentProcessorIncludes) {
       const base = path.dirname(textDocument.uri.fsPath)
-      baseDocumentProcessorIncludes.forEach((include) => {
-        const lineNo = include[1]
+      baseDocumentProcessorIncludes.forEach((entry) => {
+        const lineNo = entry.position - 1
         const documentLink = new vscode.DocumentLink(
           new vscode.Range(
             // don't link to the include:: part or the square bracket contents
             new vscode.Position(lineNo, 9),
-            new vscode.Position(lineNo, include[2] + 9)),
-          normalizeLink(document, include[0], base))
-        documentLink.tooltip = localize('documentLink.tooltip', 'Open file') + ' ' + include[0]
+            new vscode.Position(lineNo, entry.length + 9)),
+          normalizeLink(document, entry.name, base))
+        documentLink.tooltip = localize('documentLink.tooltip', 'Open file') + ' ' + entry.name
         results.push(documentLink)
       })
     }

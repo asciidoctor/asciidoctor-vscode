@@ -1,16 +1,14 @@
 interface IncludeEntry {
-  name: string
-  position: number
-  length: string
+  index: number,
+  name: string,
+  position: number,
+  length: string,
 }
 
-interface IncludeItem {
-  [index: number]: IncludeEntry
-}
+interface IncludeItems extends Array<IncludeEntry>{}
 
-interface IncludeItems extends Array<IncludeItem>{}
-
-let baseDocIncludes: IncludeItems[] = []
+let baseDocIncludes: IncludeItems = []
+let includeIndex = 0
 
 function findIncludeProcessor () {
   const self = this
@@ -23,7 +21,8 @@ function findIncludeProcessor () {
     // We don't meaningfully process the includes, we just want to identify
     // their line number and path if they belong in the base document
     if (reader.path === '<stdin>') {
-      baseDocIncludes.push([target, reader.lineno - 1, target.length])
+      baseDocIncludes.push({ index: includeIndex, name: target, position: reader.lineno - 1, length: target.length })
+      includeIndex += 1
     }
     return reader.pushInclude(['nothing'], target, target, 1, attrs)
   })
@@ -34,6 +33,7 @@ module.exports.getBaseDocIncludes = function getBaseDocIncludes () {
 }
 
 module.exports.resetIncludes = function resetIncludes () {
+  includeIndex = 0
   baseDocIncludes = []
 }
 
