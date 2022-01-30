@@ -514,7 +514,7 @@
 		"asciidoctor-kroki": "^0.15.4",
 		"eslint-config-standard": "^16.0.3",
 		"file-url": "^3.0.0",
-		"follow-redirects": "^1.10.0",
+		"follow-redirects": "^1.14.7",
 		"https-proxy-agent": "^4.0.0",
 		"moment": "^2.14.1",
 		"uuid": "^8.3.2",
