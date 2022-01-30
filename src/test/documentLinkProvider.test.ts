@@ -36,67 +36,12 @@ suite('asciidoc.DocumentLinkProvider', () => {
     assert.strictEqual(links.length, 0)
   })
 
-  test('Should not return anything for simple document without links', () => {
-    const links = getLinksForFile('# a\nfdasfdfsafsa')
+  test('Should not return anything for simple document without include', () => {
+    const links = getLinksForFile(`= a
+
+b
+
+c`)
     assert.strictEqual(links.length, 0)
-  })
-
-  test('Should detect basic http links', () => {
-    const links = getLinksForFile('a [b](https://example.com) c')
-    assert.strictEqual(links.length, 1)
-    const [link] = links
-    assertRangeEqual(link.range, new vscode.Range(0, 6, 0, 25))
-  })
-
-  test('Should detect basic workspace links', () => {
-    {
-      const links = getLinksForFile('a [b](./file) c')
-      assert.strictEqual(links.length, 1)
-      const [link] = links
-      assertRangeEqual(link.range, new vscode.Range(0, 6, 0, 12))
-    }
-    {
-      const links = getLinksForFile('a [b](file.png) c')
-      assert.strictEqual(links.length, 1)
-      const [link] = links
-      assertRangeEqual(link.range, new vscode.Range(0, 6, 0, 14))
-    }
-  })
-
-  test('Should detect links with title', () => {
-    const links = getLinksForFile('a [b](https://example.com "abc") c')
-    assert.strictEqual(links.length, 1)
-    const [link] = links
-    assertRangeEqual(link.range, new vscode.Range(0, 6, 0, 25))
-  })
-
-  test('Should handle links with balanced parens', () => {
-    {
-      const links = getLinksForFile('a [b](https://example.com/a()c) c')
-      assert.strictEqual(links.length, 1)
-      const [link] = links
-      assertRangeEqual(link.range, new vscode.Range(0, 6, 0, 30))
-    }
-    {
-      const links = getLinksForFile('a [b](https://example.com/a(b)c) c')
-      assert.strictEqual(links.length, 1)
-      const [link] = links
-      assertRangeEqual(link.range, new vscode.Range(0, 6, 0, 31))
-    }
-    {
-      // #49011
-      const links = getLinksForFile('[A link](http://ThisUrlhasParens/A_link(in_parens))')
-      assert.strictEqual(links.length, 1)
-      const [link] = links
-      assertRangeEqual(link.range, new vscode.Range(0, 9, 0, 50))
-    }
-  })
-
-  test('Should handle two links without space', () => {
-    const links = getLinksForFile('a ([test](test)[test2](test2)) c')
-    assert.strictEqual(links.length, 2)
-    const [link1, link2] = links
-    assertRangeEqual(link1.range, new vscode.Range(0, 10, 0, 14))
-    assertRangeEqual(link2.range, new vscode.Range(0, 23, 0, 28))
   })
 })
