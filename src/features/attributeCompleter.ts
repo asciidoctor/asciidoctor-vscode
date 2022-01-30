@@ -3,18 +3,22 @@ import * as vscode from 'vscode'
 import { AsciidocParser } from '../asciidocParser'
 
 export class AttributeCompleter {
-  provideCompletionItems (document: vscode.TextDocument, _position: vscode.Position) {
-    const adoc = new AsciidocParser(document.uri.fsPath)
-    adoc.parseText(document.getText(), document)
-    const attributes = adoc.document.getAttributes()
-    const attribs = []
+  constructor (private readonly extensionUri: vscode.Uri) {
+  }
 
-    for (const key in attributes) {
-      const attrib = new vscode.CompletionItem(key, vscode.CompletionItemKind.Variable)
-      attrib.detail = attributes[key].toString()
-      attribs.push(attrib)
+  async provideCompletionItems (textDocument: vscode.TextDocument, _position: vscode.Position) {
+    const { document } = await new AsciidocParser(this.extensionUri).parseText(textDocument.getText(), textDocument)
+    if (document) {
+      const attributes = document.getAttributes()
+      const attribs = []
+
+      for (const key in attributes) {
+        const attrib = new vscode.CompletionItem(key, vscode.CompletionItemKind.Variable)
+        attrib.detail = attributes[key].toString()
+        attribs.push(attrib)
+      }
+
+      return attribs
     }
-
-    return attribs
   }
 }

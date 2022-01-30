@@ -5,7 +5,6 @@ import * as path from 'path'
 import { exec, spawn } from 'child_process'
 import { uuidv4 } from 'uuid'
 import * as zlib from 'zlib'
-import { AsciidocParser } from '../asciidocParser'
 import { AsciidocEngine } from '../asciidocEngine'
 import { Command } from '../commandManager'
 
@@ -82,15 +81,13 @@ export class ExportAsPDF implements Command {
         .getConfiguration('asciidoc')
         .get('wkHTMLtoPDFPath', '')
 
-      const parser = new AsciidocParser(path.resolve(doc.fileName))
-      const body = await this.engine.render(doc.uri, true, text, false, 'html5')
-      const html = body
-      const showTitlePage = parser.getAttribute('showTitlePage')
-      const author = parser.getAttribute('author')
-      const email = parser.getAttribute('email')
-      const doctitle: string | undefined = parser.getAttribute('doctitle')
-      const titlePageLogo: string | undefined = parser.getAttribute('titlePageLogo')
-      const footerCenter: string | undefined = parser.getAttribute('footer-center')
+      const { output: html, document } = await this.engine.render(doc.uri, true, text, false, 'html5')
+      const showTitlePage = document?.getAttribute('showTitlePage')
+      const author = document?.getAttribute('author')
+      const email = document?.getAttribute('email')
+      const doctitle: string | undefined = document?.getAttribute('doctitle')
+      const titlePageLogo: string | undefined = document?.getAttribute('titlePageLogo')
+      const footerCenter: string | undefined = document?.getAttribute('footer-center')
       let cover: string | undefined
       let imageHTML: string = ''
       if (!(showTitlePage === null)) {
