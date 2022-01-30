@@ -31,7 +31,7 @@ export class SaveDocbook implements Command {
     const config = vscode.workspace.getConfiguration('asciidoc', doc.uri)
     const docbookVersion = config.get<string>('saveDocbook.docbookVersion', 'docbook5')
 
-    const {output} = await this.engine.render(doc.uri, true, text, true, docbookVersion)
+    const { output } = await this.engine.render(doc.uri, true, text, true, docbookVersion)
 
     fs.writeFile(fsPath, output, function (err) {
       if (err) {

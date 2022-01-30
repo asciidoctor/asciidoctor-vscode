@@ -2,7 +2,7 @@ import * as vscode from 'vscode'
 import * as path from 'path'
 import { spawn } from 'child_process'
 import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
-import { Asciidoctor } from "@asciidoctor/core";
+import { Asciidoctor } from '@asciidoctor/core'
 
 const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcessor')
 
@@ -220,7 +220,7 @@ export class AsciidocParser {
             this.errorCollection.set(doc.uri, diagnostics)
           }
         }
-        resolve({html: resultHTML, document})
+        resolve({ html: resultHTML, document })
       } catch (e) {
         vscode.window.showErrorMessage(e.toString())
         reject(e)
@@ -350,6 +350,6 @@ export class AsciidocParser {
     }
 
     const html = await this.convertUsingApplication(text, doc, forHTMLSave, backend)
-    return {html}
+    return { html }
   }
 }

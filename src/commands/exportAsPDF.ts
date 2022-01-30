@@ -5,7 +5,6 @@ import * as path from 'path'
 import { exec, spawn } from 'child_process'
 import { uuidv4 } from 'uuid'
 import * as zlib from 'zlib'
-import { AsciidocParser } from '../asciidocParser'
 import { AsciidocEngine } from '../asciidocEngine'
 import { Command } from '../commandManager'
 
@@ -82,7 +81,7 @@ export class ExportAsPDF implements Command {
         .getConfiguration('asciidoc')
         .get('wkHTMLtoPDFPath', '')
 
-      const {output: html, document} = await this.engine.render(doc.uri, true, text, false, 'html5')
+      const { output: html, document } = await this.engine.render(doc.uri, true, text, false, 'html5')
       const showTitlePage = document?.getAttribute('showTitlePage')
       const author = document?.getAttribute('author')
       const email = document?.getAttribute('email')

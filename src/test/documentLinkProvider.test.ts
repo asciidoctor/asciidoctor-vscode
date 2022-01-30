@@ -7,8 +7,7 @@ import 'mocha'
 import * as vscode from 'vscode'
 import LinkProvider from '../features/documentLinkProvider'
 import { InMemoryDocument } from './inMemoryDocument'
-import SymbolProvider from "../features/documentSymbolProvider";
-import { createNewAsciidocEngine } from "./engine";
+import { createNewAsciidocEngine } from './engine'
 
 const testFileName = vscode.Uri.file('test.md')
 
