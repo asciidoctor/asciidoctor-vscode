@@ -9,6 +9,7 @@ const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcess
 const asciidoctor = require('@asciidoctor/core')
 const docbook = require('@asciidoctor/docbook-converter')
 const kroki = require('asciidoctor-kroki')
+const mathjax3 = require('asciidoctor-mathjax3')
 const processor = asciidoctor()
 const highlightjsBuiltInSyntaxHighlighter = processor.SyntaxHighlighter.for('highlight.js')
 const highlightjsAdapter = require('./highlightjs-adapter')
@@ -17,22 +18,22 @@ export class AsciidocParser {
   private stylesdir: string
   public baseDocumentIncludeItems = null
 
-  constructor (extensionUri: vscode.Uri, private errorCollection: vscode.DiagnosticCollection = null) {
+  constructor(extensionUri: vscode.Uri, private errorCollection: vscode.DiagnosticCollection = null) {
     this.stylesdir = vscode.Uri.joinPath(extensionUri, 'media').toString()
   }
 
-  public getMediaDir (text) {
+  public getMediaDir(text) {
     return text.match(/^\\s*:mediadir:/)
   }
 
-  public async convertUsingJavascript (text: string,
+  public async convertUsingJavascript(text: string,
     doc: vscode.TextDocument,
     forHTMLSave: boolean,
     backend: string,
     getDocumentInformation: boolean,
     context?: vscode.ExtensionContext,
     editor?: vscode.WebviewPanel) {
-    return new Promise<{html: string, document: Asciidoctor.Document}>((resolve, reject) => {
+    return new Promise<{ html: string, document: Asciidoctor.Document }>((resolve, reject) => {
       const workspacePath = vscode.workspace.workspaceFolders
       const containsStyle = !(text.match(/'^\\s*:(stylesheet|stylesdir)/img) == null)
       const useEditorStylesheet = vscode.workspace.getConfiguration('asciidoc', null).get('preview.useEditorStyle', false)
@@ -64,6 +65,11 @@ export class AsciidocParser {
 
       if (useKroki) {
         kroki.register(registry)
+      }
+
+      const stemRenderer = vscode.workspace.getConfiguration('asciidoc', null).get('stem_renderer')
+      switch (stemRenderer) {
+        case 'MathJax3': mathjax3.register(registry); break;
       }
 
       // the include processor is only run to identify includes, not to process them
@@ -153,10 +159,10 @@ export class AsciidocParser {
         if (getDocumentInformation) {
           this.baseDocumentIncludeItems = asciidoctorFindIncludeProcessor.getBaseDocIncludes()
         }
-        const blocksWithLineNumber = document.findBy(function (b) {
+        const blocksWithLineNumber = document.findBy(function(b) {
           return typeof b.getLineNumber() !== 'undefined'
         })
-        blocksWithLineNumber.forEach(function (block) {
+        blocksWithLineNumber.forEach(function(block) {
           block.addRole('data-line-' + block.getLineNumber())
         })
         const resultHTML = document.convert(options)
@@ -228,7 +234,7 @@ export class AsciidocParser {
     })
   }
 
-  private async convertUsingApplication (text: string, doc: vscode.TextDocument, forHTMLSave: boolean, backend: string): Promise<string> {
+  private async convertUsingApplication(text: string, doc: vscode.TextDocument, forHTMLSave: boolean, backend: string): Promise<string> {
     const documentPath = path.dirname(doc.fileName).replace('"', '\\"')
     const workspacePath = vscode.workspace.workspaceFolders
     const containsStyle = !(text.match(/'^\\s*:(stylesheet|stylesdir):/img) == null)
@@ -256,7 +262,7 @@ export class AsciidocParser {
       }
       const options = { shell: true, cwd: path.dirname(doc.fileName), env: { ...process.env, RUBYOPT } }
 
-      const adocCmdArray = asciidoctorCommand.split(/(\s+)/).filter(function (e) {
+      const adocCmdArray = asciidoctorCommand.split(/(\s+)/).filter(function(e) {
         return e.trim().length > 0
       })
       const adocCmd = adocCmdArray[0]
@@ -338,12 +344,12 @@ export class AsciidocParser {
     })
   }
 
-  public async parseText (text: string,
+  public async parseText(text: string,
     doc: vscode.TextDocument,
     forHTMLSave: boolean = false,
     backend: string = 'html',
     context?: vscode.ExtensionContext,
-    editor?: vscode.WebviewPanel): Promise<{html: string, document?: Asciidoctor.Document}> {
+    editor?: vscode.WebviewPanel): Promise<{ html: string, document?: Asciidoctor.Document }> {
     const useAsciidoctorJs = vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctor_js')
     if (useAsciidoctorJs) {
       return this.convertUsingJavascript(text, doc, forHTMLSave, backend, false, context, editor)

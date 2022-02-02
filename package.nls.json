@@ -1,9 +1,8 @@
 {
 	"displayName": "AsciiDoc",
 	"description": "Provides rich language support for AsciiDoc.",
-
 	"asciidoc.exportAsPDF.title": "Export document as PDF",
-	"asciidoc.pasteImage.title" : "Paste Image",
+	"asciidoc.pasteImage.title": "Paste Image",
 	"asciidoc.preview.title": "Open Preview",
 	"asciidoc.preview.refresh.title": "Refresh Preview",
 	"asciidoc.preview.toggleLock.title": "Toggle Preview Locking",
@@ -16,7 +15,6 @@
 	"asciidoc.showLockedPreviewToSide.title": "Open Locked Preview to the Side",
 	"asciidoc.showPreviewSecuritySelector.title": "Change Preview Security Settings",
 	"asciidoc.showSource.title": "Show Source",
-
 	"asciidoc.asciidoctor_command.desc": "Full path for the asciidoctor binary/executable",
 	"asciidoc.asciidoctorpdf_command.desc": "Full path for the asciidoctor binary/executable",
 	"asciidoc.preview.attributes.desc": "Set attributes to be used in the preview. Attributes need to be written as an object of type {string: string}",
@@ -39,6 +37,7 @@
 	"asciidoc.use_asciidoctor_js.desc": "Use asciidoctor js instead of the 'asciidoctor_command'",
 	"asciidoc.use_asciidoctorpdf.desc": "Use asciidoctor-pdf instead of the integrated renderer",
 	"asciidoc.use_kroki.desc": "Enable kroki integration to generate diagrams.",
+	"asciidoc.stem_renderer.desc": "Sets stem renderer to LaTeX formulae.",
 	"asciidoc.wkhtmltopdf_path.desc": "Full path for the wkhtmltopdf binary/executable",
 	"asciidoc.forceUnixStyleSeparator.desc": "Force set the file separator style to unix style. If set false, separator style will follow the system style.",
 	"asciidoc.preview.openAsciiDocLinks.desc": "How should clicking on links to AsciiDoc files be handled in the preview.",

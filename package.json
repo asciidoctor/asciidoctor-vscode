@@ -416,6 +416,15 @@
 					"default": false,
 					"description": "%asciidoc.use_kroki.desc%"
 				},
+				"asciidoc.stem_renderer": {
+					"type": "string",
+					"enum": [
+						"MathJax2",
+						"MathJax3"
+					],
+					"default": "MathJax2",
+					"description": "%asciidoc.stem_renderer.desc%"
+				},
 				"asciidoc.wkhtmltopdf_path": {
 					"type": "string",
 					"default": "",
@@ -512,6 +521,7 @@
 		"@orcid/bibtex-parse-js": "^0.0.25",
 		"@types/vscode": "^1.31.0",
 		"asciidoctor-kroki": "^0.15.4",
+		"asciidoctor-mathjax3": "0.0.2",
 		"eslint-config-standard": "^16.0.3",
 		"file-url": "^3.0.0",
 		"follow-redirects": "^1.14.7",
