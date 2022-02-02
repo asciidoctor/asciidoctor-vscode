@@ -28,16 +28,16 @@ function findIncludeProcessor () {
   })
 }
 
-module.exports.getBaseDocIncludes = function getBaseDocIncludes () {
+export function getBaseDocIncludes () {
   return baseDocIncludes
 }
 
-module.exports.resetIncludes = function resetIncludes () {
+export function resetIncludes () {
   includeIndex = 0
   baseDocIncludes = []
 }
 
-module.exports.register = function register (registry) {
+export function register (registry) {
   if (typeof registry.register === 'function') {
     registry.register(function () {
       this.includeProcessor(findIncludeProcessor)
