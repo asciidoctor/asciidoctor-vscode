@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.9.3
+
+- Build the web extension when packaging (#500)
+
 ## 2.9.2
 
 - Initial work to make the extension available as a Web Extension (#473)
