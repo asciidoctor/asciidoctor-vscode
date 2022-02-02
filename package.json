@@ -472,7 +472,7 @@
 		"build-web": "webpack --config extension-browser.webpack.config --mode none",
 		"build-preview": "webpack --config extension-preview.webpack.config --mode production",
 		"build-ext": "tsc -p ./",
-		"package": "npm run build && vsce package",
+		"package": "npm run build && npm run build-web && vsce package",
 		"deploy": "vsce publish -p",
 		"lint": "eslint 'src/**/*.ts' 'preview-src/**/*.ts' --format unix",
 		"lint:fix": "npm run lint -- --fix",
