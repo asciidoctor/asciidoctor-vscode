@@ -53,7 +53,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
     _token: vscode.CancellationToken
   ): Promise<vscode.DocumentLink[]> {
     const asciidocParser = this.engine.getEngine()
-    const { document } = await asciidocParser.convertUsingJavascript(textDocument.getText(), textDocument, false, 'html', true)
+    const { document } = await asciidocParser.convertUsingJavascript(textDocument.getText(), textDocument, false, 'webview-html5', true)
 
     const results: vscode.DocumentLink[] = []
     const lines = document.getSourceLines()

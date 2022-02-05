@@ -65,7 +65,7 @@ export class AsciidocParser {
       const registryForDocumentInfo = processor.Extensions.create()
 
       const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter()
-      processor.ConverterFactory.register(asciidoctorWebViewConverter, ['html5'])
+      processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])
       const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
 
       if (useKroki) {
@@ -347,7 +347,7 @@ export class AsciidocParser {
   public async parseText (text: string,
     doc: vscode.TextDocument,
     forHTMLSave: boolean = false,
-    backend: string = 'html',
+    backend: string = 'webview-html5',
     context?: vscode.ExtensionContext,
     editor?: vscode.WebviewPanel): Promise<{html: string, document?: Asciidoctor.Document}> {
     const useAsciidoctorJs = vscode.workspace.getConfiguration('asciidoc', null).get('use_asciidoctor_js')
@@ -355,7 +355,8 @@ export class AsciidocParser {
       return this.convertUsingJavascript(text, doc, forHTMLSave, backend, false, context, editor)
     }
 
-    const html = await this.convertUsingApplication(text, doc, forHTMLSave, backend)
+    // AsciidoctorWebViewConverter is not available in asciidoctor (Ruby) CLI
+    const html = await this.convertUsingApplication(text, doc, forHTMLSave, backend === 'webview-html5' ? 'html5' : backend)
     return { html }
   }
 }

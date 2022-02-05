@@ -48,7 +48,7 @@ export class AsciidocEngine {
   public async render (documentUri: vscode.Uri,
     stripFrontmatter: boolean,
     text: string, forHTML: boolean = false,
-    backend: string = 'html5',
+    backend: string = 'webview-html5',
     context?: vscode.ExtensionContext,
     editor?: vscode.WebviewPanel): Promise<{output: string, document?: Asciidoctor.Document}> {
     let offset = 0
