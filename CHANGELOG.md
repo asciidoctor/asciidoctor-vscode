@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2.9.4
+
+- Fix regression in default preview styling (#501)
+
 ## 2.9.3
 
 - Build the web extension when packaging (#500)

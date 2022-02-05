@@ -18,7 +18,13 @@ export class AsciidocParser {
   public baseDocumentIncludeItems = null
 
   constructor (extensionUri: vscode.Uri, private errorCollection: vscode.DiagnosticCollection = null) {
-    this.stylesdir = vscode.Uri.joinPath(extensionUri, 'media').toString()
+    // Asciidoctor.js in the browser environment works with URIs however for desktop clients
+    // the stylesdir attribute is expected to look like a file system path (especially on Windows)
+    if (process.env.BROWSER_ENV) {
+      this.stylesdir = vscode.Uri.joinPath(extensionUri, 'media').toString()
+    } else {
+      this.stylesdir = vscode.Uri.joinPath(extensionUri, 'media').fsPath
+    }
   }
 
   public getMediaDir (text) {
