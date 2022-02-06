@@ -3,6 +3,7 @@
 ## 2.9.4
 
 - Fix regression in default preview styling (#501)
+- Upgrade Asciidoctor.js to 2.2.6 (#514)
 
 ## 2.9.3
 
