@@ -472,7 +472,6 @@
 		"build-web": "webpack --config extension-browser.webpack.config --mode none",
 		"build-preview": "webpack --config extension-preview.webpack.config --mode production",
 		"build-ext": "tsc -p ./",
-		"build-ext": "tsc -p ./",
 		"package": "npm run build && npm run build-web && vsce package",
 		"deploy": "vsce publish -p",
 		"lint": "eslint 'src/**/*.ts' 'preview-src/**/*.ts' --format unix",
@@ -507,7 +506,7 @@
 		"webpack-cli": "^4.9.1"
 	},
 	"dependencies": {
-		"@asciidoctor/core": "2.2.5",
+		"@asciidoctor/core": "2.2.6",
 		"@asciidoctor/docbook-converter": "^2.0.0",
 		"@orcid/bibtex-parse-js": "^0.0.25",
 		"@types/vscode": "^1.31.0",
