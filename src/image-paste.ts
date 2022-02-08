@@ -1,7 +1,6 @@
 import * as path from 'path'
 import * as vscode from 'vscode'
 import { spawn } from 'child_process'
-import * as moment from 'moment'
 import * as fs from 'fs'
 
 import { AsciidocParser } from './asciidocParser'
@@ -143,9 +142,12 @@ export namespace Import {
 
       const editor = vscode.window.activeTextEditor
 
-      let filename = moment()
-        .format('d-M-YYYY-HH-mm-ss-A.png')
-        .toString() //default filename
+      const currentDateString = new Date()
+        .toISOString()
+        .replace(':', '-')
+        .replace('.', '-')
+      //default filename
+      let filename = `${currentDateString}.png`
       let alttext = '' //todo:...
       const directory = await this.getCurrentImagesDir()
 
