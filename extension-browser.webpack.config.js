@@ -27,7 +27,7 @@ module.exports = {
       'crypto': false,
       'stream': false,
       'path': require.resolve('path-browserify'),
-      'util': require.resolve('util')
+      'util': false
     }
   },
   module: {
