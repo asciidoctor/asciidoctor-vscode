@@ -4,10 +4,10 @@
 import { MessagePoster } from './messaging'
 
 export class StyleLoadingMonitor {
-  private unloadedStyles: string[] = [];
-  private finishedLoading: boolean = false;
+  private unloadedStyles: string[] = []
+  private finishedLoading: boolean = false
 
-  private poster?: MessagePoster;
+  private poster?: MessagePoster
 
   constructor () {
     const onStyleLoadError = (event: any) => {

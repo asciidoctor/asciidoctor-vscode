@@ -7,7 +7,7 @@ import { Command } from '../commandManager'
 import { AsciidocPreviewManager } from '../features/previewManager'
 
 export class ShowSourceCommand implements Command {
-  public readonly id = 'asciidoc.showSource';
+  public readonly id = 'asciidoc.showSource'
 
   constructor (private readonly previewManager: AsciidocPreviewManager) {
     this.previewManager = previewManager

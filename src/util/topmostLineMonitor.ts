@@ -7,11 +7,11 @@ import { disposeAll } from '../util/dispose'
 import { isAsciidocFile } from './file'
 
 export class AsciidocFileTopmostLineMonitor {
-  private readonly disposables: vscode.Disposable[] = [];
+  private readonly disposables: vscode.Disposable[] = []
 
-  private readonly pendingUpdates = new Map<string, number>();
+  private readonly pendingUpdates = new Map<string, number>()
 
-  private readonly throttle = 50;
+  private readonly throttle = 50
 
   constructor () {
     vscode.window.onDidChangeTextEditorVisibleRanges((event) => {
@@ -28,8 +28,8 @@ export class AsciidocFileTopmostLineMonitor {
     disposeAll(this.disposables)
   }
 
-  private readonly _onDidChangeTopmostLineEmitter = new vscode.EventEmitter<{ resource: vscode.Uri, line: number }>();
-  public readonly onDidChangeTopmostLine = this._onDidChangeTopmostLineEmitter.event;
+  private readonly _onDidChangeTopmostLineEmitter = new vscode.EventEmitter<{ resource: vscode.Uri, line: number }>()
+  public readonly onDidChangeTopmostLine = this._onDidChangeTopmostLineEmitter.event
 
   private updateLine (
     resource: vscode.Uri,

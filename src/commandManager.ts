@@ -11,7 +11,7 @@ export interface Command {
 }
 
 export class CommandManager {
-  private readonly commands = new Map<string, vscode.Disposable>();
+  private readonly commands = new Map<string, vscode.Disposable>()
 
   public dispose () {
     for (const registration of this.commands.values()) {

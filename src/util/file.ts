@@ -11,8 +11,8 @@ export function isAsciidocFile (document: vscode.TextDocument) {
 }
 
 export class FileInfo {
-  file: string;
-  isFile: boolean;
+  file: string
+  isFile: boolean
 
   constructor (path: string, file: string) {
     this.file = file

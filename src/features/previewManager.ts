@@ -12,13 +12,13 @@ import { AsciidocPreviewConfigurationManager } from './previewConfig'
 import { AsciidocContentProvider } from './previewContentProvider'
 
 export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer {
-  private static readonly asciidocPreviewActiveContextKey = 'asciidocPreviewFocus';
+  private static readonly asciidocPreviewActiveContextKey = 'asciidocPreviewFocus'
 
-  private readonly _topmostLineMonitor = new AsciidocFileTopmostLineMonitor();
-  private readonly _previewConfigurations = new AsciidocPreviewConfigurationManager();
-  private readonly _previews: AsciidocPreview[] = [];
-  private _activePreview: AsciidocPreview | undefined = undefined;
-  private readonly _disposables: vscode.Disposable[] = [];
+  private readonly _topmostLineMonitor = new AsciidocFileTopmostLineMonitor()
+  private readonly _previewConfigurations = new AsciidocPreviewConfigurationManager()
+  private readonly _previews: AsciidocPreview[] = []
+  private _activePreview: AsciidocPreview | undefined = undefined
+  private readonly _disposables: vscode.Disposable[] = []
 
   public constructor (
     private readonly _contentProvider: AsciidocContentProvider,

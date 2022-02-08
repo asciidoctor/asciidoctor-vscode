@@ -24,7 +24,7 @@ export interface SkinnyTextDocument {
 }
 
 export class TableOfContentsProvider {
-  private toc?: TocEntry[];
+  private toc?: TocEntry[]
 
   public constructor (private engine: AsciidocEngine, private document: SkinnyTextDocument) {
     this.engine = engine

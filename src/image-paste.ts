@@ -39,13 +39,13 @@ export namespace Import {
   }
 
   export class Configuration {
-    DocumentDirectory: string = '';
-    ImagesDirectory: string;
-    ImageFilename: string;
+    DocumentDirectory: string = ''
+    ImagesDirectory: string
+    ImageFilename: string
 
-    selectionRole: SelectionRole = SelectionRole.Filename;
-    encoding: FilenameEncoding = FilenameEncoding.URIEncoding;
-    mode: SelectionMode = SelectionMode.Replace;
+    selectionRole: SelectionRole = SelectionRole.Filename
+    encoding: FilenameEncoding = FilenameEncoding.URIEncoding
+    mode: SelectionMode = SelectionMode.Replace
   }
 
   enum SelectionContext {
@@ -55,7 +55,7 @@ export namespace Import {
   }
 
   class ScriptArgumentError extends Error {
-    message: string;
+    message: string
   }
 
   export class Image {

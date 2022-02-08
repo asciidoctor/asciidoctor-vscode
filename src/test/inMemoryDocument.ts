@@ -5,7 +5,7 @@
 import * as vscode from 'vscode'
 
 export class InMemoryDocument implements vscode.TextDocument {
-  private readonly _lines: string[];
+  private readonly _lines: string[]
 
   constructor (
     public readonly uri: vscode.Uri,
@@ -14,12 +14,12 @@ export class InMemoryDocument implements vscode.TextDocument {
     this._lines = this._contents.split(/\n/g)
   }
 
-  isUntitled: boolean = false;
-  languageId: string = '';
-  version: number = 1;
-  isDirty: boolean = false;
-  isClosed: boolean = false;
-  eol: vscode.EndOfLine = vscode.EndOfLine.LF;
+  isUntitled: boolean = false
+  languageId: string = ''
+  version: number = 1
+  isDirty: boolean = false
+  isClosed: boolean = false
+  eol: vscode.EndOfLine = vscode.EndOfLine.LF
 
   get fileName (): string {
     return this.uri.fsPath

@@ -12,8 +12,8 @@ import { createNewAsciidocEngine } from './engine'
 const testFileName = vscode.Uri.file('test.md')
 
 const noopToken = new class implements vscode.CancellationToken {
-  private _onCancellationRequestedEmitter = new vscode.EventEmitter<void>();
-  public onCancellationRequested = this._onCancellationRequestedEmitter.event;
+  private _onCancellationRequestedEmitter = new vscode.EventEmitter<void>()
+  public onCancellationRequested = this._onCancellationRequestedEmitter.event
 
   get isCancellationRequested () { return false }
 }()

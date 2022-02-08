@@ -18,12 +18,12 @@ export interface WorkspaceAsciidocDocumentProvider {
 }
 
 class VSCodeWorkspaceAsciidocDocumentProvider implements WorkspaceAsciidocDocumentProvider {
-  private readonly _onDidChangeAsciidocDocumentEmitter = new vscode.EventEmitter<SkinnyTextDocument>();
-  private readonly _onDidCreateAsciidocDocumentEmitter = new vscode.EventEmitter<SkinnyTextDocument>();
-  private readonly _onDidDeleteAsciidocDocumentEmitter = new vscode.EventEmitter<vscode.Uri>();
+  private readonly _onDidChangeAsciidocDocumentEmitter = new vscode.EventEmitter<SkinnyTextDocument>()
+  private readonly _onDidCreateAsciidocDocumentEmitter = new vscode.EventEmitter<SkinnyTextDocument>()
+  private readonly _onDidDeleteAsciidocDocumentEmitter = new vscode.EventEmitter<vscode.Uri>()
 
-  private _watcher: vscode.FileSystemWatcher | undefined;
-  private _disposables: vscode.Disposable[] = [];
+  private _watcher: vscode.FileSystemWatcher | undefined
+  private _disposables: vscode.Disposable[] = []
 
   public dispose () {
     this._onDidChangeAsciidocDocumentEmitter.dispose()
@@ -96,7 +96,7 @@ class VSCodeWorkspaceAsciidocDocumentProvider implements WorkspaceAsciidocDocume
 }
 
 export default class AsciidocWorkspaceSymbolProvider implements vscode.WorkspaceSymbolProvider {
-  private _symbolCache = new Map<string, Lazy<Promise<vscode.SymbolInformation[]>>>();
+  private _symbolCache = new Map<string, Lazy<Promise<vscode.SymbolInformation[]>>>()
   private _symbolCachePopulated: boolean = false
   private _disposables: vscode.Disposable[] = []
 

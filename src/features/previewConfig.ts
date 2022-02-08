@@ -9,20 +9,20 @@ export class AsciidocPreviewConfiguration {
     return new AsciidocPreviewConfiguration(resource)
   }
 
-  public readonly scrollBeyondLastLine: boolean;
-  public readonly wordWrap: boolean;
-  public readonly previewFrontMatter: string;
-  public readonly lineBreaks: boolean;
-  public readonly doubleClickToSwitchToEditor: boolean;
-  public readonly scrollEditorWithPreview: boolean;
-  public readonly scrollPreviewWithEditor: boolean;
-  public readonly markEditorSelection: boolean;
+  public readonly scrollBeyondLastLine: boolean
+  public readonly wordWrap: boolean
+  public readonly previewFrontMatter: string
+  public readonly lineBreaks: boolean
+  public readonly doubleClickToSwitchToEditor: boolean
+  public readonly scrollEditorWithPreview: boolean
+  public readonly scrollPreviewWithEditor: boolean
+  public readonly markEditorSelection: boolean
 
-  public readonly lineHeight: number;
-  public readonly fontSize: number;
-  public readonly fontFamily: string | undefined;
-  public readonly styles: string[];
-  public readonly refreshInterval: number;
+  public readonly lineHeight: number
+  public readonly fontSize: number
+  public readonly fontFamily: string | undefined
+  public readonly styles: string[]
+  public readonly refreshInterval: number
 
   private constructor (resource: vscode.Uri) {
     const editorConfig = vscode.workspace.getConfiguration('editor', resource)
@@ -79,7 +79,7 @@ export class AsciidocPreviewConfiguration {
 }
 
 export class AsciidocPreviewConfigurationManager {
-  private readonly previewConfigurationsForWorkspaces = new Map<string, AsciidocPreviewConfiguration>();
+  private readonly previewConfigurationsForWorkspaces = new Map<string, AsciidocPreviewConfiguration>()
 
   public loadAndCacheConfiguration (
     resource: vscode.Uri

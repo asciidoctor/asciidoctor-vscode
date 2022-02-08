@@ -29,11 +29,11 @@ function isString (value: any): value is string {
 }
 
 export class Logger {
-  private trace?: TraceType;
+  private trace?: TraceType
 
   private readonly outputChannel = lazy(() =>
     vscode.window.createOutputChannel('Asciidoc')
-  );
+  )
 
   constructor () {
     this.updateConfiguration()

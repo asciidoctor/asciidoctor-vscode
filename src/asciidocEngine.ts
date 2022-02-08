@@ -11,9 +11,9 @@ import { Asciidoctor } from '@asciidoctor/core'
 const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/
 
 export class AsciidocEngine {
-  private ad?: AsciidocParser;
+  private ad?: AsciidocParser
 
-  private firstLine?: number;
+  private firstLine?: number
 
   public constructor (
     readonly extensionPreviewResourceProvider: AsciidocContributions,

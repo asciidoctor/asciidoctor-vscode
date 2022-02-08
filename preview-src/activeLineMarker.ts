@@ -4,7 +4,7 @@
 import { getElementsForSourceLine } from './scroll-sync'
 
 export class ActiveLineMarker {
-  private _current: any;
+  private _current: any
 
   onDidChangeTextEditorSelection (line: number) {
     const { previous } = getElementsForSourceLine(line)
