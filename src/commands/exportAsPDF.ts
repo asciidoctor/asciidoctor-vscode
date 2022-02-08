@@ -254,7 +254,6 @@ export async function html2pdf (html: string, binaryPath: string, coverFilePath:
   const documentPath = path.dirname(filename)
 
   return new Promise((resolve, reject) => {
-    const options = { cwdir: documentPath, stdio: ['pipe', 'ignore', 'pipe'] }
     let cmdArguments = ['--encoding', ' utf-8', '--javascript-delay', '1000']
     if (footerCenter !== null) {
       cmdArguments = cmdArguments.concat(['--footer-center', footerCenter])
@@ -263,7 +262,7 @@ export async function html2pdf (html: string, binaryPath: string, coverFilePath:
       cmdArguments = cmdArguments.concat(['cover', coverFilePath])
     }
     cmdArguments = cmdArguments.concat(['-', filename])
-    const command = spawn(binaryPath, cmdArguments, options)
+    const command = spawn(binaryPath, cmdArguments, { cwd: documentPath, stdio: ['pipe', 'ignore', 'pipe'] })
     let errorData = ''
     command.stdin.write(html)
     command.stdin.end()
