@@ -7,9 +7,9 @@ import { uuidv4 } from 'uuid'
 import * as zlib from 'zlib'
 import { AsciidocEngine } from '../asciidocEngine'
 import { Command } from '../commandManager'
-
-import url = require('url')
 import { Logger } from '../logger'
+import { Asciidoctor } from '@asciidoctor/core'
+import url = require('url');
 
 export class ExportAsPDF implements Command {
   public readonly id = 'asciidoc.exportAsPDF'
@@ -34,7 +34,7 @@ export class ExportAsPDF implements Command {
       let pdfPath = ''
 
       const pdfUri = await vscode.window.showSaveDialog({ defaultUri: pdfFilename })
-      if (!(pdfUri === null || pdfUri === undefined)) {
+      if (pdfUri) {
         pdfPath = pdfUri.fsPath
       } else {
         console.error(`ERROR: invalid pdfUri "${pdfUri}"`)
@@ -82,94 +82,107 @@ export class ExportAsPDF implements Command {
         .get('wkHTMLtoPDFPath', '')
 
       const { output: html, document } = await this.engine.render(doc.uri, true, text, false, 'html5')
-      const showTitlePage = document?.getAttribute('showTitlePage')
-      const author = document?.getAttribute('author')
-      const email = document?.getAttribute('email')
-      const doctitle: string | undefined = document?.getAttribute('doctitle')
+      const showTitlePage = (document?.isAttribute('showTitlePage') as unknown) as boolean // incorrect type definition in Asciidoctor.js
       const titlePageLogo: string | undefined = document?.getAttribute('titlePageLogo')
       const footerCenter: string | undefined = document?.getAttribute('footer-center')
-      let cover: string | undefined
-      let imageHTML: string = ''
-      if (!(showTitlePage === null)) {
-        if (!(titlePageLogo === null)) {
-          const imageURL = titlePageLogo.startsWith('http') ? titlePageLogo : path.join(sourceName.dir, titlePageLogo)
-          imageHTML = (titlePageLogo === null) ? '' : `<img src="${imageURL}">`
-        }
-        const tmpFilePath = path.join(os.tmpdir(), uuidv4() + '.html')
-        const extensionContext = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode')
-        const styleHref = vscode.Uri.joinPath(extensionContext.extensionUri, 'media', 'all-centered.css')
-        const html = `\
-                <!DOCTYPE html>
-                <html>
-                    <head>
-                    <meta charset="UTF-8">
-                    <link rel="stylesheet" type="text/css" href="${styleHref}">
-                    </head>
-                    <body>
-                    <div class="outer">
-                        <div class="middle">
-                            <div class="inner">
-                                ${imageHTML}
-                                <h1>${doctitle}</h1>
-                                <p>${author} &lt;${email}&gt;</p>
-                            </div>
-                        </div>
-                    </div>
-                    </body>
-                </html>
-                `
-
-        fs.writeFileSync(tmpFilePath, html, 'utf-8')
-        cover = `cover ${tmpFilePath}`
-      }
-      const platform = process.platform
-      const ext = platform === 'win32' ? '.exe' : ''
-      const arch = process.arch
-      let binaryPath = path.resolve(path.join(__dirname, 'wkhtmltopdf-' + platform + '-' + arch + ext))
-
-      if (wkHTMLtoPDFPath !== '') { binaryPath = wkHTMLtoPDFPath }
+      const coverFilePath = showTitlePage ? createCoverFile(titlePageLogo, sourceName.dir, document) : undefined
+      const binaryPath = wkHTMLtoPDFPath || path.resolve(path.join(__dirname, `wkhtmltopdf-${process.platform}-${process.arch}${process.platform === 'win32' ? '.exe' : ''}`))
 
       if (!fs.existsSync(binaryPath)) {
         const label = await vscode.window.showInformationMessage('This feature requires wkhtmltopdf\ndo you want to download', 'Download')
         if (label !== 'Download') { return }
 
-        await vscode.window.withProgress({
+        const downloadSuccessful: boolean = await vscode.window.withProgress({
           location: vscode.ProgressLocation.Window,
           title: 'Downloading wkhtmltopdf',
           // cancellable: true
         }, async (progress) => {
           progress.report({ message: 'Downloading wkhtmltopdf...' })
-          const downloadURL = `https://github.com/joaompinto/wkhtmltopdf/releases/download/v0.0.1/wkhtmltopdf-${platform}-${arch}${ext}.gz`
+          const downloadURL = `https://github.com/joaompinto/wkhtmltopdf/releases/download/v0.0.1/wkhtmltopdf-${process.platform}-${process.arch}${process.platform === 'win32' ? '.exe' : ''}.gz`
           this.logger.log('Downloading ' + downloadURL)
-          await downloadFile(downloadURL, binaryPath + '.gz', progress).then(() => {
+          try {
+            await downloadFile(downloadURL, binaryPath + '.gz', progress)
             progress.report({ message: 'Unzipping wkhtmltopdf...' })
             const ungzip = zlib.createGunzip()
             const inp = fs.createReadStream(binaryPath + '.gz')
             const out = fs.createWriteStream(binaryPath)
             inp.pipe(ungzip).pipe(out)
             fs.chmodSync(binaryPath, 0x755)
-          }).catch(async (reason) => {
-            binaryPath = null
-            console.error('Error downloading', downloadURL, ' ', reason)
-            await vscode.window.showErrorMessage('Error installing wkhtmltopdf, ' + reason.toString())
-          })
+            return true
+          } catch (err) {
+            console.error('Error downloading', downloadURL, ' ', err)
+            await vscode.window.showErrorMessage('Error installing wkhtmltopdf, ' + err.toString())
+            return false
+          }
         })
-        if (binaryPath === null || binaryPath === undefined) { return }
+        if (!downloadSuccessful) {
+          // abort!
+          return
+        }
       }
-      const saveFilename = await vscode.window.showSaveDialog({ defaultUri: pdfFilename })
-      if (!(saveFilename === null || saveFilename === undefined)) {
-        await html2pdf(html, binaryPath, cover, footerCenter, saveFilename.fsPath)
-          .then((result) => { offerOpen(result) })
-          .catch((reason) => {
-            console.error('Got error', reason)
-            vscode.window.showErrorMessage('Error converting to PDF, ' + reason.toString())
-          })
+      const saveFileUri = await vscode.window.showSaveDialog({ defaultUri: pdfFilename })
+      if (saveFileUri) {
+        try {
+          const generatedPdf = await html2pdf(html, binaryPath, coverFilePath, footerCenter, saveFileUri.fsPath)
+          offerOpen(generatedPdf)
+        } catch (err) {
+          console.error('Got error', err)
+          await vscode.window.showErrorMessage('Error converting to PDF, ' + err.toString())
+        } finally {
+          if (coverFilePath) {
+            // remove temporary file
+            fs.unlinkSync(coverFilePath)
+          }
+        }
       }
     }
   }
 }
 
-async function downloadFile (downloadURL: string, filename: string, progress) {
+export function _generateCoverHtmlContent (
+  titlePageLogo: string | undefined,
+  baseDir: string,
+  document: Asciidoctor.Document,
+  extensionUri: vscode.Uri): string {
+  let imageHTML = ''
+  if (titlePageLogo) {
+    const imageURL = titlePageLogo.startsWith('http') ? titlePageLogo : path.join(baseDir, titlePageLogo)
+    imageHTML = `<img src="${imageURL}">`
+  }
+  const styleHref = vscode.Uri.joinPath(extensionUri, 'media', 'all-centered.css')
+  const doctitle: string = document?.getAttribute('doctitle', '')
+  const author = document?.getAttribute('author', '')
+  const email = document?.getAttribute('email', '')
+  return `<!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" type="text/css" href="${styleHref}">
+  </head>
+  <body>
+  <div class="outer">
+    <div class="middle">
+      <div class="inner">
+${imageHTML}
+        <h1>${doctitle}</h1>
+        p>${author} &lt;${email}&gt;</p>
+      </div>
+    </div>
+  </div>
+  </body>
+  </html>`
+}
+
+function createCoverFile (titlePageLogo: string, baseDir: string, document: Asciidoctor.Document) {
+  const extensionContext = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode')
+  const coverHtmlContent = _generateCoverHtmlContent(titlePageLogo, baseDir, document, extensionContext.extensionUri)
+
+  const tmpFilePath = path.join(os.tmpdir(), uuidv4() + '.html')
+  fs.writeFileSync(tmpFilePath, coverHtmlContent, 'utf-8')
+  return tmpFilePath
+}
+
+async function downloadFile (downloadURL: string, filename: string, progress): Promise<void> {
   // load "follow-redirects" only when needed (because this module cannot be loaded in a browser environment)
   const followRedirects = await import('follow-redirects')
   return new Promise((resolve, reject) => {
@@ -207,7 +220,7 @@ async function downloadFile (downloadURL: string, filename: string, progress) {
       })
     }).on('error', (err) => {
       console.error('Error: ' + err.message)
-      reject(err.message)
+      reject(err)
     })
   })
 }
@@ -237,7 +250,7 @@ function offerOpen (destination) {
   })
 }
 
-export async function html2pdf (html: string, binaryPath: string, cover: string, footerCenter: string, filename: string) {
+export async function html2pdf (html: string, binaryPath: string, coverFilePath: string | undefined, footerCenter: string, filename: string): Promise<string> {
   const documentPath = path.dirname(filename)
 
   return new Promise((resolve, reject) => {
@@ -246,8 +259,8 @@ export async function html2pdf (html: string, binaryPath: string, cover: string,
     if (footerCenter !== null) {
       cmdArguments = cmdArguments.concat(['--footer-center', footerCenter])
     }
-    if (cover !== null && cover !== undefined) {
-      cmdArguments = cmdArguments.concat(cover.split(' '))
+    if (coverFilePath) {
+      cmdArguments = cmdArguments.concat(['cover', coverFilePath])
     }
     cmdArguments = cmdArguments.concat(['-', filename])
     const command = spawn(binaryPath, cmdArguments, options)
