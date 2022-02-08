@@ -81,7 +81,7 @@ export class ExportAsPDF implements Command {
         .getConfiguration('asciidoc')
         .get('wkHTMLtoPDFPath', '')
 
-      const { output: html, document } = await this.engine.render(doc.uri, true, text, false, 'html5')
+      const { output: html, document } = await this.engine.render(doc.uri, true, text, false, 'webview-html5')
       const showTitlePage = (document?.isAttribute('showTitlePage') as unknown) as boolean // incorrect type definition in Asciidoctor.js
       const titlePageLogo: string | undefined = document?.getAttribute('titlePageLogo')
       const footerCenter: string | undefined = document?.getAttribute('footer-center')
