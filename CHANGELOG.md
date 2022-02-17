@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## 2.9.5
+
+- Fix regression in the PDF export (#512)
+- Restructure the PDF export logic for testing (#512)
+- Reduce bundle size (#517)
+- Register the custom converter as `webview-html5` instead of replacing the built-in one `html5` (#513)
+
 ## 2.9.4
 
 - Fix regression in default preview styling (#501)
