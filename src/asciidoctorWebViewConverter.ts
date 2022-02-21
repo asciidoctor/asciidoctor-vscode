@@ -23,8 +23,12 @@ function isSchemeBlacklisted (href: string): boolean {
  */
 export class AsciidoctorWebViewConverter {
   baseConverter: any
+  basebackend: string
+  outfilesuffix: string
 
   constructor () {
+    this.basebackend = 'html'
+    this.outfilesuffix = '.html'
     this.baseConverter = processor.Html5Converter.create()
   }
 
