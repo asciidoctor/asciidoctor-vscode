@@ -10,10 +10,10 @@ import { getStrings } from './strings'
  * Shows an alert when there is a content security policy violation.
  */
 export class CspAlerter {
-  private didShow = false;
-  private didHaveCspWarning = false;
+  private didShow = false
+  private didHaveCspWarning = false
 
-  private messaging?: MessagePoster;
+  private messaging?: MessagePoster
 
   constructor () {
     document.addEventListener('securitypolicyviolation', () => {

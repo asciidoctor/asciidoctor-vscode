@@ -44,7 +44,7 @@ async function showPreview (
 }
 
 export class ShowPreviewCommand implements Command {
-  public readonly id = 'asciidoc.showPreview';
+  public readonly id = 'asciidoc.showPreview'
 
   constructor (private readonly webviewManager: AsciidocPreviewManager) {
     this.webviewManager = webviewManager
@@ -61,7 +61,7 @@ export class ShowPreviewCommand implements Command {
 }
 
 export class ShowPreviewToSideCommand implements Command {
-  public readonly id = 'asciidoc.showPreviewToSide';
+  public readonly id = 'asciidoc.showPreviewToSide'
 
   constructor (private readonly webviewManager: AsciidocPreviewManager) {
     this.webviewManager = webviewManager
@@ -76,7 +76,7 @@ export class ShowPreviewToSideCommand implements Command {
 }
 
 export class ShowLockedPreviewToSideCommand implements Command {
-  public readonly id = 'asciidoc.showLockedPreviewToSide';
+  public readonly id = 'asciidoc.showLockedPreviewToSide'
 
   constructor (private readonly webviewManager: AsciidocPreviewManager) {
     this.webviewManager = webviewManager

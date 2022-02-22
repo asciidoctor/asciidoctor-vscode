@@ -5,7 +5,7 @@ import { xrefProvider } from '../providers/xref.provider'
 import { disposeAll } from '../util/dispose'
 
 export class AsciidocFileIncludeAutoCompletionMonitor {
-  private readonly disposables: vscode.Disposable[] = [];
+  private readonly disposables: vscode.Disposable[] = []
   constructor () {
     const disposable = vscode.languages.registerCompletionItemProvider(
       {
@@ -46,8 +46,8 @@ export class AsciidocFileIncludeAutoCompletionMonitor {
   private readonly _onDidIncludeAutoCompletionEmitter = new vscode.EventEmitter<{
     resource: vscode.Uri;
     line: number;
-  }>();
+  }>()
 
   public readonly onDidIncludeAutoCompletionEmitter = this
-    ._onDidIncludeAutoCompletionEmitter.event;
+    ._onDidIncludeAutoCompletionEmitter.event
 }

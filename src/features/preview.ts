@@ -19,23 +19,23 @@ import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink'
 const localize = nls.loadMessageBundle()
 
 export class AsciidocPreview {
-  public static viewType = 'asciidoc.preview';
+  public static viewType = 'asciidoc.preview'
 
-  private _resource: vscode.Uri;
-  private _locked: boolean;
+  private _resource: vscode.Uri
+  private _locked: boolean
 
-  private readonly editor: vscode.WebviewPanel;
-  private throttleTimer: any;
-  private line: number | undefined = undefined;
-  private readonly disposables: vscode.Disposable[] = [];
-  private firstUpdate = true;
-  private currentVersion?: { resource: vscode.Uri, version: number };
-  private forceUpdate = false;
-  private isScrolling = false;
-  private _disposed: boolean = false;
-  private imageInfo: { id: string, width: number, height: number }[] = [];
-  private config: vscode.WorkspaceConfiguration;
-  private refreshInterval: number;
+  private readonly editor: vscode.WebviewPanel
+  private throttleTimer: any
+  private line: number | undefined = undefined
+  private readonly disposables: vscode.Disposable[] = []
+  private firstUpdate = true
+  private currentVersion?: { resource: vscode.Uri, version: number }
+  private forceUpdate = false
+  private isScrolling = false
+  private _disposed: boolean = false
+  private imageInfo: { id: string, width: number, height: number }[] = []
+  private config: vscode.WorkspaceConfiguration
+  private refreshInterval: number
 
   public static async revive (
     webview: vscode.WebviewPanel,
@@ -183,11 +183,11 @@ export class AsciidocPreview {
     }, null, this.disposables)
   }
 
-  private readonly _onDisposeEmitter = new vscode.EventEmitter<void>();
-  public readonly onDispose = this._onDisposeEmitter.event;
+  private readonly _onDisposeEmitter = new vscode.EventEmitter<void>()
+  public readonly onDispose = this._onDisposeEmitter.event
 
-  private readonly _onDidChangeViewStateEmitter = new vscode.EventEmitter<vscode.WebviewPanelOnDidChangeViewStateEvent>();
-  public readonly onDidChangeViewState = this._onDidChangeViewStateEmitter.event;
+  private readonly _onDidChangeViewStateEmitter = new vscode.EventEmitter<vscode.WebviewPanelOnDidChangeViewStateEvent>()
+  public readonly onDidChangeViewState = this._onDidChangeViewStateEmitter.event
 
   public get resource (): vscode.Uri {
     return this._resource

@@ -8,12 +8,12 @@ import { AsciidocContributions } from '../asciidocExtensions'
 import { githubSlugifier } from '../slugify'
 
 const emptyContributions = new class implements AsciidocContributions {
-  readonly extensionUri = vscode.Uri.parse('');
-  readonly previewScripts: vscode.Uri[] = [];
-  readonly previewStylesEditor: vscode.Uri[] = [];
-  readonly previewStylesDefault: vscode.Uri[] = [];
-  readonly previewResourceRoots: vscode.Uri[] = [];
-  readonly asciidocItPlugins: Promise<(md: any) => any>[] = [];
+  readonly extensionUri = vscode.Uri.parse('')
+  readonly previewScripts: vscode.Uri[] = []
+  readonly previewStylesEditor: vscode.Uri[] = []
+  readonly previewStylesDefault: vscode.Uri[] = []
+  readonly previewResourceRoots: vscode.Uri[] = []
+  readonly asciidocItPlugins: Promise<(md: any) => any>[] = []
 }()
 
 export function createNewAsciidocEngine (): AsciidocEngine {

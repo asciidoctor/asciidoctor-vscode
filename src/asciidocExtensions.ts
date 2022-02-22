@@ -14,13 +14,13 @@ export interface AsciidocContributions {
 }
 
 class AsciidocExtensionContributions implements AsciidocContributions {
-  private readonly _scripts: vscode.Uri[] = [];
-  private readonly _stylesEditor: vscode.Uri[] = [];
-  private readonly _stylesDefault: vscode.Uri[] = [];
-  private readonly _previewResourceRoots: vscode.Uri[] = [];
-  private readonly _plugins: Promise<(md: any) => any>[] = [];
+  private readonly _scripts: vscode.Uri[] = []
+  private readonly _stylesEditor: vscode.Uri[] = []
+  private readonly _stylesDefault: vscode.Uri[] = []
+  private readonly _previewResourceRoots: vscode.Uri[] = []
+  private readonly _plugins: Promise<(md: any) => any>[] = []
 
-  private _loaded = false;
+  private _loaded = false
 
   public constructor (private readonly _extensionContext: vscode.ExtensionContext) {}
 
