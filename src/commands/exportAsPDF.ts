@@ -250,12 +250,18 @@ function offerOpen (destination) {
   })
 }
 
-export async function html2pdf (html: string, binaryPath: string, coverFilePath: string | undefined, footerCenter: string, filename: string): Promise<string> {
+export async function html2pdf (
+  html: string,
+  binaryPath: string,
+  coverFilePath: string | undefined,
+  footerCenter: string | undefined,
+  filename: string
+): Promise<string> {
   const documentPath = path.dirname(filename)
 
   return new Promise((resolve, reject) => {
     const cmdArguments = ['--encoding', ' utf-8', '--javascript-delay', '1000']
-    if (footerCenter !== null) {
+    if (footerCenter) {
       cmdArguments.push('--footer-center', footerCenter)
     }
     if (coverFilePath) {
