@@ -1,0 +1,702 @@
+{
+  "source-highlighter": {
+    "label": ":source-highlighter:",
+    "insertText": "source-highlighter: ${1|coderay,highlightjs,prettify,pygments,rouge|}\n",
+    "description": "Insert source highlighter"
+  },
+  "attribute": {
+    "label": ":attribute:",
+    "insertText": "${1:attribute}: ${2:value}",
+    "description": "Insert attribute"
+  },
+  "backend": {
+    "label": ":backend:",
+    "insertText": "backend: ${1:any}",
+    "description": "The backend used to select and activate the converter that creates the output file. Usually named according to the output format (e.g., html5)"
+  },
+  "docdate": {
+    "label": ":docdate:",
+    "insertText": "docdate: ${1:date (ISO)}",
+    "description": "Last modified date of the source document. Example: 2019-01-04"
+  },
+  "docdatetime": {
+    "label": ":docdatetime:",
+    "insertText": "docdatetime: ${1:datetime (ISO)}",
+    "description": "Last modified date and time of the source document. Example: 2019-01-04 19:26:06 UTC"
+  },
+  "doctime": {
+    "label": ":doctime:",
+    "insertText": "doctime: ${1:time (ISO)}",
+    "description": "Last modified time of the source document. Example: 19:26:06 UTC"
+  },
+  "docyear": {
+    "label": ":docyear:",
+    "insertText": "docyear: ${1:integer}",
+    "description": "Year that the document was last modified. Example: 2021"
+  },
+  "localdate": {
+    "label": ":localdate:",
+    "insertText": "localdate: ${1:date (ISO)}",
+    "description": "Date when the document was converted. Example: 2019-02-17"
+  },
+  "localdatetime": {
+    "label": ":localdatetime:",
+    "insertText": "localdatetime: ${1:datetime (ISO)}",
+    "description": "Date and time when the document was converted. Example: 2019-02-17 19:31:05 UTC"
+  },
+  "localtime": {
+    "label": ":localtime:",
+    "insertText": "localtime: ${1:time (ISO)}",
+    "description": "Time when the document was converted. Example: 19:31:05 UTC"
+  },
+  "localyear": {
+    "label": ":localyear:",
+    "insertText": "localyear: ${1:integer}",
+    "description": "Year when the document was converted. Example: 2021"
+  },
+  "outfilesuffix": {
+    "label": ":outfilesuffix:",
+    "insertText": "outfilesuffix: ${1:file extension}",
+    "description": "File extension of output file, including dot (.), such as .html."
+  },
+  "attribute-missing": {
+    "label": ":attribute-missing:",
+    "insertText": "attribute-missing: ${1|drop,drop-line,skip,warn|}",
+    "description": "Controls how missing attribute references are handled. Default: skip"
+  },
+  "attribute-undefined": {
+    "label": ":attribute-undefined:",
+    "insertText": "attribute-undefined: ${1|drop,drop-line|}",
+    "description": "Controls how attribute unassignments are handled. Default: drop-line"
+  },
+  "compat-mode": {
+    "label": ":compat-mode:",
+    "insertText": "compat-mode:",
+    "description": "Controls when the legacy parsing mode is used to parse the document."
+  },
+  "experimental": {
+    "label": ":experimental:",
+    "insertText": "experimental:",
+    "description": "Enables Button and Menu UI Macros and the Keyboard Macro."
+  },
+  "reproducible": {
+    "label": ":reproducible:",
+    "insertText": "reproducible:",
+    "description": "Prevents last-updated date from being added to HTML footer or DocBook info element. Useful for storing the output in a source code control system as it prevents spurious changes every time you convert the document."
+  },
+  "skip-front-matter": {
+    "label": ":skip-front-matter:",
+    "insertText": "skip-front-matter:",
+    "description": "Consume YAML-style frontmatter at top of document and store it in front-matter attribute."
+  },
+  "appendix-caption": {
+    "label": ":appendix-caption:",
+    "insertText": "appendix-caption: ${1:any}",
+    "description": "Label added before an appendix title. Default: Appendix"
+  },
+  "appendix-number": {
+    "label": ":appendix-number:",
+    "insertText": "appendix-number: ${1:character}",
+    "description": "Sets the seed value for the appendix number sequence. Implied: @"
+  },
+  "appendix-refsig": {
+    "label": ":appendix-refsig:",
+    "insertText": "appendix-refsig: ${1:any}",
+    "description": "Signifier added to Appendix title cross references. Default: Appendix"
+  },
+  "caution-caption": {
+    "label": ":caution-caption:",
+    "insertText": "caution-caption: ${1:any}",
+    "description": "Text used to label CAUTION admonitions when icons aren\u2019t enabled. Default: Caution"
+  },
+  "chapter-number": {
+    "label": ":chapter-number:",
+    "insertText": "chapter-number: ${1:number}",
+    "description": "Sets the seed value for the chapter number sequence.[1] Book doctype only. Implied: 0"
+  },
+  "chapter-refsig": {
+    "label": ":chapter-refsig:",
+    "insertText": "chapter-refsig: ${1:any}",
+    "description": "Signifier added to Chapter titles in cross references. Book doctype only. Default: Chapter"
+  },
+  "chapter-signifier": {
+    "label": ":chapter-signifier:",
+    "insertText": "chapter-signifier: ${1:any}",
+    "description": "Label added to level-1 section titles (chapters). Book doctype only."
+  },
+  "example-caption": {
+    "label": ":example-caption:",
+    "insertText": "example-caption: ${1:any}",
+    "description": "Text used to label example blocks. Default: Example"
+  },
+  "example-number": {
+    "label": ":example-number:",
+    "insertText": "example-number: ${1:number}",
+    "description": "Sets the seed value for the example number sequence. Implied: 0"
+  },
+  "figure-caption": {
+    "label": ":figure-caption:",
+    "insertText": "figure-caption: ${1:any}",
+    "description": "Text used to label images and figures. Default: Figure"
+  },
+  "figure-number": {
+    "label": ":figure-number:",
+    "insertText": "figure-number: ${1:number}",
+    "description": "Sets the seed value for the figure number sequence. Implied: 0"
+  },
+  "important-caption": {
+    "label": ":important-caption:",
+    "insertText": "important-caption: ${1:any}",
+    "description": "Text used to label IMPORTANT admonitions when icons are not enabled. Default: Important"
+  },
+  "lang": {
+    "label": ":lang:",
+    "insertText": "lang: ${1:BCP 47 language tag}",
+    "description": "Language tag specified on document element of the output document. Refer to the lang and xml:lang attributes section of the HTML specification to learn about the acceptable values for this attribute. Implied: en"
+  },
+  "last-update-label": {
+    "label": ":last-update-label:",
+    "insertText": "last-update-label: ${1:any}",
+    "description": "Text used for \u201cLast updated\u201d label in footer. Default: Last updated"
+  },
+  "listing-caption": {
+    "label": ":listing-caption:",
+    "insertText": "listing-caption: ${1:any}",
+    "description": "Text used to label listing blocks."
+  },
+  "listing-number": {
+    "label": ":listing-number:",
+    "insertText": "listing-number: ${1:number}",
+    "description": "Sets the seed value for the listing number sequence. Implied: 0"
+  },
+  "manname-title": {
+    "label": ":manname-title:",
+    "insertText": "manname-title: ${1:any}",
+    "description": "Label for program name section in the man page. Implied: Name"
+  },
+  "nolang": {
+    "label": ":nolang:",
+    "insertText": "nolang:",
+    "description": "Prevents lang attribute from being added to root element of the output document."
+  },
+  "note-caption": {
+    "label": ":note-caption:",
+    "insertText": "note-caption: ${1:any}",
+    "description": "Text used to label NOTE admonitions when icons aren\u2019t enabled. Default: Note"
+  },
+  "part-refsig": {
+    "label": ":part-refsig:",
+    "insertText": "part-refsig: ${1:any}",
+    "description": "Signifier added to Part titles in cross references. Book doctype only. Default: Part"
+  },
+  "part-signifier": {
+    "label": ":part-signifier:",
+    "insertText": "part-signifier: ${1:any}",
+    "description": "Label added to level-0 section titles (parts). Book doctype only."
+  },
+  "preface-title": {
+    "label": ":preface-title:",
+    "insertText": "preface-title: ${1:any}",
+    "description": "Title text for an anonymous preface when doctype is book."
+  },
+  "section-refsig": {
+    "label": ":section-refsig:",
+    "insertText": "section-refsig: ${1:any}",
+    "description": "Signifier added to title of numbered sections in cross reference text. Default: Section"
+  },
+  "table-caption": {
+    "label": ":table-caption:",
+    "insertText": "table-caption: ${1:any}",
+    "description": "Text of label prefixed to table titles. Default: Table"
+  },
+  "table-number": {
+    "label": ":table-number:",
+    "insertText": "table-number: ${1:number}",
+    "description": "Sets the seed value for the table number sequence. Implied: 0"
+  },
+  "tip-caption": {
+    "label": ":tip-caption:",
+    "insertText": "tip-caption: ${1:any}",
+    "description": "Text used to label TIP admonitions when icons aren\u2019t enabled. Default: Tip"
+  },
+  "toc-title": {
+    "label": ":toc-title:",
+    "insertText": "toc-title: ${1:any}",
+    "description": "Title for table of contents. Default: Table of Contents"
+  },
+  "untitled-label": {
+    "label": ":untitled-label:",
+    "insertText": "untitled-label: ${1:any}",
+    "description": "Default document title if document doesn\u2019t have a document title. Default: Untitled"
+  },
+  "version-label": {
+    "label": ":version-label:",
+    "insertText": "version-label: ${1:any}",
+    "description": "See Version Label Attribute. Default: Version"
+  },
+  "warning-caption": {
+    "label": ":warning-caption:",
+    "insertText": "warning-caption: ${1:any}",
+    "description": "Text used to label TIP admonitions when icons aren\u2019t enabled. Default: Warning"
+  },
+  "app-name": {
+    "label": ":app-name:",
+    "insertText": "app-name: ${1:any}",
+    "description": "Adds application-name meta element for mobile devices inside HTML document head."
+  },
+  "author": {
+    "label": ":author:",
+    "insertText": "author: ${1:any}",
+    "description": "Can be set automatically via the author info line or explicitly. See Author Information."
+  },
+  "authorinitials": {
+    "label": ":authorinitials:",
+    "insertText": "authorinitials: ${1:any}",
+    "description": "Derived from the author attribute by default. See Author Information."
+  },
+  "authors": {
+    "label": ":authors:",
+    "insertText": "authors: ${1:any}",
+    "description": "Can be set automatically via the author info line or explicitly as a comma-separated value list. See Author Information."
+  },
+  "copyright": {
+    "label": ":copyright:",
+    "insertText": "copyright: ${1:any}",
+    "description": "Adds copyright meta element in HTML document head."
+  },
+  "doctitle": {
+    "label": ":doctitle:",
+    "insertText": "doctitle: ${1:any}",
+    "description": "See doctitle attribute."
+  },
+  "description": {
+    "label": ":description:",
+    "insertText": "description: ${1:any}",
+    "description": "Adds description meta element in HTML document head."
+  },
+  "email": {
+    "label": ":email:",
+    "insertText": "email: ${1:any}",
+    "description": "Can be any inline macro, such as a URL. See Author Information."
+  },
+  "firstname": {
+    "label": ":firstname:",
+    "insertText": "firstname: ${1:any}",
+    "description": "See Author Information."
+  },
+  "front-matter": {
+    "label": ":front-matter:",
+    "insertText": "front-matter: ${1:any}",
+    "description": "If skip-front-matter is set via the API or CLI, any YAML-style frontmatter skimmed from the top of the document is stored in this attribute."
+  },
+  "keywords": {
+    "label": ":keywords:",
+    "insertText": "keywords: ${1:any}",
+    "description": "Adds keywords meta element in HTML document head."
+  },
+  "lastname": {
+    "label": ":lastname:",
+    "insertText": "lastname: ${1:any}",
+    "description": "See Author Information."
+  },
+  "middlename": {
+    "label": ":middlename:",
+    "insertText": "middlename: ${1:any}",
+    "description": "See Author Information."
+  },
+  "orgname": {
+    "label": ":orgname:",
+    "insertText": "orgname: ${1:any}",
+    "description": "Adds <orgname> element value to DocBook info element."
+  },
+  "revdate": {
+    "label": ":revdate:",
+    "insertText": "revdate: ${1:any}",
+    "description": "See Revision Information."
+  },
+  "revremark": {
+    "label": ":revremark:",
+    "insertText": "revremark: ${1:any}",
+    "description": "See Revision Information."
+  },
+  "revnumber": {
+    "label": ":revnumber:",
+    "insertText": "revnumber: ${1:any}",
+    "description": "See Revision Information."
+  },
+  "title": {
+    "label": ":title:",
+    "insertText": "title: ${1:any}",
+    "description": "Value of <title> element in HTML <head> or main DocBook <info> of output document. Used as a fallback when the document title is not specified. See title attribute."
+  },
+  "idprefix": {
+    "label": ":idprefix:",
+    "insertText": "idprefix: ${1:valid XML ID start character}",
+    "description": "Prefix of auto-generated section IDs. See Change the ID prefix. Default: _"
+  },
+  "idseparator": {
+    "label": ":idseparator:",
+    "insertText": "idseparator: ${1:valid XML ID character}",
+    "description": "Word separator used in auto-generated section IDs. See Change the ID word separator. Default: _"
+  },
+  "leveloffset": {
+    "label": ":leveloffset:",
+    "insertText": "leveloffset: ${1|[+-]0\u20135|}",
+    "description": "Increases or decreases level of headings below assignment. A leading + or - makes the value relative."
+  },
+  "partnums": {
+    "label": ":partnums:",
+    "insertText": "partnums:",
+    "description": "Enables numbering of parts. See Number book parts. Book doctype only."
+  },
+  "sectanchors": {
+    "label": ":sectanchors:",
+    "insertText": "sectanchors:",
+    "description": "Adds anchor in front of section title on mouse cursor hover."
+  },
+  "sectids": {
+    "label": ":sectids:",
+    "insertText": "sectids:",
+    "description": "Generates and assigns an ID to any section that does not have an ID. Enabled by default. See Disable ID generation."
+  },
+  "sectlinks": {
+    "label": ":sectlinks:",
+    "insertText": "sectlinks:",
+    "description": "Turns section titles into self-referencing links."
+  },
+  "sectnums": {
+    "label": ":sectnums:",
+    "insertText": "sectnums: ${1:|,all|}",
+    "description": "Numbers sections to depth specified by sectnumlevels."
+  },
+  "sectnumlevels": {
+    "label": ":sectnumlevels:",
+    "insertText": "sectnumlevels: ${1|0,1,2,3,4,5|}",
+    "description": "Controls depth of section numbering. Implied: 3"
+  },
+  "title-separator": {
+    "label": ":title-separator:",
+    "insertText": "title-separator: ${1:any}",
+    "description": "Character used to separate document title and subtitle."
+  },
+  "toc": {
+    "label": ":toc:",
+    "insertText": "toc: ${1|auto,left,right,macro,preamble|}",
+    "description": "Turns on table of contents and specifies its location. If empty: auto"
+  },
+  "toclevels": {
+    "label": ":toclevels:",
+    "insertText": "toclevels: ${1|1,2,3,4,5|}",
+    "description": "Maximum section level to display. Implied: 2"
+  },
+  "fragment": {
+    "label": ":fragment:",
+    "insertText": "fragment:",
+    "description": "Informs parser that document is a fragment and that it shouldn\u2019t enforce proper section nesting."
+  },
+  "asset-uri-scheme": {
+    "label": ":asset-uri-scheme:",
+    "insertText": "asset-uri-scheme: ${1|http,https|}",
+    "description": "Controls protocol used for assets hosted on a CDN. Implied: https"
+  },
+  "cache-uri": {
+    "label": ":cache-uri:",
+    "insertText": "cache-uri:",
+    "description": "Cache content read from URIs."
+  },
+  "data-uri": {
+    "label": ":data-uri:",
+    "insertText": "data-uri:",
+    "description": "Embed graphics as data-uri elements in HTML elements so file is completely self-contained."
+  },
+  "docinfo": {
+    "label": ":docinfo:",
+    "insertText": "docinfo: ${1|shared,private,shared-head,private-head,shared-footer,private-footer|}",
+    "description": "Read input from one or more DocBook info files. If empty: private"
+  },
+  "docinfodir": {
+    "label": ":docinfodir:",
+    "insertText": "docinfodir: ${1|directory path|}",
+    "description": "Location of docinfo files. Defaults to directory of source file if not specified."
+  },
+  "docinfosubs": {
+    "label": ":docinfosubs:",
+    "insertText": "docinfosubs: ${1:comma-separated substitution names}",
+    "description": "AsciiDoc substitutions that are applied to docinfo content. Implied: attributes"
+  },
+  "doctype": {
+    "label": ":doctype:",
+    "insertText": "doctype: ${1|article,book,inline,manpage|}",
+    "description": "Output document type. Default: article"
+  },
+  "eqnums": {
+    "label": ":eqnums:",
+    "insertText": "eqnums: ${1|AMS,all,none|}",
+    "description": "Controls automatic equation numbering on LaTeX blocks in HTML output (MathJax). If the value is AMS, only LaTeX content enclosed in an \\begin{equation}..\\end{equation} container will be numbered. If the value is all, then all LaTeX blocks will be numbered. See equation numbering in MathJax. If empty: AMS"
+  },
+  "hardbreaks-option": {
+    "label": ":hardbreaks-option:",
+    "insertText": "hardbreaks-option:",
+    "description": "Preserve hard line breaks."
+  },
+  "hide-uri-scheme": {
+    "label": ":hide-uri-scheme:",
+    "insertText": "hide-uri-scheme:",
+    "description": "Hides URI scheme for raw links."
+  },
+  "media": {
+    "label": ":media:",
+    "insertText": "media: ${1|prepress,print,screen|}",
+    "description": "Specifies media type of output and enables behavior specific to that media type. PDF converter only. Implied: screen"
+  },
+  "nofooter": {
+    "label": ":nofooter:",
+    "insertText": "nofooter:",
+    "description": "Turns off footer."
+  },
+  "nofootnotes": {
+    "label": ":nofootnotes:",
+    "insertText": "nofootnotes:",
+    "description": "Turns off footnotes."
+  },
+  "noheader": {
+    "label": ":noheader:",
+    "insertText": "noheader:",
+    "description": "Turns off header."
+  },
+  "notitle": {
+    "label": ":notitle:",
+    "insertText": "notitle:",
+    "description": "Hides the doctitle in an embedded document. Mutually exclusive with the showtitle attribute."
+  },
+  "pagewidth": {
+    "label": ":pagewidth:",
+    "insertText": "pagewidth: ${1:integer}",
+    "description": "Page width used to calculate the absolute width of tables in the DocBook output. Implied: 425"
+  },
+  "relfileprefix": {
+    "label": ":relfileprefix:",
+    "insertText": "relfileprefix: ${1:path segment}",
+    "description": "The path prefix to add to relative xrefs."
+  },
+  "relfilesuffix": {
+    "label": ":relfilesuffix:",
+    "insertText": "relfilesuffix: ${1:file extension|path segment}",
+    "description": "The path suffix (e.g., file extension) to add to relative xrefs. Defaults to the value of the outfilesuffix attribute. (Preferred over modifying outfilesuffix). Example: .html"
+  },
+  "show-link-uri": {
+    "label": ":show-link-uri:",
+    "insertText": "show-link-uri:",
+    "description": "Prints the URI of a link after the link text. PDF converter only."
+  },
+  "showtitle": {
+    "label": ":showtitle:",
+    "insertText": "showtitle:",
+    "description": "Displays the doctitle in an embedded document. Mutually exclusive with the notitle attribute."
+  },
+  "stem": {
+    "label": ":stem:",
+    "insertText": "stem: ${1|asciimath,latexmath|}",
+    "description": "Enables mathematics processing and interpreter. If empty: asciimath"
+  },
+  "tabsize": {
+    "label": ":tabsize:",
+    "insertText": "tabsize: ${1|integer (\u2265 0)|}",
+    "description": "Converts tabs to spaces in verbatim content blocks (e.g., listing, literal)."
+  },
+  "webfonts": {
+    "label": ":webfonts:",
+    "insertText": "webfonts:",
+    "description": "Control whether webfonts are loaded when using the default stylesheet. When set to empty, uses the default font collection from Google Fonts. A non-empty value replaces the family query string parameter in the Google Fonts URL."
+  },
+  "xrefstyle": {
+    "label": ":xrefstyle:",
+    "insertText": "xrefstyle: ${1|full,short,basic|}",
+    "description": "Formatting style to apply to cross reference text."
+  },
+  "iconfont-cdn": {
+    "label": ":iconfont-cdn:",
+    "insertText": "iconfont-cdn: ${1:url}",
+    "description": "If not specified, uses the cdnjs.com service. Overrides CDN used to link to the Font Awesome stylesheet. Implied: default CDN URL"
+  },
+  "iconfont-name": {
+    "label": ":iconfont-name:",
+    "insertText": "iconfont-name: ${1:any}",
+    "description": "Overrides the name of the icon font stylesheet. Implied: font-awesome"
+  },
+  "iconfont-remote": {
+    "label": ":iconfont-remote:",
+    "insertText": "iconfont-remote:",
+    "description": "Allows use of a CDN for resolving the icon font. Empty by default. Only relevant used when value of icons attribute is font."
+  },
+  "icons": {
+    "label": ":icons:",
+    "insertText": "icons: ${1|image,font|}",
+    "description": "Chooses images or font icons instead of text for admonitions. Any other value is assumed to be an icontype and sets the value to empty (image-based icons). If empty: image"
+  },
+  "iconsdir": {
+    "label": ":iconsdir:",
+    "insertText": "iconsdir: ${1:directory path|url}",
+    "description": "Location of non-font-based image icons. Defaults to the icons folder under imagesdir if imagesdir is specified and iconsdir is not specified. Example: ./images/icons"
+  },
+  "icontype": {
+    "label": ":icontype:",
+    "insertText": "icontype: ${1|jpg,png,gif,svg|}",
+    "description": "File type for image icons. Only relevant when using image-based icons. Implied: png"
+  },
+  "imagesdir": {
+    "label": ":imagesdir:",
+    "insertText": "imagesdir: ${1:directory path|url}",
+    "description": "Location of image files. Empty by default."
+  },
+  "coderay-css": {
+    "label": ":coderay-css:",
+    "insertText": "coderay-css: ${1|class,style|}",
+    "description": "Controls whether CodeRay uses CSS classes or inline styles. Implied: class"
+  },
+  "coderay-linenums-mode": {
+    "label": ":coderay-linenums-mode:",
+    "insertText": "coderay-linenums-mode: ${1|inline,table|}",
+    "description": "Sets how CodeRay inserts line numbers into source listings. Implied: table"
+  },
+  "coderay-unavailable": {
+    "label": ":coderay-unavailable:",
+    "insertText": "coderay-unavailable:",
+    "description": "Tells processor not to load CodeRay."
+  },
+  "highlightjsdir": {
+    "label": ":highlightjsdir:",
+    "insertText": "highlightjsdir: ${1:directory path|url}",
+    "description": "Location of the highlight.js source code highlighter library. Implied: default CDN URL"
+  },
+  "highlightjs-theme": {
+    "label": ":highlightjs-theme:",
+    "insertText": "highlightjs-theme: ${1:highlight.js style name}",
+    "description": "Name of theme used by highlight.js. Implied: github"
+  },
+  "prettifydir": {
+    "label": ":prettifydir:",
+    "insertText": "prettifydir: ${1:directory path|url}",
+    "description": "Location of non-CDN prettify source code highlighter library. Implied: default CDN URL"
+  },
+  "prettify-theme": {
+    "label": ":prettify-theme:",
+    "insertText": "prettify-theme: ${1:prettify style name}",
+    "description": "Name of theme used by prettify. Implied: prettify"
+  },
+  "prewrap": {
+    "label": ":prewrap:",
+    "insertText": "prewrap:",
+    "description": "Wrap wide code listings. Empty by default"
+  },
+  "pygments-css": {
+    "label": ":pygments-css:",
+    "insertText": "pygments-css: ${1|class,style|}",
+    "description": "Controls whether Pygments uses CSS classes or inline styles. Implied: class"
+  },
+  "pygments-linenums-mode": {
+    "label": ":pygments-linenums-mode:",
+    "insertText": "pygments-linenums-mode: ${1|table,inline|}",
+    "description": "Sets how Pygments inserts line numbers into source listings. Implied: table"
+  },
+  "pygments-style": {
+    "label": ":pygments-style:",
+    "insertText": "pygments-style: ${1:Pygments style name}",
+    "description": "Name of style used by Pygments. Implied: default"
+  },
+  "pygments-unavailable": {
+    "label": ":pygments-unavailable:",
+    "insertText": "pygments-unavailable:",
+    "description": "Tells the processor not to load Pygments."
+  },
+  "source-highlighter": {
+    "label": ":source-highlighter:",
+    "insertText": "source-highlighter: ${1|coderay,highlight.js,pygments,rouge|}",
+    "description": "Specifies source code highlighter. Any other value is permitted, but must be supported by a custom syntax highlighter adapter."
+  },
+  "source-indent": {
+    "label": ":source-indent:",
+    "insertText": "source-indent: ${1:integer}",
+    "description": "Normalize block indentation in source code listings."
+  },
+  "source-language": {
+    "label": ":source-language:",
+    "insertText": "source-language: ${1:source code language name}",
+    "description": "Default language for source code blocks."
+  },
+  "source-linenums-option": {
+    "label": ":source-linenums-option:",
+    "insertText": "source-linenums-option:",
+    "description": "Turns on line numbers for source code listings."
+  },
+  "copycss": {
+    "label": ":copycss:",
+    "insertText": "copycss: ${1:file path}",
+    "description": "Copy CSS files to output. Empty by default. Only relevant when the linkcss attribute is set."
+  },
+  "css-signature": {
+    "label": ":css-signature:",
+    "insertText": "css-signature: ${1:valid XML ID}",
+    "description": "Assign value to id attribute of HTML <body> element. Preferred approach is to assign an ID to document title."
+  },
+  "linkcss": {
+    "label": ":linkcss:",
+    "insertText": "linkcss:",
+    "description": "Links to stylesheet instead of embedding it. Can\u2019t be unset in SECURE mode."
+  },
+  "max-width": {
+    "label": ":max-width:",
+    "insertText": "max-width: ${1:CSS length}",
+    "description": "Constrains maximum width of document body. Not recommended. Use CSS stylesheet instead. Examples: 55em, 12cm"
+  },
+  "stylesdir": {
+    "label": ":stylesdir:",
+    "insertText": "stylesdir: ${1:directory path|url|.}",
+    "description": "Location of CSS stylesheets."
+  },
+  "stylesheet": {
+    "label": ":stylesheet:",
+    "insertText": "stylesheet: ${1:file path}",
+    "description": "CSS stylesheet file name. Empty by default. An empty value tells the converter to use the default stylesheet."
+  },
+  "toc-class": {
+    "label": ":toc-class:",
+    "insertText": "toc-class: ${1:valid CSS class name}",
+    "description": "CSS class on the table of contents container. Implied: toc, or toc2 if toc=left"
+  },
+  "mantitle": {
+    "label": ":mantitle:",
+    "insertText": "mantitle: ${1:any}",
+    "description": "Metadata for man page output."
+  },
+  "manvolnum": {
+    "label": ":manvolnum:",
+    "insertText": "manvolnum: ${1:any}",
+    "description": "Metadata for man page output."
+  },
+  "manname": {
+    "label": ":manname:",
+    "insertText": "manname: ${1:any}",
+    "description": "Metadata for man page output."
+  },
+  "manpurpose": {
+    "label": ":manpurpose:",
+    "insertText": "manpurpose: ${1:any}",
+    "description": "Metadata for man page output."
+  },
+  "man-linkstyle": {
+    "label": ":man-linkstyle:",
+    "insertText": "man-linkstyle: ${1:link format pattern}",
+    "description": "Link style in man page output. Implied: blue R <>"
+  },
+  "mansource": {
+    "label": ":mansource:",
+    "insertText": "mansource: ${1:any}",
+    "description": "Source (e.g., application and version) the man page describes."
+  },
+  "manmanual": {
+    "label": ":manmanual:",
+    "insertText": "manmanual: ${1:any}",
+    "description": "Manual name displayed in the man page footer."
+  }
+}

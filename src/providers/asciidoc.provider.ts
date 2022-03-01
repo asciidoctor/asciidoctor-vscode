@@ -1,9 +1,8 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
 import { createContext, Context } from './createContext'
-
-import { createPathCompletionItem } from './createCompletionItem'
 import {
+  FileInfo,
   getPathOfFolderToLookupFiles,
   getChildrenOfPath,
   sortFilesAndDirectories,
@@ -101,4 +100,14 @@ async function provide (
       return result
     }),
   ]
+}
+
+function createPathCompletionItem (
+  fileInfo: FileInfo
+): vscode.CompletionItem {
+  return {
+    label: fileInfo.file,
+    kind: fileInfo.isFile ? vscode.CompletionItemKind.File : vscode.CompletionItemKind.Folder,
+    sortText: fileInfo.file,
+  }
 }

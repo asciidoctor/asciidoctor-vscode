@@ -4,7 +4,8 @@ import * as glob from 'glob'
 
 export function run (): Promise<void> {
   // Create the mocha test
-  const mocha = new Mocha({
+  // eslint-disable-next-line new-cap
+  const mocha = new Mocha.default({
     ui: 'tdd',
     color: true,
   })
@@ -12,7 +13,7 @@ export function run (): Promise<void> {
   const testsRoot = path.resolve(__dirname, '..')
 
   return new Promise((resolve, reject) => {
-    glob('**/**.test.js', { cwd: testsRoot }, (err, files) => {
+    glob.default('**/**.test.js', { cwd: testsRoot }, (err, files) => {
       if (err) {
         return reject(err)
       }
