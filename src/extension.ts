@@ -15,8 +15,9 @@ import { AsciidocEngine } from './asciidocEngine'
 import { getAsciidocExtensionContributions } from './asciidocExtensions'
 import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security'
 import { githubSlugifier } from './slugify'
-import { AttributeCompleter } from './features/attributeCompleter'
 import { AsciidocFileIncludeAutoCompletionMonitor } from './util/includeAutoCompletion'
+import { AttributeReferenceProvider } from './features/attributeReferenceProvider'
+import { BuiltinDocumentAttributeProvider } from './features/builtinDocumentAttributeProvider'
 
 export function activate (context: vscode.ExtensionContext) {
   const contributions = getAsciidocExtensionContributions(context)
@@ -44,7 +45,8 @@ export function activate (context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider))
   context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider(engine)))
   context.subscriptions.push(vscode.languages.registerWorkspaceSymbolProvider(new AsciidocWorkspaceSymbolProvider(symbolProvider)))
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new AttributeCompleter(contributions.extensionUri), '{'))
+  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new AttributeReferenceProvider(contributions.extensionUri), '{'))
+  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new BuiltinDocumentAttributeProvider(contributions.extensionUri), ':'))
   const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager)
 
   const commandManager = new CommandManager()
