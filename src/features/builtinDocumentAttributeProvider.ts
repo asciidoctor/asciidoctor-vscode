@@ -9,9 +9,6 @@ export class BuiltinDocumentAttributeProvider {
     return completionItem
   })
 
-  constructor (private readonly extensionUri: vscode.Uri) {
-  }
-
   async provideCompletionItems (textDocument: vscode.TextDocument, position: vscode.Position): Promise<vscode.CompletionItem[]> {
     const linePrefix = textDocument.lineAt(position).text.substr(0, position.character)
     if (linePrefix !== ':') {

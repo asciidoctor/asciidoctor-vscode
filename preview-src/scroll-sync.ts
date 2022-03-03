@@ -43,7 +43,7 @@ const getCodeLineElements = (() => {
  * returns the element prior to and the element after the given line.
  */
 export function getElementsForSourceLine (targetLine: number): { previous: CodeLineElement; next?: CodeLineElement; } {
-  const lineNumber = Math.floor(targetLine)
+  const lineNumber = Math.floor(targetLine + 1) // off by one line
   const lines = getCodeLineElements()
   let previous = lines[0] || null
   for (const entry of lines) {

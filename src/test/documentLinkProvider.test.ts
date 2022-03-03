@@ -7,7 +7,6 @@ import 'mocha'
 import * as vscode from 'vscode'
 import LinkProvider from '../features/documentLinkProvider'
 import { InMemoryDocument } from './inMemoryDocument'
-import { createNewAsciidocEngine } from './engine'
 
 const testFileName = vscode.Uri.file('test.md')
 
@@ -20,7 +19,7 @@ const noopToken = new class implements vscode.CancellationToken {
 
 async function getLinksForFile (fileContents: string) {
   const doc = new InMemoryDocument(testFileName, fileContents)
-  const provider = new LinkProvider(createNewAsciidocEngine())
+  const provider = new LinkProvider()
   return provider.provideDocumentLinks(doc, noopToken)
 }
 

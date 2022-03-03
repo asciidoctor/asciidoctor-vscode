@@ -6,6 +6,7 @@ import { ExtensionContentSecurityPolicyArbiter, AsciidoctorExtensionsSecurityPol
 import { AsciidocPreviewConfigurationManager } from './features/previewConfig'
 import { SkinnyTextDocument } from './util/document'
 import { IncludeItems } from './asciidoctorFindIncludeProcessor'
+import { AsciidocContributionProvider } from './asciidocExtensions'
 
 const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcessor')
 
@@ -26,17 +27,16 @@ export class AsciidocParser {
   private apsArbiter: AsciidoctorExtensionsSecurityPolicyArbiter
 
   constructor (
-    extensionUri: vscode.Uri,
-    apsArbiter: AsciidoctorExtensionsSecurityPolicyArbiter = null,
+    readonly contributionProvider: AsciidocContributionProvider,
+    readonly aspArbiter: AsciidoctorExtensionsSecurityPolicyArbiter = null,
     private errorCollection: vscode.DiagnosticCollection = null
   ) {
-    this.apsArbiter = apsArbiter
     // Asciidoctor.js in the browser environment works with URIs however for desktop clients
     // the stylesdir attribute is expected to look like a file system path (especially on Windows)
     if (process.env.BROWSER_ENV) {
-      this.stylesdir = vscode.Uri.joinPath(extensionUri, 'media').toString()
+      this.stylesdir = vscode.Uri.joinPath(contributionProvider.extensionUri, 'media').toString()
     } else {
-      this.stylesdir = vscode.Uri.joinPath(extensionUri, 'media').fsPath
+      this.stylesdir = vscode.Uri.joinPath(contributionProvider.extensionUri, 'media').fsPath
     }
   }
 
@@ -59,7 +59,7 @@ export class AsciidocParser {
     await this.registerAsciidoctorExtensions(registry)
 
     highlightjsBuiltInSyntaxHighlighter.$register_for('highlight.js', 'highlightjs')
-    const baseDir = this.getBaseDir(textDocument.fileName)
+    const baseDir = AsciidocParser.getBaseDir(textDocument.fileName)
     const options: { [key: string]: any } = {
       attributes: {
         'env-vscode': '',
@@ -81,13 +81,13 @@ export class AsciidocParser {
 
   // Load
 
-  public load (textDocument: SkinnyTextDocument): { document: Asciidoctor.Document, baseDocumentIncludeItems: IncludeItems } {
+  public static load (textDocument: SkinnyTextDocument): { document: Asciidoctor.Document, baseDocumentIncludeItems: IncludeItems } {
     const memoryLogger = processor.MemoryLogger.create()
     processor.LoggerManager.setLogger(memoryLogger)
     const registry = processor.Extensions.create()
     asciidoctorFindIncludeProcessor.register(registry)
     asciidoctorFindIncludeProcessor.resetIncludes()
-    const baseDir = this.getBaseDir(textDocument.fileName)
+    const baseDir = AsciidocParser.getBaseDir(textDocument.fileName)
     const document = processor.load(textDocument.getText(), {
       attributes: {
         'env-vscode': '',
@@ -130,6 +130,7 @@ export class AsciidocParser {
       context,
       editor,
       cspArbiter,
+      this.contributionProvider,
       previewConfigurationManager,
       line
     )
@@ -155,7 +156,7 @@ export class AsciidocParser {
     })
     attributes['env-vscode'] = ''
 
-    const baseDir = this.getBaseDir(doc.fileName)
+    const baseDir = AsciidocParser.getBaseDir(doc.fileName)
     const options: { [key: string]: any } = {
       attributes,
       backend: 'webview-html5',
@@ -250,7 +251,7 @@ export class AsciidocParser {
    * @param documentFileName The file system path of the text document.
    * @private
    */
-  private getBaseDir (documentFilePath: string): string | undefined {
+  private static getBaseDir (documentFilePath: string): string | undefined {
     const documentPath = process.env.BROWSER_ENV
       ? undefined
       : path.dirname(path.resolve(documentFilePath))
@@ -269,7 +270,7 @@ export class AsciidocParser {
     if (extensionsCount === 0) {
       return false
     }
-    return this.apsArbiter.confirmAsciidoctorExtensionsTrustMode(extensionsCount)
+    return this.aspArbiter.confirmAsciidoctorExtensionsTrustMode(extensionsCount)
   }
 
   private async registerAsciidoctorExtensions (registry) {

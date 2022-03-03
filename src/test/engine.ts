@@ -4,15 +4,13 @@
 
 import * as vscode from 'vscode'
 import { AsciidocEngine } from '../asciidocEngine'
-import { AsciidocContributions } from '../asciidocExtensions'
+import { AsciidocContributionProvider, AsciidocContributions } from '../asciidocExtensions'
+import { Disposable } from '../util/dispose'
 
-const emptyContributions = new class implements AsciidocContributions {
-  readonly extensionUri = vscode.Uri.parse('')
-  readonly previewScripts: vscode.Uri[] = []
-  readonly previewStylesEditor: vscode.Uri[] = []
-  readonly previewStylesDefault: vscode.Uri[] = []
-  readonly previewResourceRoots: vscode.Uri[] = []
-  readonly asciidocItPlugins: Promise<(md: any) => any>[] = []
+const emptyContributions = new class extends Disposable implements AsciidocContributionProvider {
+  readonly extensionUri = vscode.Uri.file('/')
+  readonly contributions = AsciidocContributions.Empty
+  readonly onContributionsChanged = this._register(new vscode.EventEmitter<this>()).event
 }()
 
 export function createNewAsciidocEngine (): AsciidocEngine {

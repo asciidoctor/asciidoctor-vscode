@@ -34,6 +34,8 @@ module.exports = {
     "spaced-comment": "off",
     // https://github.com/typescript-eslint/typescript-eslint/issues/2621
     "no-unused-vars": "off",
+    // https://github.com/typescript-eslint/typescript-eslint/issues/60
+    "no-redeclare": "off",
     "@typescript-eslint/no-unused-vars": ["error", { argsIgnorePattern: "^_" }],
     "no-useless-constructor": "off",
     "@typescript-eslint/no-useless-constructor": ["error"]

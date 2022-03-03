@@ -5,7 +5,6 @@
 import * as vscode from 'vscode'
 import { FoldingRangeKind } from 'vscode'
 
-import { AsciidocEngine } from '../asciidocEngine'
 import { TableOfContentsProvider } from '../tableOfContentsProvider'
 
 //https://github.com/asciidoctor/asciidoctor/blob/0aad7459d1fe548219733b4a2b4f00fd3bf6f362/lib/asciidoctor/rx.rb#L76
@@ -14,11 +13,6 @@ const conditionalEndRx = /^(\\)?(endif)::(\S*?(?:([,+])\S*?)?)\[(#{CC_ANY}+)?/
 const commentBlockRx = /^\/{4,}/
 
 export default class AsciidocFoldingRangeProvider implements vscode.FoldingRangeProvider {
-  constructor (
-    private readonly engine: AsciidocEngine
-  ) {
-  }
-
   public provideFoldingRanges (
     document: vscode.TextDocument,
     _token: vscode.CancellationToken
@@ -146,7 +140,7 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
   }
 
   private getHeaderFoldingRanges (document: vscode.TextDocument) {
-    const tableOfContentsProvider = new TableOfContentsProvider(this.engine, document)
+    const tableOfContentsProvider = new TableOfContentsProvider(document)
     const tableOfContents = tableOfContentsProvider.getToc()
 
     return tableOfContents.map((entry, startIndex) => {
