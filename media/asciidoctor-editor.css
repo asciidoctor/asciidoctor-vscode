@@ -200,13 +200,12 @@ body {
 }
 
 body {
-  /* DISABLED background: #fff; */
-  /* DISABLED color: rgba(0, 0, 0, .8); */
-  padding: 0;
+  font-family: var(--asciidoc-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", system-ui, "Ubuntu", "Droid Sans", sans-serif);
+  font-size: var(--asciidoc-font-size, 14px);
+  padding: 0 26px;
+  line-height: var(--asciidoc-line-height, 22px);
+  word-wrap: break-word;
   margin: 0;
-  /* DISABLED font-family: "Noto Serif", "DejaVu Serif", serif; */
-  /* DISABLED TODO: decide whether to use serif font
-  font-family: serif; */
   font-weight: 400;
   font-style: normal;
   line-height: 1;
@@ -2300,7 +2299,7 @@ blockquote,
 dt,
 td.content,
 span.alt {
-  font-size: 1.0625rem
+  font-size: 1.0625em
 }
 
 p {

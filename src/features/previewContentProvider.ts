@@ -79,7 +79,7 @@ export class AsciidocContentProvider {
     this.logger.log(`Using CSS ${this.getStyles(sourceUri, nonce, config, state)}`)
 
     return `<!DOCTYPE html>
-      <html>
+      <html style="${escapeAttribute(this.getSettingsOverrideStyles(config))}">
       <head>
         <meta http-equiv="Content-type" content="text/html;charset=UTF-8">
         ${csp}
@@ -146,14 +146,12 @@ export class AsciidocContentProvider {
     return ''
   }
 
-  private getSettingsOverrideStyles (nonce: string, config: AsciidocPreviewConfiguration): string {
-    return `<style nonce="${nonce}">
-      body {
-        ${config.fontFamily ? `font-family: ${config.fontFamily};` : ''}
-        ${isNaN(config.fontSize) ? '' : `font-size: ${config.fontSize}px;`}
-        ${isNaN(config.lineHeight) ? '' : `line-height: ${config.lineHeight};`}
-      }
-    </style>`
+  private getSettingsOverrideStyles (config: AsciidocPreviewConfiguration): string {
+    return [
+      config.fontFamily ? `--asciidoc-font-family: ${config.fontFamily};` : '',
+      isNaN(config.fontSize) ? '' : `--asciidoc-font-size: ${config.fontSize}px;`,
+      isNaN(config.lineHeight) ? '' : `--asciidoc-line-height: ${config.lineHeight};`,
+    ].join(' ')
   }
 
   private getImageStabilizerStyles (state?: any) {
@@ -185,7 +183,6 @@ export class AsciidocContentProvider {
     }
 
     return `${baseStyles}
-      ${this.getSettingsOverrideStyles(nonce, config)}
       ${this.computeCustomStyleSheetIncludes(resource, config)}
       ${this.getImageStabilizerStyles(state)}`
   }
@@ -207,4 +204,8 @@ export class AsciidocContentProvider {
         return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src vscode-resource: https: data:; media-src vscode-resource: https: data:; script-src vscode-resource: 'nonce-${nonce}' '${highlightjsInlineScriptHash}'; style-src vscode-resource: 'unsafe-inline' https: data:; font-src vscode-resource: https: data:;">`
     }
   }
+}
+
+function escapeAttribute (value: string | vscode.Uri): string {
+  return value.toString().replace(/"/g, '&quot;')
 }
