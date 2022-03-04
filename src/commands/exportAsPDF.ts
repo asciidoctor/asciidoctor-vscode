@@ -42,7 +42,7 @@ export class ExportAsPDF implements Command {
       }
       const asciidoctorPDFCommand = vscode.workspace
         .getConfiguration('asciidoc', null)
-        .get('asciidoctorPDFCommand', 'asciidoctor-pdf')
+        .get('asciidoctorpdf_command', 'asciidoctor-pdf')
 
       const adocPDFCmdArray = asciidoctorPDFCommand
         .split(/(\s+)/)
