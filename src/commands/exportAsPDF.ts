@@ -42,7 +42,7 @@ export class ExportAsPDF implements Command {
       }
       const asciidoctorPDFCommand = vscode.workspace
         .getConfiguration('asciidoc', null)
-        .get('asciidoctorPDFCommand', 'asciidoctor-pdf')
+        .get('asciidoctorpdf_command', 'asciidoctor-pdf')
 
       const adocPDFCmdArray = asciidoctorPDFCommand
         .split(/(\s+)/)
@@ -79,7 +79,7 @@ export class ExportAsPDF implements Command {
     } else {
       const wkHTMLtoPDFPath = vscode.workspace
         .getConfiguration('asciidoc')
-        .get('wkHTMLtoPDFPath', '')
+        .get('wkhtmltopdf_path', '')
 
       const { output: html, document } = await this.engine.render(doc.uri, true, text, false, 'webview-html5')
       const showTitlePage = (document?.isAttribute('showTitlePage') as unknown) as boolean // incorrect type definition in Asciidoctor.js
