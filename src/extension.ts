@@ -35,7 +35,7 @@ export function activate (context: vscode.ExtensionContext) {
     { language: 'asciidoc', scheme: 'untitled' },
   ]
 
-  const contentProvider = new AsciidocContentProvider(engine, context, cspArbiter, contributions, logger)
+  const contentProvider = new AsciidocContentProvider(engine, context)
   const symbolProvider = new AdocDocumentSymbolProvider(engine, null)
   const previewManager = new AsciidocPreviewManager(contentProvider, logger, contributions)
   context.subscriptions.push(previewManager)

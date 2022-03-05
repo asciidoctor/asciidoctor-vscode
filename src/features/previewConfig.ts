@@ -23,6 +23,8 @@ export class AsciidocPreviewConfiguration {
   public readonly fontFamily: string | undefined
   public readonly styles: string[]
   public readonly refreshInterval: number
+  public readonly useEditorStylesheet: boolean
+  public readonly previewStyle: string
 
   private constructor (resource: vscode.Uri) {
     const editorConfig = vscode.workspace.getConfiguration('editor', resource)
@@ -47,7 +49,9 @@ export class AsciidocPreviewConfiguration {
     this.fontSize = Math.max(8, +asciidocConfig.get<number>('preview.fontSize', NaN))
     this.lineHeight = Math.max(0.6, +asciidocConfig.get<number>('preview.lineHeight', NaN))
 
-    this.styles = asciidocConfig.get<string[]>('styles', [])
+    this.styles = asciidocConfig.get<string[]>('styles', []) // REMIND: unused, we should either use it or remove it!
+    this.useEditorStylesheet = asciidocConfig.get<boolean>('preview.useEditorStyle', false)
+    this.previewStyle = asciidocConfig.get<string>('preview.style', '')
     this.refreshInterval = Math.max(0.6, +asciidocConfig.get<number>('preview.refreshInterval', NaN))
   }
 

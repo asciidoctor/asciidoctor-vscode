@@ -10,3 +10,6 @@ dist/
 .vscode-test/
 .vscode-test-web/
 media/highlightjs/*
+media/font-awesome/**
+media/mathjax/**
+media/fonts/**

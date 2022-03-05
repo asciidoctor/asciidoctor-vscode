@@ -2,6 +2,8 @@ import * as vscode from 'vscode'
 import * as path from 'path'
 import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
 import { Asciidoctor } from '@asciidoctor/core'
+import { ExtensionContentSecurityPolicyArbiter } from './security'
+import { AsciidocPreviewConfigurationManager } from './features/previewConfig'
 import { SkinnyTextDocument } from './util/document'
 import { IncludeItems } from './asciidoctorFindIncludeProcessor'
 
@@ -17,6 +19,8 @@ const highlightjsAdapter = require('./highlightjs-adapter')
 docbookConverter.register()
 
 export type AsciidoctorBuiltInBackends = 'html5' | 'docbook5'
+
+const previewConfigurationManager = new AsciidocPreviewConfigurationManager()
 
 export class AsciidocParser {
   private stylesdir: string
@@ -95,11 +99,10 @@ export class AsciidocParser {
     context: vscode.ExtensionContext,
     editor: vscode.WebviewPanel
   ): { html: string, document: Asciidoctor.Document } {
+    // extension context should be at constructor
+    const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState)
     const workspacePath = vscode.workspace.workspaceFolders
-    const containsStyle = !(text.match(/'^\\s*:(stylesheet|stylesdir)/img) == null)
-    const useEditorStylesheet = vscode.workspace.getConfiguration('asciidoc', null).get('preview.useEditorStyle', false)
     const previewAttributes = vscode.workspace.getConfiguration('asciidoc', null).get('preview.attributes', {})
-    const previewStyle = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', '')
     const enableErrorDiagnostics = vscode.workspace.getConfiguration('asciidoc', null).get('enableErrorDiagnostics')
 
     if (this.errorCollection) {
@@ -111,7 +114,13 @@ export class AsciidocParser {
 
     const registry = processor.Extensions.create()
 
-    const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter()
+    const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter(
+      doc,
+      context,
+      editor,
+      cspArbiter,
+      previewConfigurationManager
+    )
     processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])
     const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
 
@@ -125,55 +134,16 @@ export class AsciidocParser {
       highlightjsBuiltInSyntaxHighlighter.$register_for('highlight.js', 'highlightjs')
     }
 
-    let attributes = {}
-
-    if (containsStyle) {
-      attributes = {}
-    } else if (previewStyle !== '') {
-      let stylesdir: string, stylesheet: string
-
-      if (path.isAbsolute(previewStyle)) {
-        stylesdir = path.dirname(previewStyle)
-        stylesheet = path.basename(previewStyle)
-      } else {
-        if (workspacePath === undefined) {
-          stylesdir = ''
-        } else if (workspacePath.length > 0) {
-          stylesdir = workspacePath[0].uri.path
-        }
-
-        stylesdir = path.dirname(path.join(stylesdir, previewStyle))
-        stylesheet = path.basename(previewStyle)
-      }
-
-      attributes = {
-        stylesdir: stylesdir,
-        stylesheet: stylesheet,
-      }
-    } else if (useEditorStylesheet) {
-      attributes = {
-        'allow-uri-read': true,
-        stylesdir: this.stylesdir,
-        stylesheet: 'asciidoctor-editor.css',
-      }
-    } else {
-      attributes = {
-        stylesdir: this.stylesdir,
-        stylesheet: 'asciidoctor-default.css@',
-      }
-    }
-
-    // TODO: Check -- Not clear that this code is functional
+    const attributes = {}
     Object.keys(previewAttributes).forEach((key) => {
-      if (typeof previewAttributes[key] === 'string') {
-        attributes[key] = previewAttributes[key]
-        if (workspacePath !== undefined) {
+      const attributeValue = previewAttributes[key]
+      if (typeof attributeValue === 'string') {
+        attributes[key] = workspacePath === undefined
+          ? attributeValue
           // eslint-disable-next-line no-template-curly-in-string
-          attributes[key] = attributes[key].replace('${workspaceFolder}', workspacePath[0].uri.path)
-        }
+          : attributeValue.replace('${workspaceFolder}', workspacePath[0].uri.path)
       }
     })
-
     attributes['env-vscode'] = ''
 
     const baseDir = this.getBaseDir(doc.fileName)
