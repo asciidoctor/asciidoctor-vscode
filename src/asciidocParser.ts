@@ -250,16 +250,7 @@ export class AsciidocParser {
 
     return new Promise<string>((resolve) => {
       const asciidoctorCommand = vscode.workspace.getConfiguration('asciidoc', null).get('asciidoctor_command', 'asciidoctor')
-      let RUBYOPT = process.env.RUBYOPT
-      if (RUBYOPT) {
-        let prevOpt
-        RUBYOPT = RUBYOPT.split(' ').reduce((acc, opt) => {
-          acc.push(prevOpt === '-E' ? (prevOpt = 'UTF-8:UTF-8') : (prevOpt = opt))
-          return acc
-        }, []).join(' ')
-      } else {
-        RUBYOPT = '-E UTF-8:UTF-8'
-      }
+      const RUBYOPT = this.getRubyOpts()
       const options = { shell: true, cwd: path.dirname(doc.fileName), env: { ...process.env, RUBYOPT } }
 
       const adocCmdArray = asciidoctorCommand.split(/(\s+)/).filter(function (e) {
@@ -358,5 +349,21 @@ export class AsciidocParser {
     // AsciidoctorWebViewConverter is not available in asciidoctor (Ruby) CLI
     const html = await this.convertUsingApplication(text, doc, forHTMLSave, backend === 'webview-html5' ? 'html5' : backend)
     return { html }
+  }
+
+  /**
+   * Get RUBYOPTS.
+   * @private
+   */
+  private getRubyOpts () {
+    const RUBYOPT = process.env.RUBYOPT
+    if (RUBYOPT) {
+      let prevOpt
+      return RUBYOPT.split(' ').reduce((acc, opt) => {
+        acc.push(prevOpt === '-E' ? (prevOpt = 'UTF-8:UTF-8') : (prevOpt = opt))
+        return acc
+      }, []).join(' ')
+    }
+    return '-E UTF-8:UTF-8'
   }
 }
