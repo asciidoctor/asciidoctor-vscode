@@ -118,8 +118,11 @@ export class AsciidocParser {
           stylesheet: 'asciidoctor-editor.css',
         }
       } else {
-        // TODO: decide whether to use the included css or let ascidoctor.js decide
-        // attributes = { 'copycss': true, 'stylesdir': this.stylesdir, 'stylesheet': 'asciidoctor-default.css@' }
+        attributes = {
+          copycss: true,
+          stylesdir: this.stylesdir,
+          stylesheet: 'asciidoctor-default.css@',
+        }
       }
 
       // TODO: Check -- Not clear that this code is functional
