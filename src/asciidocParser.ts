@@ -81,7 +81,7 @@ export class AsciidocParser {
       let attributes = {}
 
       if (containsStyle) {
-        attributes = { copycss: true }
+        attributes = {}
       } else if (previewStyle !== '') {
         let stylesdir: string, stylesheet: string
 
@@ -100,20 +100,17 @@ export class AsciidocParser {
         }
 
         attributes = {
-          copycss: true,
           stylesdir: stylesdir,
           stylesheet: stylesheet,
         }
       } else if (useEditorStylesheet && !forHTMLSave) {
         attributes = {
           'allow-uri-read': true,
-          copycss: false,
           stylesdir: this.stylesdir,
           stylesheet: 'asciidoctor-editor.css',
         }
       } else {
         attributes = {
-          copycss: true,
           stylesdir: this.stylesdir,
           stylesheet: 'asciidoctor-default.css@',
         }
@@ -144,7 +141,6 @@ export class AsciidocParser {
         header_footer: true,
         safe: 'unsafe',
         sourcemap: true,
-        to_file: false,
         ...(baseDir && { base_dir: baseDir }),
       }
 
