@@ -171,64 +171,7 @@ export class AsciidocParser {
         })
         const resultHTML = document.convert(options)
         if (enableErrorDiagnostics) {
-          const diagnostics = []
-          memoryLogger.getMessages().forEach((error) => {
-            //console.log(error); //Error from asciidoctor.js
-            let errorMessage = error.getText()
-            let sourceLine = 0
-            let relatedFile = null
-            const diagnosticSource = 'asciidoctor.js'
-            // allocate to line 0 in the absence of information
-            let sourceRange = doc.lineAt(0).range
-            const location = error.getSourceLocation()
-            if (location) { //There is a source location
-              if (location.getPath() === '<stdin>') { //error is within the file we are parsing
-                sourceLine = location.getLineNumber() - 1
-                // ensure errors are always associated with a valid line
-                sourceLine = sourceLine >= doc.lineCount ? doc.lineCount - 1 : sourceLine
-                sourceRange = doc.lineAt(sourceLine).range
-              } else { //error is coming from an included file
-                relatedFile = error.getSourceLocation()
-                // try to find the include responsible from the info provided by asciidoctor.js
-                sourceLine = doc.getText().split('\n').indexOf(doc.getText().split('\n').find((str) => str.startsWith('include') && str.includes(error.message.source_location.path)))
-                if (sourceLine !== -1) {
-                  sourceRange = doc.lineAt(sourceLine).range
-                }
-              }
-            } else {
-              // generic error (e.g. :source-highlighter: coderay)
-              errorMessage = error.message
-            }
-            let severity = vscode.DiagnosticSeverity.Information
-            if (error.severity === 'WARN') {
-              severity = vscode.DiagnosticSeverity.Warning
-            } else if (error.severity === 'ERROR') {
-              severity = vscode.DiagnosticSeverity.Error
-            } else if (error.severity === 'DEBUG') {
-              severity = vscode.DiagnosticSeverity.Information
-            }
-            let diagnosticRelated = null
-            if (relatedFile) {
-              diagnosticRelated = [
-                new vscode.DiagnosticRelatedInformation(
-                  new vscode.Location(vscode.Uri.file(relatedFile.file),
-                    new vscode.Position(0, 0)
-                  ),
-                  errorMessage
-                ),
-              ]
-              errorMessage = 'There was an error in an included file'
-            }
-            const diagnosticError = new vscode.Diagnostic(sourceRange, errorMessage, severity)
-            diagnosticError.source = diagnosticSource
-            if (diagnosticRelated) {
-              diagnosticError.relatedInformation = diagnosticRelated
-            }
-            diagnostics.push(diagnosticError)
-          })
-          if (this.errorCollection) {
-            this.errorCollection.set(doc.uri, diagnostics)
-          }
+          this.reportErrors(memoryLogger, doc)
         }
         resolve({ html: resultHTML, document })
       } catch (e) {
@@ -247,5 +190,66 @@ export class AsciidocParser {
     editor?: vscode.WebviewPanel
   ): Promise<{ html: string, document?: Asciidoctor.Document }> {
     return this.convertUsingJavascript(text, doc, forHTMLSave, backend, false, context, editor)
+  }
+
+  private reportErrors (memoryLogger: Asciidoctor.MemoryLogger, textDocument: vscode.TextDocument) {
+    const diagnostics = []
+    memoryLogger.getMessages().forEach((error) => {
+      //console.log(error); //Error from asciidoctor.js
+      let errorMessage = error.getText()
+      let sourceLine = 0
+      let relatedFile = null
+      const diagnosticSource = 'asciidoctor.js'
+      // allocate to line 0 in the absence of information
+      let sourceRange = textDocument.lineAt(0).range
+      const location = error.getSourceLocation()
+      if (location) { //There is a source location
+        if (location.getPath() === '<stdin>') { //error is within the file we are parsing
+          sourceLine = location.getLineNumber() - 1
+          // ensure errors are always associated with a valid line
+          sourceLine = sourceLine >= textDocument.lineCount ? textDocument.lineCount - 1 : sourceLine
+          sourceRange = textDocument.lineAt(sourceLine).range
+        } else { //error is coming from an included file
+          relatedFile = error.getSourceLocation()
+          // try to find the include responsible from the info provided by asciidoctor.js
+          sourceLine = textDocument.getText().split('\n').indexOf(textDocument.getText().split('\n').find((str) => str.startsWith('include') && str.includes(relatedFile.path)))
+          if (sourceLine !== -1) {
+            sourceRange = textDocument.lineAt(sourceLine).range
+          }
+        }
+      } else {
+        // generic error (e.g. :source-highlighter: coderay)
+        errorMessage = error.message
+      }
+      let severity = vscode.DiagnosticSeverity.Information
+      if (error.getSeverity() === 'WARN') {
+        severity = vscode.DiagnosticSeverity.Warning
+      } else if (error.getSeverity() === 'ERROR') {
+        severity = vscode.DiagnosticSeverity.Error
+      } else if (error.getSeverity() === 'DEBUG') {
+        severity = vscode.DiagnosticSeverity.Information
+      }
+      let diagnosticRelated = null
+      if (relatedFile) {
+        diagnosticRelated = [
+          new vscode.DiagnosticRelatedInformation(
+            new vscode.Location(vscode.Uri.file(relatedFile.file),
+              new vscode.Position(0, 0)
+            ),
+            errorMessage
+          ),
+        ]
+        errorMessage = 'There was an error in an included file'
+      }
+      const diagnosticError = new vscode.Diagnostic(sourceRange, errorMessage, severity)
+      diagnosticError.source = diagnosticSource
+      if (diagnosticRelated) {
+        diagnosticError.relatedInformation = diagnosticRelated
+      }
+      diagnostics.push(diagnosticError)
+    })
+    if (this.errorCollection) {
+      this.errorCollection.set(textDocument.uri, diagnostics)
+    }
   }
 }
