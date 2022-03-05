@@ -275,11 +275,6 @@
 			"title": "asciidoc",
 			"order": 21,
 			"properties": {
-				"asciidoc.asciidoctor_command": {
-					"type": "string",
-					"default": "asciidoctor",
-					"description": "%asciidoc.asciidoctor_command.desc%"
-				},
 				"asciidoc.asciidoctorpdf_command": {
 					"type": "string",
 					"default": "asciidoctor-pdf",
@@ -402,11 +397,6 @@
 					"description": "%asciidoc.trace.desc%",
 					"scope": "window"
 				},
-				"asciidoc.use_asciidoctor_js": {
-					"type": "boolean",
-					"default": true,
-					"description": "%asciidoc.use_asciidoctor_js.desc%"
-				},
 				"asciidoc.use_asciidoctorpdf": {
 					"type": "boolean",
 					"default": false,
@@ -427,19 +417,6 @@
 					"type": "boolean",
 					"default": true,
 					"description": "%asciidoc.forceUnixStyleSeparator.desc%"
-				},
-				"asciidoc.saveDocbook.docbookVersion": {
-					"type": "string",
-					"default": "docbook5",
-					"description": "%asciidoc.saveDocbook.docbookVersion.desc%",
-					"enum": [
-						"docbook5",
-						"docbook45"
-					],
-					"enumDescriptions": [
-						"%asciidoc.saveDocbook.docbookVersion.docbook5%",
-						"%asciidoc.saveDocbook.docbookVersion.docbook45%"
-					]
 				},
 				"asciidoc.enableErrorDiagnostics": {
 					"type": "boolean",
