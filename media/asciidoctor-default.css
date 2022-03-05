@@ -171,7 +171,7 @@ body {
     margin: 0;
     font-family: var(--asciidoc-font-family, "Noto Serif", "DejaVu Serif", serif);
     font-size: var(--asciidoc-font-size, 14px);
-    line-height: var(--asciidoc-line-height, 22px);
+    line-height: var(--asciidoc-line-height, 1.6);
     position: relative;
     cursor: auto;
     -moz-tab-size: 4;
@@ -242,7 +242,7 @@ select {
 }
 
 .subheader, .admonitionblock td.content > .title, .audioblock > .title, .exampleblock > .title, .imageblock > .title, .listingblock > .title, .literalblock > .title, .stemblock > .title, .openblock > .title, .paragraph > .title, .quoteblock > .title, table.tableblock > .title, .verseblock > .title, .videoblock > .title, .dlist > .title, .olist > .title, .ulist > .title, .qlist > .title, .hdlist > .title {
-    line-height: 1.45;
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 0.9);
     color: #7a2518;
     font-weight: 400;
     margin-top: 0;
@@ -269,14 +269,13 @@ a img {
 }
 
 p {
-    line-height: 1.6;
     margin-bottom: 1.25em;
     text-rendering: optimizeLegibility
 }
 
 p aside {
     font-size: .875em;
-    line-height: 1.35;
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 0.85);
     font-style: italic
 }
 
@@ -346,7 +345,7 @@ code {
 }
 
 ul, ol, dl {
-    line-height: 1.6;
+    line-height: var(--asciidoc-line-height, 1.6);
     margin-bottom: 1.25em;
     list-style-position: outside;
     font-family: inherit
@@ -398,13 +397,13 @@ blockquote {
 }
 
 blockquote, blockquote p {
-    line-height: 1.6;
+    line-height: var(--asciidoc-line-height, 1.6);
     color: rgba(0, 0, 0, .85)
 }
 
 @media screen and (min-width: 768px) {
     h1, h2, h3, #toctitle, .sidebarblock > .content > .title, h4, h5, h6 {
-        line-height: 1.2
+        line-height: calc(var(--asciidoc-line-height, 1.6) * 0.75);
     }
 
     h1 {
@@ -453,11 +452,11 @@ table tr.even, table tr.alt {
 }
 
 table thead tr th, table tfoot tr th, table tbody tr td, table tr td, table tfoot tr td {
-    line-height: 1.6
+    line-height: var(--asciidoc-line-height, 1.6);
 }
 
 h1, h2, h3, #toctitle, .sidebarblock > .content > .title, h4, h5, h6 {
-    line-height: 1.2;
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 0.75);
     word-spacing: -.05em
 }
 
@@ -503,14 +502,14 @@ h1 strong, h2 strong, h3 strong, #toctitle strong, .sidebarblock > .content > .t
     word-spacing: -.15em;
     background: #f7f7f8;
     border-radius: 4px;
-    line-height: 1.45;
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 0.9);
     text-rendering: optimizeSpeed
 }
 
 pre {
     color: rgba(0, 0, 0, .9);
     font-family: "Droid Sans Mono", "DejaVu Sans Mono", monospace;
-    line-height: 1.45;
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 0.9);
     text-rendering: optimizeSpeed
 }
 
@@ -546,7 +545,7 @@ kbd {
     display: inline-block;
     color: rgba(0, 0, 0, .8);
     font-size: .65em;
-    line-height: 1.45;
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 0.9);
     background: #f7f7f7;
     border: 1px solid #ccc;
     border-radius: 3px;
@@ -581,7 +580,7 @@ kbd {
 
 .menuseq b.caret {
     font-size: 1.25em;
-    line-height: .8
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 0.5);
 }
 
 .menuseq i.caret {
@@ -655,7 +654,7 @@ p a > code:hover {
 
 #header .details {
     border-bottom: 1px solid #dddddf;
-    line-height: 1.45;
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 0.9);
     padding-top: .25em;
     padding-bottom: .25em;
     padding-left: .25em;
@@ -729,7 +728,7 @@ p a > code:hover {
 }
 
 #toc li {
-    line-height: 1.3334;
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 0.825);
     margin-top: .3334em
 }
 
@@ -859,7 +858,7 @@ p a > code:hover {
 
 #footer-text {
     color: hsla(0, 0%, 100%, .8);
-    line-height: 1.44
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 0.9);
 }
 
 #content {
@@ -932,7 +931,7 @@ details > summary {
     cursor: pointer;
     display: block;
     position: relative;
-    line-height: 1.6;
+    var(--asciidoc-line-height, 1.6);
     margin-bottom: .625rem;
     outline: none;
     -webkit-tap-highlight-color: transparent
@@ -984,7 +983,7 @@ table.tableblock.fit-content > caption.title {
 
 .paragraph.lead > p, #preamble > .sectionbody > [class=paragraph]:first-of-type p {
     font-size: 1.21875em;
-    line-height: 1.6;
+    var(--asciidoc-line-height, 1.6);
     color: rgba(0, 0, 0, .85)
 }
 
@@ -1103,7 +1102,7 @@ table.tableblock.fit-content > caption.title {
     font-size: .75em;
     top: .425rem;
     right: .5rem;
-    line-height: 1;
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 0.625);
     text-transform: uppercase;
     color: inherit;
     opacity: .5
@@ -1142,7 +1141,7 @@ table.tableblock.fit-content > caption.title {
 }
 
 pre.prettyprint .linenums {
-    line-height: 1.45;
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 0.9);
     margin-left: 2em
 }
 
@@ -1207,7 +1206,7 @@ pre.pygments span.linenos {
 .quoteblock blockquote, .quoteblock p {
     color: rgba(0, 0, 0, .85);
     font-size: 1.15rem;
-    line-height: 1.75;
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 1.1);
     word-spacing: .1em;
     letter-spacing: 0;
     font-style: italic;
@@ -1264,7 +1263,7 @@ pre.pygments span.linenos {
 
 .quoteblock .attribution, .verseblock .attribution {
     font-size: .9375em;
-    line-height: 1.45;
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 0.9);
     font-style: italic
 }
 
@@ -1283,7 +1282,7 @@ pre.pygments span.linenos {
 }
 
 .quoteblock.abstract blockquote, .quoteblock.abstract p, .quoteblock.excerpt blockquote, .quoteblock.excerpt p, .quoteblock .quoteblock blockquote, .quoteblock .quoteblock p {
-    line-height: 1.6;
+    var(--asciidoc-line-height, 1.6);
     word-spacing: 0
 }
 
@@ -1551,7 +1550,7 @@ td.hdlist2 {
 
 .colist td:not([class]):first-child {
     padding: .4em .75em 0;
-    line-height: 1;
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 0.625);
     vertical-align: top
 }
 
@@ -1643,7 +1642,7 @@ sup.footnote a:active, sup.footnoteref a:active {
 
 #footnotes .footnote {
     padding: 0 .375em 0 .225em;
-    line-height: 1.3334;
+    line-height: calc(var(--asciidoc-line-height, 1.6) * 0.825);
     font-size: .875em;
     margin-left: 1.2em;
     margin-bottom: .2em
