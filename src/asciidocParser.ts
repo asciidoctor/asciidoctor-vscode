@@ -30,7 +30,7 @@ export class AsciidocParser {
     return text.match(/^\\s*:mediadir:/)
   }
 
-  public async convertUsingJavascript (
+  public convertUsingJavascript (
     text: string,
     doc: vscode.TextDocument,
     forHTMLSave: boolean,
@@ -38,133 +38,131 @@ export class AsciidocParser {
     getDocumentInformation: boolean,
     context?: vscode.ExtensionContext,
     editor?: vscode.WebviewPanel
-  ) {
-    return new Promise<{html: string, document: Asciidoctor.Document}>((resolve, reject) => {
-      const workspacePath = vscode.workspace.workspaceFolders
-      const containsStyle = !(text.match(/'^\\s*:(stylesheet|stylesdir)/img) == null)
-      const useEditorStylesheet = vscode.workspace.getConfiguration('asciidoc', null).get('preview.useEditorStyle', false)
-      const previewAttributes = vscode.workspace.getConfiguration('asciidoc', null).get('preview.attributes', {})
-      const previewStyle = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', '')
-      const enableErrorDiagnostics = vscode.workspace.getConfiguration('asciidoc', null).get('enableErrorDiagnostics')
+  ): {html: string, document: Asciidoctor.Document} {
+    const workspacePath = vscode.workspace.workspaceFolders
+    const containsStyle = !(text.match(/'^\\s*:(stylesheet|stylesdir)/img) == null)
+    const useEditorStylesheet = vscode.workspace.getConfiguration('asciidoc', null).get('preview.useEditorStyle', false)
+    const previewAttributes = vscode.workspace.getConfiguration('asciidoc', null).get('preview.attributes', {})
+    const previewStyle = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', '')
+    const enableErrorDiagnostics = vscode.workspace.getConfiguration('asciidoc', null).get('enableErrorDiagnostics')
 
-      if (this.errorCollection) {
-        this.errorCollection.clear()
-      }
+    if (this.errorCollection) {
+      this.errorCollection.clear()
+    }
 
-      const memoryLogger = processor.MemoryLogger.create()
-      processor.LoggerManager.setLogger(memoryLogger)
+    const memoryLogger = processor.MemoryLogger.create()
+    processor.LoggerManager.setLogger(memoryLogger)
 
-      const registry = processor.Extensions.create()
-      // registry for processing document differently to find AST/metadata otherwise not available
-      const registryForDocumentInfo = processor.Extensions.create()
+    const registry = processor.Extensions.create()
+    // registry for processing document differently to find AST/metadata otherwise not available
+    const registryForDocumentInfo = processor.Extensions.create()
 
-      const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter()
-      processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])
-      const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
+    const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter()
+    processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])
+    const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
 
-      if (useKroki) {
-        kroki.register(registry)
-      }
+    if (useKroki) {
+      kroki.register(registry)
+    }
 
-      // the include processor is only run to identify includes, not to process them
-      if (getDocumentInformation) {
-        asciidoctorFindIncludeProcessor.register(registryForDocumentInfo)
-        asciidoctorFindIncludeProcessor.resetIncludes()
-      }
+    // the include processor is only run to identify includes, not to process them
+    if (getDocumentInformation) {
+      asciidoctorFindIncludeProcessor.register(registryForDocumentInfo)
+      asciidoctorFindIncludeProcessor.resetIncludes()
+    }
 
-      if (context && editor) {
-        highlightjsAdapter.register(highlightjsBuiltInSyntaxHighlighter, context, editor)
+    if (context && editor) {
+      highlightjsAdapter.register(highlightjsBuiltInSyntaxHighlighter, context, editor)
+    } else {
+      highlightjsBuiltInSyntaxHighlighter.$register_for('highlight.js', 'highlightjs')
+    }
+
+    let attributes = {}
+
+    if (containsStyle) {
+      attributes = {}
+    } else if (previewStyle !== '') {
+      let stylesdir: string, stylesheet: string
+
+      if (path.isAbsolute(previewStyle)) {
+        stylesdir = path.dirname(previewStyle)
+        stylesheet = path.basename(previewStyle)
       } else {
-        highlightjsBuiltInSyntaxHighlighter.$register_for('highlight.js', 'highlightjs')
+        if (workspacePath === undefined) {
+          stylesdir = ''
+        } else if (workspacePath.length > 0) {
+          stylesdir = workspacePath[0].uri.path
+        }
+
+        stylesdir = path.dirname(path.join(stylesdir, previewStyle))
+        stylesheet = path.basename(previewStyle)
       }
 
-      let attributes = {}
-
-      if (containsStyle) {
-        attributes = {}
-      } else if (previewStyle !== '') {
-        let stylesdir: string, stylesheet: string
-
-        if (path.isAbsolute(previewStyle)) {
-          stylesdir = path.dirname(previewStyle)
-          stylesheet = path.basename(previewStyle)
-        } else {
-          if (workspacePath === undefined) {
-            stylesdir = ''
-          } else if (workspacePath.length > 0) {
-            stylesdir = workspacePath[0].uri.path
-          }
-
-          stylesdir = path.dirname(path.join(stylesdir, previewStyle))
-          stylesheet = path.basename(previewStyle)
-        }
-
-        attributes = {
-          stylesdir: stylesdir,
-          stylesheet: stylesheet,
-        }
-      } else if (useEditorStylesheet && !forHTMLSave) {
-        attributes = {
-          'allow-uri-read': true,
-          stylesdir: this.stylesdir,
-          stylesheet: 'asciidoctor-editor.css',
-        }
-      } else {
-        attributes = {
-          stylesdir: this.stylesdir,
-          stylesheet: 'asciidoctor-default.css@',
-        }
+      attributes = {
+        stylesdir: stylesdir,
+        stylesheet: stylesheet,
       }
-
-      // TODO: Check -- Not clear that this code is functional
-      Object.keys(previewAttributes).forEach((key) => {
-        if (typeof previewAttributes[key] === 'string') {
-          attributes[key] = previewAttributes[key]
-          if (workspacePath !== undefined) {
-            // eslint-disable-next-line no-template-curly-in-string
-            attributes[key] = attributes[key].replace('${workspaceFolder}', workspacePath[0].uri.path)
-          }
-        }
-      })
-
-      attributes['env-vscode'] = ''
-
-      if (backend.startsWith('docbook')) {
-        docbook.register()
+    } else if (useEditorStylesheet && !forHTMLSave) {
+      attributes = {
+        'allow-uri-read': true,
+        stylesdir: this.stylesdir,
+        stylesheet: 'asciidoctor-editor.css',
       }
-
-      const baseDir = this.getBaseDir(doc.fileName)
-      const options: { [key: string]: any } = {
-        attributes: attributes,
-        backend: backend,
-        extension_registry: getDocumentInformation ? registryForDocumentInfo : registry,
-        header_footer: true,
-        safe: 'unsafe',
-        sourcemap: true,
-        ...(baseDir && { base_dir: baseDir }),
+    } else {
+      attributes = {
+        stylesdir: this.stylesdir,
+        stylesheet: 'asciidoctor-default.css@',
       }
+    }
 
-      try {
-        const document = processor.load(text, options)
-        if (getDocumentInformation) {
-          this.baseDocumentIncludeItems = asciidoctorFindIncludeProcessor.getBaseDocIncludes()
+    // TODO: Check -- Not clear that this code is functional
+    Object.keys(previewAttributes).forEach((key) => {
+      if (typeof previewAttributes[key] === 'string') {
+        attributes[key] = previewAttributes[key]
+        if (workspacePath !== undefined) {
+          // eslint-disable-next-line no-template-curly-in-string
+          attributes[key] = attributes[key].replace('${workspaceFolder}', workspacePath[0].uri.path)
         }
-        const blocksWithLineNumber = document.findBy(function (b) {
-          return typeof b.getLineNumber() !== 'undefined'
-        })
-        blocksWithLineNumber.forEach(function (block) {
-          block.addRole('data-line-' + block.getLineNumber())
-        })
-        const resultHTML = document.convert(options)
-        if (enableErrorDiagnostics) {
-          this.reportErrors(memoryLogger, doc)
-        }
-        resolve({ html: resultHTML, document })
-      } catch (e) {
-        vscode.window.showErrorMessage(e.toString())
-        reject(e)
       }
     })
+
+    attributes['env-vscode'] = ''
+
+    if (backend.startsWith('docbook')) {
+      docbook.register()
+    }
+
+    const baseDir = this.getBaseDir(doc.fileName)
+    const options: { [key: string]: any } = {
+      attributes: attributes,
+      backend: backend,
+      extension_registry: getDocumentInformation ? registryForDocumentInfo : registry,
+      header_footer: true,
+      safe: 'unsafe',
+      sourcemap: true,
+      ...(baseDir && { base_dir: baseDir }),
+    }
+
+    try {
+      const document = processor.load(text, options)
+      if (getDocumentInformation) {
+        this.baseDocumentIncludeItems = asciidoctorFindIncludeProcessor.getBaseDocIncludes()
+      }
+      const blocksWithLineNumber = document.findBy(function (b) {
+        return typeof b.getLineNumber() !== 'undefined'
+      })
+      blocksWithLineNumber.forEach(function (block) {
+        block.addRole('data-line-' + block.getLineNumber())
+      })
+      const resultHTML = document.convert(options)
+      if (enableErrorDiagnostics) {
+        this.reportErrors(memoryLogger, doc)
+      }
+      return { html: resultHTML, document }
+    } catch (e) {
+      vscode.window.showErrorMessage(e.toString())
+      throw e
+    }
   }
 
   public async parseText (
