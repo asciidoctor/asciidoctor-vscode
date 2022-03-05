@@ -17,7 +17,7 @@ An extension that provides live preview, syntax highlighting and snippets for th
     - [Preview](#preview)
     - [Export as PDF](#export-as-pdf)
     - [Save as HTML](#save-as-html)
-    - [Save to Docbook](#save-to-docbook)
+    - [Save to DocBook](#save-to-docbook)
     - [Snippets](#snippets)
     - [Identifying the VS Code Environment](#identifying-the-vs-code-environment)
     - [Diagram Integration](#diagram-integration)
@@ -48,7 +48,7 @@ This extension is also available as a pre-version (alpha) in [Visual Studio Code
 |Kroki Integration for Diagrams|✔️|✔️|
 |Paste Image |✔️|⛔|
 |Save as HTML|✔️|⛔|
-|Save as Docbook|✔️|⛔|
+|Save as DocBook|✔️|⛔|
 |Snippets|✔️|✔️|
 |Syntax Highlighting|✔️|✔️ (requires security to be disabled)|
 |Sync scrolling between the editor and the preview|✔️|✔️|
@@ -95,24 +95,13 @@ The shortcout key of `ctrl+alt+s` (Mac: `cmd+alt+s`) will also save the document
 
 ### Save to Docbook
 
-The extension provides a quick command to export your AsciiDoc file as Docbook.
+The extension provides a quick command to export your AsciiDoc file as DocBook.
 
 * Open the command palette - `ctrl+shift+p` or `F1` (Mac: `cmd+shift+p`)
-* Select _AsciiDoc: Save to Docbook_
+* Select _AsciiDoc: Save to DocBook_
 * The file is generated in the same folder as the source document
 
-Docbook 5 is supported out of the box.
-
-Docbook 4.5 is more difficut to support (mostly because it's ancient).
-
-Docbook 4.5 requires the use of command line Asciidoctor and requires the use of either the community maintained docbook converter (which can be installed using [`specific_install`](https://github.com/rdp/specific_install)) or an older version of Asciidoctor (v1.5.8 or earlier).
-
-To use Docbook 4.5, the following is known to work on Debian based systems:
-
-1. From the command line, install the `specific_install` gem: `gem install specific_install`
-2. Then install the [community supported Docbook 4.5 converter](https://github.com/asciidoctor/asciidoctor-docbook45) from the command line: `gem specific_install -l https://github.com/asciidoctor/asciidoctor-docbook45`
-3. Then change the User setting: `asciidoc.asciidoctor_command` to: `asciidoctor -r asciidoctor-docbook45`
-4. Finally, untick (disable): `asciidoc.use_asciidoctor_js`
+Only DocBook 5 is supported.
 
 ### Snippets
 
@@ -163,7 +152,6 @@ The following list contains all the options and their default value.
 
 | Option: Default value | Description |
 | :--- | :--- |
-| `asciidoc.asciidoctor_command: "asciidoctor"` | The path or command invoked when using Asciidoctor for the preview. |
 | `asciidoc.asciidoctorpdf_command: "asciidoctor-pdf"` | The path or command invoked when using Asciidoctor PDF for the _Export as PDF_ function. |
 | `asciidoc.forceUnixStyleSeparator: true` | Force set the file separator style to unix style. If set false, separator style will follow the system style. |
 | `asciidoc.preview.style: ""` | The local path to a CSS style sheet to use in the AsciiDoc preview. Relative paths are interpreted relative to the workspace folder. If no workspace is open the document path. |
@@ -182,9 +170,7 @@ The following list contains all the options and their default value.
 | `asciidoc.preview.refreshInterval: 2000` | Interval (in miliseconds) between preview refreshes (when the document is changed), 0 means refresh only on save |
 | `asciidoc.preview.useEditorStyle: true` | Use editor style instead of default asciidoctor.css |
 | `asciidoc.previewFrontMatter: "hide"` | Sets how YAML front matter should be rendered in the AsciiDoc preview. "hide" removes the front matter. Otherwise, the front matter is treated as AsciiDoc content. |
-| `asciidoc.saveDocbook.docbookVersion: docbook5` | Choose either Docbook 5 or Docbook 4.5 for Docbook output command |
 | `asciidoc.trace: "off"` | Enable debug logging for the AsciiDoc extension. |
-| `asciidoc.use_asciidoctor_js: true` | Use Asciidoctor.js instead of the 'asciidoctor_command' to render the preview. |
 | `asciidoc.use_asciidoctorpdf: false` | Use Asciidoctor PDF instead of the integrated renderer for the _Export as PDF_ command. |
 | `asciidoc.use_kroki: false` | Enable kroki integration to generate diagrams. |
 
