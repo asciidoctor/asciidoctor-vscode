@@ -931,7 +931,7 @@ details > summary {
     cursor: pointer;
     display: block;
     position: relative;
-    var(--asciidoc-line-height, 1.6);
+    line-height: var(--asciidoc-line-height, 1.6);
     margin-bottom: .625rem;
     outline: none;
     -webkit-tap-highlight-color: transparent
@@ -983,7 +983,7 @@ table.tableblock.fit-content > caption.title {
 
 .paragraph.lead > p, #preamble > .sectionbody > [class=paragraph]:first-of-type p {
     font-size: 1.21875em;
-    var(--asciidoc-line-height, 1.6);
+    line-height: var(--asciidoc-line-height, 1.6);
     color: rgba(0, 0, 0, .85)
 }
 
@@ -1282,7 +1282,7 @@ pre.pygments span.linenos {
 }
 
 .quoteblock.abstract blockquote, .quoteblock.abstract p, .quoteblock.excerpt blockquote, .quoteblock.excerpt p, .quoteblock .quoteblock blockquote, .quoteblock .quoteblock p {
-    var(--asciidoc-line-height, 1.6);
+    line-height: var(--asciidoc-line-height, 1.6);
     word-spacing: 0
 }
 
