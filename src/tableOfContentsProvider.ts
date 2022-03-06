@@ -46,7 +46,7 @@ export class TableOfContentsProvider {
     const toc = asciidocDocument
       .findBy({ context: 'section' })
       .map((section) => ({
-        slug: section.getId(),
+        slug: new Slug(section.getId()),
         text: section.getTitle(),
         level: section.getLevel(),
         line: section.getLineNumber() - 1,

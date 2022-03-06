@@ -5,6 +5,8 @@ import * as fs from 'fs'
 
 import { AsciidocParser } from './asciidocParser'
 
+const remoteRegex = /^(?:[a-z]+:)?\/\//i
+
 export namespace Import {
 
   /**
@@ -138,23 +140,27 @@ export namespace Import {
     }
 
     static async importFromClipboard (config: Configuration) {
-      config = config || new Configuration()
+      const activeTextEditor = vscode.window.activeTextEditor
+      if (activeTextEditor === undefined) {
+        return
+      }
 
-      const editor = vscode.window.activeTextEditor
+      const textDocument = activeTextEditor.document
+      const selection = activeTextEditor.selection
 
       const currentDateString = new Date()
         .toISOString()
         .replace(':', '-')
         .replace('.', '-')
-      //default filename
+      // default filename
       let filename = `${currentDateString}.png`
       let alttext = '' //todo:...
-      const directory = this.getCurrentImagesDir()
+      const imagesDirectory = this.getCurrentImagesDir(textDocument, selection)
 
-      // confirm directory is local--asciidoctor allows external URIs. test for
-      // protocol (http, ftp, etc) to determine this
+      // confirm directory is local--asciidoctor allows external URIs.
+      // test for protocol (http://, ftp://, etc) to determine this.
 
-      const remote = /'^(?:[a-z]+:)?\\/i.test(directory)
+      const remote = remoteRegex.test(imagesDirectory)
       if (remote) {
         vscode.window.showWarningMessage(
           'Cannot determine save location for image because `imagesdir` attribute references a remote location.'
@@ -164,10 +170,10 @@ export namespace Import {
 
       // grab the selected text & update either the alt-attribute or filename
       // corresponding to the selection role.
-
-      const selectedText = editor.document.getText(editor.selection)
-      if (!editor.selection.isEmpty) {
-        switch (config.selectionRole) {
+      const importConfig = config || new Configuration()
+      const selectedText = textDocument.getText(selection)
+      if (!selection.isEmpty) {
+        switch (importConfig.selectionRole) {
           case SelectionRole.AltText:
             alttext = selectedText
             break
@@ -177,14 +183,14 @@ export namespace Import {
         }
       }
 
-      switch (config.encoding) {
+      switch (importConfig.encoding) {
         case FilenameEncoding.URIEncoding:
           filename = encodeURIComponent(filename)
           break
       }
 
       try {
-        const docDir = path.dirname(vscode.window.activeTextEditor.document.uri.fsPath)
+        const docDir = path.dirname(textDocument.uri.fsPath)
 
         // docDir === '.' if a document has not yet been saved
         if (docDir === '.') {
@@ -192,11 +198,11 @@ export namespace Import {
           return
         }
 
-        await this.saveImageFromClipboard(path.join(docDir, directory, filename))
+        await this.saveImageFromClipboard(path.join(docDir, imagesDirectory, filename))
       } catch (error) {
         if (error instanceof ScriptArgumentError) {
           if (error.message === 'bad path exception') {
-            const folder = path.join(vscode.workspace.rootPath, directory)
+            const folder = path.join(vscode.workspace.rootPath, imagesDirectory)
             vscode.window
               .showErrorMessage(
                 `The imagesdir folder was not found (${folder}).`,
@@ -205,7 +211,7 @@ export namespace Import {
               .then(async (value) => {
                 if (value === 'Create Folder & Retry') {
                   fs.mkdirSync(folder)
-                  this.importFromClipboard(config) // try again
+                  this.importFromClipboard(importConfig) // try again
                 }
               })
           } else if (error.message === 'no image exception') {
@@ -222,22 +228,22 @@ export namespace Import {
       }
 
       const isInline = Image.predict(
-        config.mode,
-        Image.modifiedLines(editor),
-        editor.selection.anchor.character,
+        importConfig.mode,
+        Image.modifiedLines(activeTextEditor),
+        selection.anchor.character,
         selectedText
       )
       let macro = `image${isInline ? ':' : '::'}${filename}[${alttext}]`
 
-      macro = Image.padMacro(config, editor, macro)
+      macro = Image.padMacro(importConfig, activeTextEditor, macro)
 
-      editor.edit((edit) => {
-        switch (config.mode) {
+      activeTextEditor.edit((edit) => {
+        switch (importConfig.mode) {
           case SelectionMode.Insert:
-            edit.insert(editor.selection.active, macro)
+            edit.insert(selection.active, macro)
             break
           case SelectionMode.Replace:
-            edit.replace(editor.selection, macro)
+            edit.replace(selection, macro)
             break
         }
       })
@@ -307,20 +313,17 @@ export namespace Import {
     /**
      * Reads the current `:imagesdir:` [attribute](https://asciidoctor.org/docs/user-manual/#setting-the-location-of-images) from the document.
      *
-     *
      * Reads the _nearest_ `:imagesdir:` attribute that appears _before_ the current selection
      * or cursor location, failing that figures it out from the API by converting the document and reading the attribute
      */
-    static getCurrentImagesDir () {
-      const text = vscode.window.activeTextEditor.document.getText()
+    static getCurrentImagesDir (textDocument: vscode.TextDocument, selection: vscode.Selection) {
+      const text = textDocument.getText()
 
       const imagesdir = /^[\t\f]*?:imagesdir:\s+(.+?)\s+$/gim
       let matches = imagesdir.exec(text)
 
-      const index = vscode.window.activeTextEditor.selection.start
-      const cursorIndex = vscode.window.activeTextEditor.document.offsetAt(
-        index
-      )
+      const index = selection.start
+      const cursorIndex = textDocument.offsetAt(index)
 
       let dir = ''
       while (matches && matches.index < cursorIndex) {
@@ -328,14 +331,13 @@ export namespace Import {
         matches = imagesdir.exec(text)
       }
 
-      if (dir === '') {
-        const textDocument = vscode.window.activeTextEditor.document
-        const extensionUri = vscode.Uri.file('') // won't be used anyway... needs refactoring!
-        const { document } = new AsciidocParser(extensionUri).load(textDocument)
-        dir = document.getAttribute('imagesdir')
+      if (dir !== '') {
+        return dir
       }
 
-      return dir !== undefined ? dir : ''
+      const extensionUri = vscode.Uri.file('') // won't be used anyway... needs refactoring!
+      const { document } = new AsciidocParser(extensionUri).load(textDocument)
+      return document.getAttribute('imagesdir', '')
     }
 
     /**
