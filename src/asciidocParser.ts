@@ -45,14 +45,7 @@ export class AsciidocParser {
       const useEditorStylesheet = vscode.workspace.getConfiguration('asciidoc', null).get('preview.useEditorStyle', false)
       const previewAttributes = vscode.workspace.getConfiguration('asciidoc', null).get('preview.attributes', {})
       const previewStyle = vscode.workspace.getConfiguration('asciidoc', null).get('preview.style', '')
-      const useWorkspaceAsBaseDir = vscode.workspace.getConfiguration('asciidoc', null).get('useWorkspaceRoot')
       const enableErrorDiagnostics = vscode.workspace.getConfiguration('asciidoc', null).get('enableErrorDiagnostics')
-      const documentPath = process.env.BROWSER_ENV
-        ? undefined
-        : path.dirname(path.resolve(doc.fileName))
-      const baseDir = useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined'
-        ? vscode.workspace.rootPath
-        : documentPath
 
       if (this.errorCollection) {
         this.errorCollection.clear()
@@ -143,19 +136,16 @@ export class AsciidocParser {
         docbook.register()
       }
 
-      let options: { [key: string]: any } = {
+      const baseDir = this.getBaseDir(doc.fileName)
+      const options: { [key: string]: any } = {
         attributes: attributes,
         backend: backend,
-        base_dir: baseDir,
         extension_registry: getDocumentInformation ? registryForDocumentInfo : registry,
         header_footer: true,
         safe: 'unsafe',
         sourcemap: true,
         to_file: false,
-      }
-
-      if (baseDir) {
-        options = { ...options, base_dir: baseDir }
+        ...(baseDir && { base_dir: baseDir }),
       }
 
       try {
@@ -251,5 +241,21 @@ export class AsciidocParser {
     if (this.errorCollection) {
       this.errorCollection.set(textDocument.uri, diagnostics)
     }
+  }
+
+  /**
+   * Get the base directory.
+   * @param documentFileName The file system path of the text document.
+   * @private
+   */
+  private getBaseDir (documentFilePath: string): string | undefined {
+    const documentPath = process.env.BROWSER_ENV
+      ? undefined
+      : path.dirname(path.resolve(documentFilePath))
+    const asciidocConfig = vscode.workspace.getConfiguration('asciidoc', null)
+    const useWorkspaceAsBaseDir = asciidocConfig.get('useWorkspaceRoot')
+    return useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined'
+      ? vscode.workspace.rootPath
+      : documentPath
   }
 }
