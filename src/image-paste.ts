@@ -149,7 +149,7 @@ export namespace Import {
       //default filename
       let filename = `${currentDateString}.png`
       let alttext = '' //todo:...
-      const directory = await this.getCurrentImagesDir()
+      const directory = this.getCurrentImagesDir()
 
       // confirm directory is local--asciidoctor allows external URIs. test for
       // protocol (http, ftp, etc) to determine this
@@ -311,7 +311,7 @@ export namespace Import {
      * Reads the _nearest_ `:imagesdir:` attribute that appears _before_ the current selection
      * or cursor location, failing that figures it out from the API by converting the document and reading the attribute
      */
-    static async getCurrentImagesDir () {
+    static getCurrentImagesDir () {
       const text = vscode.window.activeTextEditor.document.getText()
 
       const imagesdir = /^[\t\f]*?:imagesdir:\s+(.+?)\s+$/gim
@@ -331,7 +331,7 @@ export namespace Import {
       if (dir === '') {
         const textDocument = vscode.window.activeTextEditor.document
         const extensionUri = vscode.Uri.file('') // won't be used anyway... needs refactoring!
-        const { document } = await new AsciidocParser(extensionUri).parseText(textDocument.getText(), textDocument)
+        const { document } = new AsciidocParser(extensionUri).load(textDocument)
         dir = document.getAttribute('imagesdir')
       }
 

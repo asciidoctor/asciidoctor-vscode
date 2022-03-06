@@ -64,9 +64,9 @@ export class AsciidocEngine {
     return { output, document }
   }
 
-  public async load (documentUri: vscode.Uri, source: string): Promise<any> {
+  public async load (documentUri: vscode.Uri): Promise<Asciidoctor.Document> {
     const textDocument = await vscode.workspace.openTextDocument(documentUri)
-    const { document } = await this.getEngine().parseText(source, textDocument)
+    const { document } = this.getEngine().load(textDocument)
     return document
   }
 }

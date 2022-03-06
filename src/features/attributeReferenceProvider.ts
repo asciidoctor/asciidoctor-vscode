@@ -6,8 +6,8 @@ export class AttributeReferenceProvider {
   constructor (private readonly extensionUri: vscode.Uri) {
   }
 
-  async provideCompletionItems (textDocument: vscode.TextDocument, position: vscode.Position) {
-    const { document } = await new AsciidocParser(this.extensionUri).parseText(textDocument.getText(), textDocument)
+  provideCompletionItems (textDocument: vscode.TextDocument, position: vscode.Position): vscode.CompletionItem[] {
+    const { document } = new AsciidocParser(this.extensionUri).load(textDocument)
     const attributes = document.getAttributes()
     const lineText = textDocument.lineAt(position).text
     const prefix = lineText.substring(position.character - 1, position.character)
@@ -23,7 +23,6 @@ export class AttributeReferenceProvider {
       insertText = suffix !== '}' ? `${insertText}}` : insertText
       completionItem.insertText = insertText
       return completionItem
-    }
-    )
+    })
   }
 }
