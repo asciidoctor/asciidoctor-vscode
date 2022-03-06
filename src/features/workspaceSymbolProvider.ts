@@ -7,7 +7,7 @@ import { disposeAll } from '../util/dispose'
 import { isAsciidocFile } from '../util/file'
 import { Lazy, lazy } from '../util/lazy'
 import AdocDocumentSymbolProvider from './documentSymbolProvider'
-import { SkinnyTextDocument } from '../tableOfContentsProvider'
+import { SkinnyTextDocument } from '../util/document'
 
 export interface WorkspaceAsciidocDocumentProvider {
   getAllAsciidocDocuments(): Promise<Iterable<SkinnyTextDocument>>;

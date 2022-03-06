@@ -2,6 +2,8 @@ import * as vscode from 'vscode'
 import * as path from 'path'
 import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
 import { Asciidoctor } from '@asciidoctor/core'
+import { SkinnyTextDocument } from './util/document'
+import { IncludeItems } from './asciidoctorFindIncludeProcessor'
 
 const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcessor')
 
@@ -14,7 +16,6 @@ const highlightjsAdapter = require('./highlightjs-adapter')
 
 export class AsciidocParser {
   private stylesdir: string
-  public baseDocumentIncludeItems = null
 
   constructor (extensionUri: vscode.Uri, private errorCollection: vscode.DiagnosticCollection = null) {
     // Asciidoctor.js in the browser environment works with URIs however for desktop clients
@@ -26,16 +27,35 @@ export class AsciidocParser {
     }
   }
 
-  public getMediaDir (text) {
-    return text.match(/^\\s*:mediadir:/)
+  // Load
+
+  public load (textDocument: SkinnyTextDocument): { document: Asciidoctor.Document, baseDocumentIncludeItems: IncludeItems } {
+    const memoryLogger = processor.MemoryLogger.create()
+    processor.LoggerManager.setLogger(memoryLogger)
+    const registry = processor.Extensions.create()
+    asciidoctorFindIncludeProcessor.register(registry)
+    asciidoctorFindIncludeProcessor.resetIncludes()
+    const baseDir = this.getBaseDir(textDocument.fileName)
+    const document = processor.load(textDocument.getText(), {
+      attributes: {
+        'env-vscode': '',
+      },
+      extension_registry: registry,
+      sourcemap: true,
+      safe: 'unsafe',
+      ...(baseDir && { base_dir: baseDir }),
+    })
+    // QUESTION: should we report error?
+    return { document, baseDocumentIncludeItems: asciidoctorFindIncludeProcessor.getBaseDocIncludes() }
   }
+
+  // Convert (preview)
 
   public convertUsingJavascript (
     text: string,
     doc: vscode.TextDocument,
     forHTMLSave: boolean,
     backend: string,
-    getDocumentInformation: boolean,
     context?: vscode.ExtensionContext,
     editor?: vscode.WebviewPanel
   ): {html: string, document: Asciidoctor.Document} {
@@ -54,8 +74,6 @@ export class AsciidocParser {
     processor.LoggerManager.setLogger(memoryLogger)
 
     const registry = processor.Extensions.create()
-    // registry for processing document differently to find AST/metadata otherwise not available
-    const registryForDocumentInfo = processor.Extensions.create()
 
     const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter()
     processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])
@@ -63,12 +81,6 @@ export class AsciidocParser {
 
     if (useKroki) {
       kroki.register(registry)
-    }
-
-    // the include processor is only run to identify includes, not to process them
-    if (getDocumentInformation) {
-      asciidoctorFindIncludeProcessor.register(registryForDocumentInfo)
-      asciidoctorFindIncludeProcessor.resetIncludes()
     }
 
     if (context && editor) {
@@ -136,7 +148,7 @@ export class AsciidocParser {
     const options: { [key: string]: any } = {
       attributes: attributes,
       backend: backend,
-      extension_registry: getDocumentInformation ? registryForDocumentInfo : registry,
+      extension_registry: registry,
       header_footer: true,
       safe: 'unsafe',
       sourcemap: true,
@@ -145,9 +157,6 @@ export class AsciidocParser {
 
     try {
       const document = processor.load(text, options)
-      if (getDocumentInformation) {
-        this.baseDocumentIncludeItems = asciidoctorFindIncludeProcessor.getBaseDocIncludes()
-      }
       const blocksWithLineNumber = document.findBy(function (b) {
         return typeof b.getLineNumber() !== 'undefined'
       })
@@ -173,7 +182,7 @@ export class AsciidocParser {
     context?: vscode.ExtensionContext,
     editor?: vscode.WebviewPanel
   ): Promise<{ html: string, document?: Asciidoctor.Document }> {
-    return this.convertUsingJavascript(text, doc, forHTMLSave, backend, false, context, editor)
+    return this.convertUsingJavascript(text, doc, forHTMLSave, backend, context, editor)
   }
 
   private reportErrors (memoryLogger: Asciidoctor.MemoryLogger, textDocument: vscode.TextDocument) {
