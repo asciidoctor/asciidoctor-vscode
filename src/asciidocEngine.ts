@@ -7,6 +7,7 @@ import { AsciidocContributions } from './asciidocExtensions'
 import { Slugifier } from './slugify'
 import { AsciidocParser } from './asciidocParser'
 import { Asciidoctor } from '@asciidoctor/core'
+import { SkinnyTextDocument } from './util/document'
 
 const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/
 
@@ -64,8 +65,7 @@ export class AsciidocEngine {
     return { output, document }
   }
 
-  public async load (documentUri: vscode.Uri): Promise<Asciidoctor.Document> {
-    const textDocument = await vscode.workspace.openTextDocument(documentUri)
+  public load (textDocument: SkinnyTextDocument): Asciidoctor.Document {
     const { document } = this.getEngine().load(textDocument)
     return document
   }

@@ -40,8 +40,8 @@ export class TableOfContentsProvider {
     return toc.find((entry) => entry.slug.equals(slug))
   }
 
-  private async buildToc (textDocument: SkinnyTextDocument): Promise<TocEntry[]> {
-    const asciidocDocument = await this.engine.load(textDocument.uri)
+  private buildToc (textDocument: SkinnyTextDocument): TocEntry[] {
+    const asciidocDocument = this.engine.load(textDocument)
 
     const toc = asciidocDocument
       .findBy({ context: 'section' })

@@ -29,7 +29,7 @@ This is a preamble.
 :imagesdir: /path/to/assets
 
 :imagesdir: /path/to/img
-`);
+`)
     // document attribute
     assert.strictEqual(Import.Image.getCurrentImagesDir(textDocument, new vscode.Selection(2, 0, 2, 0)), '/path/to/images')
     // attribute defined at line 7
