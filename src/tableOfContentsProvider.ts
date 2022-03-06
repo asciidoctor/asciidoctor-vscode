@@ -5,6 +5,7 @@
 import * as vscode from 'vscode'
 import { AsciidocEngine } from './asciidocEngine'
 import { githubSlugifier, Slug } from './slugify'
+import { SkinnyTextDocument } from './util/document'
 
 export interface TocEntry {
   readonly slug: Slug;
@@ -12,15 +13,6 @@ export interface TocEntry {
   readonly level: number;
   readonly line: number;
   readonly location: vscode.Location;
-}
-
-export interface SkinnyTextDocument {
-  readonly uri: vscode.Uri;
-  readonly lineCount: number;
-
-  getText(): string;
-
-  lineAt(line: number): vscode.TextLine;
 }
 
 export class TableOfContentsProvider {

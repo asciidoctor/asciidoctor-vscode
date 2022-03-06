@@ -5,7 +5,7 @@ interface IncludeEntry {
   length: string,
 }
 
-interface IncludeItems extends Array<IncludeEntry>{}
+export interface IncludeItems extends Array<IncludeEntry>{}
 
 let baseDocIncludes: IncludeItems = []
 let includeIndex = 0

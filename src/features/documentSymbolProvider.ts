@@ -4,7 +4,8 @@
 
 import * as vscode from 'vscode'
 import { AsciidocEngine } from '../asciidocEngine'
-import { TableOfContentsProvider, SkinnyTextDocument, TocEntry } from '../tableOfContentsProvider'
+import { TableOfContentsProvider, TocEntry } from '../tableOfContentsProvider'
+import { SkinnyTextDocument } from '../util/document'
 
 interface AsciidocSymbol {
   readonly level: number;
