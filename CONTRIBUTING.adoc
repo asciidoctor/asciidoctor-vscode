@@ -3,6 +3,42 @@
 :uri-atom-textmate-language-raw: https://raw.githubusercontent.com/asciidoctor/atom-language-asciidoc/master/grammars/language-asciidoc.cson
 :uri-npm-package-cson: https://www.npmjs.com/package/cson
 
+== Hacking and Testing the Extension
+
+Currently, testing the extension is only supported on Linux as the build scripts are not compatible with Windows.
+
+. Clone the repository from Github
++
+ $ git clone https://github.com/asciidoctor/asciidoctor-vscode.git
+
+. Open the folder within Visual Studio Code.
+
+. Make changes (ideally on a separate branch).
+
+Testing is done differently on the desktop client and the web client.
+
+=== Desktop
+
+. With the folder open in Visual Studio code, from the menu bar, select Run > 'Start Debugging' (or click the Run and Debug icon on the left sidebar and click on the green 'Run Extension' play button)
+. A new Visual Studio Code instance will open with '[Extension Development Host]' in the header.
+. You can use the first Visual Studio Code instance to:
+* Apply breakpoints in the code (by clicking on a line number).
+* Access the Debug Console.
+* See errors in the Terminal window.
+
+. You can find helpful debug information in:
+
+* The extension logs -- Go to the Command Palette and select the option 'Developer: Open Extension Logs Folder'.
+* The web view developer tools -- Go to the Command Palette and select the option 'Developer: Open Webview Developer Tools'.
+
+=== Web
+
+On Linux to test the extension run the following command within the repository folder from the command line:
+
+ $ npm run build-web && npx @vscode/test-web --browserType=chromium --extensionDevelopmentPath=${PWD}
+
+Looking at the browser's Web Developer tools can often help locate errors.
+
 == Updating The Grammar
 
 This package now uses the {uri-atom-textmate-language}[Atom language package] to generate a grammar.
