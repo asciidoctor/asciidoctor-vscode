@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2.9.6
+
+- Fix regression about Docinfo files by setting `basebackend` and `outfilesuffix` (#524)
+- Upgrade dependencies (#515)
+- Fix regression about footer in the PDF export (#528)
+- Only activate completion when `:` is at the start of the line (#529)
+- Fix regression about reading `asciidoctorpdf_command` configuration (#533)
+- Fix regression about reading `wkhtmltopdf_path` configuration (#533)
+
 ## 2.9.5
 
 - Fix regression in the PDF export (#512)
