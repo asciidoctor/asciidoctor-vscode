@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## 2.9.6
+## 2.9.7
 
 - Fix regression about Docinfo files by setting `basebackend` and `outfilesuffix` (#524)
 - Upgrade dependencies (#515)
