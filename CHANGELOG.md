@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## 2.9.8
+
+- Fix regression about Docinfo files by setting `basebackend` and `outfilesuffix` (#524)
+- Upgrade dependencies (#515)
+- Fix regression about footer in the PDF export (#528)
+- Only activate completion when `:` is at the start of the line (#529)
+- Fix regression about reading `asciidoctorpdf_command` configuration (#533)
+- Fix regression about reading `wkhtmltopdf_path` configuration (#533)
+
 ## 2.9.5
 
 - Fix regression in the PDF export (#512)
@@ -27,7 +36,7 @@
 
 - Ensure Asciidoctor.js error reporting is displayed on Windows (closes #466)
 - Provide offline and integrated code syntax highlighting with highlight.js (closes #459)
-- Update preview on preferences change (closes #447) 
+- Update preview on preferences change (closes #447)
 - Enforce code style (closes #446)
 - Make `use_kroki` setting change effective without VS code restart (closes #444)
 - Allow links to work in the preview pane (closes #435)
