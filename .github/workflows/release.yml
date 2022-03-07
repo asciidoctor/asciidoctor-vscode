@@ -62,6 +62,6 @@ jobs:
           asset_content_type: application/zip
 
       - name: Publish Package to Marketplace
-        run: node_modules/vsce/out/vsce publish -p $VSCE_TOKEN
+        run: npx vsce publish -p $VSCE_TOKEN
         env:
           VSCE_TOKEN: ${{ secrets.VSCE_TOKEN }}
