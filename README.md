@@ -186,16 +186,6 @@ npm run package
 code --install-extension *.vsix
 ```
 
-### Script
-
-```shell
-git clone https://github.com/asciidoctor/asciidoctor-vscode
-bash ./script/build.sh build install
-```
-
-The script included in the repository automates all operations needed to build the extension. Run `bash ./script/build.sh help` for more information.
-
-**WARNING**: The script only works in MacOS and Windows
 
 ## Issues
 
