@@ -182,7 +182,7 @@ The following list contains all the options and their default value.
 git clone https://github.com/asciidoctor/asciidoctor-vscode
 cd asciidoctor-vscode
 npm install
-node_modules/vsce/out/vsce package
+npm run package
 code --install-extension *.vsix
 ```
 
