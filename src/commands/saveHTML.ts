@@ -16,19 +16,18 @@ export class SaveHTML implements Command {
     const editor = vscode.window.activeTextEditor
     if (editor === null || editor === undefined) { return }
 
-    const doc = editor.document
-    const text = doc.getText()
+    const textDocument = editor.document
 
-    const docPath = path.parse(path.resolve(doc.fileName))
+    const docPath = path.parse(path.resolve(textDocument.fileName))
     let htmlPath
 
-    if (doc.isUntitled) {
+    if (textDocument.isUntitled) {
       htmlPath = path.join(docPath.dir, 'untitled.html')
     } else {
       htmlPath = path.join(docPath.dir, docPath.name + '.html')
     }
 
-    const { output: html } = await this.engine.render(doc.uri, true, text, true, 'webview-html5')
+    const { output: html } = await this.engine.export(textDocument, 'html5')
 
     fs.writeFile(htmlPath, html, function (err) {
       if (err) {

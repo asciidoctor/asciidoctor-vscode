@@ -4,7 +4,7 @@
 
 import * as vscode from 'vscode'
 import { AsciidocContributions } from './asciidocExtensions'
-import { AsciidocParser } from './asciidocParser'
+import { AsciidocParser, AsciidoctorBuiltInBackends } from './asciidocParser'
 import { Asciidoctor } from '@asciidoctor/core'
 import { SkinnyTextDocument } from './util/document'
 
@@ -43,12 +43,13 @@ export class AsciidocEngine {
     return { text, offset }
   }
 
-  public async render (documentUri: vscode.Uri,
+  public async convert (
+    documentUri: vscode.Uri,
     stripFrontmatter: boolean,
-    text: string, forHTML: boolean = false,
-    backend: string = 'webview-html5',
-    context?: vscode.ExtensionContext,
-    editor?: vscode.WebviewPanel): Promise<{output: string, document?: Asciidoctor.Document}> {
+    text: string,
+    context: vscode.ExtensionContext,
+    editor: vscode.WebviewPanel
+  ): Promise<{output: string, document?: Asciidoctor.Document}> {
     let offset = 0
     if (stripFrontmatter) {
       const asciidocContent = this.stripFrontmatter(text)
@@ -58,8 +59,12 @@ export class AsciidocEngine {
 
     this.firstLine = offset
     const textDocument = await vscode.workspace.openTextDocument(documentUri)
-    const { html: output, document } = await this.getEngine().parseText(text, textDocument, forHTML, backend, context, editor)
+    const { html: output, document } = await this.getEngine().convertUsingJavascript(text, textDocument, context, editor)
     return { output, document }
+  }
+
+  public export (textDocument: vscode.TextDocument, backend: AsciidoctorBuiltInBackends): { output: string, document: Asciidoctor.Document } {
+    return this.getEngine().export(textDocument.getText(), textDocument, backend)
   }
 
   public load (textDocument: SkinnyTextDocument): Asciidoctor.Document {
