@@ -4,7 +4,6 @@
 
 import * as vscode from 'vscode'
 import { AsciidocContributions } from './asciidocExtensions'
-import { Slugifier } from './slugify'
 import { AsciidocParser } from './asciidocParser'
 import { Asciidoctor } from '@asciidoctor/core'
 
@@ -17,11 +16,9 @@ export class AsciidocEngine {
 
   public constructor (
     readonly extensionPreviewResourceProvider: AsciidocContributions,
-    private readonly slugifier: Slugifier,
     private readonly errorCollection: vscode.DiagnosticCollection = null
   ) {
     this.extensionPreviewResourceProvider = extensionPreviewResourceProvider
-    this.slugifier = slugifier
     this.errorCollection = errorCollection
   }
 
