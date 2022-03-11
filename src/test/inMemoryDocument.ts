@@ -40,8 +40,11 @@ export class InMemoryDocument implements vscode.TextDocument {
     }
   }
 
-  offsetAt (_position: vscode.Position): never {
-    throw new Error('Method not implemented.')
+  offsetAt (position: vscode.Position): number {
+    let lines = this._contents.split('\n')
+    lines = lines.splice(0, position.line + 1)
+    lines[lines.length - 1] = lines[lines.length - 1].substring(0, position.character)
+    return lines.join('\n').split('').length
   }
 
   positionAt (offset: number): vscode.Position {

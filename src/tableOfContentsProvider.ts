@@ -40,20 +40,19 @@ export class TableOfContentsProvider {
     return toc.find((entry) => entry.slug.equals(slug))
   }
 
-  private async buildToc (document: SkinnyTextDocument): Promise<TocEntry[]> {
-    const toc: TocEntry[] = []
-    const adoc = await this.engine.load(document.uri, document.getText())
+  private buildToc (textDocument: SkinnyTextDocument): TocEntry[] {
+    const asciidocDocument = this.engine.load(textDocument)
 
-    adoc.findBy({ context: 'section' }, function (section) {
-      toc.push({
-        slug: section.getId(),
+    const toc = asciidocDocument
+      .findBy({ context: 'section' })
+      .map((section) => ({
+        slug: new Slug(section.getId()),
         text: section.getTitle(),
         level: section.getLevel(),
         line: section.getLineNumber() - 1,
-        location: new vscode.Location(document.uri,
+        location: new vscode.Location(textDocument.uri,
           new vscode.Position(section.getLineNumber() - 1, 1)),
-      })
-    })
+      }))
 
     // Get full range of section
     return toc.map((entry, startIndex): TocEntry => {
@@ -64,13 +63,13 @@ export class TableOfContentsProvider {
           break
         }
       }
-      const endLine = typeof end === 'number' ? end : document.lineCount - 1
+      const endLine = typeof end === 'number' ? end : textDocument.lineCount - 1
       return {
         ...entry,
-        location: new vscode.Location(document.uri,
+        location: new vscode.Location(textDocument.uri,
           new vscode.Range(
             entry.location.range.start,
-            new vscode.Position(endLine, document.lineAt(endLine).range.end.character))),
+            new vscode.Position(endLine, textDocument.lineAt(endLine).range.end.character))),
       }
     })
   }
