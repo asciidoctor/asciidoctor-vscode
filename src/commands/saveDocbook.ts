@@ -16,19 +16,18 @@ export class SaveDocbook implements Command {
     const editor = vscode.window.activeTextEditor
     if (editor === null || editor === undefined) { return }
 
-    const doc = editor.document
-    const text = doc.getText()
+    const textDocument = editor.document
 
-    const docPath = path.parse(path.resolve(doc.fileName))
+    const docPath = path.parse(path.resolve(textDocument.fileName))
     let fsPath
 
-    if (doc.isUntitled) {
+    if (textDocument.isUntitled) {
       fsPath = path.join(docPath.dir, 'untitled.xml')
     } else {
       fsPath = path.join(docPath.dir, docPath.name + '.xml')
     }
 
-    const { output } = await this.engine.render(doc.uri, true, text, true, 'docbook5')
+    const { output } = await this.engine.export(textDocument, 'docbook5')
 
     fs.writeFile(fsPath, output, function (err) {
       if (err) {

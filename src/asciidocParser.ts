@@ -8,11 +8,15 @@ import { IncludeItems } from './asciidoctorFindIncludeProcessor'
 const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcessor')
 
 const asciidoctor = require('@asciidoctor/core')
-const docbook = require('@asciidoctor/docbook-converter')
+const docbookConverter = require('@asciidoctor/docbook-converter')
 const kroki = require('asciidoctor-kroki')
 const processor = asciidoctor()
 const highlightjsBuiltInSyntaxHighlighter = processor.SyntaxHighlighter.for('highlight.js')
 const highlightjsAdapter = require('./highlightjs-adapter')
+
+docbookConverter.register()
+
+export type AsciidoctorBuiltInBackends = 'html5' | 'docbook5'
 
 export class AsciidocParser {
   private stylesdir: string
@@ -25,6 +29,40 @@ export class AsciidocParser {
     } else {
       this.stylesdir = vscode.Uri.joinPath(extensionUri, 'media').fsPath
     }
+  }
+
+  // Export
+
+  public export (text: string, textDocument: vscode.TextDocument, backend: AsciidoctorBuiltInBackends): { output: string, document: Asciidoctor.Document } {
+    const asciidocConfig = vscode.workspace.getConfiguration('asciidoc', null)
+    if (this.errorCollection) {
+      this.errorCollection.clear()
+    }
+    const memoryLogger = processor.MemoryLogger.create()
+    processor.LoggerManager.setLogger(memoryLogger)
+    const registry = processor.Extensions.create()
+    const useKroki = asciidocConfig.get('use_kroki')
+    if (useKroki) {
+      kroki.register(registry)
+    }
+    highlightjsBuiltInSyntaxHighlighter.$register_for('highlight.js', 'highlightjs')
+    const baseDir = this.getBaseDir(textDocument.fileName)
+    const options: { [key: string]: any } = {
+      attributes: {
+        'env-vscode': '',
+      },
+      backend,
+      extension_registry: registry,
+      header_footer: true,
+      safe: 'unsafe',
+      ...(baseDir && { base_dir: baseDir }),
+    }
+    const document = processor.load(text, options)
+    const output = document.convert(options)
+    if (asciidocConfig.get('enableErrorDiagnostics')) {
+      this.reportErrors(memoryLogger, textDocument)
+    }
+    return { output, document }
   }
 
   // Load
@@ -54,10 +92,8 @@ export class AsciidocParser {
   public convertUsingJavascript (
     text: string,
     doc: vscode.TextDocument,
-    forHTMLSave: boolean,
-    backend: string,
-    context?: vscode.ExtensionContext,
-    editor?: vscode.WebviewPanel
+    context: vscode.ExtensionContext,
+    editor: vscode.WebviewPanel
   ): {html: string, document: Asciidoctor.Document} {
     const workspacePath = vscode.workspace.workspaceFolders
     const containsStyle = !(text.match(/'^\\s*:(stylesheet|stylesdir)/img) == null)
@@ -114,7 +150,7 @@ export class AsciidocParser {
         stylesdir: stylesdir,
         stylesheet: stylesheet,
       }
-    } else if (useEditorStylesheet && !forHTMLSave) {
+    } else if (useEditorStylesheet) {
       attributes = {
         'allow-uri-read': true,
         stylesdir: this.stylesdir,
@@ -140,14 +176,10 @@ export class AsciidocParser {
 
     attributes['env-vscode'] = ''
 
-    if (backend.startsWith('docbook')) {
-      docbook.register()
-    }
-
     const baseDir = this.getBaseDir(doc.fileName)
     const options: { [key: string]: any } = {
       attributes: attributes,
-      backend: backend,
+      backend: 'webview-html5',
       extension_registry: registry,
       header_footer: true,
       safe: 'unsafe',
@@ -172,17 +204,6 @@ export class AsciidocParser {
       vscode.window.showErrorMessage(e.toString())
       throw e
     }
-  }
-
-  public async parseText (
-    text: string,
-    doc: vscode.TextDocument,
-    forHTMLSave: boolean = false,
-    backend: string = 'webview-html5',
-    context?: vscode.ExtensionContext,
-    editor?: vscode.WebviewPanel
-  ): Promise<{ html: string, document?: Asciidoctor.Document }> {
-    return this.convertUsingJavascript(text, doc, forHTMLSave, backend, context, editor)
   }
 
   private reportErrors (memoryLogger: Asciidoctor.MemoryLogger, textDocument: vscode.TextDocument) {

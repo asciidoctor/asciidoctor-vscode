@@ -3,6 +3,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
+import { Webview } from 'vscode'
 import * as path from 'path'
 import { AsciidocEngine } from '../asciidocEngine'
 
@@ -12,7 +13,6 @@ import { Logger } from '../logger'
 import { AsciidocPreviewSecurityLevel, ContentSecurityPolicyArbiter } from '../security'
 import { AsciidocPreviewConfiguration, AsciidocPreviewConfigurationManager } from './previewConfig'
 import { AsciidocContributions } from '../asciidocExtensions'
-import { Webview } from 'vscode'
 
 const localize = nls.loadMessageBundle()
 
@@ -72,7 +72,7 @@ export class AsciidocContentProvider {
     // Content Security Policy
     const nonce = new Date().getTime() + '' + new Date().getMilliseconds()
     const csp = this.getCspForResource(sourceUri, nonce)
-    const { output: body } = await this.engine.render(sourceUri, config.previewFrontMatter === 'hide', asciidocDocument.getText(), false, 'webview-html5', this.context, editor)
+    const { output: body } = await this.engine.convert(sourceUri, config.previewFrontMatter === 'hide', asciidocDocument.getText(), this.context, editor)
     const bodyClassesRegex = /<body(?:(?:\s+(?:id=".*"\s*)?class(?:\s*=\s*(?:"(.+?)"|'(.+?)')))+\s*)>/
     const bodyClasses = body.match(bodyClassesRegex)
     const bodyClassesVal = bodyClasses === null ? '' : bodyClasses[1]
