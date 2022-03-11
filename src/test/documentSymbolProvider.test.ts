@@ -9,7 +9,7 @@ import SymbolProvider from '../features/documentSymbolProvider'
 import { InMemoryDocument } from './inMemoryDocument'
 import { createNewAsciidocEngine } from './engine'
 
-const testFileName = vscode.Uri.file('test.md')
+const testFileName = vscode.Uri.file('test.adoc')
 
 function getSymbolsForFile (fileContents: string) {
   const doc = new InMemoryDocument(testFileName, fileContents)

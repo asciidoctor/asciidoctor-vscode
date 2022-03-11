@@ -91,10 +91,10 @@ export class AsciidocParser {
 
   public convertUsingJavascript (
     text: string,
-    doc: vscode.TextDocument,
+    doc: SkinnyTextDocument,
     context: vscode.ExtensionContext,
     editor: vscode.WebviewPanel
-  ): {html: string, document: Asciidoctor.Document} {
+  ): { html: string, document: Asciidoctor.Document } {
     const workspacePath = vscode.workspace.workspaceFolders
     const containsStyle = !(text.match(/'^\\s*:(stylesheet|stylesdir)/img) == null)
     const useEditorStylesheet = vscode.workspace.getConfiguration('asciidoc', null).get('preview.useEditorStyle', false)
@@ -206,7 +206,7 @@ export class AsciidocParser {
     }
   }
 
-  private reportErrors (memoryLogger: Asciidoctor.MemoryLogger, textDocument: vscode.TextDocument) {
+  private reportErrors (memoryLogger: Asciidoctor.MemoryLogger, textDocument: SkinnyTextDocument) {
     const diagnostics = []
     memoryLogger.getMessages().forEach((error) => {
       //console.log(error); //Error from asciidoctor.js

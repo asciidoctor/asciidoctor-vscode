@@ -17,6 +17,7 @@ import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from '
 import { AsciidocFileIncludeAutoCompletionMonitor } from './util/includeAutoCompletion'
 import { AttributeReferenceProvider } from './features/attributeReferenceProvider'
 import { BuiltinDocumentAttributeProvider } from './features/builtinDocumentAttributeProvider'
+import AsciidocFoldingRangeProvider from './features/foldingProvider'
 
 export function activate (context: vscode.ExtensionContext) {
   const contributions = getAsciidocExtensionContributions(context)
@@ -46,8 +47,8 @@ export function activate (context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.languages.registerWorkspaceSymbolProvider(new AsciidocWorkspaceSymbolProvider(symbolProvider)))
   context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new AttributeReferenceProvider(contributions.extensionUri), '{'))
   context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new BuiltinDocumentAttributeProvider(contributions.extensionUri), ':'))
+  context.subscriptions.push(vscode.languages.registerFoldingRangeProvider(selector, new AsciidocFoldingRangeProvider(engine)))
   const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager)
-
   const commandManager = new CommandManager()
   context.subscriptions.push(commandManager)
   commandManager.register(new commands.ShowPreviewCommand(previewManager))
