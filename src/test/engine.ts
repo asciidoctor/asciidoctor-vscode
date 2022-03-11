@@ -5,7 +5,6 @@
 import * as vscode from 'vscode'
 import { AsciidocEngine } from '../asciidocEngine'
 import { AsciidocContributions } from '../asciidocExtensions'
-import { githubSlugifier } from '../slugify'
 
 const emptyContributions = new class implements AsciidocContributions {
   readonly extensionUri = vscode.Uri.parse('')
@@ -17,5 +16,5 @@ const emptyContributions = new class implements AsciidocContributions {
 }()
 
 export function createNewAsciidocEngine (): AsciidocEngine {
-  return new AsciidocEngine(emptyContributions, githubSlugifier)
+  return new AsciidocEngine(emptyContributions)
 }

@@ -14,7 +14,6 @@ import { Logger } from './logger'
 import { AsciidocEngine } from './asciidocEngine'
 import { getAsciidocExtensionContributions } from './asciidocExtensions'
 import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security'
-import { githubSlugifier } from './slugify'
 import { AsciidocFileIncludeAutoCompletionMonitor } from './util/includeAutoCompletion'
 import { AttributeReferenceProvider } from './features/attributeReferenceProvider'
 import { BuiltinDocumentAttributeProvider } from './features/builtinDocumentAttributeProvider'
@@ -26,7 +25,7 @@ export function activate (context: vscode.ExtensionContext) {
 
   const errorCollection = vscode.languages.createDiagnosticCollection('asciidoc')
 
-  const engine = new AsciidocEngine(contributions, githubSlugifier, errorCollection)
+  const engine = new AsciidocEngine(contributions, errorCollection)
   const logger = new Logger()
   logger.log('Extension was started')
 
