@@ -1,11 +1,10 @@
 **/*
 !images/icon.png
+!out/
 !dist/
-!res/
 !syntaxes/
 !snippets/
 !media/
-!node_modules/
 !package.json
 !package.nls*.json
 !en.json
