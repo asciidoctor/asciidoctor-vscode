@@ -5,8 +5,6 @@
 
 == Hacking and Testing the Extension
 
-Currently, testing the extension is only supported on Linux as the build scripts are not compatible with Windows.
-
 . Clone the repository from Github
 +
  $ git clone https://github.com/asciidoctor/asciidoctor-vscode.git
@@ -31,6 +29,19 @@ Testing is done differently on the desktop client and the web client.
 * The extension logs -- Go to the Command Palette and select the option 'Developer: Open Extension Logs Folder'.
 * The web view developer tools -- Go to the Command Palette and select the option 'Developer: Open Webview Developer Tools'.
 
+To run the tests suite, select 'Run Extension Tests' in the 'Run' view then, click on the green play button or run the 'Start Debbuging' command.
+
+You can also run the tests suite from a terminal using:
+
+ $ npm t
+ 
+[NOTE]
+====
+In that case, you must close your Visual Studio code instance otherwise you will get an error:
+
+ Running extension tests from the command line is currently only supported if no other instance of Code is running.
+====
+
 === Web
 
 On Linux to test the extension run the following command within the repository folder from the command line:
@@ -54,15 +65,7 @@ This can be updated manually using the following process:
 [source,bash,subs=attributes+]
 curl {uri-atom-textmate-language-raw} | cson2json > ./syntaxes/Asciidoctor.json
 
-. Now manually edit and change the scope name from:
-+
-[source,json]
-"scopeName": "source.asciidoc",
-+
-to
-+
-[source,json]
-"scopeName": "text.asciidoc",
+. Now manually edit and change the scope name from `"scopeName": "source.asciidoc"` to `"scopeName": "text.asciidoc"`
 
 Because this package has diverged slightly from upstream it may be best to cherry-pick commits after the original conversion or do before/after comparisons and account for each change.
 
