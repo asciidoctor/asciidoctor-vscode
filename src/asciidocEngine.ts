@@ -59,7 +59,7 @@ export class AsciidocEngine {
 
     this.firstLine = offset
     const textDocument = await vscode.workspace.openTextDocument(documentUri)
-    const { html: output, document } = await this.getEngine().convertUsingJavascript(text, textDocument, context, editor)
+    const { html: output, document } = this.getEngine().convertUsingJavascript(text, textDocument, context, editor)
     return { output, document }
   }
 

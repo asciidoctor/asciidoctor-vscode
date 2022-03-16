@@ -28,6 +28,7 @@ export class TableOfContentsProvider {
       try {
         this.toc = await this.buildToc(this.document)
       } catch (e) {
+        console.log(`Unable to build the Table Of Content for: ${this.document.fileName}`, e)
         this.toc = []
       }
     }
