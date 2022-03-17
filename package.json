@@ -70,19 +70,13 @@
 				"command": "asciidoc.exportAsPDF",
 				"title": "%asciidoc.exportAsPDF.title%",
 				"category": "AsciiDoc",
-				"icon": {
-					"light": "./media/Preview.svg",
-					"dark": "./media/Preview_inverse.svg"
-				}
+				"icon": "$(file-pdf)"
 			},
 			{
 				"command": "asciidoc.pasteImage",
 				"title": "%asciidoc.pasteImage.title%",
 				"category": "AsciiDoc",
-				"icon": {
-					"light": "./media/preview-light.svg",
-					"dark": "./media/preview-dark.svg"
-				}
+				"icon": "$(file-media)"
 			},
 			{
 				"command": "asciidoc.showPreview",
@@ -97,28 +91,19 @@
 				"command": "asciidoc.showPreviewToSide",
 				"title": "%asciidoc.previewSide.title%",
 				"category": "AsciiDoc",
-				"icon": {
-					"light": "./media/PreviewOnRightPane_16x.svg",
-					"dark": "./media/PreviewOnRightPane_16x_dark.svg"
-				}
+				"icon": "$(open-preview)"
 			},
 			{
 				"command": "asciidoc.showLockedPreviewToSide",
 				"title": "%asciidoc.showLockedPreviewToSide.title%",
 				"category": "AsciiDoc",
-				"icon": {
-					"light": "./media/PreviewOnRightPane_16x.svg",
-					"dark": "./media/PreviewOnRightPane_16x_dark.svg"
-				}
+				"icon": "$(open-preview)"
 			},
 			{
 				"command": "asciidoc.showSource",
 				"title": "%asciidoc.showSource.title%",
 				"category": "AsciiDoc",
-				"icon": {
-					"light": "./media/ViewSource.svg",
-					"dark": "./media/ViewSource_inverse.svg"
-				}
+				"icon": "$(go-to-file)"
 			},
 			{
 				"command": "asciidoc.showPreviewSecuritySelector",
@@ -139,19 +124,13 @@
 				"command": "asciidoc.saveHTML",
 				"title": "%asciidoc.saveHTML.title%",
 				"category": "AsciiDoc",
-				"icon": {
-					"light": "./media/SaveHTML.svg",
-					"dark": "./media/SaveHTML_inverse.svg"
-				}
+				"icon": "$(globe)"
 			},
 			{
 				"command": "asciidoc.saveDocbook",
 				"title": "%asciidoc.saveDocbook.title%",
 				"category": "AsciiDoc",
-				"icon": {
-					"light": "./media/SaveDocbook.svg",
-					"dark": "./media/SaveDocbook_inverse.svg"
-				}
+				"icon": "$(file-code)"
 			}
 		],
 		"menus": {
