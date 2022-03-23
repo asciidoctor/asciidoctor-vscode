@@ -3,9 +3,14 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
+import { FoldingRangeKind } from 'vscode'
 
 import { AsciidocEngine } from '../asciidocEngine'
 import { TableOfContentsProvider } from '../tableOfContentsProvider'
+
+//https://github.com/asciidoctor/asciidoctor/blob/0aad7459d1fe548219733b4a2b4f00fd3bf6f362/lib/asciidoctor/rx.rb#L76
+const conditionalStartRx = /^(\\)?(ifdef|ifndef|ifeval)::(\S*?(?:([,+])\S*?)?)\[(#{CC_ANY}+)?/
+const conditionalEndRx = /^(\\)?(endif)::(\S*?(?:([,+])\S*?)?)\[(#{CC_ANY}+)?/
 
 export default class AsciidocFoldingRangeProvider implements vscode.FoldingRangeProvider {
   constructor (
@@ -13,12 +18,39 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
   ) {
   }
 
-  public async provideFoldingRanges (
+  public provideFoldingRanges (
     document: vscode.TextDocument,
     _token: vscode.CancellationToken
-  ): Promise<vscode.FoldingRange[]> {
+  ): vscode.FoldingRange[] {
+    const foldingRanges = this.getHeaderFoldingRanges(document)
+    return foldingRanges.concat(AsciidocFoldingRangeProvider.getConditionalFoldingRanges(document))
+  }
+
+  private static getConditionalFoldingRanges (document: vscode.TextDocument) {
+    const conditionalStartIndexes = []
+    const listOfRanges = []
+    for (let lineIndex = 0; lineIndex < document.lineCount; lineIndex++) {
+      const line = document.lineAt(lineIndex)
+      if (conditionalStartRx.test(line.text)) {
+        conditionalStartIndexes.push(lineIndex)
+      }
+      if (conditionalEndRx.test(line.text)) {
+        const startIndex = conditionalStartIndexes.pop()
+        if (typeof startIndex !== 'undefined') {
+          listOfRanges.push(new vscode.FoldingRange(
+            startIndex,
+            lineIndex,
+            FoldingRangeKind.Region)
+          )
+        }
+      }
+    }
+    return listOfRanges
+  }
+
+  private getHeaderFoldingRanges (document: vscode.TextDocument) {
     const tableOfContentsProvider = new TableOfContentsProvider(this.engine, document)
-    const tableOfContents = await tableOfContentsProvider.getToc()
+    const tableOfContents = tableOfContentsProvider.getToc()
 
     return tableOfContents.map((entry, startIndex) => {
       const start = entry.line
@@ -31,7 +63,8 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
       }
       return new vscode.FoldingRange(
         start,
-        typeof end === 'number' ? end : document.lineCount - 1)
+        typeof end === 'number' ? end : document.lineCount - 1,
+        FoldingRangeKind.Region)
     })
   }
 }
