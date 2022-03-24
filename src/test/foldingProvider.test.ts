@@ -13,47 +13,48 @@ import { InMemoryDocument } from './inMemoryDocument'
 const testFileName = vscode.Uri.file('test.adoc')
 
 suite('asciidoc.FoldingProvider', () => {
-  test('Should not return anything for empty document', () => {
-    const folds = getFoldsForDocument('')
-    assert.strictEqual(folds.length, 0)
-  })
+  suite('getHeaderFoldingRanges', () => {
+    test('Should not return anything for empty document', () => {
+      const folds = getFoldsForDocument('')
+      assert.strictEqual(folds.length, 0)
+    })
 
-  test('Should not return anything for document without headers', () => {
-    const folds = getFoldsForDocument(`a
+    test('Should not return anything for document without headers', () => {
+      const folds = getFoldsForDocument(`a
 *b* afas
 a=b
 a`)
-    assert.strictEqual(folds.length, 0)
-  })
+      assert.strictEqual(folds.length, 0)
+    })
 
-  test('Should fold from header to end of document', () => {
-    const folds = getFoldsForDocument(`= a
+    test('Should fold from header to end of document', () => {
+      const folds = getFoldsForDocument(`= a
 
 == b
 
 c
 d`)
-    assert.strictEqual(folds.length, 2)
-    const firstFold = folds[0]
-    assert.strictEqual(firstFold.start, 0)
-    assert.strictEqual(firstFold.end, 5)
-  })
+      assert.strictEqual(folds.length, 2)
+      const firstFold = folds[0]
+      assert.strictEqual(firstFold.start, 0)
+      assert.strictEqual(firstFold.end, 5)
+    })
 
-  test('Should leave single newline before next header', () => {
-    const folds = getFoldsForDocument(`
+    test('Should leave single newline before next header', () => {
+      const folds = getFoldsForDocument(`
 == a
 x
 
 == b
 y`)
-    assert.strictEqual(folds.length, 2)
-    const firstFold = folds[0]
-    assert.strictEqual(firstFold.start, 1)
-    assert.strictEqual(firstFold.end, 3)
-  })
+      assert.strictEqual(folds.length, 2)
+      const firstFold = folds[0]
+      assert.strictEqual(firstFold.start, 1)
+      assert.strictEqual(firstFold.end, 3)
+    })
 
-  test('Should collapse multiple newlines to single newline before next header', () => {
-    const folds = getFoldsForDocument(`
+    test('Should collapse multiple newlines to single newline before next header', () => {
+      const folds = getFoldsForDocument(`
 == a
 x
 
@@ -61,49 +62,50 @@ x
 
 == b
 y`)
-    assert.strictEqual(folds.length, 2)
-    const firstFold = folds[0]
-    assert.strictEqual(firstFold.start, 1)
-    assert.strictEqual(firstFold.end, 5)
-    const secondFold = folds[1]
-    assert.strictEqual(secondFold.start, 6)
-    assert.strictEqual(secondFold.end, 7)
-  })
+      assert.strictEqual(folds.length, 2)
+      const firstFold = folds[0]
+      assert.strictEqual(firstFold.start, 1)
+      assert.strictEqual(firstFold.end, 5)
+      const secondFold = folds[1]
+      assert.strictEqual(secondFold.start, 6)
+      assert.strictEqual(secondFold.end, 7)
+    })
 
-  test('Should not collapse if there is no newline before next header', () => {
-    const folds = getFoldsForDocument(`= a
+    test('Should not collapse if there is no newline before next header', () => {
+      const folds = getFoldsForDocument(`= a
 x
 == b
 y`)
-    assert.strictEqual(folds.length, 1)
-    const firstFold = folds[0]
-    assert.strictEqual(firstFold.start, 0)
-    assert.strictEqual(firstFold.end, 3)
+      assert.strictEqual(folds.length, 1)
+      const firstFold = folds[0]
+      assert.strictEqual(firstFold.start, 0)
+      assert.strictEqual(firstFold.end, 3)
+    })
   })
-})
 
-test('Should fold from ifeval conditional beginning to its end', () => {
-  const folds = getFoldsForDocument(`ifeval::["{lang}" == "de"]
+  suite('getConditionalFoldingRanges', () => {
+    test('Should fold from ifeval conditional beginning to its end', () => {
+      const folds = getFoldsForDocument(`ifeval::["{lang}" == "de"]
 Das ist mein Text.
 endif::[]`)
-  assert.strictEqual(folds.length, 1)
-  const firstFold = folds[0]
-  assert.strictEqual(firstFold.start, 0)
-  assert.strictEqual(firstFold.end, 2)
-})
+      assert.strictEqual(folds.length, 1)
+      const firstFold = folds[0]
+      assert.strictEqual(firstFold.start, 0)
+      assert.strictEqual(firstFold.end, 2)
+    })
 
-test('Should fold from ifndef conditional beginning to its end', () => {
-  const folds = getFoldsForDocument(`ifndef::env-github[]
+    test('Should fold from ifndef conditional beginning to its end', () => {
+      const folds = getFoldsForDocument(`ifndef::env-github[]
 This content is not shown on GitHub.
 endif::[]`)
-  assert.strictEqual(folds.length, 1)
-  const firstFold = folds[0]
-  assert.strictEqual(firstFold.start, 0)
-  assert.strictEqual(firstFold.end, 2)
-})
+      assert.strictEqual(folds.length, 1)
+      const firstFold = folds[0]
+      assert.strictEqual(firstFold.start, 0)
+      assert.strictEqual(firstFold.end, 2)
+    })
 
-test('Should fold from ifdef multi conditionals beginning to its end', () => {
-  const folds = getFoldsForDocument(`ifeval::["{InstallOS}"=="Linux"]
+    test('Should fold from ifdef multi conditionals beginning to its end', () => {
+      const folds = getFoldsForDocument(`ifeval::["{InstallOS}"=="Linux"]
 :install-os-linux:
 endif::[]
 ifeval::["{InstallOS}"=="Solaris"]
@@ -119,25 +121,158 @@ endif::[]
 ifdef::install-os-windows[]
 NOTE: We recommend that you install the library in the \`C:\\Program Files\` directory.
 endif::[]`)
-  assert.strictEqual(folds.length, 5)
-  const firstFold = folds[0]
-  assert.strictEqual(firstFold.start, 0)
-  assert.strictEqual(firstFold.end, 2)
-})
+      assert.strictEqual(folds.length, 5)
+      const firstFold = folds[0]
+      assert.strictEqual(firstFold.start, 0)
+      assert.strictEqual(firstFold.end, 2)
+    })
 
-test('Should fold nested conditionals', () => {
-  const folds = getFoldsForDocument(`ifdef::foo[]
+    test('Should fold nested conditionals', () => {
+      const folds = getFoldsForDocument(`ifdef::foo[]
 foo1
 ifdef::bar[]
 bar
 endif::[]
 foo2
 endif::[]`)
-  assert.strictEqual(folds.length, 2, 'expecting 2 folds')
-  assert.deepStrictEqual(folds, [
-    new vscode.FoldingRange(2, 4, vscode.FoldingRangeKind.Region),
-    new vscode.FoldingRange(0, 6, vscode.FoldingRangeKind.Region),
-  ])
+      assert.strictEqual(folds.length, 2, 'expecting 2 folds')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(2, 4, vscode.FoldingRangeKind.Region),
+        new vscode.FoldingRange(0, 6, vscode.FoldingRangeKind.Region),
+      ])
+    })
+  })
+
+  suite('getOpenBlockFoldingRanges', () => {
+    test('Should fold open block', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+--
+An open block can be an anonymous container,
+or it can masquerade as any other block.
+--
+
+this is a paragraph`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 fold')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(2, 5, vscode.FoldingRangeKind.Region),
+      ])
+    })
+
+    test('Should fold open block from dashes to the end of the document if no end block dashes', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+--
+An open block can be an anonymous container,
+or it can masquerade as any other block.
+
+this is a paragraph`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 fold')
+      assert.deepStrictEqual(folds, [new vscode.FoldingRange(2, 6, vscode.FoldingRangeKind.Region)])
+    })
+
+    test('Should fold open block acting as a sidebar', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+[sidebar]
+.Related information
+--
+This is aside text.
+
+It is used to present information related to the main content.
+--
+
+this is a paragraph`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 fold')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(4, 8, vscode.FoldingRangeKind.Region),
+      ])
+    })
+
+    test('Should fold open block acting as a source block', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+[source]
+--
+puts "I'm a source block!"
+--
+
+this is a paragraph`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 fold')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(3, 5, vscode.FoldingRangeKind.Region),
+      ])
+    })
+
+    test('Should fold open block if title is before sidebar', () => {
+      const folds = getFoldsForDocument(
+        `before
+
+.Title
+[sidebar]
+--
+text
+--
+
+after`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 fold')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(4, 6, vscode.FoldingRangeKind.Region),
+      ])
+    })
+
+    test('Nested open blocks  should behave like 2 separate blocks', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+[source]
+--
+--
+puts "I'm a nested block!"
+--
+--
+
+this is a paragraph`)
+      assert.strictEqual(folds.length, 2, 'expecting 1 folds')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(3, 4, vscode.FoldingRangeKind.Region),
+        new vscode.FoldingRange(6, 7, vscode.FoldingRangeKind.Region),
+      ])
+    })
+
+    test('Should not collapse if more or less than 2 dashes ', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+--
+---
+inside
+--
+
+this is a paragraph`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 folds')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(2, 5, vscode.FoldingRangeKind.Region),
+      ])
+    })
+
+    test('Should not fold on title if it is not the block title ', () => {
+      const folds = getFoldsForDocument(
+        `.Title
+This is a paragraph.
+--
+Open
+--`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 folds')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(2, 4, vscode.FoldingRangeKind.Region),
+      ])
+    })
+  })
 })
 
 function getFoldsForDocument (contents: string) {
