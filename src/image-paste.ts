@@ -150,8 +150,7 @@ export namespace Import {
 
       const currentDateString = new Date()
         .toISOString()
-        .replace(':', '-')
-        .replace('.', '-')
+        .replace(/[:.]/g, '-')
       // default filename
       let filename = `${currentDateString}.png`
       let alttext = '' //todo:...
