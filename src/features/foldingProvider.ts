@@ -23,7 +23,10 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
     _token: vscode.CancellationToken
   ): vscode.FoldingRange[] {
     const foldingRanges = this.getHeaderFoldingRanges(document)
-    return foldingRanges.concat(AsciidocFoldingRangeProvider.getConditionalFoldingRanges(document))
+    return foldingRanges.concat(
+      AsciidocFoldingRangeProvider.getConditionalFoldingRanges(document),
+      AsciidocFoldingRangeProvider.getOpenBlockFoldingRanges(document)
+    )
   }
 
   private static getConditionalFoldingRanges (document: vscode.TextDocument) {
@@ -44,6 +47,35 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
           )
         }
       }
+    }
+    return listOfRanges
+  }
+
+  private static getOpenBlockFoldingRanges (document: vscode.TextDocument) {
+    const listOfRanges = []
+    const openBlockIndexes = []
+    for (let lineIndex = 0; lineIndex < document.lineCount; lineIndex++) {
+      const line = document.lineAt(lineIndex)
+      if (line.text === '--') {
+        if (openBlockIndexes.length === 0) {
+          openBlockIndexes.push(lineIndex)
+        } else {
+          const startIndex = openBlockIndexes.pop()
+          listOfRanges.push(new vscode.FoldingRange(
+            startIndex,
+            lineIndex,
+            FoldingRangeKind.Region)
+          )
+        }
+      }
+    }
+    if (openBlockIndexes.length === 1) {
+      // unterminated open block
+      listOfRanges.push(new vscode.FoldingRange(
+        openBlockIndexes.pop(),
+        document.lineCount - 1,
+        FoldingRangeKind.Region)
+      )
     }
     return listOfRanges
   }
