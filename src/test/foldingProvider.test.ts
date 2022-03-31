@@ -165,8 +165,8 @@ this is a paragraph`)
         `this is a paragraph
 
 --
-An open block can be an anonymous container,
-or it can masquerade as any other block.
+An unterminated open block.
+Fold will end at the end of the document.
 
 this is a paragraph`)
       assert.strictEqual(folds.length, 1, 'expecting 1 fold')
