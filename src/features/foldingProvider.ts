@@ -11,6 +11,7 @@ import { TableOfContentsProvider } from '../tableOfContentsProvider'
 //https://github.com/asciidoctor/asciidoctor/blob/0aad7459d1fe548219733b4a2b4f00fd3bf6f362/lib/asciidoctor/rx.rb#L76
 const conditionalStartRx = /^(\\)?(ifdef|ifndef|ifeval)::(\S*?(?:([,+])\S*?)?)\[(#{CC_ANY}+)?/
 const conditionalEndRx = /^(\\)?(endif)::(\S*?(?:([,+])\S*?)?)\[(#{CC_ANY}+)?/
+const commentBlockRx = /^\/{4,}/
 
 export default class AsciidocFoldingRangeProvider implements vscode.FoldingRangeProvider {
   constructor (
@@ -25,13 +26,13 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
     const foldingRanges = this.getHeaderFoldingRanges(document)
     return foldingRanges.concat(
       AsciidocFoldingRangeProvider.getConditionalFoldingRanges(document),
-      AsciidocFoldingRangeProvider.getOpenBlockFoldingRanges(document)
+      AsciidocFoldingRangeProvider.getBlockFoldingRanges(document)
     )
   }
 
   private static getConditionalFoldingRanges (document: vscode.TextDocument) {
     const conditionalStartIndexes = []
-    const listOfRanges = []
+    const foldingRanges = []
     for (let lineIndex = 0; lineIndex < document.lineCount; lineIndex++) {
       const line = document.lineAt(lineIndex)
       if (conditionalStartRx.test(line.text)) {
@@ -40,7 +41,7 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
       if (conditionalEndRx.test(line.text)) {
         const startIndex = conditionalStartIndexes.pop()
         if (typeof startIndex !== 'undefined') {
-          listOfRanges.push(new vscode.FoldingRange(
+          foldingRanges.push(new vscode.FoldingRange(
             startIndex,
             lineIndex,
             FoldingRangeKind.Region)
@@ -48,36 +49,68 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
         }
       }
     }
-    return listOfRanges
+    return foldingRanges
   }
 
-  private static getOpenBlockFoldingRanges (document: vscode.TextDocument) {
-    const listOfRanges = []
-    const openBlockIndexes = []
-    for (let lineIndex = 0; lineIndex < document.lineCount; lineIndex++) {
-      const line = document.lineAt(lineIndex)
-      if (line.text === '--') {
-        if (openBlockIndexes.length === 0) {
-          openBlockIndexes.push(lineIndex)
-        } else {
-          const startIndex = openBlockIndexes.pop()
-          listOfRanges.push(new vscode.FoldingRange(
-            startIndex,
-            lineIndex,
-            FoldingRangeKind.Region)
-          )
-        }
+  private static handleOpenBlockFoldingRanges (openBlockIndexes: any[], foldingRanges: any[], lineIndex: number, lineText: string, documentLineCount: number) {
+    if (lineText === '--') {
+      if (openBlockIndexes.length === 0) {
+        openBlockIndexes.push(lineIndex)
+      } else {
+        const startIndex = openBlockIndexes.pop()
+        foldingRanges.push(new vscode.FoldingRange(
+          startIndex,
+          lineIndex,
+          FoldingRangeKind.Region)
+        )
       }
     }
-    if (openBlockIndexes.length === 1) {
+    if (openBlockIndexes.length === 1 && lineIndex === documentLineCount - 1) {
       // unterminated open block
-      listOfRanges.push(new vscode.FoldingRange(
+      foldingRanges.push(new vscode.FoldingRange(
         openBlockIndexes.pop(),
-        document.lineCount - 1,
+        documentLineCount - 1,
         FoldingRangeKind.Region)
       )
     }
-    return listOfRanges
+  }
+
+  private static handleCommentBlockFoldingRanges (commentBlockIndexes: any[], foldingRanges: any[], lineIndex: number, lineText: string,
+    documentLineCount: number) {
+    if (commentBlockRx.test(lineText)) {
+      if (commentBlockIndexes.length === 0) {
+        commentBlockIndexes.push(lineIndex)
+      } else {
+        const startIndex = commentBlockIndexes.pop()
+        foldingRanges.push(new vscode.FoldingRange(
+          startIndex,
+          lineIndex,
+          FoldingRangeKind.Region)
+        )
+      }
+    }
+    if (commentBlockIndexes.length === 1 && lineIndex === documentLineCount - 1) {
+      // unterminated comment block
+      foldingRanges.push(new vscode.FoldingRange(
+        commentBlockIndexes.pop(),
+        documentLineCount - 1,
+        FoldingRangeKind.Region)
+      )
+    }
+  }
+
+  private static getBlockFoldingRanges (document: vscode.TextDocument) {
+    const foldingRanges = []
+    const openBlockIndexes = []
+    const commentBlockIndexes = []
+    const documentLineCount = document.lineCount
+    for (let lineIndex = 0; lineIndex < documentLineCount; lineIndex++) {
+      const line = document.lineAt(lineIndex)
+      const lineText = line.text
+      this.handleOpenBlockFoldingRanges(openBlockIndexes, foldingRanges, lineIndex, lineText, documentLineCount)
+      this.handleCommentBlockFoldingRanges(commentBlockIndexes, foldingRanges, lineIndex, lineText, documentLineCount)
+    }
+    return foldingRanges
   }
 
   private getHeaderFoldingRanges (document: vscode.TextDocument) {
