@@ -273,6 +273,78 @@ Open
       ])
     })
   })
+
+  suite('getCommentBlockFoldingRanges', () => {
+    test('Should fold comment block with 4 slashes ', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+////
+A comment block.
+Notice it's a delimited block.
+////
+
+this is a paragraph`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 fold')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(2, 5, vscode.FoldingRangeKind.Region),
+      ])
+    })
+
+    test('Should fold comment block with more than 4 slashes ', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+/////
+A comment block.
+Notice it's a delimited block.
+/////
+
+this is a paragraph`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 fold')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(2, 5, vscode.FoldingRangeKind.Region),
+      ])
+    })
+
+    test('Should not fold comment block with less than 4 slashes ', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+///
+Some text.
+From a paragraph.
+///
+
+this is another paragraph`)
+      assert.strictEqual(folds.length, 0, 'expecting 0 fold')
+    })
+
+    test('Should fold comment block from slashes to the end of the document if no end block ', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+////
+An unterminated comment block.
+Fold will end at the end of the document.
+
+this is a paragraph`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 fold')
+      assert.deepStrictEqual(folds, [new vscode.FoldingRange(2, 6, vscode.FoldingRangeKind.Region)])
+    })
+
+    test('Should not fold comment block if slashes are part of literal text ', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+ ////
+Some text.
+From a paragraph.
+///
+this is the same paragraph`)
+      assert.strictEqual(folds.length, 0, 'expecting 0 fold')
+    })
+  })
 })
 
 function getFoldsForDocument (contents: string) {
