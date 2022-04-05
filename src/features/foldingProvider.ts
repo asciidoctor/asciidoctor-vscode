@@ -99,16 +99,48 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
     }
   }
 
+  private static handleSingleLineCommentFoldingRanges (singleLineCommentStartIndexes: any[], foldingRanges: any[], lineIndex: number, lineText: string,
+    documentLineCount: number) {
+    if (lineText.startsWith('//')) {
+      if (singleLineCommentStartIndexes.length === 0 && lineIndex < documentLineCount - 1) {
+        singleLineCommentStartIndexes.push(lineIndex)
+      } else {
+        // comment on last line of the document
+        const startIndex = singleLineCommentStartIndexes.pop()
+        if (lineIndex > startIndex) {
+          foldingRanges.push(new vscode.FoldingRange(
+            startIndex,
+            lineIndex,
+            FoldingRangeKind.Region)
+          )
+        }
+      }
+    } else {
+      if (singleLineCommentStartIndexes.length !== 0) {
+        const startIndex = singleLineCommentStartIndexes.pop()
+        const endIndex = lineIndex - 1
+        if (endIndex > startIndex) {
+          foldingRanges.push(new vscode.FoldingRange(
+            startIndex,
+            endIndex,
+            FoldingRangeKind.Region))
+        }
+      }
+    }
+  }
+
   private static getBlockFoldingRanges (document: vscode.TextDocument) {
     const foldingRanges = []
     const openBlockIndexes = []
     const commentBlockIndexes = []
+    const singleLineCommentStartIndexes = []
     const documentLineCount = document.lineCount
     for (let lineIndex = 0; lineIndex < documentLineCount; lineIndex++) {
       const line = document.lineAt(lineIndex)
       const lineText = line.text
       this.handleOpenBlockFoldingRanges(openBlockIndexes, foldingRanges, lineIndex, lineText, documentLineCount)
       this.handleCommentBlockFoldingRanges(commentBlockIndexes, foldingRanges, lineIndex, lineText, documentLineCount)
+      this.handleSingleLineCommentFoldingRanges(singleLineCommentStartIndexes, foldingRanges, lineIndex, lineText, documentLineCount)
     }
     return foldingRanges
   }
