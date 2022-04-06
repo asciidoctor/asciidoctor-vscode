@@ -63,6 +63,10 @@ export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer {
     return this._activePreview && this._activePreview.resource
   }
 
+  public get activePreviewResourceColumn () {
+    return this._activePreview && this._activePreview.resourceColumn
+  }
+
   public toggleLock () {
     const preview = this._activePreview
     if (preview) {
@@ -107,6 +111,7 @@ export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer {
   ): AsciidocPreview {
     const preview = AsciidocPreview.create(
       resource,
+      previewSettings.resourceColumn,
       previewSettings.previewColumn,
       previewSettings.locked,
       this._contentProvider,

@@ -22,6 +22,7 @@ export class AsciidocPreview {
   public static viewType = 'asciidoc.preview'
 
   private _resource: vscode.Uri
+  private _resourceColumn: vscode.ViewColumn
   private _locked: boolean
 
   private readonly editor: vscode.WebviewPanel
@@ -72,6 +73,7 @@ export class AsciidocPreview {
   public static create (
     resource: vscode.Uri,
     previewColumn: vscode.ViewColumn,
+    resourceColumn: vscode.ViewColumn,
     locked: boolean,
     contentProvider: AsciidocContentProvider,
     previewConfigurations: AsciidocPreviewConfigurationManager,
@@ -109,6 +111,7 @@ export class AsciidocPreview {
     private readonly _contributions: AsciidocContributions
   ) {
     this._resource = resource
+
     this._locked = locked
     this.editor = webview
     this.config = vscode.workspace.getConfiguration('asciidoc', this.resource)
@@ -191,6 +194,10 @@ export class AsciidocPreview {
 
   public get resource (): vscode.Uri {
     return this._resource
+  }
+
+  public get resourceColumn (): vscode.ViewColumn {
+    return this._resourceColumn || vscode.ViewColumn.One
   }
 
   public get state () {
