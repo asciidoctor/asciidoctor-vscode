@@ -345,6 +345,56 @@ this is the same paragraph`)
       assert.strictEqual(folds.length, 0, 'expecting 0 fold')
     })
   })
+
+  suite('getSingleLineCommentFoldingRanges', () => {
+    test('Should fold on a group of single line comments ', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+// A single-line comment.
+// Another single-line comment.
+
+this is a paragraph`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 fold')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(2, 3, vscode.FoldingRangeKind.Region),
+      ])
+    })
+
+    test('Should not fold single line comment if not contiguous ', () => {
+      const folds = getFoldsForDocument(
+        `// A single-line comment.
+
+// Another single-line comment.
+
+// This is a comment too.
+
+This is a paragraph.
+
+// This is another comment.`)
+      assert.strictEqual(folds.length, 0, 'expecting 0 fold')
+    })
+
+    test('Should not fold single lines comments if slashes are part of literal text ', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+ // This is literal text
+// This is a single line comment
+this is the same paragraph`)
+      assert.strictEqual(folds.length, 0, 'expecting 0 fold')
+    })
+
+    test('Should fold if last single line comment is on the last line of the document', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+// This is a comment.
+// The last line of the document is also a comment!`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 fold')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(1, 2, vscode.FoldingRangeKind.Region),
+      ])
+    })
+  })
 })
 
 function getFoldsForDocument (contents: string) {
