@@ -10,6 +10,7 @@ const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcess
 const asciidoctor = require('@asciidoctor/core')
 const docbookConverter = require('@asciidoctor/docbook-converter')
 const kroki = require('asciidoctor-kroki')
+const emoji = require('asciidoctor-emoji')
 const processor = asciidoctor()
 const highlightjsBuiltInSyntaxHighlighter = processor.SyntaxHighlighter.for('highlight.js')
 const highlightjsAdapter = require('./highlightjs-adapter')
@@ -42,8 +43,12 @@ export class AsciidocParser {
     processor.LoggerManager.setLogger(memoryLogger)
     const registry = processor.Extensions.create()
     const useKroki = asciidocConfig.get('use_kroki')
+    const useEmoji = asciidocConfig.get('use_emoji')
     if (useKroki) {
       kroki.register(registry)
+    }
+    if (useEmoji) {
+      emoji.register(registry)
     }
     highlightjsBuiltInSyntaxHighlighter.$register_for('highlight.js', 'highlightjs')
     const baseDir = this.getBaseDir(textDocument.fileName)
@@ -114,9 +119,13 @@ export class AsciidocParser {
     const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter()
     processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])
     const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
+    const useEmoji = vscode.workspace.getConfiguration('asciidoc', null).get('use_emoji')
 
     if (useKroki) {
       kroki.register(registry)
+    }
+    if (useEmoji) {
+      emoji.register(registry)
     }
 
     if (context && editor) {

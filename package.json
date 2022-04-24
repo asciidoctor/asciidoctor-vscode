@@ -386,6 +386,11 @@
 					"default": false,
 					"description": "%asciidoc.use_kroki.desc%"
 				},
+				"asciidoc.use_emoji": {
+					"type": "boolean",
+					"default": false,
+					"description": "%asciidoc.use_emoji.desc%"
+				},
 				"asciidoc.wkhtmltopdf_path": {
 					"type": "string",
 					"default": "",
@@ -466,6 +471,7 @@
 		"@asciidoctor/core": "2.2.6",
 		"@asciidoctor/docbook-converter": "2.0.0",
 		"@orcid/bibtex-parse-js": "0.0.25",
+		"asciidoctor-emoji": "^0.3.4",
 		"asciidoctor-kroki": "0.15.4",
 		"file-url": "4.0.0",
 		"follow-redirects": "1.14.8",

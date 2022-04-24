@@ -175,6 +175,7 @@ The following list contains all the options and their default value.
 | `asciidoc.trace: "off"` | Enable debug logging for the AsciiDoc extension. |
 | `asciidoc.use_asciidoctorpdf: false` | Use Asciidoctor PDF instead of the integrated renderer for the _Export as PDF_ command. |
 | `asciidoc.use_kroki: false` | Enable kroki integration to generate diagrams. |
+| `asciidoc.use_emoji: false` | Enable emoji. |
 
 ## Build and Install from Source
 
