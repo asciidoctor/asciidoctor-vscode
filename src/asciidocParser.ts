@@ -250,17 +250,34 @@ export class AsciidocParser {
   }
 
   private registerExt (registry) {
-    const workspacePath = vscode.workspace.workspaceFolders
     const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
     if (useKroki) {
       const kroki = require('asciidoctor-kroki')
       kroki.register(registry)
     }
-    if (workspacePath !== undefined) {
-      const extPath = workspacePath[0].uri.path + '/asciidoctor-ext.js'
-      if (fs.existsSync(extPath)) {
-        const adaptorjs = require(extPath)
-        adaptorjs.register(registry)
+    this.registerExtInDotDir(registry)
+  }
+
+  private registerExtInDotDir (registry) {
+    const workspacePath = vscode.workspace.workspaceFolders
+    if (workspacePath === undefined) {
+      return
+    }
+    const extDir = workspacePath[0].uri.path + '/.asciidoctor/lib/'
+    if (fs.existsSync(extDir)) {
+      const extfiles = fs.readdirSync(extDir)
+      for (const extfile of extfiles) {
+        const extPath = extDir + extfile
+        const stat = fs.statSync(extPath)
+        if (stat.isFile && extfile.endsWith('.js')) {
+          try {
+            const extjs = require(extPath)
+            extjs.register(registry)
+          } catch (e) {
+            vscode.window.showErrorMessage(extPath + ': ' + e.toString())
+            throw e
+          }
+        }
       }
     }
   }

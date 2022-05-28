@@ -156,7 +156,7 @@ This extension supports registration of asciidoctor.js extensions.
 npm install asciidoctor-emoji
 ```
 
-* Create `asciidoctor-ext.js` in the top workspace directory. For example is following:
+* This extension will search the directory `.asciidoctor/lib` in the workspace directory and load all files with the extension `js` as Asciidoctor.js extensions. For example is following:
 
 ```javascript
 const emoji = require('asciidoctor-emoji')
