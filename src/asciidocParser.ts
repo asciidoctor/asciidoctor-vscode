@@ -257,7 +257,7 @@ export class AsciidocParser {
       : documentPath
   }
 
-  private registerExt(registry) {
+  private registerExt (registry) {
     const workspacePath = vscode.workspace.workspaceFolders
     const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
     if (useKroki) {
