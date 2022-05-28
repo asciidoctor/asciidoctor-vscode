@@ -146,6 +146,26 @@ This will store images by default in your document folder, however you may also 
 :imagesdir: media
 ```
 
+### Use asciidoctor.js extensions in workspace
+
+This extension supports registration of asciidoctor.js extensions.
+
+* Install npm package in the workspace directory. For example is following:
+
+```shell
+npm install asciidoctor-emoji
+```
+
+* Create asciidoctor-ext.js in the top workspace directory. For example is following:
+
+```javascript
+const emoji = require('asciidoctor-emoji')
+
+module.exports.register = function register(registry) {
+    emoji.register(registry)
+}
+```
+
 ## User Settings
 
 This extension is controlled by a multitude of user settings.
