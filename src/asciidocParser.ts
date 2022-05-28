@@ -124,14 +124,6 @@ export class AsciidocParser {
 
     this.registerExt(registry)
 
-    if (workspacePath !== undefined) {
-      const extPath = workspacePath[0].uri.path + '/asciidoctor-ext.js'
-      if (fs.existsSync(extPath)) {
-        const adaptorjs = require(extPath)
-        adaptorjs.register(registry)
-      }
-    }
-
     if (context && editor) {
       highlightjsAdapter.register(highlightjsBuiltInSyntaxHighlighter, context, editor)
     } else {
