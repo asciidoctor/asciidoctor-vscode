@@ -1,5 +1,6 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
+import * as fs from 'fs'
 import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
 import { Asciidoctor } from '@asciidoctor/core'
 import { ExtensionContentSecurityPolicyArbiter } from './security'
@@ -11,7 +12,6 @@ const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcess
 
 const asciidoctor = require('@asciidoctor/core')
 const docbookConverter = require('@asciidoctor/docbook-converter')
-const kroki = require('asciidoctor-kroki')
 const processor = asciidoctor()
 const highlightjsBuiltInSyntaxHighlighter = processor.SyntaxHighlighter.for('highlight.js')
 const highlightjsAdapter = require('./highlightjs-adapter')
@@ -45,10 +45,9 @@ export class AsciidocParser {
     const memoryLogger = processor.MemoryLogger.create()
     processor.LoggerManager.setLogger(memoryLogger)
     const registry = processor.Extensions.create()
-    const useKroki = asciidocConfig.get('use_kroki')
-    if (useKroki) {
-      kroki.register(registry)
-    }
+
+    this.registerExt(registry)
+
     highlightjsBuiltInSyntaxHighlighter.$register_for('highlight.js', 'highlightjs')
     const baseDir = this.getBaseDir(textDocument.fileName)
     const options: { [key: string]: any } = {
@@ -122,10 +121,15 @@ export class AsciidocParser {
       previewConfigurationManager
     )
     processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])
-    const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
 
-    if (useKroki) {
-      kroki.register(registry)
+    this.registerExt(registry)
+
+    if (workspacePath !== undefined) {
+      const extPath = workspacePath[0].uri.path + '/asciidoctor-ext.js'
+      if (fs.existsSync(extPath)) {
+        const adaptorjs = require(extPath)
+        adaptorjs.register(registry)
+      }
     }
 
     if (context && editor) {
@@ -251,5 +255,21 @@ export class AsciidocParser {
     return useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined'
       ? vscode.workspace.rootPath
       : documentPath
+  }
+
+  private registerExt(registry) {
+    const workspacePath = vscode.workspace.workspaceFolders
+    const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
+    if (useKroki) {
+      const kroki = require('asciidoctor-kroki')
+      kroki.register(registry)
+    }
+    if (workspacePath !== undefined) {
+      const extPath = workspacePath[0].uri.path + '/asciidoctor-ext.js'
+      if (fs.existsSync(extPath)) {
+        const adaptorjs = require(extPath)
+        adaptorjs.register(registry)
+      }
+    }
   }
 }
