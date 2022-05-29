@@ -23,6 +23,7 @@ An extension that provides live preview, syntax highlighting and snippets for th
     - [Snippets](#snippets)
     - [Identifying the VS Code Environment](#identifying-the-vs-code-environment)
     - [Diagram Integration](#diagram-integration)
+    - [Use asciidoctor.js extensions in workspace](#use-asciidoctorjs-extensions-in-workspace)
   - [User Settings](#user-settings)
   - [Visual Studio Code for the Web](#visual-studio-code-for-the-web)
   - [Build and Install from Source](#build-and-install-from-source)
