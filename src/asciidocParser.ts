@@ -264,19 +264,20 @@ export class AsciidocParser {
       return
     }
     const extDir = workspacePath[0].uri.path + '/.asciidoctor/lib/'
-    if (fs.existsSync(extDir)) {
-      const extfiles = fs.readdirSync(extDir)
-      for (const extfile of extfiles) {
-        const extPath = extDir + extfile
-        const stat = fs.statSync(extPath)
-        if (stat.isFile && extfile.endsWith('.js')) {
-          try {
-            const extjs = require(extPath)
-            extjs.register(registry)
-          } catch (e) {
-            vscode.window.showErrorMessage(extPath + ': ' + e.toString())
-            throw e
-          }
+    if (!fs.existsSync(extDir)) {
+      return
+    }
+    const extfiles = fs.readdirSync(extDir)
+    for (const extfile of extfiles) {
+      const extPath = extDir + extfile
+      const stat = fs.statSync(extPath)
+      if (stat.isFile && extfile.endsWith('.js')) {
+        try {
+          const extjs = require(extPath)
+          extjs.register(registry)
+        } catch (e) {
+          vscode.window.showErrorMessage(extPath + ': ' + e.toString())
+          throw e
         }
       }
     }
