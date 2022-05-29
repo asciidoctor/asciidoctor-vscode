@@ -273,6 +273,7 @@ export class AsciidocParser {
       const stat = fs.statSync(extPath)
       if (stat.isFile && extfile.endsWith('.js')) {
         try {
+          delete require.cache[extPath]
           const extjs = require(extPath)
           extjs.register(registry)
         } catch (e) {
