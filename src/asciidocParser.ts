@@ -16,6 +16,8 @@ const processor = asciidoctor()
 const highlightjsBuiltInSyntaxHighlighter = processor.SyntaxHighlighter.for('highlight.js')
 const highlightjsAdapter = require('./highlightjs-adapter')
 
+const extDirInWorkspace = '.asciidoctor/lib/'
+
 docbookConverter.register()
 
 export type AsciidoctorBuiltInBackends = 'html5' | 'docbook5'
@@ -255,31 +257,67 @@ export class AsciidocParser {
       const kroki = require('asciidoctor-kroki')
       kroki.register(registry)
     }
-    this.registerExtInDotDir(registry)
+    this.registerExtensionInWorkspace(registry)
   }
 
-  private registerExtInDotDir (registry) {
+  public alreadyShowWarningMessage = false
+  private allowToExecuteExtInWorkspace = false
+
+  public async showWarningMessageRegisterExtensionInWorkspace () {
+    const value = await vscode.window.showWarningMessage(
+      'AsciiDoc extension is trying to execute scripts in workspace(' + extDirInWorkspace + '*.js). Do you trust authors of scripts in workspace?',
+      { title: 'Yes, I trust the authors.', value: true },
+      { title: 'No, I don\'t trust the authors.', value: false })
+    this.allowToExecuteExtInWorkspace = value.value
+    this.alreadyShowWarningMessage = true
+  }
+
+  private getExtensionFilesInWorkspace (): string[] {
+    const workspacePath = vscode.workspace.workspaceFolders
+    if (workspacePath === undefined) {
+      return []
+    }
+    const extDir = workspacePath[0].uri.path + '/' + extDirInWorkspace
+    if (!fs.existsSync(extDir)) {
+      return []
+    }
+    return fs.readdirSync(extDir)
+      .filter(function (extfile) {
+        const extPath = extDir + extfile
+        const stat = fs.statSync(extPath)
+        return stat.isFile && extfile.endsWith('.js')
+      })
+  }
+
+  public hasExtensionInWorkspace () {
+    return this.getExtensionFilesInWorkspace().length !== 0
+  }
+
+  private registerExtensionInWorkspace (registry) {
+    if (this.allowToExecuteExtInWorkspace === false) {
+      return
+    }
+
     const workspacePath = vscode.workspace.workspaceFolders
     if (workspacePath === undefined) {
       return
     }
-    const extDir = workspacePath[0].uri.path + '/.asciidoctor/lib/'
+
+    const extDir = workspacePath[0].uri.path + '/' + extDirInWorkspace
     if (!fs.existsSync(extDir)) {
       return
     }
-    const extfiles = fs.readdirSync(extDir)
+
+    const extfiles = this.getExtensionFilesInWorkspace()
     for (const extfile of extfiles) {
       const extPath = extDir + extfile
-      const stat = fs.statSync(extPath)
-      if (stat.isFile && extfile.endsWith('.js')) {
-        try {
-          delete require.cache[extPath]
-          const extjs = require(extPath)
-          extjs.register(registry)
-        } catch (e) {
-          vscode.window.showErrorMessage(extPath + ': ' + e.toString())
-          throw e
-        }
+      try {
+        delete require.cache[extPath]
+        const extjs = require(extPath)
+        extjs.register(registry)
+      } catch (e) {
+        vscode.window.showErrorMessage(extPath + ': ' + e.toString())
+        throw e
       }
     }
   }

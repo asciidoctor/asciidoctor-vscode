@@ -50,6 +50,12 @@ export class AsciidocEngine {
     context: vscode.ExtensionContext,
     editor: vscode.WebviewPanel
   ): Promise<{output: string, document?: Asciidoctor.Document}> {
+    const parser = this.getEngine()
+
+    if (parser.hasExtensionInWorkspace() && parser.alreadyShowWarningMessage === false) {
+      await parser.showWarningMessageRegisterExtensionInWorkspace()
+    }
+
     let offset = 0
     if (stripFrontmatter) {
       const asciidocContent = this.stripFrontmatter(text)
@@ -59,12 +65,18 @@ export class AsciidocEngine {
 
     this.firstLine = offset
     const textDocument = await vscode.workspace.openTextDocument(documentUri)
-    const { html: output, document } = this.getEngine().convertUsingJavascript(text, textDocument, context, editor)
+    const { html: output, document } = parser.convertUsingJavascript(text, textDocument, context, editor)
     return { output, document }
   }
 
-  public export (textDocument: vscode.TextDocument, backend: AsciidoctorBuiltInBackends): { output: string, document: Asciidoctor.Document } {
-    return this.getEngine().export(textDocument.getText(), textDocument, backend)
+  public async export (textDocument: vscode.TextDocument, backend: AsciidoctorBuiltInBackends): Promise<{ output: string, document: Asciidoctor.Document }> {
+    const parser = this.getEngine()
+
+    if (parser.hasExtensionInWorkspace() && parser.alreadyShowWarningMessage === false) {
+      await parser.showWarningMessageRegisterExtensionInWorkspace()
+    }
+
+    return parser.export(textDocument.getText(), textDocument, backend)
   }
 
   public load (textDocument: SkinnyTextDocument): Asciidoctor.Document {
