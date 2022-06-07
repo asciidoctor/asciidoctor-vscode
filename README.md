@@ -150,6 +150,9 @@ This will store images by default in your document folder, however you may also 
 ### Use asciidoctor.js extensions in workspace
 
 This extension supports registration of asciidoctor.js extensions.
+To see the rendered result in the preview, the extension can use asciidoctor.js extensions while rendering it.
+
+To create an autoloadable extension you should do the next steps:
 
 * Install npm package in the workspace directory. For example, the installation command is the following:
 
