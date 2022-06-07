@@ -1,6 +1,5 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
-import { posix } from 'path'
 import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
 import { Asciidoctor } from '@asciidoctor/core'
 import { ExtensionContentSecurityPolicyArbiter } from './security'
@@ -282,7 +281,7 @@ export class AsciidocParser {
       return []
     }
     const workspacePath = workspaceFolders[0].uri
-    const extDir = posix.join(workspacePath.path, extDirInWorkspace)
+    const extDir = path.posix.join(workspacePath.path, extDirInWorkspace)
     if (!vscode.workspace.fs.stat(workspacePath.with({ path: extDir }))) {
       return []
     }
@@ -311,7 +310,7 @@ export class AsciidocParser {
 
     const extfiles = await this.getExtensionFilesInWorkspace()
     for (const extfile of extfiles) {
-      const extPath = posix.join(workspacePath, extDirInWorkspace, extfile[0])
+      const extPath = path.posix.join(workspacePath, extDirInWorkspace, extfile[0])
       try {
         delete require.cache[extPath]
         const extjs = require(extPath)
