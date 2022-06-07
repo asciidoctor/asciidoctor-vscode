@@ -19,6 +19,7 @@ import { AsciidocFileIncludeAutoCompletionMonitor } from './util/includeAutoComp
 import { AttributeReferenceProvider } from './features/attributeReferenceProvider'
 import { BuiltinDocumentAttributeProvider } from './features/builtinDocumentAttributeProvider'
 import AsciidocFoldingRangeProvider from './features/foldingProvider'
+import { AntoraSupportManager } from './features/antora/antoraSupport'
 
 export function activate (context: vscode.ExtensionContext) {
   const contributions = getAsciidocExtensionContributions(context)
@@ -34,8 +35,14 @@ export function activate (context: vscode.ExtensionContext) {
   logger.log('Extension was started')
 
   const selector: vscode.DocumentSelector = [
-    { language: 'asciidoc', scheme: 'file' },
-    { language: 'asciidoc', scheme: 'untitled' },
+    {
+      language: 'asciidoc',
+      scheme: 'file',
+    },
+    {
+      language: 'asciidoc',
+      scheme: 'untitled',
+    },
   ]
 
   const contentProvider = new AsciidocContentProvider(engine, context)
@@ -44,6 +51,8 @@ export function activate (context: vscode.ExtensionContext) {
   context.subscriptions.push(previewManager)
   const includeAutoCompletionMonitor = new AsciidocFileIncludeAutoCompletionMonitor()
   context.subscriptions.push(includeAutoCompletionMonitor)
+  const antora = new AntoraSupportManager(context)
+  context.subscriptions.push(antora)
 
   context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider))
   context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider(engine)))

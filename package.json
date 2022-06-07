@@ -526,6 +526,11 @@
 						"order": 2,
 						"scope": "resource"
 					}
+				},
+				"asciidoc.antora.enableAntoraSupport": {
+					"type": "boolean",
+					"default": false,
+					"markdownDescription": "%asciidoc.antora.desc%"
 				}
 			}
 		],
@@ -583,6 +588,7 @@
 		"eslint-plugin-n": "^15.2.4",
 		"eslint-plugin-node": "11.1.0",
 		"eslint-plugin-promise": "6.0.0",
+		"js-yaml": "^4.1.0",
 		"font-awesome": "^4.7.0",
 		"gulp": "^4.0.2",
 		"lodash.throttle": "4.1.1",

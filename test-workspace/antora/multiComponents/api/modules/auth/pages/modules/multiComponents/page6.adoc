@@ -1,0 +1,1 @@
+= document inside a directory which has the same name as the workspace

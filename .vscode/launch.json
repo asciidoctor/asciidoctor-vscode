@@ -11,12 +11,14 @@
       "request": "launch",
       "runtimeExecutable": "${execPath}",
       "args": [
-        "--extensionDevelopmentPath=${workspaceFolder}"
+        "--extensionDevelopmentPath=${workspaceFolder}",
       ],
       "outFiles": [
         "${workspaceFolder}/dist/**/*.js"
       ],
-      "preLaunchTask": "npm: dev"
+      "preLaunchTask": "npm: dev",
+      "skipFiles": ["<node_internals>/**"],
+      "showAsyncStacks": true
     },
     {
       "name": "Run Extension Tests",
@@ -24,6 +26,7 @@
       "request": "launch",
       "runtimeExecutable": "${execPath}",
       "args": [
+        "${workspaceFolder}/test-workspace",
         "--disable-extensions",
         "--extensionDevelopmentPath=${workspaceFolder}",
         "--extensionTestsPath=${workspaceFolder}/dist/src/test/suite"
