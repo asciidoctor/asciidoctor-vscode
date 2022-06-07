@@ -275,6 +275,27 @@ export class AsciidocParser {
     this.alreadyShowWarningMessage = true
   }
 
+  private async readdirsRecursive (uri: vscode.Uri): Promise<[ string, vscode.FileType ][]> {
+    if (!vscode.workspace.fs.stat(uri)) {
+      return []
+    }
+    const rd = await vscode.workspace.fs.readDirectory(uri)
+    const result = rd.filter(function (extfile) {
+      return extfile[1] === vscode.FileType.File
+    })
+    for (const fd of rd) {
+      const fname = fd[0]
+      const ftype = fd[1]
+      if (ftype === vscode.FileType.Directory) {
+        const subdir = await this.readdirsRecursive(uri.with({ path: path.posix.join(uri.path, fname) }))
+        for (const subdirfile of subdir) {
+          result.push([path.posix.join(fname, subdirfile[0]), subdirfile[1]])
+        }
+      }
+    }
+    return result
+  }
+
   private async getExtensionFilesInWorkspace (): Promise<[ string, vscode.FileType ][]> {
     const workspaceFolders = vscode.workspace.workspaceFolders
     if (workspaceFolders === undefined) {
@@ -285,7 +306,7 @@ export class AsciidocParser {
     if (!vscode.workspace.fs.stat(workspacePath.with({ path: extDir }))) {
       return []
     }
-    const rd = await vscode.workspace.fs.readDirectory(workspacePath.with({ path: extDir }))
+    const rd = await this.readdirsRecursive(workspacePath.with({ path: extDir }))
     return rd.filter(function (extfile) {
       return extfile[1] === vscode.FileType.File && extfile[0].endsWith('.js')
     })
