@@ -338,7 +338,6 @@ export class AsciidocParser {
         extjs.register(registry)
       } catch (e) {
         vscode.window.showErrorMessage(extPath + ': ' + e.toString())
-        throw e
       }
     }
   }
