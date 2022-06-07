@@ -52,7 +52,7 @@ export class AsciidocEngine {
   ): Promise<{output: string, document?: Asciidoctor.Document}> {
     const parser = this.getEngine()
 
-    if (parser.hasExtensionInWorkspace() && parser.alreadyShowWarningMessage === false) {
+    if (await parser.hasExtensionInWorkspace() && parser.alreadyShowWarningMessage === false) {
       await parser.showWarningMessageRegisterExtensionInWorkspace()
     }
 
@@ -65,14 +65,14 @@ export class AsciidocEngine {
 
     this.firstLine = offset
     const textDocument = await vscode.workspace.openTextDocument(documentUri)
-    const { html: output, document } = parser.convertUsingJavascript(text, textDocument, context, editor)
+    const { html: output, document } = await parser.convertUsingJavascript(text, textDocument, context, editor)
     return { output, document }
   }
 
   public async export (textDocument: vscode.TextDocument, backend: AsciidoctorBuiltInBackends): Promise<{ output: string, document: Asciidoctor.Document }> {
     const parser = this.getEngine()
 
-    if (parser.hasExtensionInWorkspace() && parser.alreadyShowWarningMessage === false) {
+    if (await parser.hasExtensionInWorkspace() && parser.alreadyShowWarningMessage === false) {
       await parser.showWarningMessageRegisterExtensionInWorkspace()
     }
 

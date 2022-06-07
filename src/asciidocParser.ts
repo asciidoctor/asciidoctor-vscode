@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
-import * as fs from 'fs'
+import { posix } from 'path'
 import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
 import { Asciidoctor } from '@asciidoctor/core'
 import { ExtensionContentSecurityPolicyArbiter } from './security'
@@ -39,7 +39,11 @@ export class AsciidocParser {
 
   // Export
 
-  public export (text: string, textDocument: vscode.TextDocument, backend: AsciidoctorBuiltInBackends): { output: string, document: Asciidoctor.Document } {
+  public async export (
+    text: string,
+    textDocument: vscode.TextDocument,
+    backend: AsciidoctorBuiltInBackends
+  ): Promise<{ output: string, document: Asciidoctor.Document }> {
     const asciidocConfig = vscode.workspace.getConfiguration('asciidoc', null)
     if (this.errorCollection) {
       this.errorCollection.clear()
@@ -48,7 +52,7 @@ export class AsciidocParser {
     processor.LoggerManager.setLogger(memoryLogger)
     const registry = processor.Extensions.create()
 
-    this.registerExt(registry)
+    await this.registerExt(registry)
 
     highlightjsBuiltInSyntaxHighlighter.$register_for('highlight.js', 'highlightjs')
     const baseDir = this.getBaseDir(textDocument.fileName)
@@ -94,12 +98,12 @@ export class AsciidocParser {
 
   // Convert (preview)
 
-  public convertUsingJavascript (
+  public async convertUsingJavascript (
     text: string,
     doc: SkinnyTextDocument,
     context: vscode.ExtensionContext,
     editor: vscode.WebviewPanel
-  ): { html: string, document: Asciidoctor.Document } {
+  ): Promise<{ html: string, document: Asciidoctor.Document }> {
     // extension context should be at constructor
     const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState)
     const workspacePath = vscode.workspace.workspaceFolders
@@ -124,7 +128,7 @@ export class AsciidocParser {
     )
     processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])
 
-    this.registerExt(registry)
+    await this.registerExt(registry)
 
     if (context && editor) {
       highlightjsAdapter.register(highlightjsBuiltInSyntaxHighlighter, context, editor)
@@ -251,13 +255,13 @@ export class AsciidocParser {
       : documentPath
   }
 
-  private registerExt (registry) {
+  private async registerExt (registry) {
     const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
     if (useKroki) {
       const kroki = require('asciidoctor-kroki')
       kroki.register(registry)
     }
-    this.registerExtensionInWorkspace(registry)
+    await this.registerExtensionInWorkspace(registry)
   }
 
   public alreadyShowWarningMessage = false
@@ -272,45 +276,42 @@ export class AsciidocParser {
     this.alreadyShowWarningMessage = true
   }
 
-  private getExtensionFilesInWorkspace (): string[] {
-    const workspacePath = vscode.workspace.workspaceFolders
-    if (workspacePath === undefined) {
+  private async getExtensionFilesInWorkspace (): Promise<[ string, vscode.FileType ][]> {
+    const workspaceFolders = vscode.workspace.workspaceFolders
+    if (workspaceFolders === undefined) {
       return []
     }
-    const extDir = workspacePath[0].uri.path + '/' + extDirInWorkspace
-    if (!fs.existsSync(extDir)) {
+    const workspacePath = workspaceFolders[0].uri
+    const extDir = posix.join(workspacePath.path, extDirInWorkspace)
+    if (!vscode.workspace.fs.stat(workspacePath.with({ path: extDir }))) {
       return []
     }
-    return fs.readdirSync(extDir)
-      .filter(function (extfile) {
-        const extPath = extDir + extfile
-        const stat = fs.statSync(extPath)
-        return stat.isFile && extfile.endsWith('.js')
-      })
+    const rd = await vscode.workspace.fs.readDirectory(workspacePath.with({ path: extDir }))
+    return rd.filter(function (extfile) {
+      return extfile[1] === vscode.FileType.File && extfile[0].endsWith('.js')
+    })
   }
 
-  public hasExtensionInWorkspace () {
-    return this.getExtensionFilesInWorkspace().length !== 0
+  public async hasExtensionInWorkspace () {
+    const files = await this.getExtensionFilesInWorkspace()
+    return files.length !== 0
   }
 
-  private registerExtensionInWorkspace (registry) {
+  private async registerExtensionInWorkspace (registry) {
     if (this.allowToExecuteExtInWorkspace === false) {
       return
     }
 
-    const workspacePath = vscode.workspace.workspaceFolders
-    if (workspacePath === undefined) {
+    const workspaceFolders = vscode.workspace.workspaceFolders
+    if (workspaceFolders === undefined) {
       return
     }
+    const workspaceFolder = workspaceFolders[0]
+    const workspacePath = workspaceFolder.uri.path
 
-    const extDir = workspacePath[0].uri.path + '/' + extDirInWorkspace
-    if (!fs.existsSync(extDir)) {
-      return
-    }
-
-    const extfiles = this.getExtensionFilesInWorkspace()
+    const extfiles = await this.getExtensionFilesInWorkspace()
     for (const extfile of extfiles) {
-      const extPath = extDir + extfile
+      const extPath = posix.join(workspacePath, extDirInWorkspace, extfile[0])
       try {
         delete require.cache[extPath]
         const extjs = require(extPath)
