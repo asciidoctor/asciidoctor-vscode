@@ -433,25 +433,29 @@ export class AsciidocPreview {
     vscode.workspace.openTextDocument(this._resource).then(vscode.window.showTextDocument)
   }
 
-  private async onDidClickPreviewLink (href: string) {
-    let [hrefPath, fragment] = decodeURIComponent(href).split('#')
-    // From Markdown plugin
-    if (hrefPath[0] !== '/') {
-      hrefPath = path.join(path.dirname(this.resource.fsPath), hrefPath)
-    } else {
-      // Handle any normalized file paths
-      hrefPath = vscode.Uri.parse(hrefPath.replace('/file', '')).fsPath
+  private resolveDocumentLink (href: string): { path: string, fragment: string } {
+    let [hrefPath, fragment] = href.split('#').map((c) => decodeURIComponent(c))
+    if (hrefPath.startsWith('file:///')) {
+      hrefPath = hrefPath.replace('file://', '')
     }
+    if (!hrefPath.startsWith('/')) {
+      // Relative path. Resolve relative to the file
+      hrefPath = path.join(path.dirname(this.resource.fsPath), hrefPath)
+    }
+    return { path: hrefPath, fragment: fragment }
+  }
+
+  private async onDidClickPreviewLink (href: string) {
+    const targetResource = this.resolveDocumentLink(href)
     const openLinks = this.config.get<string>('preview.openAsciiDocLinks', 'inPreview')
     if (openLinks === 'inPreview') {
-      const asciidocLink = await resolveLinkToAsciidocFile(hrefPath)
+      const asciidocLink = await resolveLinkToAsciidocFile(targetResource.path)
       if (asciidocLink) {
         this.update(asciidocLink)
         return
       }
     }
-
-    vscode.commands.executeCommand('_asciidoc.openDocumentLink', { path: hrefPath, fragment })
+    vscode.commands.executeCommand('_asciidoc.openDocumentLink', targetResource)
   }
 
   private async onCacheImageSizes (imageInfo: { id: string, width: number, height: number }[]) {
