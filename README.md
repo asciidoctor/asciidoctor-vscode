@@ -169,11 +169,7 @@ npm install asciidoctor-emoji
 * This extension will search the directory `.asciidoctor/lib` in the workspace directory and load all files with the extension `js` as Asciidoctor.js extensions. For example, `.asciidoctor/lib/emoji.js` containing the following:
 
 ```javascript
-const emoji = require('asciidoctor-emoji')
-
-module.exports.register = function register(registry) {
-    emoji.register(registry)
-}
+module.exports = require('asciidoctor-emoji')
 ```
 
 ## User Settings
