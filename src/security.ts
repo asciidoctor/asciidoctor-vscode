@@ -227,7 +227,7 @@ export class AsciidocExtensionSecuritySelector {
           { modal: true },
           { title: 'Yes, I trust the authors.', value: true },
           { title: 'No, I don\'t trust the authors.', value: false })
-        if (!confirmYes.value) {
+        if (!confirmYes || !confirmYes.value) {
           return
         }
       }
