@@ -6,6 +6,7 @@ import { ExtensionContentSecurityPolicyArbiter } from './security'
 import { AsciidocPreviewConfigurationManager } from './features/previewConfig'
 import { SkinnyTextDocument } from './util/document'
 import { IncludeItems } from './asciidoctorFindIncludeProcessor'
+import { AsciidocParserSecurityPolicyArbiter } from './security'
 
 const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcessor')
 
@@ -25,8 +26,14 @@ const previewConfigurationManager = new AsciidocPreviewConfigurationManager()
 
 export class AsciidocParser {
   private stylesdir: string
+  private apsArbiter: AsciidocParserSecurityPolicyArbiter
 
-  constructor (extensionUri: vscode.Uri, private errorCollection: vscode.DiagnosticCollection = null) {
+  constructor (
+    extensionUri: vscode.Uri,
+    apsArbiter: AsciidocParserSecurityPolicyArbiter = null,
+    private errorCollection: vscode.DiagnosticCollection = null
+  ) {
+    this.apsArbiter = apsArbiter
     // Asciidoctor.js in the browser environment works with URIs however for desktop clients
     // the stylesdir attribute is expected to look like a file system path (especially on Windows)
     if (process.env.BROWSER_ENV) {
@@ -51,7 +58,7 @@ export class AsciidocParser {
     processor.LoggerManager.setLogger(memoryLogger)
     const registry = processor.Extensions.create()
 
-    await this.registerExt(registry)
+    await this.registerExt(registry, this.apsArbiter)
 
     highlightjsBuiltInSyntaxHighlighter.$register_for('highlight.js', 'highlightjs')
     const baseDir = this.getBaseDir(textDocument.fileName)
@@ -127,7 +134,7 @@ export class AsciidocParser {
     )
     processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])
 
-    await this.registerExt(registry)
+    await this.registerExt(registry, this.apsArbiter)
 
     if (context && editor) {
       highlightjsAdapter.register(highlightjsBuiltInSyntaxHighlighter, context, editor)
@@ -254,25 +261,13 @@ export class AsciidocParser {
       : documentPath
   }
 
-  private async registerExt (registry) {
+  private async registerExt (registry, apsArbiter: AsciidocParserSecurityPolicyArbiter) {
     const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
     if (useKroki) {
       const kroki = require('asciidoctor-kroki')
       kroki.register(registry)
     }
-    await this.registerExtensionInWorkspace(registry)
-  }
-
-  public alreadyShowWarningMessage = false
-  private allowToExecuteExtInWorkspace = false
-
-  public async showWarningMessageRegisterExtensionInWorkspace () {
-    const value = await vscode.window.showWarningMessage(
-      'AsciiDoc extension is trying to execute scripts in workspace(' + extDirInWorkspace + '*.js). Do you trust authors of scripts in workspace?',
-      { title: 'Yes, I trust the authors.', value: true },
-      { title: 'No, I don\'t trust the authors.', value: false })
-    this.allowToExecuteExtInWorkspace = value.value
-    this.alreadyShowWarningMessage = true
+    await this.registerExtensionInWorkspace(registry, apsArbiter)
   }
 
   private async readdirsRecursive (uri: vscode.Uri): Promise<[ string, vscode.FileType ][]> {
@@ -312,16 +307,13 @@ export class AsciidocParser {
     })
   }
 
-  public async hasExtensionInWorkspace () {
-    const files = await this.getExtensionFilesInWorkspace()
-    return files.length !== 0
-  }
-
-  private async registerExtensionInWorkspace (registry) {
-    if (this.allowToExecuteExtInWorkspace === false) {
+  private async registerExtensionInWorkspace (registry, apsArbiter :AsciidocParserSecurityPolicyArbiter) {
+    if (!apsArbiter) {
       return
     }
-
+    if (!apsArbiter.getEnableScripts()) {
+      return
+    }
     const workspaceFolders = vscode.workspace.workspaceFolders
     if (workspaceFolders === undefined) {
       return

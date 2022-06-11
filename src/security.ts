@@ -158,3 +158,80 @@ export class PreviewSecuritySelector {
     this.webviewManager.refresh()
   }
 }
+
+export class AsciidocParserSecurityPolicyArbiter {
+  private readonly enableAsciidocExtensionScriptKey = 'enable_asciidoc_extension_script:'
+
+  constructor (
+    private readonly context: vscode.ExtensionContext
+  ) {
+    this.context = context
+  }
+
+  public getEnableScripts (): boolean {
+    return this.context.workspaceState.get<boolean>(this.enableAsciidocExtensionScriptKey, false)
+  }
+
+  public async setEnableScripts (enabled: boolean): Promise<void> {
+    return this.context.workspaceState.update(this.enableAsciidocExtensionScriptKey, enabled)
+  }
+}
+
+export class AsciidocExtensionSecuritySelector {
+  private static readonly enableAsciidocExtensionScriptKey = 'enable_asciidoc_extension_script:'
+
+  constructor (
+    private readonly apsArbiter: AsciidocParserSecurityPolicyArbiter
+  ) {
+    this.apsArbiter = apsArbiter
+  }
+
+  public async showSelector (): Promise<void> {
+    const enableExtension = this.apsArbiter.getEnableScripts()
+
+    interface ExtensionPickItem extends vscode.QuickPickItem {
+      readonly type: 'disable_extension' | 'enable_extension';
+    }
+
+    function markActiveWhen (when: boolean): string {
+      return when ? '• ' : ''
+    }
+
+    const selection = await vscode.window.showQuickPick<ExtensionPickItem>(
+      [
+        {
+          type: 'disable_extension',
+          label: markActiveWhen(enableExtension === false) + localize('disable_extension.title', 'Disable AsciiDoc extension scripts'),
+          description: localize('disable_extension.description', 'Disable AsciiDoc extension scripts in the workspace.'),
+        }, {
+          type: 'enable_extension',
+          label: markActiveWhen(enableExtension === true) + localize('enable_extension.title', 'Enable AsciiDoc extension scripts'),
+          description: localize('enable_extension.description', 'Enable AsciiDoc extension scripts in the workspace.'),
+        },
+      ], {
+        placeHolder: localize(
+          'asciidocExtensionSecuritySelector.title',
+          'Select security settings for Asciidoc extension scripts in this workspace'),
+      })
+
+    if (!selection) {
+      return
+    }
+    if (selection.type === 'disable_extension') {
+      await this.apsArbiter.setEnableScripts(false)
+    }
+    if (selection.type === 'enable_extension') {
+      if (!enableExtension) {
+        const confirmYes = await vscode.window.showWarningMessage(
+          'AsciiDoc extension will execute scripts in workspace(.asciidoctor/lib/*.js). Do you trust authors of scripts in workspace?',
+          { modal: true },
+          { title: 'Yes, I trust the authors.', value: true },
+          { title: 'No, I don\'t trust the authors.', value: false })
+        if (!confirmYes.value) {
+          return
+        }
+      }
+      await this.apsArbiter.setEnableScripts(true)
+    }
+  }
+}

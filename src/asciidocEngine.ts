@@ -7,6 +7,7 @@ import { AsciidocContributions } from './asciidocExtensions'
 import { AsciidocParser, AsciidoctorBuiltInBackends } from './asciidocParser'
 import { Asciidoctor } from '@asciidoctor/core'
 import { SkinnyTextDocument } from './util/document'
+import { AsciidocParserSecurityPolicyArbiter } from './security'
 
 const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/
 
@@ -17,16 +18,18 @@ export class AsciidocEngine {
 
   public constructor (
     readonly extensionPreviewResourceProvider: AsciidocContributions,
+    readonly apsArbiter: AsciidocParserSecurityPolicyArbiter = null,
     private readonly errorCollection: vscode.DiagnosticCollection = null
   ) {
     this.extensionPreviewResourceProvider = extensionPreviewResourceProvider
+    this.apsArbiter = apsArbiter
     this.errorCollection = errorCollection
   }
 
   private getEngine (): AsciidocParser {
     // singleton
     if (!this.ad) {
-      this.ad = new AsciidocParser(this.extensionPreviewResourceProvider.extensionUri, this.errorCollection)
+      this.ad = new AsciidocParser(this.extensionPreviewResourceProvider.extensionUri, this.apsArbiter, this.errorCollection)
     }
 
     return this.ad
@@ -52,10 +55,6 @@ export class AsciidocEngine {
   ): Promise<{output: string, document?: Asciidoctor.Document}> {
     const parser = this.getEngine()
 
-    if (await parser.hasExtensionInWorkspace() && parser.alreadyShowWarningMessage === false) {
-      await parser.showWarningMessageRegisterExtensionInWorkspace()
-    }
-
     let offset = 0
     if (stripFrontmatter) {
       const asciidocContent = this.stripFrontmatter(text)
@@ -71,10 +70,6 @@ export class AsciidocEngine {
 
   public async export (textDocument: vscode.TextDocument, backend: AsciidoctorBuiltInBackends): Promise<{ output: string, document: Asciidoctor.Document }> {
     const parser = this.getEngine()
-
-    if (await parser.hasExtensionInWorkspace() && parser.alreadyShowWarningMessage === false) {
-      await parser.showWarningMessageRegisterExtensionInWorkspace()
-    }
 
     return parser.export(textDocument.getText(), textDocument, backend)
   }

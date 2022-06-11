@@ -12,6 +12,7 @@
 	"asciidoc.saveDocbook.title": "Save to DocBook",
 	"asciidoc.showLockedPreviewToSide.title": "Open Locked Preview to the Side",
 	"asciidoc.showPreviewSecuritySelector.title": "Change Preview Security Settings",
+	"asciidoc.showExtensionSecuritySelector.title": "Change AsciiDoc extension scripts Security Settings",
 	"asciidoc.showSource.title": "Show Source",
 
 	"asciidoc.asciidoctorpdf_command.desc": "Full path for the asciidoctor binary/executable",

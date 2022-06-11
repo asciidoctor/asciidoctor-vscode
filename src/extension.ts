@@ -13,7 +13,7 @@ import AsciidocWorkspaceSymbolProvider from './features/workspaceSymbolProvider'
 import { Logger } from './logger'
 import { AsciidocEngine } from './asciidocEngine'
 import { getAsciidocExtensionContributions } from './asciidocExtensions'
-import { ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security'
+import { AsciidocParserSecurityPolicyArbiter, AsciidocExtensionSecuritySelector, ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security'
 import { AsciidocFileIncludeAutoCompletionMonitor } from './util/includeAutoCompletion'
 import { AttributeReferenceProvider } from './features/attributeReferenceProvider'
 import { BuiltinDocumentAttributeProvider } from './features/builtinDocumentAttributeProvider'
@@ -23,10 +23,12 @@ export function activate (context: vscode.ExtensionContext) {
   const contributions = getAsciidocExtensionContributions(context)
 
   const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState)
+  const apsArbiter = new AsciidocParserSecurityPolicyArbiter(context)
+  const asciidocExtSelector = new AsciidocExtensionSecuritySelector(apsArbiter)
 
   const errorCollection = vscode.languages.createDiagnosticCollection('asciidoc')
 
-  const engine = new AsciidocEngine(contributions, errorCollection)
+  const engine = new AsciidocEngine(contributions, apsArbiter, errorCollection)
   const logger = new Logger()
   logger.log('Extension was started')
 
@@ -58,6 +60,7 @@ export function activate (context: vscode.ExtensionContext) {
   commandManager.register(new commands.RefreshPreviewCommand(previewManager))
   commandManager.register(new commands.MoveCursorToPositionCommand())
   commandManager.register(new commands.ShowPreviewSecuritySelectorCommand(previewSecuritySelector, previewManager))
+  commandManager.register(new commands.AsciidocExtensionSecuritySelectorCommand(asciidocExtSelector))
   commandManager.register(new commands.OpenDocumentLinkCommand(engine))
   commandManager.register(new commands.ExportAsPDF(engine, logger))
   commandManager.register(new commands.PasteImage())

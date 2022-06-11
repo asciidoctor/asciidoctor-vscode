@@ -39,6 +39,7 @@
 		"onCommand:asciidoc.showLockedPreviewToSide",
 		"onCommand:asciidoc.showSource",
 		"onCommand:asciidoc.showPreviewSecuritySelector",
+		"onCommand:asciidoc.showExtensionSecuritySelector",
 		"onWebviewPanel:asciidoc.preview"
 	],
 	"contributes": {
@@ -111,6 +112,11 @@
 				"category": "AsciiDoc"
 			},
 			{
+				"command": "asciidoc.showExtensionSecuritySelector",
+				"title": "%asciidoc.showExtensionSecuritySelector.title%",
+				"category": "AsciiDoc"
+			},
+			{
 				"command": "asciidoc.preview.refresh",
 				"title": "%asciidoc.preview.refresh.title%",
 				"category": "AsciiDoc"
@@ -158,6 +164,11 @@
 				},
 				{
 					"command": "asciidoc.showPreviewSecuritySelector",
+					"when": "asciidocPreviewFocus",
+					"group": "1_asciidoc"
+				},
+				{
+					"command": "asciidoc.showExtensionSecuritySelector",
 					"when": "asciidocPreviewFocus",
 					"group": "1_asciidoc"
 				}
@@ -215,6 +226,10 @@
 				},
 				{
 					"command": "asciidoc.showPreviewSecuritySelector",
+					"when": "editorLangId == asciidoc || asciidocPreviewFocus"
+				},
+				{
+					"command": "asciidoc.showExtensionSecuritySelector",
 					"when": "editorLangId == asciidoc || asciidocPreviewFocus"
 				},
 				{

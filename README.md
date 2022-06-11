@@ -154,6 +154,12 @@ To see the rendered result in the preview, the extension can use asciidoctor.js 
 
 To create an autoloadable extension you should do the next steps:
 
+* Enable the feature by `Change AsciiDoc extension scripts Security Settings` command.
+
+**Warning**
+This feature will automatically executes scripts in workspace. So, this feature is disabled by default.
+Enable the feature only if you trust the workspace project.
+
 * Install npm package in the workspace directory. For example, the installation command is the following:
 
 ```shell
