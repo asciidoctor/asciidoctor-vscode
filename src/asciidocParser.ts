@@ -261,6 +261,19 @@ export class AsciidocParser {
       : documentPath
   }
 
+  private async showWarningRegisterExt () {
+    if (!this.isRegisterAsciidocExtensionEnabled()) {
+      return
+    }
+    if (this.apsArbiter.getAllowScripts()) {
+      return
+    }
+    if (!await this.hasExtensionInWorkspace()) {
+      return
+    }
+    await this.apsArbiter.showDialogTrustAutherOnlyOnce()
+  }
+
   private async registerExt (registry, apsArbiter: AsciidocParserSecurityPolicyArbiter) {
     const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
     if (useKroki) {
@@ -268,6 +281,11 @@ export class AsciidocParser {
       kroki.register(registry)
     }
     await this.registerExtensionInWorkspace(registry, apsArbiter)
+  }
+
+  public async hasExtensionInWorkspace () {
+    const files = await this.getExtensionFilesInWorkspace()
+    return files.length !== 0
   }
 
   private async readdirsRecursive (uri: vscode.Uri): Promise<[ string, vscode.FileType ][]> {
@@ -307,11 +325,20 @@ export class AsciidocParser {
     })
   }
 
+  private isRegisterAsciidocExtensionEnabled ():boolean {
+    return vscode.workspace.getConfiguration('asciidoc', null).get('registerAsciidocExtension')
+  }
+
   private async registerExtensionInWorkspace (registry, apsArbiter :AsciidocParserSecurityPolicyArbiter) {
+    await this.showWarningRegisterExt()
+
+    if (!this.isRegisterAsciidocExtensionEnabled()) {
+      return
+    }
     if (!apsArbiter) {
       return
     }
-    if (!apsArbiter.getEnableScripts()) {
+    if (!apsArbiter.getAllowScripts()) {
       return
     }
     const workspaceFolders = vscode.workspace.workspaceFolders

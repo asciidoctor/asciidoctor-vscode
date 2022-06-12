@@ -160,7 +160,8 @@ export class PreviewSecuritySelector {
 }
 
 export class AsciidocParserSecurityPolicyArbiter {
-  private readonly enableAsciidocExtensionScriptKey = 'enable_asciidoc_extension_script:'
+  private readonly allowAsciidocExtensionScriptKey = 'allow_asciidoc_extension_script:'
+  private trustAutherDialogIsSelected = false
 
   constructor (
     private readonly context: vscode.ExtensionContext
@@ -168,18 +169,40 @@ export class AsciidocParserSecurityPolicyArbiter {
     this.context = context
   }
 
-  public getEnableScripts (): boolean {
-    return this.context.workspaceState.get<boolean>(this.enableAsciidocExtensionScriptKey, false)
+  public getAllowScripts (): boolean {
+    return this.context.workspaceState.get<boolean>(this.allowAsciidocExtensionScriptKey, false)
   }
 
-  public async setEnableScripts (enabled: boolean): Promise<void> {
-    return this.context.workspaceState.update(this.enableAsciidocExtensionScriptKey, enabled)
+  public async setAllowScripts (enabled: boolean): Promise<void> {
+    return this.context.workspaceState.update(this.allowAsciidocExtensionScriptKey, enabled)
+  }
+
+  public async showDialogTrustAutherOnlyOnce ():Promise<boolean> {
+    if (this.trustAutherDialogIsSelected) {
+      return false
+    }
+    const userSelected = await this.showDialogTrustAuther()
+    if (userSelected) {
+      this.trustAutherDialogIsSelected = true
+    }
+    return userSelected
+  }
+
+  public async showDialogTrustAuther ():Promise<boolean> {
+    const confirmYes = await vscode.window.showWarningMessage(
+      'AsciiDoc extension will execute scripts in workspace(.asciidoctor/lib/*.js). Do you trust authors of scripts in workspace?',
+      // "modal" is disabled. Because, I couldn't control the button's order in Linux when "modal" is enabled.
+      { title: 'Yes, I trust the authors.', value: true },
+      { title: 'No, I don\'t trust the authors.', value: false })
+    if (!confirmYes) {
+      return false
+    }
+    await this.setAllowScripts(confirmYes.value)
+    return true
   }
 }
 
 export class AsciidocExtensionSecuritySelector {
-  private static readonly enableAsciidocExtensionScriptKey = 'enable_asciidoc_extension_script:'
-
   constructor (
     private readonly apsArbiter: AsciidocParserSecurityPolicyArbiter
   ) {
@@ -187,10 +210,10 @@ export class AsciidocExtensionSecuritySelector {
   }
 
   public async showSelector (): Promise<void> {
-    const enableExtension = this.apsArbiter.getEnableScripts()
+    const allowExtension = this.apsArbiter.getAllowScripts()
 
     interface ExtensionPickItem extends vscode.QuickPickItem {
-      readonly type: 'disable_extension' | 'enable_extension';
+      readonly type: 'deny_extension' | 'allow_extension';
     }
 
     function markActiveWhen (when: boolean): string {
@@ -200,13 +223,13 @@ export class AsciidocExtensionSecuritySelector {
     const selection = await vscode.window.showQuickPick<ExtensionPickItem>(
       [
         {
-          type: 'disable_extension',
-          label: markActiveWhen(enableExtension === false) + localize('disable_extension.title', 'Disable AsciiDoc extension scripts'),
-          description: localize('disable_extension.description', 'Disable AsciiDoc extension scripts in the workspace.'),
+          type: 'deny_extension',
+          label: markActiveWhen(allowExtension === false) + localize('deny_extension.title', 'Deny AsciiDoc extension scripts'),
+          description: localize('deny_extension.description', 'Deny AsciiDoc extension scripts in the workspace.'),
         }, {
-          type: 'enable_extension',
-          label: markActiveWhen(enableExtension === true) + localize('enable_extension.title', 'Enable AsciiDoc extension scripts'),
-          description: localize('enable_extension.description', 'Enable AsciiDoc extension scripts in the workspace.'),
+          type: 'allow_extension',
+          label: markActiveWhen(allowExtension === true) + localize('allow_extension.title', 'Allow AsciiDoc extension scripts'),
+          description: localize('allow_extension.description', 'Allow AsciiDoc extension scripts in the workspace.'),
         },
       ], {
         placeHolder: localize(
@@ -217,21 +240,13 @@ export class AsciidocExtensionSecuritySelector {
     if (!selection) {
       return
     }
-    if (selection.type === 'disable_extension') {
-      await this.apsArbiter.setEnableScripts(false)
+    if (selection.type === 'deny_extension') {
+      await this.apsArbiter.setAllowScripts(false)
     }
-    if (selection.type === 'enable_extension') {
-      if (!enableExtension) {
-        const confirmYes = await vscode.window.showWarningMessage(
-          'AsciiDoc extension will execute scripts in workspace(.asciidoctor/lib/*.js). Do you trust authors of scripts in workspace?',
-          // "modal" is disabled. Because, I couldn't control the button's order in Linux when "modal" is enabled.
-          { title: 'Yes, I trust the authors.', value: true },
-          { title: 'No, I don\'t trust the authors.', value: false })
-        if (!confirmYes || !confirmYes.value) {
-          return
-        }
+    if (selection.type === 'allow_extension') {
+      if (!allowExtension) {
+        await this.apsArbiter.showDialogTrustAuther()
       }
-      await this.apsArbiter.setEnableScripts(true)
     }
   }
 }

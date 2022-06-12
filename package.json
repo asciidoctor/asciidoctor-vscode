@@ -402,6 +402,11 @@
 					"default": false,
 					"description": "%asciidoc.use_kroki.desc%"
 				},
+				"asciidoc.registerAsciidocExtension": {
+					"type": "boolean",
+					"default": false,
+					"description": "%asciidoc.registerAsciidocExtension.desc%"
+				},
 				"asciidoc.wkhtmltopdf_path": {
 					"type": "string",
 					"default": "",
