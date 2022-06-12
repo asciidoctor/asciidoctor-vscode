@@ -161,7 +161,7 @@ export class PreviewSecuritySelector {
 
 export class AsciidocParserSecurityPolicyArbiter {
   private readonly allowAsciidocExtensionScriptKey = 'allow_asciidoc_extension_script:'
-  private trustAutherDialogIsSelected = false
+  private readonly trustAutherDialogIsSelectedKey = 'trust_auther_dialog_is_trusted:'
 
   constructor (
     private readonly context: vscode.ExtensionContext
@@ -177,13 +177,21 @@ export class AsciidocParserSecurityPolicyArbiter {
     return this.context.workspaceState.update(this.allowAsciidocExtensionScriptKey, enabled)
   }
 
+  public trustAutherDialogIsSelected (): boolean {
+    return this.context.workspaceState.get<boolean>(this.trustAutherDialogIsSelectedKey, false)
+  }
+
+  public async setTrustAutherDialogIsSelected (isSelected: boolean): Promise<void> {
+    return this.context.workspaceState.update(this.trustAutherDialogIsSelectedKey, isSelected)
+  }
+
   public async showDialogTrustAutherOnlyOnce ():Promise<boolean> {
-    if (this.trustAutherDialogIsSelected) {
+    if (this.trustAutherDialogIsSelected()) {
       return false
     }
     const userSelected = await this.showDialogTrustAuther()
     if (userSelected) {
-      this.trustAutherDialogIsSelected = true
+      this.setTrustAutherDialogIsSelected(true)
     }
     return userSelected
   }
@@ -195,6 +203,8 @@ export class AsciidocParserSecurityPolicyArbiter {
       { title: 'Yes, I trust the authors.', value: true },
       { title: 'No, I don\'t trust the authors.', value: false })
     if (!confirmYes) {
+      // Clear trusted flag when a user cancels dialog.
+      this.setTrustAutherDialogIsSelected(false)
       return false
     }
     await this.setAllowScripts(confirmYes.value)
