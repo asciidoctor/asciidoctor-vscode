@@ -224,7 +224,7 @@ export class AsciidocExtensionSecuritySelector {
       if (!enableExtension) {
         const confirmYes = await vscode.window.showWarningMessage(
           'AsciiDoc extension will execute scripts in workspace(.asciidoctor/lib/*.js). Do you trust authors of scripts in workspace?',
-          { modal: true },
+          // "modal" is disabled. Because, I couldn't control the button's order in Linux when "modal" is enabled.
           { title: 'Yes, I trust the authors.', value: true },
           { title: 'No, I don\'t trust the authors.', value: false })
         if (!confirmYes || !confirmYes.value) {
