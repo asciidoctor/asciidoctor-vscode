@@ -283,7 +283,7 @@ export class AsciidocParser {
     await this.registerExtensionInWorkspace(registry, apsArbiter)
   }
 
-  public async hasExtensionInWorkspace () {
+  private async hasExtensionInWorkspace () {
     const files = await this.getExtensionFilesInWorkspace()
     return files.length !== 0
   }
