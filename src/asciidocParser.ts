@@ -288,41 +288,8 @@ export class AsciidocParser {
     return files.length !== 0
   }
 
-  private async readdirsRecursive (uri: vscode.Uri): Promise<[ string, vscode.FileType ][]> {
-    if (!vscode.workspace.fs.stat(uri)) {
-      return []
-    }
-    const rd = await vscode.workspace.fs.readDirectory(uri)
-    const result = rd.filter(function (extfile) {
-      return extfile[1] === vscode.FileType.File
-    })
-    for (const fd of rd) {
-      const fname = fd[0]
-      const ftype = fd[1]
-      if (ftype === vscode.FileType.Directory) {
-        const subdir = await this.readdirsRecursive(uri.with({ path: path.posix.join(uri.path, fname) }))
-        for (const subdirfile of subdir) {
-          result.push([path.posix.join(fname, subdirfile[0]), subdirfile[1]])
-        }
-      }
-    }
-    return result
-  }
-
-  private async getExtensionFilesInWorkspace (): Promise<[ string, vscode.FileType ][]> {
-    const workspaceFolders = vscode.workspace.workspaceFolders
-    if (workspaceFolders === undefined) {
-      return []
-    }
-    const workspacePath = workspaceFolders[0].uri
-    const extDir = path.posix.join(workspacePath.path, extDirInWorkspace)
-    if (!vscode.workspace.fs.stat(workspacePath.with({ path: extDir }))) {
-      return []
-    }
-    const rd = await this.readdirsRecursive(workspacePath.with({ path: extDir }))
-    return rd.filter(function (extfile) {
-      return extfile[1] === vscode.FileType.File && extfile[0].endsWith('.js')
-    })
+  private async getExtensionFilesInWorkspace (): Promise<vscode.Uri[]> {
+    return vscode.workspace.findFiles(extDirInWorkspace + '**/*.js')
   }
 
   private isRegisterAsciidocExtensionEnabled ():boolean {
@@ -341,16 +308,10 @@ export class AsciidocParser {
     if (!apsArbiter.getAllowScripts()) {
       return
     }
-    const workspaceFolders = vscode.workspace.workspaceFolders
-    if (workspaceFolders === undefined) {
-      return
-    }
-    const workspaceFolder = workspaceFolders[0]
-    const workspacePath = workspaceFolder.uri.path
 
     const extfiles = await this.getExtensionFilesInWorkspace()
     for (const extfile of extfiles) {
-      const extPath = path.posix.join(workspacePath, extDirInWorkspace, extfile[0])
+      const extPath = extfile.path
       try {
         delete require.cache[extPath]
         const extjs = require(extPath)
