@@ -142,7 +142,7 @@ document.addEventListener('click', (event) => {
       }
 
       // If original link doesn't look like a url, delegate back to VS Code to resolve
-      if (!/^[a-z-]+:/i.test(hrefText)) {
+      if (!/^[a-z-]+:\/\//i.test(hrefText) || hrefText.startsWith('file:///')) {
         messaging.postMessage('clickLink', { href: hrefText })
         event.preventDefault()
         event.stopPropagation()
