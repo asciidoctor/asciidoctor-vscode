@@ -39,6 +39,7 @@
 		"onCommand:asciidoc.showLockedPreviewToSide",
 		"onCommand:asciidoc.showSource",
 		"onCommand:asciidoc.showPreviewSecuritySelector",
+		"onCommand:asciidoc.showAsciidoctorExtensionsTrustModeSelector",
 		"onWebviewPanel:asciidoc.preview"
 	],
 	"contributes": {
@@ -111,6 +112,11 @@
 				"category": "AsciiDoc"
 			},
 			{
+				"command": "asciidoc.showAsciidoctorExtensionsTrustModeSelector",
+				"title": "%asciidoc.showAsciidoctorExtensionsTrustModeSelector.title%",
+				"category": "AsciiDoc"
+			},
+			{
 				"command": "asciidoc.preview.refresh",
 				"title": "%asciidoc.preview.refresh.title%",
 				"category": "AsciiDoc"
@@ -158,6 +164,11 @@
 				},
 				{
 					"command": "asciidoc.showPreviewSecuritySelector",
+					"when": "asciidocPreviewFocus",
+					"group": "1_asciidoc"
+				},
+				{
+					"command": "asciidoc.showAsciidoctorExtensionsTrustModeSelector",
 					"when": "asciidocPreviewFocus",
 					"group": "1_asciidoc"
 				}
@@ -215,6 +226,10 @@
 				},
 				{
 					"command": "asciidoc.showPreviewSecuritySelector",
+					"when": "editorLangId == asciidoc || asciidocPreviewFocus"
+				},
+				{
+					"command": "asciidoc.showAsciidoctorExtensionsTrustModeSelector",
 					"when": "editorLangId == asciidoc || asciidocPreviewFocus"
 				},
 				{
@@ -386,6 +401,11 @@
 					"type": "boolean",
 					"default": false,
 					"description": "%asciidoc.use_kroki.desc%"
+				},
+				"asciidoc.registerAsciidoctorExtensions": {
+					"type": "boolean",
+					"default": false,
+					"description": "%asciidoc.registerAsciidoctorExtensions.desc%"
 				},
 				"asciidoc.wkhtmltopdf_path": {
 					"type": "string",

@@ -2,7 +2,7 @@ import * as vscode from 'vscode'
 import * as path from 'path'
 import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
 import { Asciidoctor } from '@asciidoctor/core'
-import { ExtensionContentSecurityPolicyArbiter } from './security'
+import { ExtensionContentSecurityPolicyArbiter, AsciidoctorExtensionsSecurityPolicyArbiter } from './security'
 import { AsciidocPreviewConfigurationManager } from './features/previewConfig'
 import { SkinnyTextDocument } from './util/document'
 import { IncludeItems } from './asciidoctorFindIncludeProcessor'
@@ -11,7 +11,6 @@ const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcess
 
 const asciidoctor = require('@asciidoctor/core')
 const docbookConverter = require('@asciidoctor/docbook-converter')
-const kroki = require('asciidoctor-kroki')
 const processor = asciidoctor()
 const highlightjsBuiltInSyntaxHighlighter = processor.SyntaxHighlighter.for('highlight.js')
 const highlightjsAdapter = require('./highlightjs-adapter')
@@ -24,8 +23,14 @@ const previewConfigurationManager = new AsciidocPreviewConfigurationManager()
 
 export class AsciidocParser {
   private stylesdir: string
+  private apsArbiter: AsciidoctorExtensionsSecurityPolicyArbiter
 
-  constructor (extensionUri: vscode.Uri, private errorCollection: vscode.DiagnosticCollection = null) {
+  constructor (
+    extensionUri: vscode.Uri,
+    apsArbiter: AsciidoctorExtensionsSecurityPolicyArbiter = null,
+    private errorCollection: vscode.DiagnosticCollection = null
+  ) {
+    this.apsArbiter = apsArbiter
     // Asciidoctor.js in the browser environment works with URIs however for desktop clients
     // the stylesdir attribute is expected to look like a file system path (especially on Windows)
     if (process.env.BROWSER_ENV) {
@@ -37,7 +42,11 @@ export class AsciidocParser {
 
   // Export
 
-  public export (text: string, textDocument: vscode.TextDocument, backend: AsciidoctorBuiltInBackends): { output: string, document: Asciidoctor.Document } {
+  public async export (
+    text: string,
+    textDocument: vscode.TextDocument,
+    backend: AsciidoctorBuiltInBackends
+  ): Promise<{ output: string, document: Asciidoctor.Document }> {
     const asciidocConfig = vscode.workspace.getConfiguration('asciidoc', null)
     if (this.errorCollection) {
       this.errorCollection.clear()
@@ -45,10 +54,9 @@ export class AsciidocParser {
     const memoryLogger = processor.MemoryLogger.create()
     processor.LoggerManager.setLogger(memoryLogger)
     const registry = processor.Extensions.create()
-    const useKroki = asciidocConfig.get('use_kroki')
-    if (useKroki) {
-      kroki.register(registry)
-    }
+
+    await this.registerAsciidoctorExtensions(registry)
+
     highlightjsBuiltInSyntaxHighlighter.$register_for('highlight.js', 'highlightjs')
     const baseDir = this.getBaseDir(textDocument.fileName)
     const options: { [key: string]: any } = {
@@ -93,12 +101,12 @@ export class AsciidocParser {
 
   // Convert (preview)
 
-  public convertUsingJavascript (
+  public async convertUsingJavascript (
     text: string,
     doc: SkinnyTextDocument,
     context: vscode.ExtensionContext,
     editor: vscode.WebviewPanel
-  ): { html: string, document: Asciidoctor.Document } {
+  ): Promise<{ html: string, document: Asciidoctor.Document }> {
     // extension context should be at constructor
     const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState)
     const workspacePath = vscode.workspace.workspaceFolders
@@ -122,11 +130,8 @@ export class AsciidocParser {
       previewConfigurationManager
     )
     processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])
-    const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
 
-    if (useKroki) {
-      kroki.register(registry)
-    }
+    await this.registerAsciidoctorExtensions(registry)
 
     if (context && editor) {
       highlightjsAdapter.register(highlightjsBuiltInSyntaxHighlighter, context, editor)
@@ -179,7 +184,6 @@ export class AsciidocParser {
   private reportErrors (memoryLogger: Asciidoctor.MemoryLogger, textDocument: SkinnyTextDocument) {
     const diagnostics = []
     memoryLogger.getMessages().forEach((error) => {
-      //console.log(error); //Error from asciidoctor.js
       let errorMessage = error.getText()
       let sourceLine = 0
       let relatedFile = null
@@ -251,5 +255,52 @@ export class AsciidocParser {
     return useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined'
       ? vscode.workspace.rootPath
       : documentPath
+  }
+
+  private async confirmAsciidoctorExtensionsTrusted (): Promise<boolean> {
+    if (!this.isAsciidoctorExtensionsRegistrationEnabled()) {
+      return false
+    }
+    const extensionFiles = await this.getExtensionFilesInWorkspace()
+    const extensionsCount = extensionFiles.length
+    if (extensionsCount === 0) {
+      return false
+    }
+    return this.apsArbiter.confirmAsciidoctorExtensionsTrustMode(extensionsCount)
+  }
+
+  private async registerAsciidoctorExtensions (registry) {
+    const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
+    if (useKroki) {
+      const kroki = require('asciidoctor-kroki')
+      kroki.register(registry)
+    }
+    await this.registerExtensionsInWorkspace(registry)
+  }
+
+  private async getExtensionFilesInWorkspace (): Promise<vscode.Uri[]> {
+    return vscode.workspace.findFiles('.asciidoctor/lib/**/*.js')
+  }
+
+  private isAsciidoctorExtensionsRegistrationEnabled (): boolean {
+    return vscode.workspace.getConfiguration('asciidoc', null).get('registerAsciidoctorExtensions')
+  }
+
+  private async registerExtensionsInWorkspace (registry) {
+    const extensionsTrusted = await this.confirmAsciidoctorExtensionsTrusted()
+    if (!extensionsTrusted) {
+      return
+    }
+    const extfiles = await this.getExtensionFilesInWorkspace()
+    for (const extfile of extfiles) {
+      const extPath = extfile.path
+      try {
+        delete require.cache[extPath]
+        const extjs = require(extPath)
+        extjs.register(registry)
+      } catch (e) {
+        vscode.window.showErrorMessage(extPath + ': ' + e.toString())
+      }
+    }
   }
 }

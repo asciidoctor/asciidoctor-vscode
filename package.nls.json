@@ -11,7 +11,8 @@
 	"asciidoc.saveHTML.title": "Save HTML document",
 	"asciidoc.saveDocbook.title": "Save to DocBook",
 	"asciidoc.showLockedPreviewToSide.title": "Open Locked Preview to the Side",
-	"asciidoc.showPreviewSecuritySelector.title": "Change Preview Security Settings",
+	"asciidoc.showPreviewSecuritySelector.title": "Manage Preview Security Settings",
+	"asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Manage Asciidoctor.js Extensions Trust Mode",
 	"asciidoc.showSource.title": "Show Source",
 
 	"asciidoc.asciidoctorpdf_command.desc": "Full path for the asciidoctor binary/executable",
@@ -34,6 +35,7 @@
 	"asciidoc.trace.desc": "Enable debug logging for the AsciiDoc extension.",
 	"asciidoc.use_asciidoctorpdf.desc": "Use asciidoctor-pdf instead of the integrated renderer",
 	"asciidoc.use_kroki.desc": "Enable kroki integration to generate diagrams.",
+	"asciidoc.registerAsciidoctorExtensions.desc": "Enable Asciidoctor.js extensions registration.",
 	"asciidoc.wkhtmltopdf_path.desc": "Full path for the wkhtmltopdf binary/executable",
 	"asciidoc.forceUnixStyleSeparator.desc": "Force set the file separator style to unix style. If set false, separator style will follow the system style.",
 	"asciidoc.preview.openAsciiDocLinks.desc": "How should clicking on links to AsciiDoc files be handled in the preview.",

@@ -7,6 +7,7 @@ import { AsciidocContributions } from './asciidocExtensions'
 import { AsciidocParser, AsciidoctorBuiltInBackends } from './asciidocParser'
 import { Asciidoctor } from '@asciidoctor/core'
 import { SkinnyTextDocument } from './util/document'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from './security'
 
 const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/
 
@@ -17,16 +18,18 @@ export class AsciidocEngine {
 
   public constructor (
     readonly extensionPreviewResourceProvider: AsciidocContributions,
+    readonly apsArbiter: AsciidoctorExtensionsSecurityPolicyArbiter = null,
     private readonly errorCollection: vscode.DiagnosticCollection = null
   ) {
     this.extensionPreviewResourceProvider = extensionPreviewResourceProvider
+    this.apsArbiter = apsArbiter
     this.errorCollection = errorCollection
   }
 
   private getEngine (): AsciidocParser {
     // singleton
     if (!this.ad) {
-      this.ad = new AsciidocParser(this.extensionPreviewResourceProvider.extensionUri, this.errorCollection)
+      this.ad = new AsciidocParser(this.extensionPreviewResourceProvider.extensionUri, this.apsArbiter, this.errorCollection)
     }
 
     return this.ad
@@ -50,6 +53,8 @@ export class AsciidocEngine {
     context: vscode.ExtensionContext,
     editor: vscode.WebviewPanel
   ): Promise<{output: string, document?: Asciidoctor.Document}> {
+    const parser = this.getEngine()
+
     let offset = 0
     if (stripFrontmatter) {
       const asciidocContent = this.stripFrontmatter(text)
@@ -59,12 +64,14 @@ export class AsciidocEngine {
 
     this.firstLine = offset
     const textDocument = await vscode.workspace.openTextDocument(documentUri)
-    const { html: output, document } = this.getEngine().convertUsingJavascript(text, textDocument, context, editor)
+    const { html: output, document } = await parser.convertUsingJavascript(text, textDocument, context, editor)
     return { output, document }
   }
 
-  public export (textDocument: vscode.TextDocument, backend: AsciidoctorBuiltInBackends): { output: string, document: Asciidoctor.Document } {
-    return this.getEngine().export(textDocument.getText(), textDocument, backend)
+  public async export (textDocument: vscode.TextDocument, backend: AsciidoctorBuiltInBackends): Promise<{ output: string, document: Asciidoctor.Document }> {
+    const parser = this.getEngine()
+
+    return parser.export(textDocument.getText(), textDocument, backend)
   }
 
   public load (textDocument: SkinnyTextDocument): Asciidoctor.Document {

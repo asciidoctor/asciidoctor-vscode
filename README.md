@@ -23,6 +23,7 @@ An extension that provides live preview, syntax highlighting and snippets for th
     - [Snippets](#snippets)
     - [Identifying the VS Code Environment](#identifying-the-vs-code-environment)
     - [Diagram Integration](#diagram-integration)
+    - [Use Asciidoctor.js extensions](#use-asciidoctorjs-extensions)
   - [User Settings](#user-settings)
   - [Visual Studio Code for the Web](#visual-studio-code-for-the-web)
   - [Build and Install from Source](#build-and-install-from-source)
@@ -146,35 +147,73 @@ This will store images by default in your document folder, however you may also 
 :imagesdir: media
 ```
 
+### Use Asciidoctor.js extensions
+
+When using the preview, the VS code extension can load and register Asciidoctor.js extensions.
+
+By convention, extensions must be located in `.asciidoctor/lib` (at the root of your workspace).
+The VS code extension will recursively load all files with the extension `.js` as Asciidoctor.js extensions.
+For instance, the following files will be loaded: `.asciidoctor/lib/emoji.js`, `.asciidoctor/lib/emoji/index.js` and `.asciidoctor/lib/foo/bar/baz.js`.
+
+In order to use an Asciidoctor.js extension, you should enable the feature by checking "Enable Asciidoctor.js extensions registration" in the extension settings.
+The first time, you will also need to confirm that you trust the authors of the Asciidoctor.js extensions located in _.asciidoctor/lib_.
+
+![Asciidoctor.js extensions trust confirmation message](images/asciidoctor-vscode-trust-exts.png)
+
+**❗ Important:** This feature will execute JavaScript code and should not be enabled if you don't fully trust the authors of the Asciidoctor.js extensions.
+
+**💡 Tip:** You can always update the trust mode using the command "Manage Asciidoctor.js Extensions Trust Mode".
+
+You can create a new extension by creating a JavaScript file in the `.asciidoctor/lib` directory or use an existing one.  
+Here's an exemple on how to use the [asciidoctor-emoji](https://github.com/mogztter/asciidoctor-emoji) extension:
+
+1. Install the npm package in the workspace directory:
+
+    ```shell
+    npm i asciidoctor-emoji
+    ```
+
+2. Create a file a JavaScript file in _.asciidoctor/lib_ with the following content:
+
+    ```javascript
+    module.exports = require('asciidoctor-emoji')
+    ```
+
+3. Enjoy :tada:
+
+![Asciidoctor.js Emoji extension enabled!](images/asciidoctor-vscode-emoji-ext.png)
+
+
 ## User Settings
 
 This extension is controlled by a multitude of user settings.
 
 The following list contains all the options and their default value.
 
-| Option: Default value | Description |
-| :--- | :--- |
-| `asciidoc.asciidoctorpdf_command: "asciidoctor-pdf"` | The path or command invoked when using Asciidoctor PDF for the _Export as PDF_ function. |
-| `asciidoc.forceUnixStyleSeparator: true` | Force set the file separator style to unix style. If set false, separator style will follow the system style. |
-| `asciidoc.preview.style: ""` | The local path to a CSS style sheet to use in the AsciiDoc preview. Relative paths are interpreted relative to the workspace folder. If no workspace is open the document path. |
-| `asciidoc.preview.attributes: {}` | Set attributes to be used in the preview. Attributes need to be written as an object of type {string: string} |
-| `asciidoc.preview.breaks: false` | Sets how line-breaks are rendered in the AsciiDoc preview. Setting it to 'true' creates a `<br>` for every newline. |
-| `asciidoc.preview.doubleClickToSwitchToEditor: true` | Double click in the AsciiDoc preview to switch to the editor. |
-| `asciidoc.preview.fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif"` | Controls the font family used in the AsciiDoc preview. |
-| `asciidoc.preview.fontSize: 14` | Controls the font size in pixels used in the AsciiDoc preview. |
-| `asciidoc.preview.lineHeight: 1.6` | Controls the line height used in the AsciiDoc preview. This number is relative to the font size. |
-| `asciidoc.preview.linkify: true` | Enable or disable conversion of URL-like text to links in the AsciiDoc preview. |
-| `asciidoc.preview.markEditorSelection: true` | Mark the current editor selection in the AsciiDoc preview. |
-| `asciidoc.preview.openAsciiDocLinks: "inPreview"` | How should clicking on links to AsciiDoc files be handled in the preview.<br/>"inPreview" Try to open links in the the AsciiDoc preview<br/>"inEditor" Try to open links in the the editor |
-| `asciidoc.preview.scrollEditorWithPreview: true` | When an AsciiDoc preview is scrolled, update the view of the editor. |
-| `asciidoc.preview.scrollPreviewWithEditor: true` | When an AsciiDoc editor is scrolled, update the view of the preview. |
-| `asciidoc.preview.scrollPreviewWithEditorSelection: true` | [Deprecated] Scrolls the AsciiDoc preview to reveal the currently selected line from the editor.<br/>This setting has been replaced by 'asciidoc.preview.scrollPreviewWithEditor' and no longer has any effect. |
-| `asciidoc.preview.refreshInterval: 2000` | Interval (in miliseconds) between preview refreshes (when the document is changed), 0 means refresh only on save |
-| `asciidoc.preview.useEditorStyle: true` | Use editor style instead of default asciidoctor.css |
-| `asciidoc.previewFrontMatter: "hide"` | Sets how YAML front matter should be rendered in the AsciiDoc preview. "hide" removes the front matter. Otherwise, the front matter is treated as AsciiDoc content. |
-| `asciidoc.trace: "off"` | Enable debug logging for the AsciiDoc extension. |
-| `asciidoc.use_asciidoctorpdf: false` | Use Asciidoctor PDF instead of the integrated renderer for the _Export as PDF_ command. |
-| `asciidoc.use_kroki: false` | Enable kroki integration to generate diagrams. |
+| Option: Default value                                                                                                                                  | Description                                                                                                                                                                                                     |
+|:-------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `asciidoc.asciidoctorpdf_command: "asciidoctor-pdf"`                                                                                                   | The path or command invoked when using Asciidoctor PDF for the _Export as PDF_ function.                                                                                                                        |
+| `asciidoc.forceUnixStyleSeparator: true`                                                                                                               | Force set the file separator style to unix style. If set false, separator style will follow the system style.                                                                                                   |
+| `asciidoc.preview.style: ""`                                                                                                                           | The local path to a CSS style sheet to use in the AsciiDoc preview. Relative paths are interpreted relative to the workspace folder. If no workspace is open the document path.                                 |
+| `asciidoc.preview.attributes: {}`                                                                                                                      | Set attributes to be used in the preview. Attributes need to be written as an object of type {string: string}                                                                                                   |
+| `asciidoc.preview.breaks: false`                                                                                                                       | Sets how line-breaks are rendered in the AsciiDoc preview. Setting it to 'true' creates a `<br>` for every newline.                                                                                             |
+| `asciidoc.preview.doubleClickToSwitchToEditor: true`                                                                                                   | Double click in the AsciiDoc preview to switch to the editor.                                                                                                                                                   |
+| `asciidoc.preview.fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif"` | Controls the font family used in the AsciiDoc preview.                                                                                                                                                          |
+| `asciidoc.preview.fontSize: 14`                                                                                                                        | Controls the font size in pixels used in the AsciiDoc preview.                                                                                                                                                  |
+| `asciidoc.preview.lineHeight: 1.6`                                                                                                                     | Controls the line height used in the AsciiDoc preview. This number is relative to the font size.                                                                                                                |
+| `asciidoc.preview.linkify: true`                                                                                                                       | Enable or disable conversion of URL-like text to links in the AsciiDoc preview.                                                                                                                                 |
+| `asciidoc.preview.markEditorSelection: true`                                                                                                           | Mark the current editor selection in the AsciiDoc preview.                                                                                                                                                      |
+| `asciidoc.preview.openAsciiDocLinks: "inPreview"`                                                                                                      | How should clicking on links to AsciiDoc files be handled in the preview.<br/>"inPreview" Try to open links in the the AsciiDoc preview<br/>"inEditor" Try to open links in the the editor                      |
+| `asciidoc.preview.scrollEditorWithPreview: true`                                                                                                       | When an AsciiDoc preview is scrolled, update the view of the editor.                                                                                                                                            |
+| `asciidoc.preview.scrollPreviewWithEditor: true`                                                                                                       | When an AsciiDoc editor is scrolled, update the view of the preview.                                                                                                                                            |
+| `asciidoc.preview.scrollPreviewWithEditorSelection: true`                                                                                              | [Deprecated] Scrolls the AsciiDoc preview to reveal the currently selected line from the editor.<br/>This setting has been replaced by 'asciidoc.preview.scrollPreviewWithEditor' and no longer has any effect. |
+| `asciidoc.preview.refreshInterval: 2000`                                                                                                               | Interval (in miliseconds) between preview refreshes (when the document is changed), 0 means refresh only on save                                                                                                |
+| `asciidoc.preview.useEditorStyle: true`                                                                                                                | Use editor style instead of default asciidoctor.css                                                                                                                                                             |
+| `asciidoc.previewFrontMatter: "hide"`                                                                                                                  | Sets how YAML front matter should be rendered in the AsciiDoc preview. "hide" removes the front matter. Otherwise, the front matter is treated as AsciiDoc content.                                             |
+| `asciidoc.trace: "off"`                                                                                                                                | Enable debug logging for the AsciiDoc extension.                                                                                                                                                                |
+| `asciidoc.use_asciidoctorpdf: false`                                                                                                                   | Use Asciidoctor PDF instead of the integrated renderer for the _Export as PDF_ command.                                                                                                                         |
+| `asciidoc.use_kroki: false`                                                                                                                            | Enable kroki integration to generate diagrams.                                                                                                                                                                  |
+| `asciidoc.registerAsciidoctorExtensions: false`                                                                                                        | Enable Asciidoctor.js extensions registration.                                                                                                                                                                  |
 
 ## Build and Install from Source
 
@@ -187,7 +226,6 @@ npm install
 npm run package
 code --install-extension *.vsix
 ```
-
 
 ## Issues
 
