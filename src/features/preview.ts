@@ -7,7 +7,8 @@ import * as path from 'path'
 
 import { Logger } from '../logger'
 import { AsciidocContentProvider } from './previewContentProvider'
-import { disposeAll } from '../util/dispose'
+import { disposeAll, Disposable } from '../util/dispose'
+import { WebviewResourceProvider } from '../util/resources'
 
 import * as nls from 'vscode-nls'
 import { AsciidocFileTopmostLineMonitor, getVisibleLine } from '../util/topmostLineMonitor'
@@ -18,7 +19,7 @@ import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink'
 
 const localize = nls.loadMessageBundle()
 
-export class AsciidocPreview {
+export class AsciidocPreview extends Disposable implements WebviewResourceProvider {
   public static viewType = 'asciidoc.preview'
 
   private _resource: vscode.Uri
@@ -110,6 +111,7 @@ export class AsciidocPreview {
     topmostLineMonitor: AsciidocFileTopmostLineMonitor,
     private readonly _contributions: AsciidocContributions
   ) {
+    super()
     this._resource = resource
 
     this._locked = locked
@@ -202,17 +204,15 @@ export class AsciidocPreview {
 
   public get state () {
     return {
-      resource: this.resource.toString(),
+      resource: this._resource.toString(),
       locked: this._locked,
       line: this.line,
       imageInfo: this.imageInfo,
     }
   }
 
-  public dispose () {
-    if (this._disposed) {
-      return
-    }
+  override dispose () {
+    super.dispose()
 
     this._disposed = true
     this._onDisposeEmitter.fire()
@@ -370,7 +370,7 @@ export class AsciidocPreview {
     }
     this.editor.iconPath = this.iconPath
     this.editor.webview.options = AsciidocPreview.getWebviewOptions(resource, this._contributions)
-    const content = await this._contentProvider.providePreviewHTML(document, this._previewConfigurations, this.line, this.state, this.editor)
+    const content = await this._contentProvider.providePreviewHTML(document, this._previewConfigurations, this.editor)
     this.editor.webview.html = content
   }
 
@@ -460,6 +460,14 @@ export class AsciidocPreview {
 
   private async onCacheImageSizes (imageInfo: { id: string, width: number, height: number }[]) {
     this.imageInfo = imageInfo
+  }
+
+  asWebviewUri (resource: vscode.Uri) {
+    return this.editor.webview.asWebviewUri(resource)
+  }
+
+  get cspSource () {
+    return this.editor.webview.cspSource
   }
 }
 

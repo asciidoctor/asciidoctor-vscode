@@ -28,7 +28,7 @@
 	"asciidoc.preview.scrollPreviewWithEditor.desc": "When an AsciiDoc editor is scrolled, update the view of the preview.",
 	"asciidoc.preview.scrollPreviewWithEditorSelection.desc": "[Deprecated] Scrolls the AsciiDoc preview to reveal the currently selected line from the editor.",
 	"asciidoc.preview.scrollPreviewWithEditorSelection.deprecationMessage": "This setting has been replaced by 'asciidoc.preview.scrollPreviewWithEditor' and no longer has any effect.",
-	"asciidoc.preview.style.desc": "The local path to a CSS style sheet to use in the AsciiDoc preview. Relative paths are interpreted relative to the workspace folder.",
+	"asciidoc.preview.style.desc": "An URL or a local path to CSS style sheets to use from the AsciiDoc preview. Relative paths are interpreted relative to the folder open in the Explorer. If there is no open folder, they are interpreted relative to the location of the AsciiDoc file. All '\\\\' need to be written as '\\\\\\\\'.",
 	"asciidoc.preview.useEditorStyle.desc": "Use editor style instead of default asciidoctor.css",
 	"asciidoc.previewFrontMatter.desc": "Sets how YAML front matter should be rendered in the AsciiDoc preview. 'hide' removes the front matter. Otherwise, the front matter is treated as AsciiDoc content.",
 	"asciidoc.trace.desc": "Enable debug logging for the AsciiDoc extension.",

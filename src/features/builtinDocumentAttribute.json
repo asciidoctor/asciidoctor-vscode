@@ -1,9 +1,4 @@
 {
-  "source-highlighter": {
-    "label": ":source-highlighter:",
-    "insertText": "source-highlighter: ${1|coderay,highlightjs,prettify,pygments,rouge|}\n",
-    "description": "Insert source highlighter"
-  },
   "attribute": {
     "label": ":attribute:",
     "insertText": "${1:attribute}: ${2:value}",
@@ -611,7 +606,7 @@
   },
   "source-highlighter": {
     "label": ":source-highlighter:",
-    "insertText": "source-highlighter: ${1|coderay,highlight.js,pygments,rouge|}",
+    "insertText": "source-highlighter: ${1|highlight.js,rouge,coderay,pygments|}",
     "description": "Specifies source code highlighter. Any other value is permitted, but must be supported by a custom syntax highlighter adapter."
   },
   "source-indent": {

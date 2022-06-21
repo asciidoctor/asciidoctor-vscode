@@ -22,7 +22,7 @@ module.exports = {
       "exports": "always-multiline"
     }],
     "max-len": ["error", {
-      "code": 160,
+      "code": 180,
       "ignoreStrings": true,
       "ignoreUrls": true,
       "ignoreTemplateLiterals": true

@@ -314,7 +314,8 @@
 				"asciidoc.preview.useEditorStyle": {
 					"type": "boolean",
 					"default": true,
-					"description": "%asciidoc.preview.useEditorStyle.desc%"
+					"description": "%asciidoc.preview.useEditorStyle.desc%",
+					"scope": "resource"
 				},
 				"asciidoc.preview.refreshInterval": {
 					"type": "number",
@@ -423,7 +424,14 @@
 		]
 	},
 	"scripts": {
-		"copy-assets": "cp node_modules/@highlightjs/cdn-assets/highlight.min.js media/highlightjs && cp -r node_modules/@highlightjs/cdn-assets/languages media/highlightjs && cp -r node_modules/@highlightjs/cdn-assets/styles media/highlightjs",
+		"copy-fonts:all": "npm run copy-fonts:noto-serif && npm run copy-fonts:open-sans && npm run copy-fonts:roboto-mono",
+		"copy-fonts:noto-serif": "cp -r node_modules/@fontsource/noto-serif/files/noto-serif-all-400-italic.woff media/fonts && cp -r node_modules/@fontsource/noto-serif/files/noto-serif-all-400-normal.woff media/fonts && cp -r node_modules/@fontsource/noto-serif/files/noto-serif-all-700-normal.woff media/fonts && cp -r node_modules/@fontsource/noto-serif/files/noto-serif-all-700-italic.woff media/fonts",
+		"copy-fonts:open-sans": "cp -r node_modules/@fontsource/open-sans/files/open-sans-latin-variable-full-italic.woff2 media/fonts && cp -r node_modules/@fontsource/open-sans/files/open-sans-latin-variable-full-normal.woff2 media/fonts",
+		"copy-fonts:roboto-mono": "cp -r node_modules/@fontsource/roboto-mono/files/roboto-mono-latin-variable-wghtOnly-italic.woff2 media/fonts && cp -r node_modules/@fontsource/roboto-mono/files/roboto-mono-latin-variable-wghtOnly-normal.woff2 media/fonts",
+		"copy-font-awesome": "cp -r node_modules/font-awesome/fonts media/font-awesome && cp -r node_modules/font-awesome/css media/font-awesome",
+		"copy-mathjax": "cp -r node_modules/mathjax media",
+		"copy-highlightjs": "cp node_modules/@highlightjs/cdn-assets/highlight.min.js media/highlightjs && cp -r node_modules/@highlightjs/cdn-assets/languages media/highlightjs && cp -r node_modules/@highlightjs/cdn-assets/styles media/highlightjs",
+		"copy-assets": "npm run copy-fonts:all && npm run copy-font-awesome && npm run copy-mathjax && npm run copy-highlightjs",
 		"dev": "npm run build",
 		"build": "npm run copy-assets && npm run build-ext && npm run build-preview",
 		"build-web": "webpack --config extension-browser.webpack.config --mode none",
@@ -437,6 +445,9 @@
 		"test": "node ./dist/src/test/runTest.js"
 	},
 	"devDependencies": {
+		"@fontsource/noto-serif": "^4.5.7",
+		"@fontsource/open-sans": "^4.5.8",
+		"@fontsource/roboto-mono": "^4.5.5",
 		"@highlightjs/cdn-assets": "~11.4",
 		"@types/lodash.throttle": "~4.1",
 		"@types/mocha": "~9.1",
@@ -450,7 +461,9 @@
 		"eslint-plugin-import": "2.25.4",
 		"eslint-plugin-node": "11.1.0",
 		"eslint-plugin-promise": "6.0.0",
+		"font-awesome": "^4.7.0",
 		"lodash.throttle": "4.1.1",
+		"mathjax": "^2.7.9",
 		"mocha": "9.2.0",
 		"mocha-junit-reporter": "2.0.2",
 		"mocha-multi-reporters": "1.5.1",
