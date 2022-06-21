@@ -3,12 +3,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import { Command } from '../commandManager'
-import { AsciidocExtensionSecuritySelector } from '../security'
+import { AsciidoctorExtensionsTrustModeSelector } from '../security'
 
-export class AsciidocExtensionSecuritySelectorCommand implements Command {
-  public readonly id = 'asciidoc.showExtensionSecuritySelector'
+export class ShowAsciidoctorExtensionsTrustModeSelectorCommand implements Command {
+  public readonly id = 'asciidoc.showAsciidoctorExtensionsTrustModeSelector'
 
-  constructor (private readonly asciidocExtensionScriptsSecuritySelector: AsciidocExtensionSecuritySelector) {
+  constructor (private readonly asciidocExtensionScriptsSecuritySelector: AsciidoctorExtensionsTrustModeSelector) {
     this.asciidocExtensionScriptsSecuritySelector = asciidocExtensionScriptsSecuritySelector
   }
 

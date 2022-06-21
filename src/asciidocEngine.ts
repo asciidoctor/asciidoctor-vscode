@@ -7,7 +7,7 @@ import { AsciidocContributions } from './asciidocExtensions'
 import { AsciidocParser, AsciidoctorBuiltInBackends } from './asciidocParser'
 import { Asciidoctor } from '@asciidoctor/core'
 import { SkinnyTextDocument } from './util/document'
-import { AsciidocParserSecurityPolicyArbiter } from './security'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from './security'
 
 const FrontMatterRegex = /^---\s*[^]*?(-{3}|\.{3})\s*/
 
@@ -18,7 +18,7 @@ export class AsciidocEngine {
 
   public constructor (
     readonly extensionPreviewResourceProvider: AsciidocContributions,
-    readonly apsArbiter: AsciidocParserSecurityPolicyArbiter = null,
+    readonly apsArbiter: AsciidoctorExtensionsSecurityPolicyArbiter = null,
     private readonly errorCollection: vscode.DiagnosticCollection = null
   ) {
     this.extensionPreviewResourceProvider = extensionPreviewResourceProvider

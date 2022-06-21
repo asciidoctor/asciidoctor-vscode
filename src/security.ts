@@ -159,104 +159,112 @@ export class PreviewSecuritySelector {
   }
 }
 
-export class AsciidocParserSecurityPolicyArbiter {
-  private readonly allowAsciidocExtensionScriptKey = 'allow_asciidoc_extension_script:'
-  private readonly trustAutherDialogIsSelectedKey = 'trust_auther_dialog_is_trusted:'
+export class AsciidoctorExtensionsSecurityPolicyArbiter {
+  private readonly allowAsciidoctorExtensionsKey = 'asciidoc.allow_asciidoctor_extensions'
+  public readonly trustAsciidoctorExtensionsAuthorsKey = 'asciidoc.trust_asciidoctor_extensions_authors'
 
-  constructor (
-    private readonly context: vscode.ExtensionContext
-  ) {
+  constructor (private readonly context: vscode.ExtensionContext) {
     this.context = context
   }
 
-  public getAllowScripts (): boolean {
-    return this.context.workspaceState.get<boolean>(this.allowAsciidocExtensionScriptKey, false)
+  public asciidoctorExtensionsAllowed (): boolean {
+    return this.context.workspaceState.get<boolean>(this.allowAsciidoctorExtensionsKey, false)
   }
 
-  public async setAllowScripts (enabled: boolean): Promise<void> {
-    return this.context.workspaceState.update(this.allowAsciidocExtensionScriptKey, enabled)
+  public async enableAsciidoctorExtensions (): Promise<void> {
+    return this.setAllowAsciidoctorExtensions(true)
   }
 
-  public trustAutherDialogIsSelected (): boolean {
-    return this.context.workspaceState.get<boolean>(this.trustAutherDialogIsSelectedKey, false)
+  public async disableAsciidoctorExtensions (): Promise<void> {
+    return this.setAllowAsciidoctorExtensions(false)
   }
 
-  public async setTrustAutherDialogIsSelected (isSelected: boolean): Promise<void> {
-    return this.context.workspaceState.update(this.trustAutherDialogIsSelectedKey, isSelected)
+  public asciidoctorExtensionsAuthorsTrusted (): boolean {
+    return this.context.workspaceState.get<boolean>(this.trustAsciidoctorExtensionsAuthorsKey, undefined)
   }
 
-  public async showDialogTrustAutherOnlyOnce ():Promise<boolean> {
-    if (this.trustAutherDialogIsSelected()) {
-      return false
+  public async denyAsciidoctorExtensionsAuthors (): Promise<void> {
+    return this.setTrustAsciidoctorExtensionsAuthors(false)
+  }
+
+  public async trustAsciidoctorExtensionsAuthors (): Promise<void> {
+    return this.setTrustAsciidoctorExtensionsAuthors(true)
+  }
+
+  public async confirmAsciidoctorExtensionsTrustMode (extensionsCount: number): Promise<boolean> {
+    if (this.asciidoctorExtensionsAuthorsTrusted() !== undefined) {
+      // Asciidoctor.js extensions authors are already trusted or not, do not ask again.
+      return true
     }
-    const userSelected = await this.showDialogTrustAuther()
-    if (userSelected) {
-      this.setTrustAutherDialogIsSelected(true)
-    }
-    return userSelected
+    return this.showTrustAsciidoctorExtensionsDialog(extensionsCount)
   }
 
-  public async showDialogTrustAuther ():Promise<boolean> {
-    const confirmYes = await vscode.window.showWarningMessage(
-      'AsciiDoc extension will execute scripts in workspace(.asciidoctor/lib/*.js). Do you trust authors of scripts in workspace?',
+  private async showTrustAsciidoctorExtensionsDialog (extensionsCount: number): Promise<boolean> {
+    const userChoice = await vscode.window.showWarningMessage(
+      `This feature will execute ${extensionsCount} JavaScript ${extensionsCount > 1 ? 'files' : 'file'} from .asciidoctor/lib/**/*.js.
+      Do you trust the authors of ${extensionsCount > 1 ? 'these files' : 'this file'}?`,
       // "modal" is disabled. Because, I couldn't control the button's order in Linux when "modal" is enabled.
-      { title: 'Yes, I trust the authors.', value: true },
-      { title: 'No, I don\'t trust the authors.', value: false })
-    if (!confirmYes) {
-      // Clear trusted flag when a user cancels dialog.
-      this.setTrustAutherDialogIsSelected(false)
-      return false
-    }
-    await this.setAllowScripts(confirmYes.value)
-    return true
+      { title: 'Yes, I trust the authors', value: true },
+      { title: 'No, I don\'t trust the authors', value: false })
+    // if userChoice is undefined, no choice was selected, consider that we don't trust authors.
+    const trustGranted = userChoice?.value || false
+    await this.setTrustAsciidoctorExtensionsAuthors(trustGranted)
+    return trustGranted
+  }
+
+  private async setAllowAsciidoctorExtensions (value: boolean): Promise<void> {
+    return this.context.workspaceState.update(this.allowAsciidoctorExtensionsKey, value)
+  }
+
+  private async setTrustAsciidoctorExtensionsAuthors (value: boolean): Promise<void> {
+    return this.context.workspaceState.update(this.trustAsciidoctorExtensionsAuthorsKey, value)
   }
 }
 
-export class AsciidocExtensionSecuritySelector {
+export class AsciidoctorExtensionsTrustModeSelector {
   constructor (
-    private readonly apsArbiter: AsciidocParserSecurityPolicyArbiter
+    private readonly aespArbiter: AsciidoctorExtensionsSecurityPolicyArbiter
   ) {
-    this.apsArbiter = apsArbiter
+    this.aespArbiter = aespArbiter
   }
 
   public async showSelector (): Promise<void> {
-    const allowExtension = this.apsArbiter.getAllowScripts()
+    const asciidoctorExtensionsAuthorsTrusted = this.aespArbiter.asciidoctorExtensionsAuthorsTrusted()
 
     interface ExtensionPickItem extends vscode.QuickPickItem {
-      readonly type: 'deny_extension' | 'allow_extension';
+      readonly type: 'trust_asciidoctor_extensions_authors' | 'deny_asciidoctor_extensions_authors';
     }
 
     function markActiveWhen (when: boolean): string {
       return when ? '• ' : ''
     }
 
-    const selection = await vscode.window.showQuickPick<ExtensionPickItem>(
+    const userChoice = await vscode.window.showQuickPick<ExtensionPickItem>(
       [
         {
-          type: 'deny_extension',
-          label: markActiveWhen(allowExtension === false) + localize('deny_extension.title', 'Deny AsciiDoc extension scripts'),
-          description: localize('deny_extension.description', 'Deny AsciiDoc extension scripts in the workspace.'),
+          type: 'deny_asciidoctor_extensions_authors',
+          label: markActiveWhen(asciidoctorExtensionsAuthorsTrusted === false) + localize('asciidoc.restrictAsciidoctorExtensionsAuthors.title', 'Denied'),
+          description: localize('asciidoc.restrictAsciidoctorExtensionsAuthors.description', 'Prevent code execution by disabling Asciidoctor.js extensions'),
         }, {
-          type: 'allow_extension',
-          label: markActiveWhen(allowExtension === true) + localize('allow_extension.title', 'Allow AsciiDoc extension scripts'),
-          description: localize('allow_extension.description', 'Allow AsciiDoc extension scripts in the workspace.'),
+          type: 'trust_asciidoctor_extensions_authors',
+          label: markActiveWhen(asciidoctorExtensionsAuthorsTrusted === true) + localize('asciidoc.trustAsciidoctorExtensionsAuthors.title', 'Trusted'),
+          description: localize('asciidoc.trustAsciidoctorExtensionsAuthors.description', 'Allow code execution by activating Asciidoctor.js extensions'),
         },
       ], {
         placeHolder: localize(
-          'asciidocExtensionSecuritySelector.title',
-          'Select security settings for Asciidoc extension scripts in this workspace'),
+          'asciidoctorExtensionsTrustModeSelector.title',
+          'Select the trust mode for the Asciidoctor.js extensions in this workspace'),
       })
 
-    if (!selection) {
+    if (!userChoice) {
       return
     }
-    if (selection.type === 'deny_extension') {
-      await this.apsArbiter.setAllowScripts(false)
+    if (userChoice.type === 'deny_asciidoctor_extensions_authors') {
+      await this.aespArbiter.denyAsciidoctorExtensionsAuthors()
     }
-    if (selection.type === 'allow_extension') {
-      if (!allowExtension) {
-        await this.apsArbiter.showDialogTrustAuther()
-      }
+    if (userChoice.type === 'trust_asciidoctor_extensions_authors') {
+      await this.aespArbiter.enableAsciidoctorExtensions() // make sure that Asciidoctor.js extensions are enabled
+      await this.aespArbiter.trustAsciidoctorExtensionsAuthors()
     }
   }
 }

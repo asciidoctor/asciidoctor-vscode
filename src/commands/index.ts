@@ -7,7 +7,7 @@ export { ShowPreviewCommand, ShowPreviewToSideCommand, ShowLockedPreviewToSideCo
 export { ShowSourceCommand } from './showSource'
 export { RefreshPreviewCommand } from './refreshPreview'
 export { ShowPreviewSecuritySelectorCommand } from './showPreviewSecuritySelector'
-export { AsciidocExtensionSecuritySelectorCommand } from './showAsciidocExtensionSecuritySelector'
+export { ShowAsciidoctorExtensionsTrustModeSelectorCommand } from './showAsciidoctorExtensionsTrustModeSelector'
 export { MoveCursorToPositionCommand } from './moveCursorToPosition'
 export { ToggleLockCommand } from './toggleLock'
 export { ExportAsPDF } from './exportAsPDF'
