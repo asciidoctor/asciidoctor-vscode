@@ -192,9 +192,10 @@ export class AsciidoctorExtensionsSecurityPolicyArbiter {
   }
 
   public async confirmAsciidoctorExtensionsTrustMode (extensionsCount: number): Promise<boolean> {
-    if (this.asciidoctorExtensionsAuthorsTrusted() !== undefined) {
+    const extensionsTrusted = this.asciidoctorExtensionsAuthorsTrusted()
+    if (extensionsTrusted !== undefined) {
       // Asciidoctor.js extensions authors are already trusted or not, do not ask again.
-      return true
+      return extensionsTrusted
     }
     return this.showTrustAsciidoctorExtensionsDialog(extensionsCount)
   }
