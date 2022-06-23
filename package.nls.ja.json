@@ -30,7 +30,7 @@
 	"asciidoc.preview.scrollPreviewWithEditorSelection.desc": "[非推奨] エディターの選択行に合わせて、プレビューをスクロールします。",
 	"asciidoc.preview.scrollPreviewWithEditorSelection.deprecationMessage": "本設定は、'asciidoc.preview.scrollPreviewWithEditor'に置き換えられました。動作しません。",
 	"asciidoc.preview.style.desc": "プレビューで使用するCSSスタイルシートのURLまたはローカルパスを指定します。相対パスは、エクスプローラで開いているフォルダからの相対パスとして解釈されます。フォルダーを開いていない場合は、AsciiDocファイルからの相対パスとして解釈されます。すべての '\\\\'は、 '\\\\\\\\'と記述する必要があります。",
-	"asciidoc.preview.useEditorStyle.desc": "エディターのスタイルをデフォルトのasciidoctor.cssに代わって使用します。",
+	"asciidoc.preview.useEditorStyle.desc": "デフォルトスタイルであるasciidoctor.cssではなく、エディターのスタイルを使用します。",
 	"asciidoc.previewFrontMatter.desc": "プレビューでYAML形式のフロントマターを表示有無を選択します。'hide'の場合は、フロントマターを除去します。それ以外の場合は、AsciiDocのコンテンツとして扱います。",
 	"asciidoc.trace.desc": "AsciiDoc拡張のデバッグログを有効にします。",
 	"asciidoc.use_asciidoctorpdf.desc": "レンダラーにasciidoctor-pdfを使用します。",
