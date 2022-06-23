@@ -13,7 +13,7 @@
 	"asciidoc.showLockedPreviewToSide.title": "サイドにロック状態でプレビュー",
 	"asciidoc.showPreviewSecuritySelector.title": "プレビューセキュリティ設定",
 	"asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Asciidoctor.js拡張のトラストモード設定",
-	"asciidoc.showSource.title": "ソースの表示",
+	"asciidoc.showSource.title": "ソース表示",
 
 	"asciidoc.asciidoctorpdf_command.desc": "Asciidoctor PDFの実行バイナリのフルパスを指定します。",
 	"asciidoc.preview.attributes.desc": "プレビューのAttributeを指定します。 Attributeは、{string: string} の形式で入力してください。",
