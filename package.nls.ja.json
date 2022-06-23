@@ -37,7 +37,7 @@
 	"asciidoc.use_kroki.desc": "ダイアグラム生成Krokiを使用します。",
 	"asciidoc.registerAsciidoctorExtensions.desc": "Asciidoctor.js拡張の登録を有効にします。",
 	"asciidoc.wkhtmltopdf_path.desc": "wkhtmltopdfの実行バイナリのフルパスを指定します。",
-	"asciidoc.forceUnixStyleSeparator.desc": "Force set the file separator style to unix style. If set false, separator style will follow the system style.",
+	"asciidoc.forceUnixStyleSeparator.desc": "ファイル区切り文字をUnixスタイルに強制します。falseの場合は、システムのスタイルに従います。",
 	"asciidoc.preview.openAsciiDocLinks.desc": "プレビューのAsciiDocファイルのリンクをクリックした場合の動作を選択します。",
 	"asciidoc.preview.openAsciiDocLinks.inEditor": "リンク先をエディターで開きます。",
 	"asciidoc.preview.openAsciiDocLinks.inPreview": "リンク先をプレビューで開きます。",
