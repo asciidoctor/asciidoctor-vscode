@@ -1,6 +1,6 @@
 {
 	"displayName": "AsciiDoc",
-	"description": "AsciiDocによるリッチで軽量なマークアップ言語",
+	"description": "リッチで軽量なマークアップであるAsciiDocをサポートします。",
 
 	"asciidoc.exportAsPDF.title": "PDFへエキスポート",
 	"asciidoc.pasteImage.title" : "イメージの貼り付け",
@@ -12,7 +12,7 @@
 	"asciidoc.saveDocbook.title": "DocBook保存",
 	"asciidoc.showLockedPreviewToSide.title": "サイドにロック状態でプレビュー",
 	"asciidoc.showPreviewSecuritySelector.title": "プレビューセキュリティ設定",
-	"asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Asciidoctor.js拡張のトラストモード設定",
+	"asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Asciidoctor.js拡張の信頼モード設定",
 	"asciidoc.showSource.title": "ソース表示",
 
 	"asciidoc.asciidoctorpdf_command.desc": "Asciidoctor PDFの実行バイナリのフルパスを指定します。",
