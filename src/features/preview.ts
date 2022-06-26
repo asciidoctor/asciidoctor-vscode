@@ -73,8 +73,8 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
 
   public static create (
     resource: vscode.Uri,
-    previewColumn: vscode.ViewColumn,
     resourceColumn: vscode.ViewColumn,
+    previewColumn: vscode.ViewColumn,
     locked: boolean,
     contentProvider: AsciidocContentProvider,
     previewConfigurations: AsciidocPreviewConfigurationManager,
