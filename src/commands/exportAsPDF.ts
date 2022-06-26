@@ -3,7 +3,7 @@ import * as os from 'os'
 import * as fs from 'fs'
 import * as path from 'path'
 import url from 'url'
-import { exec, spawn, SpawnOptionsWithStdioTuple, StdioPipe } from 'child_process'
+import { exec, spawn, SpawnOptions, StdioPipe } from 'child_process'
 import commandExists from 'command-exists'
 import { uuidv4 } from 'uuid'
 import * as zlib from 'zlib'
@@ -107,7 +107,7 @@ export class ExportAsPDF implements Command {
   }
 }
 
-function execute(command: string, args: string[], input: string, options: SpawnOptionsWithStdioTuple<StdioPipe, StdioPipe, StdioPipe>) {
+function execute(command: string, args: string[], input: string, options: SpawnOptions) {
   return new Promise(function (resolve, reject) {
     const process = spawn(command, args, options);
     const stderrOutput = []
