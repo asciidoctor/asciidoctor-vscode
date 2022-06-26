@@ -250,8 +250,7 @@ export class AsciidocParser {
     const documentPath = process.env.BROWSER_ENV
       ? undefined
       : path.dirname(path.resolve(documentFilePath))
-    const asciidocConfig = vscode.workspace.getConfiguration('asciidoc', null)
-    const useWorkspaceAsBaseDir = asciidocConfig.get('useWorkspaceRoot')
+    const useWorkspaceAsBaseDir = vscode.workspace.getConfiguration('asciidoc', null).get('useWorkspaceRootAsBaseDirectory')
     return useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined'
       ? vscode.workspace.rootPath
       : documentPath
@@ -270,8 +269,8 @@ export class AsciidocParser {
   }
 
   private async registerAsciidoctorExtensions (registry) {
-    const useKroki = vscode.workspace.getConfiguration('asciidoc', null).get('use_kroki')
-    if (useKroki) {
+    const enableKroki = vscode.workspace.getConfiguration('asciidoc.extensions', null).get('enableKroki')
+    if (enableKroki) {
       const kroki = require('asciidoctor-kroki')
       kroki.register(registry)
     }
@@ -283,7 +282,7 @@ export class AsciidocParser {
   }
 
   private isAsciidoctorExtensionsRegistrationEnabled (): boolean {
-    return vscode.workspace.getConfiguration('asciidoc', null).get('registerAsciidoctorExtensions')
+    return vscode.workspace.getConfiguration('asciidoc.extensions', null).get('registerWorkspaceExtensions')
   }
 
   private async registerExtensionsInWorkspace (registry) {

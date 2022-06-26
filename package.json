@@ -434,18 +434,37 @@
 						"order": 1,
 						"scope": "resource"
 					},
-					"asciidoc.pdf.asciidoctorPdfCommand": {
+					"asciidoc.pdf.asciidoctorPdfCommandPath": {
 						"type": "string",
 						"default": "asciidoctor-pdf",
-						"markdownDescription": "%asciidoc.pdf.asciidoctorPdfCommand.desc%",
+						"markdownDescription": "%asciidoc.pdf.asciidoctorPdfCommandPath.desc%",
 						"order": 2,
 						"scope": "resource"
 					},
-					"asciidoc.pdf.wkhtmltopdfCommand": {
-						"type": "string",
-						"default": "wkhtmltopdf",
-						"markdownDescription": "%asciidoc.pdf.wkhtmltopdfCommand.desc%",
+					"asciidoc.pdf.asciidoctorPdfCommandArgs": {
+						"type": "array",
+						"markdownDescription": "%asciidoc.pdf.asciidoctorPdfCommandArgs.desc%",
+						"items": {
+							"type": "string"
+						},
+						"uniqueItems": false,
 						"order": 3,
+						"scope": "resource"
+					},
+					"asciidoc.pdf.wkhtmltopdfCommandPath": {
+						"type": "string",
+						"markdownDescription": "%asciidoc.pdf.wkhtmltopdfCommandPath.desc%",
+						"order": 4,
+						"scope": "resource"
+					},
+					"asciidoc.pdf.wkhtmltopdfCommandArgs": {
+						"type": "array",
+						"markdownDescription": "%asciidoc.pdf.wkhtmltopdfCommandArgs.desc%",
+						"items": {
+							"type": "string"
+						},
+						"uniqueItems": false,
+						"order": 5,
 						"scope": "resource"
 					}
 				}
@@ -580,6 +599,7 @@
 		"@asciidoctor/docbook-converter": "2.0.0",
 		"@orcid/bibtex-parse-js": "0.0.25",
 		"asciidoctor-kroki": "0.15.4",
+		"command-exists": "^1.2.9",
 		"file-url": "4.0.0",
 		"follow-redirects": "1.14.8",
 		"https-proxy-agent": "5.0.0",

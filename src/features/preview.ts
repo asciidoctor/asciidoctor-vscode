@@ -447,7 +447,7 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
 
   private async onDidClickPreviewLink (href: string) {
     const targetResource = this.resolveDocumentLink(href)
-    const openLinks = this.config.get<string>('preview.openAsciiDocLinks', 'inPreview')
+    const openLinks = this.config.get<string>('preview.openLinksToAsciidocFiles', 'inPreview')
     if (openLinks === 'inPreview') {
       const asciidocLink = await resolveLinkToAsciidocFile(targetResource.path)
       if (asciidocLink) {
