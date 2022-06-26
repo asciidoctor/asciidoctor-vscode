@@ -5,7 +5,6 @@
 [![Ratings](https://vsmarketplacebadge.apphb.com/rating/asciidoctor.asciidoctor-vscode.svg)](https://vsmarketplacebadge.apphb.com/rating/asciidoctor.asciidoctor-vscode.svg)
 [![Project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://asciidoctor.zulipchat.com/)
 
-
 An extension that provides live preview, syntax highlighting and snippets for the AsciiDoc format using Asciidoctor.
 
 ![demo](images/simple.gif)
@@ -18,7 +17,8 @@ Launch Visual Studio Code "Quick Open" (`Ctrl+P`), paste the following command, 
 
 Alternatively, you can use the built-in extension browser to find the _AsciiDoc_ by _asciidoctor_ extension and install it.
 
-This extension is also available as a pre-version (alpha) in [Visual Studio Code for the Web](https://code.visualstudio.com/docs/editor/vscode-web) and can be installed using the same procedure.
+This extension is also available as a pre-version (alpha) in [Visual Studio Code for the Web](https://code.visualstudio.com/docs/editor/vscode-web) and can be installed using the
+same procedure.
 
 |Feature|Desktop|Web|
 |--|--|--|
@@ -48,7 +48,8 @@ The preview refreshes automatically, but it can also be forced with the _AsciiDo
 
 The preview supports setting attributes through the `asciidoc.preview.attributes` option.
 
-By default the preview style follows the VSCode theme (`workbench.colorTheme`). To use Asciidoctor's style set option `asciidoc.preview.useEditorStyle` to `false`. It is also possible to set your own preview stylesheet with the `asciidoc.preview.style` option.
+By default the preview style follows the VSCode theme (`workbench.colorTheme`). To use Asciidoctor's style set option `asciidoc.preview.useEditorStyle` to `false`. It is also
+possible to set your own preview stylesheet with the `asciidoc.preview.style` option.
 
 (See more details under [User Settings](#user-settings))
 
@@ -101,11 +102,13 @@ endif::[]
 
 ### Diagram Integration
 
-This extension supports a wide range of diagrams from BPMN to Graphviz to PlantUML and Vega graphs using [kroki](https://kroki.io/) and [asciidoctor-kroki](https://github.com/Mogztter/asciidoctor-kroki).
+This extension supports a wide range of diagrams from BPMN to Graphviz to PlantUML and Vega graphs using [kroki](https://kroki.io/)
+and [asciidoctor-kroki](https://github.com/Mogztter/asciidoctor-kroki).
 
 You can [see the full range](https://kroki.io/#support) on the kroki website.
 
-Note that this extension will send graph information to https://kroki.io. If this is an issue it is also possible to use your own kroki instance (see [the instructions](https://github.com/Mogztter/asciidoctor-kroki#using-your-own-kroki) for further information).
+Note that this extension will send graph information to https://kroki.io. If this is an issue it is also possible to use your own kroki instance (
+see [the instructions](https://github.com/Mogztter/asciidoctor-kroki#using-your-own-kroki) for further information).
 
 To enable diagram support, set the `use_kroki` parameter in your User Settings to `true`.
 
@@ -160,32 +163,53 @@ Here's an example of how to use the [asciidoctor-emoji](https://github.com/mogzt
 
 ![Asciidoctor.js Emoji extension enabled!](images/asciidoctor-vscode-emoji-ext.png)
 
+## Extension Settings
 
-## User Settings
+This extension contributes the following settings:
 
-This extension is controlled by a multitude of user settings.
+### Preview
 
-The following list contains all the options and their default value.
+| Name                                           | Description                                                                                                                        | Default Value                                                                                                             |
+|:-----------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------|
+| `asciidoc.preview.asciidoctorAttribute`        | Asciidoctor attributes used in the preview (object of `{string: string}`).                                                         | `{}`                                                                                                                      |
+| `asciidoc.preview.refreshInterval`             | Interval in miliseconds between two consecutive updates of the preview. The value 0 means it will only update the preview on save. | `2000`                                                                                                                    |
+| `asciidoc.preview.useEditorStyle`              | Use VS Code editor style instead of the default Asciidoctor style.                                                                 |                                                                                                                           |
+| `asciidoc.preview.fontFamily`                  | Control the font family used in the preview.                                                                                       | `"-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif"` |
+| `asciidoc.preview.fontSize`                    | Control the font size in pixels used in the preview.                                                                               | `14`                                                                                                                      |
+| `asciidoc.preview.lineHeight`                  | Control the line height used in the preview.                                                                                       | `1.6`                                                                                                                     |
+| `asciidoc.preview.scrollPreviewWithEditor`     | When the preview is scrolled, update the view of the editor.                                                                       | `true`                                                                                                                    |
+| `asciidoc.preview.scrollEditorWithPreview`     | When the editor is scrolled, update the view of the preview.                                                                       | `true`                                                                                                                    |
+| `asciidoc.preview.markEditorSelection`         | Mark the current editor selection in the preview.                                                                                  | `true`                                                                                                                    |
+| `asciidoc.preview.doubleClickToSwitchToEditor` | Double click in the preview to switch to the editor.                                                                               | `true`                                                                                                                    |
+| `asciidoc.preview.openLinksToAsciidocFiles`    | Control how links to other AsciiDoc files in the preview should be opened. Possible values: `"inPreview"`, `"inEditor"`.           | `"inPreview"`                                                                                                             |
 
-| Option: Default value                                                                                                                                  | Description                                                                                                                                                                                                     |
-|:-------------------------------------------------------------------------------------------------------------------------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `asciidoc.asciidoctorpdf_command: "asciidoctor-pdf"`                                                                                                   | The path or command invoked when using Asciidoctor PDF for the _Export as PDF_ function.                                                                                                                        |
-| `asciidoc.preview.style: ""`                                                                                                                           | The local path to a CSS style sheet to use in the AsciiDoc preview. Relative paths are interpreted relative to the workspace folder. If no workspace is open the document path.                                 |
-| `asciidoc.preview.attributes: {}`                                                                                                                      | Set attributes to be used in the preview. Attributes need to be written as an object of type {string: string}                                                                                                   |
-| `asciidoc.preview.doubleClickToSwitchToEditor: true`                                                                                                   | Double click in the AsciiDoc preview to switch to the editor.                                                                                                                                                   |
-| `asciidoc.preview.fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif"` | Controls the font family used in the AsciiDoc preview.                                                                                                                                                          |
-| `asciidoc.preview.fontSize: 14`                                                                                                                        | Controls the font size in pixels used in the AsciiDoc preview.                                                                                                                                                  |
-| `asciidoc.preview.lineHeight: 1.6`                                                                                                                     | Controls the line height used in the AsciiDoc preview. This number is relative to the font size.                                                                                                                |
-| `asciidoc.preview.markEditorSelection: true`                                                                                                           | Mark the current editor selection in the AsciiDoc preview.                                                                                                                                                      |
-| `asciidoc.preview.openAsciiDocLinks: "inPreview"`                                                                                                      | How should clicking on links to AsciiDoc files be handled in the preview.<br/>"inPreview" Try to open links in the the AsciiDoc preview<br/>"inEditor" Try to open links in the the editor                      |
-| `asciidoc.preview.scrollEditorWithPreview: true`                                                                                                       | When an AsciiDoc preview is scrolled, update the view of the editor.                                                                                                                                            |
-| `asciidoc.preview.scrollPreviewWithEditor: true`                                                                                                       | When an AsciiDoc editor is scrolled, update the view of the preview.                                                                                                                                            |
-| `asciidoc.preview.refreshInterval: 2000`                                                                                                               | Interval (in miliseconds) between preview refreshes (when the document is changed), 0 means refresh only on save                                                                                                |
-| `asciidoc.preview.useEditorStyle: true`                                                                                                                | Use editor style instead of default asciidoctor.css                                                                                                                                                             |
-| `asciidoc.trace: "off"`                                                                                                                                | Enable debug logging for the AsciiDoc extension.                                                                                                                                                                |
-| `asciidoc.use_asciidoctorpdf: false`                                                                                                                   | Use Asciidoctor PDF instead of the integrated renderer for the _Export as PDF_ command.                                                                                                                         |
-| `asciidoc.use_kroki: false`                                                                                                                            | Enable kroki integration to generate diagrams.                                                                                                                                                                  |
-| `asciidoc.registerAsciidoctorExtensions: false`                                                                                                        | Enable Asciidoctor.js extensions registration.                                                                                                                                                                  |
+### PDF
+
+| Name                                 | Description                                                                                                                                                                                                                                                                                                                                   | Default Value       |
+|:-------------------------------------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:--------------------|
+| `asciidoc.pdf.engine`                | Control the PDF engine used to export as PDF. Possible values: `"asciidoctor-pdf"`, `"wkhtmltopdf"`.                                                                                                                                                                                                                                          | `"asciidoctor-pdf"` |
+| `asciidoc.pdf.asciidoctorPdfCommand` | External `asciidoctor-pdf` command to execute. It accepts a full path to the binary and a list of arguments, for instance: `/path/to/asciidoctor-pdf -a pdf-themesdir=resources/themes -a pdf-theme=basic`. By default, it passes the following arguments: `--quiet` and `--base-dir` with the full directory path to the AsciiDoc document.  | `"asciidoctor-pdf"` |
+| `asciidoc.pdf.wkhtmltopdfCommand`    | External `wkhtmltopdf` command to execute. It accepts a full path to the binary and a list of arguments, for instance: `/path/to/wkhtmltopdf --enable-local-file-access`. By default, it passes the following arguments: `--encoding utf-8`,  `--javascript-delay 1000`, `--footer-center` (if enabled) and `cover` (if it has a cover page). | `"wkhtmltopdf"`     |
+
+### Extensions
+
+| Name                                              | Description                                                                                     | Default Value |
+|:--------------------------------------------------|:------------------------------------------------------------------------------------------------|:--------------|
+| `asciidoc.extensions.enableKroki`                 | Enable Kroki extension to generate diagrams.                                                    | `false`       |
+| `asciidoc.extensions.registerWorkspaceExtensions` | Enables Asciidoctor.js extensions registration from the workspace directory `.asciidoctor/lib`. | `false`       |
+
+### General
+
+| Name                                       | Description                                                             | Default Value |
+|:-------------------------------------------|:------------------------------------------------------------------------|:--------------|
+| `asciidoc.useWorkspaceRootAsBaseDirectory` | When in a workspace, use the workspace root path as the base directory. | `false`       |
+
+### Debug
+
+| Name                                    | Description                                                                     | Default Value |
+|:----------------------------------------|:--------------------------------------------------------------------------------|:--------------|
+| `asciidoc.debug.trace`                  | Enable debug logging for this extension. Possible values: `"off"`, `"verbose"`. | `"off"`       |
+| `asciidoc.debug.enableErrorDiagnostics` | Provide error diagnostics.                                                      | `true`        |
 
 ## Build and Install from Source
 
@@ -201,19 +225,22 @@ code --install-extension *.vsix
 
 ## Issues
 
-If you encounter any problems with the extension and cannot find the solution yourself, please open an issue in the dedicated GitHub page: [asciidoctor-vscode/issues](https://github.com/asciidoctor/asciidoctor-vscode/issues).
+If you encounter any problems with the extension and cannot find the solution yourself, please open an issue in the dedicated GitHub
+page: [asciidoctor-vscode/issues](https://github.com/asciidoctor/asciidoctor-vscode/issues).
 
-Before opening an issue, please make sure that it is not a duplicate. Your problem may have already been brought up by another user and been solved: [asciidoctor-vscode/issues all](https://github.com/asciidoctor/asciidoctor-vscode/issues?utf8=%E2%9C%93&q=).
+Before opening an issue, please make sure that it is not a duplicate. Your problem may have already been brought up by another user and been
+solved: [asciidoctor-vscode/issues all](https://github.com/asciidoctor/asciidoctor-vscode/issues?utf8=%E2%9C%93&q=).
 
 When you do open an issue, remember to include the following information:
 
 1. Description of the issue
 2. VSCode version, OS (_Help -> About_) and extension version
 3. Steps to reproduce the issue<br/>
-**IMPORTANT**: We cannot solve the issue if you do not explain how you encountered it
+   **IMPORTANT**: We cannot solve the issue if you do not explain how you encountered it
 4. If the problem occurs only with a specific file, attach it, together with any screenshot that might better show what the issue is.
 
-If your issue only appeared after updating to a new version of the extension, you can roll back to a previous one via the extensions browser. Click on the small gear icon beside the AsciiDoc extension, then select _Install Another Version..._. A selection menu will appear allowing you to select which version you want to install.
+If your issue only appeared after updating to a new version of the extension, you can roll back to a previous one via the extensions browser. Click on the small gear icon beside
+the AsciiDoc extension, then select _Install Another Version..._. A selection menu will appear allowing you to select which version you want to install.
 
 ## Contributing
 
@@ -221,7 +248,8 @@ To contribute simply clone the repository and then commit your changes. When you
 
 Do not update the extension version or changelog, it will be done by the maintainers when a new version is released.
 
-If you want to update the readme, you are free to fix typos, errors, and add or improve descriptions; but, if you have a style change in mind please use an issue (or specific pull request) so that it can be discussed.
+If you want to update the readme, you are free to fix typos, errors, and add or improve descriptions; but, if you have a style change in mind please use an issue (or specific pull
+request) so that it can be discussed.
 
 ## Credits
 
