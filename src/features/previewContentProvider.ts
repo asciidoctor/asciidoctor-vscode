@@ -14,7 +14,7 @@ export class AsciidocContentProvider {
     const sourceUri = asciidocDocument.uri
     const config = previewConfigurations.loadAndCacheConfiguration(sourceUri)
 
-    const { output } = await this.engine.convert(sourceUri, config.previewFrontMatter === 'hide', asciidocDocument.getText(), this.context, editor)
+    const { output } = await this.engine.convert(sourceUri, asciidocDocument.getText(), this.context, editor)
     return output
   }
 }

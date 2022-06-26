@@ -48,7 +48,7 @@
 				"id": "asciidoc",
 				"aliases": [
 					"AsciiDoc",
-					"AsciiDoc(tor)"
+					"Asciidoctor"
 				],
 				"extensions": [
 					".adoc",
@@ -264,172 +264,252 @@
 				"when": "editorLangId == asciidoc"
 			}
 		],
-		"configuration": {
-			"type": "object",
-			"title": "asciidoc",
-			"order": 21,
-			"properties": {
-				"asciidoc.asciidoctorpdf_command": {
-					"type": "string",
-					"default": "asciidoctor-pdf",
-					"description": "%asciidoc.asciidoctorpdf_command.desc%"
-				},
-				"asciidoc.previewFrontMatter": {
-					"type": "string",
-					"enum": [
-						"hide",
-						"show"
-					],
-					"default": "hide",
-					"description": "%asciidoc.previewFrontMatter.desc%",
-					"scope": "resource"
-				},
-				"asciidoc.preview.style": {
-					"type": "string",
-					"default": "",
-					"description": "%asciidoc.preview.style.desc%",
-					"scope": "resource"
-				},
-				"asciidoc.preview.attributes": {
-					"type": "object",
-					"default": {},
-					"description": "%asciidoc.preview.attributes.desc%",
-					"scope": "resource"
-				},
-				"asciidoc.preview.breaks": {
-					"type": "boolean",
-					"default": false,
-					"description": "%asciidoc.preview.breaks.desc%",
-					"scope": "resource"
-				},
-				"asciidoc.preview.linkify": {
-					"type": "boolean",
-					"default": true,
-					"description": "%asciidoc.preview.linkify.desc%",
-					"scope": "resource"
-				},
-				"asciidoc.preview.fontFamily": {
-					"type": "string",
-					"default": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif",
-					"description": "%asciidoc.preview.fontFamily.desc%",
-					"scope": "resource"
-				},
-				"asciidoc.preview.fontSize": {
-					"type": "number",
-					"default": 14,
-					"description": "%asciidoc.preview.fontSize.desc%",
-					"scope": "resource"
-				},
-				"asciidoc.preview.lineHeight": {
-					"type": "number",
-					"default": 1.6,
-					"description": "%asciidoc.preview.lineHeight.desc%",
-					"scope": "resource"
-				},
-				"asciidoc.preview.useEditorStyle": {
-					"type": "boolean",
-					"default": true,
-					"description": "%asciidoc.preview.useEditorStyle.desc%",
-					"scope": "resource"
-				},
-				"asciidoc.preview.refreshInterval": {
-					"type": "number",
-					"default": 2000,
-					"description": "%asciidoc.preview.refreshInterval.desc%",
-					"scope": "resource"
-				},
-				"asciidoc.preview.scrollPreviewWithEditor": {
-					"type": "boolean",
-					"default": true,
-					"description": "%asciidoc.preview.scrollPreviewWithEditor.desc%",
-					"scope": "resource"
-				},
-				"asciidoc.preview.scrollPreviewWithEditorSelection": {
-					"type": "boolean",
-					"default": true,
-					"description": "%asciidoc.preview.scrollPreviewWithEditorSelection.desc%",
-					"deprecationMessage": "%asciidoc.preview.scrollPreviewWithEditorSelection.deprecationMessage%"
-				},
-				"asciidoc.preview.markEditorSelection": {
-					"type": "boolean",
-					"default": true,
-					"description": "%asciidoc.preview.markEditorSelection.desc%",
-					"scope": "resource"
-				},
-				"asciidoc.preview.scrollEditorWithPreview": {
-					"type": "boolean",
-					"default": true,
-					"description": "%asciidoc.preview.scrollEditorWithPreview.desc%",
-					"scope": "resource"
-				},
-				"asciidoc.preview.doubleClickToSwitchToEditor": {
-					"type": "boolean",
-					"default": true,
-					"description": "%asciidoc.preview.doubleClickToSwitchToEditor.desc%",
-					"scope": "resource"
-				},
-				"asciidoc.preview.openAsciiDocLinks": {
-					"type": "string",
-					"default": "inPreview",
-					"description": "%asciidoc.preview.openAsciiDocLinks.desc%",
-					"scope": "resource",
-					"enum": [
-						"inPreview",
-						"inEditor"
-					],
-					"enumDescriptions": [
-						"%asciidoc.preview.openAsciiDocLinks.inPreview%",
-						"%asciidoc.preview.openAsciiDocLinks.inEditor%"
-					]
-				},
-				"asciidoc.trace": {
-					"type": "string",
-					"enum": [
-						"off",
-						"verbose"
-					],
-					"default": "off",
-					"description": "%asciidoc.trace.desc%",
-					"scope": "window"
-				},
-				"asciidoc.use_asciidoctorpdf": {
-					"type": "boolean",
-					"default": false,
-					"description": "%asciidoc.use_asciidoctorpdf.desc%"
-				},
-				"asciidoc.use_kroki": {
-					"type": "boolean",
-					"default": false,
-					"description": "%asciidoc.use_kroki.desc%"
-				},
-				"asciidoc.registerAsciidoctorExtensions": {
-					"type": "boolean",
-					"default": false,
-					"description": "%asciidoc.registerAsciidoctorExtensions.desc%"
-				},
-				"asciidoc.wkhtmltopdf_path": {
-					"type": "string",
-					"default": "",
-					"description": "%asciidoc.wkhtmltopdf_path.desc%",
-					"scope": "resource"
-				},
-				"asciidoc.forceUnixStyleSeparator": {
-					"type": "boolean",
-					"default": true,
-					"description": "%asciidoc.forceUnixStyleSeparator.desc%"
-				},
-				"asciidoc.enableErrorDiagnostics": {
-					"type": "boolean",
-					"default": true,
-					"description": "%asciidoc.enableErrorDiagnostics.desc%"
-				},
-				"asciidoc.useWorkspaceRoot": {
-					"type": "boolean",
-					"default": false,
-					"description": "%asciidoc.useWorkspaceRoot.desc%"
+		"configuration": [
+			{
+				"order": 20,
+				"id": "preview",
+				"title": "%asciidoc.preview.title%",
+				"properties": {
+					"asciidoc.preview.asciidoctorAttributes": {
+						"type": "object",
+						"default": {},
+						"markdownDescription": "%asciidoc.preview.asciidoctorAttributes.desc%",
+						"order": 1,
+						"scope": "resource"
+					},
+					"asciidoc.preview.refreshInterval": {
+						"type": "number",
+						"default": 2000,
+						"markdownDescription": "%asciidoc.preview.refreshInterval.desc%",
+						"order": 2,
+						"scope": "resource"
+					},
+					"asciidoc.preview.style": {
+						"type": "string",
+						"default": "",
+						"markdownDescription": "%asciidoc.preview.style.desc%",
+						"order": 3,
+						"scope": "resource"
+					},
+					"asciidoc.preview.useEditorStyle": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "%asciidoc.preview.useEditorStyle.desc%",
+						"order": 4,
+						"scope": "resource"
+					},
+					"asciidoc.preview.fontFamily": {
+						"type": "string",
+						"default": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif",
+						"markdownDescription": "%asciidoc.preview.fontFamily.desc%",
+						"order": 5,
+						"scope": "resource"
+					},
+					"asciidoc.preview.fontSize": {
+						"type": "number",
+						"default": 14,
+						"markdownDescription": "%asciidoc.preview.fontSize.desc%",
+						"order": 6,
+						"scope": "resource"
+					},
+					"asciidoc.preview.lineHeight": {
+						"type": "number",
+						"default": 1.6,
+						"markdownDescription": "%asciidoc.preview.lineHeight.desc%",
+						"order": 7,
+						"scope": "resource"
+					},
+					"asciidoc.preview.scrollPreviewWithEditor": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "%asciidoc.preview.scrollPreviewWithEditor.desc%",
+						"order": 8,
+						"scope": "resource"
+					},
+					"asciidoc.preview.scrollEditorWithPreview": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "%asciidoc.preview.scrollEditorWithPreview.desc%",
+						"order": 9,
+						"scope": "resource"
+					},
+					"asciidoc.preview.markEditorSelection": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "%asciidoc.preview.markEditorSelection.desc%",
+						"order": 10,
+						"scope": "resource"
+					},
+					"asciidoc.preview.doubleClickToSwitchToEditor": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "%asciidoc.preview.doubleClickToSwitchToEditor.desc%",
+						"order": 11,
+						"scope": "resource"
+					},
+					"asciidoc.preview.openLinksToAsciidocFiles": {
+						"type": "string",
+						"default": "inPreview",
+						"markdownDescription": "%asciidoc.preview.openLinksToAsciidocFiles.desc%",
+						"enum": [
+							"inPreview",
+							"inEditor"
+						],
+						"enumDescriptions": [
+							"%asciidoc.preview.openLinksToAsciidocFiles.inPreview%",
+							"%asciidoc.preview.openLinksToAsciidocFiles.inEditor%"
+						],
+						"order": 12,
+						"scope": "resource"
+					},
+					"asciidoc.preview.openAsciiDocLinks": {
+						"type": "string",
+						"default": "inPreview",
+						"markdownDescription": "%asciidoc.preview.openAsciiDocLinks.desc%",
+						"markdownDeprecationMessage": "%asciidoc.preview.openAsciiDocLinks.deprecationMessage%",
+						"enum": [
+							"inPreview",
+							"inEditor"
+						],
+						"enumDescriptions": [
+							"%asciidoc.preview.openAsciiDocLinks.inPreview%",
+							"%asciidoc.preview.openAsciiDocLinks.inEditor%"
+						],
+						"scope": "resource"
+					},
+					"asciidoc.use_kroki": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "%asciidoc.use_kroki.desc%",
+						"markdownDeprecationMessage": "%asciidoc.use_kroki.deprecationMessage%",
+						"scope": "resource"
+					},
+					"asciidoc.useWorkspaceRoot": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "%asciidoc.useWorkspaceRoot.desc%",
+						"markdownDeprecationMessage": "%asciidoc.useWorkspaceRoot.deprecationMessage%",
+						"scope": "resource"
+					},
+					"asciidoc.wkhtmltopdf_path": {
+						"type": "string",
+						"default": "",
+						"markdownDescription": "%asciidoc.wkhtmltopdf_path.desc%",
+						"markdownDeprecationMessage": "%asciidoc.wkhtmltopdf_path.deprecationMessage%",
+						"scope": "resource"
+					},
+					"asciidoc.asciidoctorpdf_command": {
+						"type": "string",
+						"default": "asciidoctor-pdf",
+						"markdownDescription": "%asciidoc.asciidoctorpdf_command.desc%",
+						"markdownDeprecationMessage": "%asciidoc.asciidoctorpdf_command.deprecationMessage%",
+						"scope": "resource"
+					},
+					"asciidoc.use_asciidoctorpdf": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "%asciidoc.use_asciidoctorpdf.desc%",
+						"markdownDeprecationMessage": "%asciidoc.use_asciidoctorpdf.deprecationMessage%",
+						"scope": "resource"
+					}
+				}
+			},
+			{
+				"order": 21,
+				"id": "pdf",
+				"title": "%asciidoc.pdf.title%",
+				"properties": {
+					"asciidoc.pdf.engine": {
+						"type": "string",
+						"default": "asciidoctor-pdf",
+						"markdownDescription": "%asciidoc.pdf.engine.desc%",
+						"enum": [
+							"asciidoctor-pdf",
+							"wkhtmltopdf"
+						],
+						"enumDescriptions": [
+							"%asciidoc.pdf.engine.asciidoctorPdf.desc%",
+							"%asciidoc.pdf.engine.wkhtmltopdf.desc%"
+						],
+						"order": 1,
+						"scope": "resource"
+					},
+					"asciidoc.pdf.asciidoctorPdfCommand": {
+						"type": "string",
+						"default": "asciidoctor-pdf",
+						"markdownDescription": "%asciidoc.pdf.asciidoctorPdfCommand.desc%",
+						"order": 2,
+						"scope": "resource"
+					},
+					"asciidoc.pdf.wkhtmltopdfCommand": {
+						"type": "string",
+						"default": "wkhtmltopdf",
+						"markdownDescription": "%asciidoc.pdf.wkhtmltopdfCommand.desc%",
+						"order": 3,
+						"scope": "resource"
+					}
+				}
+			},
+			{
+				"order": 22,
+				"id": "extensions",
+				"title": "%asciidoc.extensions.title%",
+				"properties": {
+					"asciidoc.extensions.enableKroki": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "%asciidoc.extensions.enableKroki.desc%",
+						"order": 1,
+						"scope": "resource"
+					},
+					"asciidoc.extensions.registerWorkspaceExtensions": {
+						"type": "boolean",
+						"default": false,
+						"order": 2,
+						"markdownDescription": "%asciidoc.extensions.registerWorkspaceExtensions.desc%"
+					}
+				}
+			},
+			{
+				"order": 23,
+				"id": "common",
+				"title": "%asciidoc.common.title%",
+				"properties": {
+					"asciidoc.useWorkspaceRootAsBaseDirectory": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "%asciidoc.useWorkspaceRootAsBaseDirectory.desc%",
+						"order": 1,
+						"scope": "resource"
+					}
+				}
+			},
+			{
+				"order": 24,
+				"id": "debug",
+				"title": "%asciidoc.debug.title%",
+				"properties": {
+					"asciidoc.debug.trace": {
+						"type": "string",
+						"enum": [
+							"off",
+							"verbose"
+						],
+						"default": "off",
+						"markdownDescription": "%asciidoc.debug.trace.desc%",
+						"order": 1,
+						"scope": "window"
+					},
+					"asciidoc.debug.enableErrorDiagnostics": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "%asciidoc.enableErrorDiagnostics.desc%",
+						"order": 2,
+						"scope": "resource"
+					}
 				}
 			}
-		},
+		],
 		"configurationDefaults": {
 			"[asciidoc]": {
 				"editor.wordWrap": "on",
