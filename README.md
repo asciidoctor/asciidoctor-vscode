@@ -10,29 +10,6 @@ An extension that provides live preview, syntax highlighting and snippets for th
 
 ![demo](images/simple.gif)
 
-## Contents
-
-- [AsciiDoc support for Visual Studio Code](#asciidoc-support-for-visual-studio-code)
-  - [Contents](#contents)
-  - [How to Install](#how-to-install)
-  - [How to Use](#how-to-use)
-    - [Preview](#preview)
-    - [Export as PDF](#export-as-pdf)
-    - [Save as HTML](#save-as-html)
-    - [Save to DocBook](#save-to-docbook)
-    - [Snippets](#snippets)
-    - [Identifying the VS Code Environment](#identifying-the-vs-code-environment)
-    - [Diagram Integration](#diagram-integration)
-    - [Use Asciidoctor.js extensions](#use-asciidoctorjs-extensions)
-  - [User Settings](#user-settings)
-  - [Visual Studio Code for the Web](#visual-studio-code-for-the-web)
-  - [Build and Install from Source](#build-and-install-from-source)
-    - [Manual](#manual)
-    - [Script](#script)
-  - [Issues](#issues)
-  - [Contributing](#contributing)
-  - [Credits](#credits)
-
 ## How to Install
 
 Launch Visual Studio Code "Quick Open" (`Ctrl+P`), paste the following command, and press `Enter`:
