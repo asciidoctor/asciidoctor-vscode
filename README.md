@@ -17,8 +17,8 @@ Launch Visual Studio Code "Quick Open" (`Ctrl+P`), paste the following command, 
 
 Alternatively, you can use the built-in extension browser to find the _AsciiDoc_ by _asciidoctor_ extension and install it.
 
-This extension is also available as a pre-version (alpha) in [Visual Studio Code for the Web](https://code.visualstudio.com/docs/editor/vscode-web) and can be installed using the
-same procedure.
+This extension is also available as a pre-version (alpha) in [Visual Studio Code for the Web](https://code.visualstudio.com/docs/editor/vscode-web)
+and can be installed using the same procedure.
 
 |Feature|Desktop|Web|
 |--|--|--|
@@ -44,14 +44,14 @@ To show the preview you can use the same commands as the Markdown extension:
 * Toggle Preview - `ctrl+shift+v` (Mac: `cmd+shift+v`)
 * Open Preview to the Side - `ctrl+k v` (Mac: `cmd+k v`)
 
-The preview refreshes automatically, but it can also be forced with the _AsciiDoc: Refresh Preview_ command.
+The extension updates automatically the preview but it can also be forced with the _AsciiDoc: Refresh Preview_ command.
 
-The preview supports setting attributes through the `asciidoc.preview.attributes` option.
+The preview supports setting AsciiDoc attributes through the `asciidoc.preview.asciidoctorAttributes` setting.
 
-By default the preview style follows the VSCode theme (`workbench.colorTheme`). To use Asciidoctor's style set option `asciidoc.preview.useEditorStyle` to `false`. It is also
-possible to set your own preview stylesheet with the `asciidoc.preview.style` option.
-
-(See more details under [User Settings](#user-settings))
+By default, the preview uses VS Code editor theme (`workbench.colorTheme`).
+To use Asciidoctor default style set the `asciidoc.preview.useEditorStyle` setting to `false`.
+It is also possible to set your own preview stylesheet with the `asciidoc.preview.style` setting.<br/>
+(See more details under [Extension Settings](#extension-settings))
 
 ### Export as PDF
 
@@ -61,8 +61,9 @@ The extension provides a quick command to export your AsciiDoc file as PDF.
 * Select _AsciiDoc: Export document as PDF_
 * Choose the folder and filename for the generated PDF
 
-By default a separate binary is downloaded and used to render the document in PDF format. To use Asciidoctor PDF set option `asciidoc.use_asciidoctorpdf` to `true`.<br/>
-(See more details under [User Settings](#user-settings))
+By default, the PDF export feature relies on `asciidoctor-pdf`.
+If you prefer to use `wkhtmltopdf`, set the `asciidoc.pdf.engine` setting to `wkhtmltopdf` and configure the `asciidoc.pdf.wkhtmltopdfCommandPath` if necessary.<br/>
+(See more details under [Extension Settings](#extension-settings))
 
 ### Save as HTML
 
@@ -82,7 +83,7 @@ The extension provides a quick command to export your AsciiDoc file as DocBook.
 * Select _AsciiDoc: Save to DocBook_
 * The file is generated in the same folder as the source document
 
-Only DocBook 5 is supported.
+**ℹ️ Note:** Only DocBook 5 is supported.
 
 ### Snippets
 
@@ -92,7 +93,8 @@ For a full list open the command palette and select _Insert Snippet_.
 
 ### Identifying the VS Code Environment
 
-The `env-vscode` attribute is set on all output documents. If you need to identify or handle the VS Code environment you can use an `ifdef` expression similar to the following:
+The `env-vscode` attribute is set on all output documents.
+If you need to identify or handle the VS Code environment you can use an `ifdef` expression similar to the following:
 
 ```asciidoc
 ifdef::env-vscode[]
@@ -102,17 +104,17 @@ endif::[]
 
 ### Diagram Integration
 
-This extension supports a wide range of diagrams from BPMN to Graphviz to PlantUML and Vega graphs using [kroki](https://kroki.io/)
+This extension supports a wide range of diagrams from BPMN to Graphviz to PlantUML and Vega graphs using [Kroki](https://kroki.io/)
 and [asciidoctor-kroki](https://github.com/Mogztter/asciidoctor-kroki).
 
-You can [see the full range](https://kroki.io/#support) on the kroki website.
+You can [see the full range](https://kroki.io/#support) on the Kroki website.
 
-Note that this extension will send graph information to https://kroki.io. If this is an issue it is also possible to use your own kroki instance (
-see [the instructions](https://github.com/Mogztter/asciidoctor-kroki#using-your-own-kroki) for further information).
+Note that this extension will send graph information to https://kroki.io. 
+If this is an issue it is also possible to use your own Kroki instance (see [the instructions](https://github.com/Mogztter/asciidoctor-kroki#using-your-own-kroki) for further information).
 
-To enable diagram support, set the `use_kroki` parameter in your User Settings to `true`.
+To enable diagram support, set the `asciidoc.extensions.enableKroki` setting to `true`.
 
-To cache and save diagrams locally set the `kroki-fetch-diagram` attribute in your document header:
+To cache and save diagrams locally set the `:kroki-fetch-diagram:` AsciiDoc attribute in your document header:
 
 ```asciidoc
 = My Amazing Document
