@@ -41,8 +41,8 @@
 	"asciidoc.preview.openLinksToAsciidocFiles.inPreview": "Try to open links in the editor",
 	"asciidoc.preview.openLinksToAsciidocFiles.inEditor": "Try to open links in the preview",
 	"asciidoc.extensions.enableKroki.desc": "Enables Kroki extension to generate diagrams.",
-	"asciidoc.extensions.registerWorkspaceExtensions.desc": "Enables Asciidoctor.js extensions registration.",
-	"asciidoc.debug.trace.desc": "Enables debug logging for the AsciiDoc extension.",
+	"asciidoc.extensions.registerWorkspaceExtensions.desc": "Enables Asciidoctor.js extensions registration from the workspace directory `.asciidoctor/lib`.",
+	"asciidoc.debug.trace.desc": "Enables debug logging for this extension.",
 	"asciidoc.debug.enableErrorDiagnostics.desc": "Provides error diagnostics.",
 	"asciidoc.useWorkspaceRootAsBaseDirectory.desc": "When in a workspace, uses the workspace root path as the base directory.",
 
