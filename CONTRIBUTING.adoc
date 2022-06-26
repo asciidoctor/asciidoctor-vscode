@@ -46,9 +46,11 @@ In that case, you must close your Visual Studio code instance otherwise you will
 
 On Linux to test the extension run the following command within the repository folder from the command line:
 
- $ npm run build-web && npx @vscode/test-web --browserType=chromium --extensionDevelopmentPath=${PWD}
+ $ npm run build-web && npm run build-preview && npx @vscode/test-web --browserType=chromium --extensionDevelopmentPath=${PWD}
+ 
+IMPORTANT: In development, you will need to disable security because resources are loaded through http://localhost:3000/static/devextensions
 
-Looking at the browser's Web Developer tools can often help locate errors.
+TIP: Looking at the browser's Web Developer tools can often help locate errors.
 
 == Updating The Grammar
 
