@@ -2,7 +2,6 @@ import * as vscode from 'vscode'
 import * as os from 'os'
 import * as fs from 'fs'
 import * as path from 'path'
-import url from 'url'
 import { exec, spawn, SpawnOptions, StdioPipe } from 'child_process'
 import commandExists from 'command-exists'
 import { uuidv4 } from 'uuid'
@@ -27,6 +26,7 @@ export class ExportAsPDF implements Command {
     }
 
     const doc = editor.document
+    const workspaceFolder = vscode.workspace.getWorkspaceFolder(doc.uri);
     const docUri = path.parse(path.resolve(doc.fileName))
     const baseDirectory = path.join(docUri.root, docUri.dir)
     const pdfFilename = vscode.Uri.file(path.join(baseDirectory, docUri.name + '.pdf'))
@@ -40,9 +40,12 @@ export class ExportAsPDF implements Command {
 
     const pdfOutputPath = pdfOutputUri.fsPath
     const text = doc.getText()
-    const pdfEnfine = asciidocPdfConfig.get("engine");
+    const pdfEnfine = asciidocPdfConfig.get("engine")
     if (pdfEnfine === "asciidoctor-pdf") {
-      const asciidoctorPdfCommandPath = asciidocPdfConfig.get('asciidoctorPdfCommandPath', 'asciidoctor-pdf')
+      let asciidoctorPdfCommandPath = asciidocPdfConfig.get('asciidoctorPdfCommandPath', 'asciidoctor-pdf')
+      if (workspaceFolder && asciidoctorPdfCommandPath.includes('${workspaceFolder}')) {
+        asciidoctorPdfCommandPath = asciidoctorPdfCommandPath.replace('${workspaceFolder}', workspaceFolder.uri.fsPath)
+      }
       const asciidoctorPdfCommandArgs = asciidocPdfConfig.get<string[]>('asciidoctorPdfCommandArgs', [])
       const defaultArgs = [
         '-q', // quiet
@@ -52,6 +55,7 @@ export class ExportAsPDF implements Command {
         `"${pdfOutputPath.replace('"', '\\"')}"` // output file
       ]
       const args = defaultArgs.concat(asciidoctorPdfCommandArgs)
+        .concat('-') // read from stdin
 
       try {
         // question: do we really need `shell: true`?
@@ -65,7 +69,10 @@ export class ExportAsPDF implements Command {
         await vscode.window.showErrorMessage(`Unable to generate a PDF using asciidoctor-pdf: ${err}`)
       }
     } else if (pdfEnfine === 'wkhtmltopdf') {
-      const wkhtmltopdfCommandPath = asciidocPdfConfig.get('wkhtmltopdfCommandPath', `wkhtmltopdf${process.platform === 'win32' ? '.exe' : ''}`)
+      let wkhtmltopdfCommandPath = asciidocPdfConfig.get('wkhtmltopdfCommandPath', `wkhtmltopdf${process.platform === 'win32' ? '.exe' : ''}`)
+      if (workspaceFolder && wkhtmltopdfCommandPath.includes('${workspaceFolder}')) {
+        wkhtmltopdfCommandPath = wkhtmltopdfCommandPath.replace('${workspaceFolder}', workspaceFolder.uri.fsPath)
+      }
       try {
         await commandExists(wkhtmltopdfCommandPath)
       } catch (error) {
@@ -89,7 +96,7 @@ export class ExportAsPDF implements Command {
         defaultArgs.push('cover', coverFilePath)
       }
       defaultArgs.push('-', pdfOutputPath)
-      const args = defaultArgs.concat(wkhtmltopdfCommandArgs);
+      const args = defaultArgs.concat(wkhtmltopdfCommandArgs)
 
       try {
         await execute(wkhtmltopdfCommandPath, args, html, { cwd: baseDirectory, stdio: ['pipe', 'ignore', 'pipe'] })
@@ -109,7 +116,7 @@ export class ExportAsPDF implements Command {
 
 function execute(command: string, args: string[], input: string, options: SpawnOptions) {
   return new Promise(function (resolve, reject) {
-    const process = spawn(command, args, options);
+    const process = spawn(command, args, options)
     const stderrOutput = []
     process.stderr.on('data', (data) => {
       stderrOutput.push(data)
@@ -170,49 +177,6 @@ function createCoverFile (titlePageLogo: string, baseDir: string, document: Asci
   const tmpFilePath = path.join(os.tmpdir(), uuidv4() + '.html')
   fs.writeFileSync(tmpFilePath, coverHtmlContent, 'utf-8')
   return tmpFilePath
-}
-
-async function downloadFile (downloadURL: string, filename: string, progress): Promise<void> {
-  // load "follow-redirects" only when needed (because this module cannot be loaded in a browser environment)
-  const followRedirects = await import('follow-redirects')
-  return new Promise((resolve, reject) => {
-    const downloadOptions = url.parse(downloadURL)
-    const wstream = fs.createWriteStream(filename)
-    let totalDownloaded = 0
-    // Proxy support needs to be reworked
-    // var proxy = process.env.http_proxy || vscode.workspace.getConfiguration("http", null)["proxy"].trim();
-    // var proxyStrictSSL = vscode.workspace.getConfiguration("http", null)["proxyStrictSSL"];
-    // if (proxy != '')
-    // {
-    //   var agent = new HttpsProxyAgent(proxy);
-    //   downloadOptions.agent = agent
-    //   downloadOptions.rejectUnauthorized = proxyStrictSSL
-    // }
-    followRedirects.https.get(downloadOptions, (resp) => {
-      const contentSize = resp.headers['content-length']
-      if (resp.statusCode !== 200) {
-        wstream.end()
-        fs.unlinkSync(filename)
-        return reject(new Error('http error' + resp.statusCode))
-      }
-
-      // A chunk of data has been recieved.
-      resp.on('data', (chunk) => {
-        totalDownloaded += chunk.length
-        progress.report({ message: 'Downloading wkhtmltopdf ... ' + ((totalDownloaded / contentSize) * 100.0).toFixed(0) + '%' })
-        wstream.write(chunk)
-      })
-
-      // The whole response has been received. Print out the result.
-      resp.on('end', () => {
-        wstream.end()
-        resolve()
-      })
-    }).on('error', (err) => {
-      console.error('Error: ' + err.message)
-      reject(err)
-    })
-  })
 }
 
 function offerOpen (destination) {

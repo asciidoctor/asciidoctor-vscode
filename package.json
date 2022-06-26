@@ -600,9 +600,6 @@
 		"@orcid/bibtex-parse-js": "0.0.25",
 		"asciidoctor-kroki": "0.15.4",
 		"command-exists": "^1.2.9",
-		"file-url": "4.0.0",
-		"follow-redirects": "1.14.8",
-		"https-proxy-agent": "5.0.0",
 		"uuid": "8.3.2",
 		"vscode-nls": "5.0.0"
 	}
