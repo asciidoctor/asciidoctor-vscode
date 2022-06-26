@@ -149,13 +149,13 @@ This will store images by default in your document folder, however you may also 
 
 ### Use Asciidoctor.js extensions
 
-When using the preview, the VS code extension can load and register Asciidoctor.js extensions.
+When using the preview, the VS Code extension can load and register Asciidoctor.js extensions.
 
 By convention, extensions must be located in `.asciidoctor/lib` (at the root of your workspace).
-The VS code extension will recursively load all files with the extension `.js` as Asciidoctor.js extensions.
+The VS Code extension will recursively load all files with the extension `.js` as Asciidoctor.js extensions.
 For instance, the following files will be loaded: `.asciidoctor/lib/emoji.js`, `.asciidoctor/lib/emoji/index.js` and `.asciidoctor/lib/foo/bar/baz.js`.
 
-In order to use an Asciidoctor.js extension, you should enable the feature by checking "Enable Asciidoctor.js extensions registration" in the extension settings.
+To use an Asciidoctor.js extension, you should enable the feature by checking "Enable Asciidoctor.js extensions registration" in the extension settings.
 The first time, you will also need to confirm that you trust the authors of the Asciidoctor.js extensions located in _.asciidoctor/lib_.
 
 ![Asciidoctor.js extensions trust confirmation message](images/asciidoctor-vscode-trust-exts.png)
@@ -165,7 +165,7 @@ The first time, you will also need to confirm that you trust the authors of the 
 **💡 Tip:** You can always update the trust mode using the command "Manage Asciidoctor.js Extensions Trust Mode".
 
 You can create a new extension by creating a JavaScript file in the `.asciidoctor/lib` directory or use an existing one.  
-Here's an exemple on how to use the [asciidoctor-emoji](https://github.com/mogztter/asciidoctor-emoji) extension:
+Here's an example of how to use the [asciidoctor-emoji](https://github.com/mogztter/asciidoctor-emoji) extension:
 
 1. Install the npm package in the workspace directory:
 
@@ -239,7 +239,7 @@ When you do open an issue, remember to include the following information:
 2. VSCode version, OS (_Help -> About_) and extension version
 3. Steps to reproduce the issue<br/>
 **IMPORTANT**: We cannot solve the issue if you do not explain how you encountered it
-4. If the problem occurs only with a specific file, attach it, together with any screnshot that might better show what the issue is.
+4. If the problem occurs only with a specific file, attach it, together with any screenshot that might better show what the issue is.
 
 If your issue only appeared after updating to a new version of the extension, you can roll back to a previous one via the extensions browser. Click on the small gear icon beside the AsciiDoc extension, then select _Install Another Version..._. A selection menu will appear allowing you to select which version you want to install.
 
@@ -258,45 +258,4 @@ If you want to update the readme, you are free to fix typos, errors, and add or 
 * [Asciidoctor.js](https://asciidoctor.org/docs/asciidoctor.js/) for the preview
 * [Asciidoctor PDF](https://asciidoctor.org/docs/asciidoctor-pdf/) for the _Export to PDF_ function
 * [wkhtmltopdf](https://wkhtmltopdf.org/) for the _Export to PDF_ function
-
-All the following people who have contributed to the extension:
-
-<!-- This list is generated using (on linux) a command something like:
-
-    git log --format='%aN' | sort -u | awk '{print "* "$0}' | uniq
-
--->
-
-* Achille Lacoin
-* Andre Bossert
-* Bart Sokol
-* chriskoerner
-* cirrusj
-* Dan Allen
-* Daniel Mulholland
-* danyill
-* Garrett D'Amore
-* Gigacee
-* Guillaume Grossetie
-* Jackson C. Wiebe
-* jacksoncougar
-* João Pinto
-* Johannes Rössel
-* Joshua Stafman
-* Kevin Palmowski
-* Lars Hvam
-* larshp
-* Loïc PÉRON
-* Marcelo Alvim
-* Mark Roszko
-* Masanori Asano
-* Matteo Campinoti
-* MatteoCampinoti94
-* ojn
-* Øyvind Hansen
-* sgn
-* shaneknysh
-* Stephen Pegoraro
-* Tatsunori Uchino
-* Tilmann Oestreich
-* Waldir Pimenta
+* [Each and every contributor](https://github.com/asciidoctor/asciidoctor-vscode/graphs/contributors) to this extension.

@@ -1,5 +1,48 @@
 # CHANGELOG
 
+## 3.0.0
+
+### Improvements
+
+- add Japanese localisation by @YoshihideShirai (#581)
+- register Asciidoctor.js extensions by @YoshihideShirai (#569)
+- create a complete HTML document using the WebView converter by @Mogztter (#547)
+- add code folding based on sections by @marieflorescontact (#550)
+- add code folding on conditionals by @marieflorescontact (#555)
+- add code folding on open blocks by @marieflorescontact (#559)
+- add code folding on comment blocks by @marieflorescontact (#561)
+- add code folding on single line comment by @marieflorescontact (#565)
+- update preview icons and use codicons by @Mogztter (#54)
+- use load instead of convert for performance by @Mogztter (#542)
+
+### Bug fixes
+
+- set `basebackend` and `outfilesuffix` on the WebView converter otherwise Docinfo are not correctly included (#522)
+- activate completion only when `:` is at the start of the line by @Mogztter (#529)
+- correctly pass the `--footer-center` option to `wkthtmltopdf` by @gurbindersingh (#526)
+- fix asciidoctor-pdf and wkhtmltopdf user settings by @meznom (#533)
+- set CSS variables for font size, font family and line height by @Mogztter (#530)
+- fix format of paste image default filename by @Zhou-Yicheng (#558)
+- show source action does not open a new pane (if the source is already opened) by @marieflorescontact (#562)
+- fix for opening links to local files in preview window by @tombolano & @marieflorescontact (#572 #573)
+
+### Infrastructure
+
+- upgrade dependencies (#515)
+- extract the report errors logic into a dedicated function by @Mogztter (#534)
+- extract get baseDir logic by @Mogztter (#535)
+- remove superfluous `copycss` by @Mogztter (#538)
+- unwrap convertUsingJavascript function by @Mogztter (#537)
+- introduce a load function by @Mogztter (#541)
+- remove slugifier (unused) from AsciidocEngine by @Mogztter (#545)
+- introduce an export function by @Mogztter (#546)
+
+### Documentation
+
+- add basic instructions on how to develop/test the extension by @danyill (#540)
+- fix manual install command in README by @marieflorescontact (#544)
+- update contributing guide by @Mogztter (#554)
+
 ## 2.9.8
 
 - Fix regression about Docinfo files by setting `basebackend` and `outfilesuffix` (#524)
