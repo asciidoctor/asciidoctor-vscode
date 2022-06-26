@@ -110,8 +110,8 @@ export class AsciidocParser {
     // extension context should be at constructor
     const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState)
     const workspacePath = vscode.workspace.workspaceFolders
-    const previewAttributes = vscode.workspace.getConfiguration('asciidoc', null).get('preview.attributes', {})
-    const enableErrorDiagnostics = vscode.workspace.getConfiguration('asciidoc', null).get('enableErrorDiagnostics')
+    const previewAttributes = vscode.workspace.getConfiguration('asciidoc.preview', null).get('asciidoctorAttributes', {})
+    const enableErrorDiagnostics = vscode.workspace.getConfiguration('asciidoc.debug', null).get('enableErrorDiagnostics')
 
     if (this.errorCollection) {
       this.errorCollection.clear()

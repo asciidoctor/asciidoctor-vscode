@@ -59,8 +59,8 @@ export class Logger {
   private readTrace (): TraceType {
     return Trace.fromString(
       vscode.workspace
-        .getConfiguration(null, null)
-        .get<string>('asciidoc.trace', 'off')
+        .getConfiguration('asciidoc.debug', null)
+        .get<string>('trace', 'off')
     )
   }
 
