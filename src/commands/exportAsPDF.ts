@@ -3,7 +3,6 @@ import * as os from 'os'
 import * as fs from 'fs'
 import * as path from 'path'
 import { exec, spawn, SpawnOptions, StdioPipe } from 'child_process'
-import commandExists from 'command-exists'
 import { uuidv4 } from 'uuid'
 import * as zlib from 'zlib'
 import { AsciidocEngine } from '../asciidocEngine'
@@ -26,7 +25,12 @@ export class ExportAsPDF implements Command {
     }
 
     const doc = editor.document
-    const workspaceFolder = vscode.workspace.getWorkspaceFolder(doc.uri);
+    const workspaceFolder = vscode.workspace.getWorkspaceFolder(doc.uri)
+    if (workspaceFolder === undefined) {
+      await vscode.window.showWarningMessage('Unable to get the workspace folder, aborting.')
+      return
+    }
+    const workspacePath = workspaceFolder.uri.fsPath
     const docUri = path.parse(path.resolve(doc.fileName))
     const baseDirectory = path.join(docUri.root, docUri.dir)
     const pdfFilename = vscode.Uri.file(path.join(baseDirectory, docUri.name + '.pdf'))
@@ -34,17 +38,50 @@ export class ExportAsPDF implements Command {
     const asciidocPdfConfig = vscode.workspace.getConfiguration('asciidoc.pdf')
     const pdfOutputUri = await vscode.window.showSaveDialog({ defaultUri: pdfFilename })
     if (!pdfOutputUri) {
-      console.log(`No output directory selected to save the PDF, aborting.`)
+      console.log('No output directory selected to save the PDF, aborting.')
       return
     }
 
     const pdfOutputPath = pdfOutputUri.fsPath
     const text = doc.getText()
-    const pdfEnfine = asciidocPdfConfig.get("engine")
-    if (pdfEnfine === "asciidoctor-pdf") {
+    const pdfEnfine = asciidocPdfConfig.get('engine')
+    if (pdfEnfine === 'asciidoctor-pdf') {
       let asciidoctorPdfCommandPath = asciidocPdfConfig.get('asciidoctorPdfCommandPath', 'asciidoctor-pdf')
-      if (workspaceFolder && asciidoctorPdfCommandPath.includes('${workspaceFolder}')) {
-        asciidoctorPdfCommandPath = asciidoctorPdfCommandPath.replace('${workspaceFolder}', workspaceFolder.uri.fsPath)
+      if (asciidoctorPdfCommandPath.includes('${workspaceFolder}')) {
+        asciidoctorPdfCommandPath = asciidoctorPdfCommandPath.replace('${workspaceFolder}', workspacePath)
+      }
+      try {
+        await commandExists(asciidoctorPdfCommandPath, { shell: true, cwd: workspacePath })
+      } catch (error) {
+        // command does not exist!
+        console.error(error)
+        const answer = await vscode.window.showInformationMessage('This feature requires asciidoctor-pdf. Do you want to install the latest version locally (in .bundle/gems) using Bundler? Alternatively, you can configure the path to the asciidoctor-pdf executable from the extension settings.', 'Install locally')
+        if (answer === 'Install locally') {
+          const temporaryGemfile = path.join(workspacePath, '.asciidoctor-vscode-asciidoctor-pdf-gemfile')
+          try {
+            await execute('bundle', ['config', '--local', 'path', '.bundle/gem'], undefined, { cwd: workspacePath })
+            fs.writeFileSync(temporaryGemfile, `source 'https://rubygems.org'
+
+gem 'asciidoctor-pdf'`, { encoding: 'utf8' })
+            await execute('bundle', ['install', '--gemfile', '.asciidoctor-vscode-asciidoctor-pdf-gemfile'], undefined, { cwd: workspacePath })
+          } catch (err) {
+            await vscode.window.showErrorMessage(`Unable to install the latest version of asciidoctor-pdf using Bundler: ${err}`)
+            return
+          } finally {
+            try {
+              fs.unlinkSync(temporaryGemfile)
+            } catch (err) {
+              console.warn('Unable to unlink Gemfile', err)
+            }
+            try {
+              fs.unlinkSync(`${temporaryGemfile}.lock`)
+            } catch (err) {
+              console.warn('Unable to unlink Gemfile.lock', err)
+            }
+          }
+        } else {
+          return
+        }
       }
       const asciidoctorPdfCommandArgs = asciidocPdfConfig.get<string[]>('asciidoctorPdfCommandArgs', [])
       const defaultArgs = [
@@ -52,16 +89,12 @@ export class ExportAsPDF implements Command {
         '-B',
         `"${baseDirectory.replace('"', '\\"')}"`, // base directory
         '-o',
-        `"${pdfOutputPath.replace('"', '\\"')}"` // output file
+        `"${pdfOutputPath.replace('"', '\\"')}"`, // output file
       ]
       const args = defaultArgs.concat(asciidoctorPdfCommandArgs)
         .concat('-') // read from stdin
 
       try {
-        // question: do we really need `shell: true`?
-        // from the Node.js documentation:
-        // > if the shell option is enabled, do not pass unsanitized user input to this function. Any input containing shell metacharacters may be used to trigger arbitrary command execution.
-        // https://nodejs.org/api/child_process.html#child_processspawnsynccommand-args-options
         await execute(asciidoctorPdfCommandPath, args, text, { shell: true, cwd: baseDirectory })
         offerOpen(pdfOutputPath)
       } catch (err) {
@@ -70,11 +103,11 @@ export class ExportAsPDF implements Command {
       }
     } else if (pdfEnfine === 'wkhtmltopdf') {
       let wkhtmltopdfCommandPath = asciidocPdfConfig.get('wkhtmltopdfCommandPath', `wkhtmltopdf${process.platform === 'win32' ? '.exe' : ''}`)
-      if (workspaceFolder && wkhtmltopdfCommandPath.includes('${workspaceFolder}')) {
-        wkhtmltopdfCommandPath = wkhtmltopdfCommandPath.replace('${workspaceFolder}', workspaceFolder.uri.fsPath)
+      if (wkhtmltopdfCommandPath.includes('${workspaceFolder}')) {
+        wkhtmltopdfCommandPath = wkhtmltopdfCommandPath.replace('${workspaceFolder}', workspacePath)
       }
       try {
-        await commandExists(wkhtmltopdfCommandPath)
+        await commandExists(wkhtmltopdfCommandPath, { shell: true, cwd: workspacePath })
       } catch (error) {
         // command does not exist!
         console.error(error)
@@ -99,7 +132,7 @@ export class ExportAsPDF implements Command {
       const args = defaultArgs.concat(wkhtmltopdfCommandArgs)
 
       try {
-        await execute(wkhtmltopdfCommandPath, args, html, { cwd: baseDirectory, stdio: ['pipe', 'ignore', 'pipe'] })
+        await execute(wkhtmltopdfCommandPath, args, html, { shell: true, cwd: workspacePath, stdio: ['pipe', 'ignore', 'pipe'] })
         offerOpen(pdfOutputPath)
       } catch (err) {
         console.error('Unable to generate a PDF using wkhtmltopdf: ', err)
@@ -114,7 +147,30 @@ export class ExportAsPDF implements Command {
   }
 }
 
-function execute(command: string, args: string[], input: string, options: SpawnOptions) {
+function commandExists (command: string, options: SpawnOptions): Promise<{ stdout: string, code: number }> {
+  const process = spawn(command, ['--version'], options)
+  return new Promise(function (resolve, reject) {
+    const stdoutOutput = []
+    process.stdout.on('data', (data) => {
+      stdoutOutput.push(data)
+    })
+    process.on('close', function (code) {
+      if (code === 0) {
+        resolve({
+          stdout: stdoutOutput.join('\n'),
+          code,
+        })
+      } else {
+        reject(new Error(`command failed: ${command}`))
+      }
+    })
+    process.on('error', function (err) {
+      reject(err)
+    })
+  })
+}
+
+function execute (command: string, args: string[], input: string | undefined, options: SpawnOptions): Promise<boolean> {
   return new Promise(function (resolve, reject) {
     const process = spawn(command, args, options)
     const stderrOutput = []
@@ -131,8 +187,10 @@ function execute(command: string, args: string[], input: string, options: SpawnO
     process.on('error', function (err) {
       reject(err)
     })
-    process.stdin.write(input)
-    process.stdin.end()
+    if (input !== undefined) {
+      process.stdin.write(input)
+      process.stdin.end()
+    }
   })
 }
 
@@ -184,9 +242,9 @@ function offerOpen (destination) {
   vscode.window.showInformationMessage(('Successfully converted to ' + path.basename(destination)), 'Open File').then((label: string) => {
     if (label === 'Open File') {
       switch (process.platform) {
-      // Use backticks for unix systems to run the open command directly
-      // This avoids having to wrap the command AND path in quotes which
-      // breaks if there is a single quote (') in the path
+        // Use backticks for unix systems to run the open command directly
+        // This avoids having to wrap the command AND path in quotes which
+        // breaks if there is a single quote (') in the path
         case 'win32':
           exec(`"${destination.replace('"', '\\"')}"`)
           break

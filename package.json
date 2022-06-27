@@ -436,7 +436,7 @@
 					},
 					"asciidoc.pdf.asciidoctorPdfCommandPath": {
 						"type": "string",
-						"default": "asciidoctor-pdf",
+						"default": "bundle exec asciidoctor-pdf",
 						"markdownDescription": "%asciidoc.pdf.asciidoctorPdfCommandPath.desc%",
 						"order": 2,
 						"scope": "resource"
@@ -599,7 +599,6 @@
 		"@asciidoctor/docbook-converter": "2.0.0",
 		"@orcid/bibtex-parse-js": "0.0.25",
 		"asciidoctor-kroki": "0.15.4",
-		"command-exists": "^1.2.9",
 		"uuid": "8.3.2",
 		"vscode-nls": "5.0.0"
 	}
