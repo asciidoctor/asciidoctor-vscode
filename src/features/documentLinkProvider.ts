@@ -2,15 +2,14 @@
   *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { localize } from '../i18n'
 import * as path from 'path'
 import * as vscode from 'vscode'
-import * as nls from 'vscode-nls'
 import { OpenDocumentLinkCommand } from '../commands/openDocumentLink'
 import { getUriForLinkWithKnownExternalScheme } from '../util/links'
 import { similarArrayMatch } from '../similarArrayMatch'
 import { isSchemeBlacklisted } from '../linkSanitizer'
 
-const localize = nls.loadMessageBundle()
 export interface AsciidoctorLinkRegexes {
   [key: string]: RegExp
 }
@@ -88,7 +87,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
             new vscode.Position(lineNo, 9),
             new vscode.Position(lineNo, entry.length + 9)),
           normalizeLink(document, entry.name, base))
-        documentLink.tooltip = localize('documentLink.tooltip', 'Open file') + ' ' + entry.name
+        documentLink.tooltip = localize('documentLink.openFile.tooltip', 'Open file {0}', entry.name)
         results.push(documentLink)
       })
     }

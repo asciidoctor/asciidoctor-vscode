@@ -1,0 +1,5 @@
+{
+  "preview.locked.title": "[Prévisualisation] {0}",
+  "preview.unlocked.title": "Prévisualisation {0}",
+  "preview.styleLoadError.message": "Impossible de charger la feuille de style 'asciidoc.preview.style' : {0}"
+}

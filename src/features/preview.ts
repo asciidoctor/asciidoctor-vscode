@@ -2,6 +2,7 @@
   *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { localize } from '../i18n'
 import * as vscode from 'vscode'
 import * as path from 'path'
 
@@ -9,15 +10,11 @@ import { Logger } from '../logger'
 import { AsciidocContentProvider } from './previewContentProvider'
 import { disposeAll, Disposable } from '../util/dispose'
 import { WebviewResourceProvider } from '../util/resources'
-
-import * as nls from 'vscode-nls'
 import { AsciidocFileTopmostLineMonitor, getVisibleLine } from '../util/topmostLineMonitor'
 import { AsciidocPreviewConfigurationManager } from './previewConfig'
 import { AsciidocContributions } from '../asciidocExtensions'
 import { isAsciidocFile } from '../util/file'
 import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink'
-
-const localize = nls.loadMessageBundle()
 
 export class AsciidocPreview extends Disposable implements WebviewResourceProvider {
   public static viewType = 'asciidoc.preview'
@@ -154,7 +151,7 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
           break
 
         case 'previewStyleLoadError':
-          vscode.window.showWarningMessage(localize('onPreviewStyleLoadError', "Could not load 'asciidoc.styles': {0}", e.body.unloadedStyles.join(', ')))
+          vscode.window.showWarningMessage(localize('preview.styleLoadError.message', "Could not load 'asciidoc.styles': {0}", e.body.unloadedStyles.join(', ')))
           break
       }
     }, null, this.disposables)
@@ -312,8 +309,8 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
 
   private static getPreviewTitle (resource: vscode.Uri, locked: boolean): string {
     return locked
-      ? localize('lockedPreviewTitle', '[Preview] {0}', path.basename(resource.fsPath))
-      : localize('previewTitle', 'Preview {0}', path.basename(resource.fsPath))
+      ? localize('preview.locked.title', '[Preview] {0}', path.basename(resource.fsPath))
+      : localize('preview.unlocked.title', 'Preview {0}', path.basename(resource.fsPath))
   }
 
   private updateForView (resource: vscode.Uri, topLine: number | undefined) {

@@ -1,7 +1,8 @@
 /*---------------------------------------------------------------------------------------------
   *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-
+// This must be the first import in the main entry file
+import './i18n'
 import * as vscode from 'vscode'
 import { CommandManager } from './commandManager'
 import * as commands from './commands/index'
