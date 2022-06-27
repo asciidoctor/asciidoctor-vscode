@@ -2,9 +2,8 @@ import * as vscode from 'vscode'
 import * as os from 'os'
 import * as fs from 'fs'
 import * as path from 'path'
-import { exec, spawn, SpawnOptions, StdioPipe } from 'child_process'
+import { exec, spawn, SpawnOptions } from 'child_process'
 import { uuidv4 } from 'uuid'
-import * as zlib from 'zlib'
 import { AsciidocEngine } from '../asciidocEngine'
 import { Command } from '../commandManager'
 import { Logger } from '../logger'
@@ -47,9 +46,8 @@ export class ExportAsPDF implements Command {
     const pdfEnfine = asciidocPdfConfig.get('engine')
     if (pdfEnfine === 'asciidoctor-pdf') {
       let asciidoctorPdfCommandPath = asciidocPdfConfig.get('asciidoctorPdfCommandPath', 'asciidoctor-pdf')
-      if (asciidoctorPdfCommandPath.includes('${workspaceFolder}')) {
-        asciidoctorPdfCommandPath = asciidoctorPdfCommandPath.replace('${workspaceFolder}', workspacePath)
-      }
+      /* eslint-disable-next-line no-template-curly-in-string */
+      asciidoctorPdfCommandPath = asciidoctorPdfCommandPath.replace('${workspaceFolder}', workspacePath)
       try {
         await commandExists(asciidoctorPdfCommandPath, { shell: true, cwd: workspacePath })
       } catch (error) {
@@ -103,9 +101,8 @@ gem 'asciidoctor-pdf'`, { encoding: 'utf8' })
       }
     } else if (pdfEnfine === 'wkhtmltopdf') {
       let wkhtmltopdfCommandPath = asciidocPdfConfig.get('wkhtmltopdfCommandPath', `wkhtmltopdf${process.platform === 'win32' ? '.exe' : ''}`)
-      if (wkhtmltopdfCommandPath.includes('${workspaceFolder}')) {
-        wkhtmltopdfCommandPath = wkhtmltopdfCommandPath.replace('${workspaceFolder}', workspacePath)
-      }
+      /* eslint-disable-next-line no-template-curly-in-string */
+      wkhtmltopdfCommandPath = wkhtmltopdfCommandPath.replace('${workspaceFolder}', workspacePath)
       try {
         await commandExists(wkhtmltopdfCommandPath, { shell: true, cwd: workspacePath })
       } catch (error) {
