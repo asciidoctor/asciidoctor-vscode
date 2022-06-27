@@ -43,10 +43,13 @@ export class AsciidocEngine {
     return { output, document }
   }
 
-  public async export (textDocument: vscode.TextDocument, backend: AsciidoctorBuiltInBackends): Promise<{ output: string, document: Asciidoctor.Document }> {
+  public async export (
+    textDocument: vscode.TextDocument,
+    backend: AsciidoctorBuiltInBackends,
+    asciidoctorAttributes = {}
+  ): Promise<{ output: string, document: Asciidoctor.Document }> {
     const parser = this.getEngine()
-
-    return parser.export(textDocument.getText(), textDocument, backend)
+    return parser.export(textDocument.getText(), textDocument, backend, asciidoctorAttributes)
   }
 
   public load (textDocument: SkinnyTextDocument): Asciidoctor.Document {

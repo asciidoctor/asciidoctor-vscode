@@ -90,7 +90,7 @@ gem 'asciidoctor-pdf'`, { encoding: 'utf8' })
         `"${pdfOutputPath.replace('"', '\\"')}"`, // output file
       ]
       const args = defaultArgs.concat(asciidoctorPdfCommandArgs)
-        .concat('-') // read from stdin
+        .concat(['-']) // read from stdin
 
       try {
         await execute(asciidoctorPdfCommandPath, args, text, { shell: true, cwd: baseDirectory })
@@ -100,33 +100,43 @@ gem 'asciidoctor-pdf'`, { encoding: 'utf8' })
         await vscode.window.showErrorMessage(`Unable to generate a PDF using asciidoctor-pdf: ${err}`)
       }
     } else if (pdfEnfine === 'wkhtmltopdf') {
-      let wkhtmltopdfCommandPath = asciidocPdfConfig.get('wkhtmltopdfCommandPath', `wkhtmltopdf${process.platform === 'win32' ? '.exe' : ''}`)
-      /* eslint-disable-next-line no-template-curly-in-string */
-      wkhtmltopdfCommandPath = wkhtmltopdfCommandPath.replace('${workspaceFolder}', workspacePath)
+      let wkhtmltopdfCommandPath = asciidocPdfConfig.get('wkhtmltopdfCommandPath', '')
+      if (wkhtmltopdfCommandPath === '') {
+        wkhtmltopdfCommandPath = `wkhtmltopdf${process.platform === 'win32' ? '.exe' : ''}`
+      } else {
+        /* eslint-disable-next-line no-template-curly-in-string */
+        wkhtmltopdfCommandPath = wkhtmltopdfCommandPath.replace('${workspaceFolder}', workspacePath)
+      }
       try {
         await commandExists(wkhtmltopdfCommandPath, { shell: true, cwd: workspacePath })
       } catch (error) {
         // command does not exist!
         console.error(error)
-        await vscode.window.showInformationMessage('This feature requires wkhtmltopdf. Please download the latest version from https://wkhtmltopdf.org/downloads.html. If wkhtmltopdf is not available on your path, you can configure the path to wkhtmltopdf executable from the extension settings.')
+        const answer = await vscode.window.showInformationMessage('This feature requires wkhtmltopdf. Please download the latest version from https://wkhtmltopdf.org/downloads.html. If wkhtmltopdf is not available on your path, you can configure the path to wkhtmltopdf executable from the extension settings.', 'Download')
+        if (answer === 'Download') {
+          vscode.env.openExternal(vscode.Uri.parse('https://wkhtmltopdf.org/downloads.html'))
+        }
         return
       }
       const wkhtmltopdfCommandArgs = asciidocPdfConfig.get<string[]>('wkhtmltopdfCommandArgs', [])
-      const defaultArgs = ['--encoding', ' utf-8', '--javascript-delay', '1000']
+      const defaultArgs = ['--enable-local-file-access', '--encoding', ' utf-8', '--javascript-delay', '1000']
 
-      const { output: html, document } = await this.engine.export(doc, 'html5')
+      const { output: html, document } = await this.engine.export(doc, 'html5', { 'data-uri@': '' })
       const footerCenter = document?.getAttribute('footer-center')
       if (footerCenter) {
         defaultArgs.push('--footer-center', footerCenter)
       }
+      const objectArgs = []
       const showTitlePage = (document?.isAttribute('showTitlePage') as unknown) as boolean // incorrect type definition in Asciidoctor.js
       const titlePageLogo = document?.getAttribute('titlePageLogo')
       const coverFilePath = showTitlePage ? createCoverFile(titlePageLogo, baseDirectory, document) : undefined
       if (coverFilePath) {
-        defaultArgs.push('cover', coverFilePath)
+        objectArgs.push('cover', coverFilePath)
       }
-      defaultArgs.push('-', pdfOutputPath)
+      // wkhtmltopdf [GLOBAL OPTION]... [OBJECT]... <output file>
       const args = defaultArgs.concat(wkhtmltopdfCommandArgs)
+        .concat(objectArgs)
+        .concat(['-', pdfOutputPath]) // read from stdin and outputfile
 
       try {
         await execute(wkhtmltopdfCommandPath, args, html, { shell: true, cwd: workspacePath, stdio: ['pipe', 'ignore', 'pipe'] })
@@ -145,13 +155,13 @@ gem 'asciidoctor-pdf'`, { encoding: 'utf8' })
 }
 
 function commandExists (command: string, options: SpawnOptions): Promise<{ stdout: string, code: number }> {
-  const process = spawn(command, ['--version'], options)
+  const childProcess = spawn(command, ['--version'], { env: process.env, ...options })
   return new Promise(function (resolve, reject) {
     const stdoutOutput = []
-    process.stdout.on('data', (data) => {
+    childProcess.stdout.on('data', (data) => {
       stdoutOutput.push(data)
     })
-    process.on('close', function (code) {
+    childProcess.on('close', function (code) {
       if (code === 0) {
         resolve({
           stdout: stdoutOutput.join('\n'),
@@ -161,7 +171,7 @@ function commandExists (command: string, options: SpawnOptions): Promise<{ stdou
         reject(new Error(`command failed: ${command}`))
       }
     })
-    process.on('error', function (err) {
+    childProcess.on('error', function (err) {
       reject(err)
     })
   })
@@ -169,24 +179,24 @@ function commandExists (command: string, options: SpawnOptions): Promise<{ stdou
 
 function execute (command: string, args: string[], input: string | undefined, options: SpawnOptions): Promise<boolean> {
   return new Promise(function (resolve, reject) {
-    const process = spawn(command, args, options)
+    const childProcess = spawn(command, args, { env: process.env, ...options })
     const stderrOutput = []
-    process.stderr.on('data', (data) => {
+    childProcess.stderr.on('data', (data) => {
       stderrOutput.push(data)
     })
-    process.on('close', function (code) {
+    childProcess.on('close', function (code) {
       if (code === 0) {
         resolve(true)
       } else {
         reject(new Error(`command failed: ${command} ${args.join(' ')}\n${stderrOutput.join('\n')}`))
       }
     })
-    process.on('error', function (err) {
+    childProcess.on('error', function (err) {
       reject(err)
     })
     if (input !== undefined) {
-      process.stdin.write(input)
-      process.stdin.end()
+      childProcess.stdin.write(input)
+      childProcess.stdin.end()
     }
   })
 }

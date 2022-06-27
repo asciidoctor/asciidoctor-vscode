@@ -45,7 +45,8 @@ export class AsciidocParser {
   public async export (
     text: string,
     textDocument: vscode.TextDocument,
-    backend: AsciidoctorBuiltInBackends
+    backend: AsciidoctorBuiltInBackends,
+    asciidoctorAttributes = {}
   ): Promise<{ output: string, document: Asciidoctor.Document }> {
     const asciidocConfig = vscode.workspace.getConfiguration('asciidoc', null)
     if (this.errorCollection) {
@@ -62,6 +63,7 @@ export class AsciidocParser {
     const options: { [key: string]: any } = {
       attributes: {
         'env-vscode': '',
+        ...asciidoctorAttributes,
       },
       backend,
       extension_registry: registry,
