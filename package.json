@@ -436,7 +436,7 @@
 					},
 					"asciidoc.pdf.asciidoctorPdfCommandPath": {
 						"type": "string",
-						"default": "bundle exec asciidoctor-pdf",
+						"default": "",
 						"markdownDescription": "%asciidoc.pdf.asciidoctorPdfCommandPath.desc%",
 						"order": 2,
 						"scope": "resource"

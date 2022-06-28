@@ -11,10 +11,10 @@ import { Asciidoctor } from '@asciidoctor/core'
 
 export class ExportAsPDF implements Command {
   public readonly id = 'asciidoc.exportAsPDF'
+  private readonly installAsciidoctorPdfStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
 
-  constructor (private readonly engine: AsciidocEngine, private readonly logger: Logger) {
-    this.engine = engine
-    this.logger = logger
+  constructor (private readonly engine: AsciidocEngine, private readonly context: vscode.ExtensionContext, private readonly logger: Logger) {
+    this.installAsciidoctorPdfStatusBarItem.name = 'Asciidoctor PDF installer'
   }
 
   public async execute () {
@@ -45,41 +45,61 @@ export class ExportAsPDF implements Command {
     const text = doc.getText()
     const pdfEnfine = asciidocPdfConfig.get('engine')
     if (pdfEnfine === 'asciidoctor-pdf') {
-      let asciidoctorPdfCommandPath = asciidocPdfConfig.get('asciidoctorPdfCommandPath', 'asciidoctor-pdf')
-      /* eslint-disable-next-line no-template-curly-in-string */
-      asciidoctorPdfCommandPath = asciidoctorPdfCommandPath.replace('${workspaceFolder}', workspacePath)
-      try {
-        await commandExists(asciidoctorPdfCommandPath, { shell: true, cwd: workspacePath })
-      } catch (error) {
-        // command does not exist!
-        console.error(error)
-        const answer = await vscode.window.showInformationMessage('This feature requires asciidoctor-pdf. Do you want to install the latest version locally (in .bundle/gems) using Bundler? Alternatively, you can configure the path to the asciidoctor-pdf executable from the extension settings.', 'Install locally')
-        if (answer === 'Install locally') {
-          const temporaryGemfile = path.join(workspacePath, '.asciidoctor-vscode-asciidoctor-pdf-gemfile')
+      let asciidoctorPdfCommandPath = asciidocPdfConfig.get('asciidoctorPdfCommandPath', '')
+      let asciidoctorPdfCommandCwd = workspacePath
+      if (asciidoctorPdfCommandPath === '') {
+        try {
+          asciidoctorPdfCommandPath = 'asciidoctor-pdf'
+          await commandExists(asciidoctorPdfCommandPath, { shell: true, cwd: asciidoctorPdfCommandCwd })
+        } catch (asciidoctorPdfError) {
+          // command does not exist, trying to execute `bundle exec asciidoctor-pdf` from the extension global storage
+          console.warn(asciidoctorPdfError)
+          const globalStorageUri = this.context.globalStorageUri
+          const installDirectory = path.join(globalStorageUri.fsPath, 'asciidoctor-pdf-install')
           try {
-            await execute('bundle', ['config', '--local', 'path', '.bundle/gem'], undefined, { cwd: workspacePath })
-            fs.writeFileSync(temporaryGemfile, `source 'https://rubygems.org'
+            asciidoctorPdfCommandPath = 'bundle exec asciidoctor-pdf'
+            await commandExists(asciidoctorPdfCommandPath, { shell: true, cwd: installDirectory })
+            asciidoctorPdfCommandCwd = installDirectory
+          } catch (bundleExecError) {
+            // command does not exist!
+            console.warn(bundleExecError)
+            const answer = await vscode.window.showInformationMessage('This feature requires asciidoctor-pdf. Do you want to install the latest version locally using Bundler? Alternatively, you can configure the path to the asciidoctor-pdf executable from the extension settings.', 'Install locally')
+            if (answer === 'Install locally') {
+              this.installAsciidoctorPdfStatusBarItem.text = '$(loading~spin) Installing Asciidoctor PDF...'
+              this.installAsciidoctorPdfStatusBarItem.show()
+              try {
+                if (!fs.existsSync(installDirectory)) {
+                  fs.mkdirSync(installDirectory, { recursive: true })
+                }
+                const gemfile = path.join(installDirectory, 'Gemfile')
+
+                await execute('bundle', ['config', '--local', 'path', '.bundle/gem'], undefined, { cwd: installDirectory })
+                fs.writeFileSync(gemfile, `source 'https://rubygems.org'
 
 gem 'asciidoctor-pdf'`, { encoding: 'utf8' })
-            await execute('bundle', ['install', '--gemfile', '.asciidoctor-vscode-asciidoctor-pdf-gemfile'], undefined, { cwd: workspacePath })
-          } catch (err) {
-            await vscode.window.showErrorMessage(`Unable to install the latest version of asciidoctor-pdf using Bundler: ${err}`)
-            return
-          } finally {
-            try {
-              fs.unlinkSync(temporaryGemfile)
-            } catch (err) {
-              console.warn('Unable to unlink Gemfile', err)
-            }
-            try {
-              fs.unlinkSync(`${temporaryGemfile}.lock`)
-            } catch (err) {
-              console.warn('Unable to unlink Gemfile.lock', err)
+                await execute('bundle', ['install'], undefined, { cwd: installDirectory })
+                this.installAsciidoctorPdfStatusBarItem.text = '$(pass) Asciidoctor PDF installed!'
+                const answer = await vscode.window.showInformationMessage(`Successfully installed Asciidoctor PDF in ${installDirectory}`, 'Continue')
+                if (answer === 'Continue') {
+                  // continue
+                } else {
+                  return
+                }
+              } catch (err) {
+                await vscode.window.showErrorMessage(`Unable to install the latest version of asciidoctor-pdf using Bundler: ${err}`)
+                return
+              } finally {
+                this.installAsciidoctorPdfStatusBarItem.hide()
+              }
+              asciidoctorPdfCommandCwd = installDirectory
+            } else {
+              return
             }
           }
-        } else {
-          return
         }
+      } else {
+        /* eslint-disable-next-line no-template-curly-in-string */
+        asciidoctorPdfCommandPath = asciidoctorPdfCommandPath.replace('${workspaceFolder}', workspacePath)
       }
       const asciidoctorPdfCommandArgs = asciidocPdfConfig.get<string[]>('asciidoctorPdfCommandArgs', [])
       const defaultArgs = [
@@ -93,7 +113,7 @@ gem 'asciidoctor-pdf'`, { encoding: 'utf8' })
         .concat(['-']) // read from stdin
 
       try {
-        await execute(asciidoctorPdfCommandPath, args, text, { shell: true, cwd: baseDirectory })
+        await execute(asciidoctorPdfCommandPath, args, text, { shell: true, cwd: asciidoctorPdfCommandCwd })
         offerOpen(pdfOutputPath)
       } catch (err) {
         console.error('Unable to generate a PDF using asciidoctor-pdf: ', err)
