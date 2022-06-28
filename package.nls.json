@@ -15,9 +15,6 @@
 	"asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Manage Asciidoctor.js Extensions Trust Mode",
 	"asciidoc.showSource.title": "Show Source",
 
-	"asciidoc.previewLocked.title": "[Preview] {0}",
-	"asciidoc.previewUnlocked.title": "Preview {0}",
-
 	"asciidoc.preview.title": "Preview",
 	"asciidoc.preview.asciidoctorAttributes.desc": "Sets Asciidoctor attributes used in the preview. Attributes need to be written as an object of type {string: string}.",
 	"asciidoc.preview.refreshInterval.desc": "Interval in miliseconds between two consecutive updates of the preview. The value 0 means it will only update the preview on save.",
@@ -38,7 +35,7 @@
 	"asciidoc.pdf.engine.desc": "Controls the PDF engine used to export as PDF.",
 	"asciidoc.pdf.engine.asciidoctorPdf.desc": "asciidoctor-pdf CLI",
 	"asciidoc.pdf.engine.wkhtmltopdf.desc": "wkhtmltopdf CLI",
-	"asciidoc.pdf.asciidoctorPdfCommandPath.desc": "External `asciidoctor-pdf` command to execute. It accepts a full path to the binary, for instance: `/path/to/asciidoctor-pdf`.",
+	"asciidoc.pdf.asciidoctorPdfCommandPath.desc": "External `asciidoctor-pdf` command to execute. It accepts a full path to the binary, for instance: `/path/to/asciidoctor-pdf`. If the value is empty, use `asciidoctor-pdf` or, if not available, `bundle exec asciidoctor-pdf` (from the extension global storage).",
 	"asciidoc.pdf.asciidoctorPdfCommandArgs.desc": "List of arguments, for instance: `-a`, `pdf-themesdir=resources/themes`, `-a`, `pdf-theme=basic`. Please note that the argument key and value should be added separately (i.e., two items). By default, it passes the following arguments: `--quiet` and `--base-dir` with the full directory path to the AsciiDoc document.",
 	"asciidoc.pdf.wkhtmltopdfCommandPath.desc": "External `wkhtmltopdf` command to execute. It accepts a full path to the binary, for instance: `/path/to/wkhtmltopdf`. If the value is empty, use either `wkhtmltopdf` on Linux/macOS or `wkhtmltopdf.exe` on Windows.",
 	"asciidoc.pdf.wkhtmltopdfCommandArgs.desc": "List of arguments, for instance: `--orientation`, `Landscape`. Please note that the argument key and value should be added separately (i.e., two items). By default, it passes the following arguments: `--enable-local-file-access`, `--encoding`, `utf-8`, `--javascript-delay`, `1000`, `--footer-center` (if enabled) and `cover` (if it has a cover page).",

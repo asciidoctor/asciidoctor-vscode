@@ -1,0 +1,5 @@
+{
+  "preview.securityMessage.text": "Some content has been disabled in this document",
+  "preview.securityMessage.title": "Potentially unsafe or insecure content has been disabled in the Asciidoc preview. Change the Asciidoc preview security setting to allow insecure content or enable scripts",
+  "preview.securityMessage.label": "Content Disabled Security Warning"
+}

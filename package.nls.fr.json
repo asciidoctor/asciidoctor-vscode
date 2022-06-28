@@ -13,8 +13,6 @@
 	"asciidoc.showPreviewSecuritySelector.title": "Configurer les paramètres de sécurité de la prévisualisation",
 	"asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Configurer le mode de confiance des extensions Asciidoctor.js",
 	"asciidoc.showSource.title": "Afficher la source",
-	"asciidoc.previewLocked.title": "[Prévisualisation] {0}",
-	"asciidoc.previewUnlocked.title": "Prévisualisation {0}",
 	"asciidoc.preview.asciidoctorAttributes.desc": "Positionne les attributs Asciidoctor utilisés pour la prévisualisation. Les attributs doivent être déclarés en tant qu'objet JSON {string: string}.",
 	"asciidoc.preview.refreshInterval.desc": "Intervalle en milisecondes entre deux mises à jour consécutives de la prévisualisation. La valeur 0 signifie que la prévisualisation sera mise à jour uniquement lors de l'enregistrement du document.",
 	"asciidoc.preview.style.desc": "Une URL ou un chemin local vers une feuille de styles CSS qui sera utilisée pour la prévisualisation. Les chemins relatifs sont résolues par rapport au dossier ouvert dans l'Explorateur. Si il n'y a aucun dossier ouvert, les chemins sont résolus par rapport au document AsciiDoc. Les caractères `\\` doivent être échappés `\\\\`.",
