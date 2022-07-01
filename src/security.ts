@@ -2,13 +2,9 @@
   *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
+import { localize } from './i18n'
 import * as vscode from 'vscode'
-
 import { AsciidocPreviewManager } from './features/previewManager'
-
-import * as nls from 'vscode-nls'
-
-const localize = nls.loadMessageBundle()
 
 export const enum AsciidocPreviewSecurityLevel {
   Strict = 0,
@@ -111,35 +107,31 @@ export class PreviewSecuritySelector {
       [
         {
           type: AsciidocPreviewSecurityLevel.Strict,
-          label: markActiveWhen(currentSecurityLevel === AsciidocPreviewSecurityLevel.Strict) + localize('strict.title', 'Strict'),
-          description: localize('strict.description', 'Only load secure content'),
+          label: markActiveWhen(currentSecurityLevel === AsciidocPreviewSecurityLevel.Strict) + localize('security.strict.title', 'Strict'),
+          description: localize('security.strict.description', 'Only load secure content.'),
         }, {
           type: AsciidocPreviewSecurityLevel.AllowInsecureLocalContent,
-          label: markActiveWhen(currentSecurityLevel === AsciidocPreviewSecurityLevel.AllowInsecureLocalContent) + localize('insecureLocalContent.title', 'Allow insecure local content'),
-          description: localize('insecureLocalContent.description', 'Enable loading content over http served from localhost'),
+          label: markActiveWhen(currentSecurityLevel === AsciidocPreviewSecurityLevel.AllowInsecureLocalContent) + localize('security.insecureLocalContent.title', 'Allow insecure local content'),
+          description: localize('security.insecureLocalContent.description', 'Enable loading content over HTTP served from localhost.'),
         }, {
           type: AsciidocPreviewSecurityLevel.AllowInsecureContent,
-          label: markActiveWhen(currentSecurityLevel === AsciidocPreviewSecurityLevel.AllowInsecureContent) + localize('insecureContent.title', 'Allow insecure content'),
-          description: localize('insecureContent.description', 'Enable loading content over http'),
+          label: markActiveWhen(currentSecurityLevel === AsciidocPreviewSecurityLevel.AllowInsecureContent) + localize('security.insecureContent.title', 'Allow insecure content'),
+          description: localize('security.insecureContent.description', 'Enable loading content over HTTP.'),
         }, {
           type: AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent,
-          label: markActiveWhen(currentSecurityLevel === AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent) + localize('disable.title', 'Disable'),
-          description: localize('disable.description', 'Allow all content and script execution. Not recommended'),
-        }, {
-          type: 'moreinfo',
-          label: localize('moreInfo.title', 'More Information'),
-          description: '',
+          label: markActiveWhen(currentSecurityLevel === AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent) + localize('security.disable.title', 'Disable'),
+          description: localize('security.disable.description', 'Allow all content and script execution. Not recommended.'),
         }, {
           type: 'toggle',
           label: this.cspArbiter.shouldDisableSecurityWarnings()
-            ? localize('enableSecurityWarning.title', 'Enable preview security warnings in this workspace')
-            : localize('disableSecurityWarning.title', 'Disable preview security warning in this workspace'),
-          description: localize('toggleSecurityWarning.description', 'Does not affect the content security level'),
+            ? localize('security.enableSecurityWarning.title', 'Enable preview security warnings in this workspace')
+            : localize('security.disableSecurityWarning.title', 'Disable preview security warning in this workspace'),
+          description: localize('security.toggleSecurityWarning.description', 'Please note that it does not affect the content security level.'),
         },
       ], {
         placeHolder: localize(
-          'preview.showPreviewSecuritySelector.title',
-          'Select security settings for Asciidoc previews in this workspace'),
+          'security.showPreviewSecuritySelector.title',
+          'Select security settings for Asciidoc previews in this workspace.'),
       })
     if (!selection) {
       return
@@ -244,17 +236,17 @@ export class AsciidoctorExtensionsTrustModeSelector {
       [
         {
           type: 'deny_asciidoctor_extensions_authors',
-          label: markActiveWhen(asciidoctorExtensionsAuthorsTrusted === false) + localize('asciidoc.restrictAsciidoctorExtensionsAuthors.title', 'Denied'),
-          description: localize('asciidoc.restrictAsciidoctorExtensionsAuthors.description', 'Prevent code execution by disabling Asciidoctor.js extensions'),
+          label: markActiveWhen(asciidoctorExtensionsAuthorsTrusted === false) + localize('security.restrictAsciidoctorExtensionsAuthors.title', 'Untrusted'),
+          description: localize('security.restrictAsciidoctorExtensionsAuthors.description', 'Prevent code execution by disabling Asciidoctor.js extensions.'),
         }, {
           type: 'trust_asciidoctor_extensions_authors',
-          label: markActiveWhen(asciidoctorExtensionsAuthorsTrusted === true) + localize('asciidoc.trustAsciidoctorExtensionsAuthors.title', 'Trusted'),
-          description: localize('asciidoc.trustAsciidoctorExtensionsAuthors.description', 'Allow code execution by activating Asciidoctor.js extensions'),
+          label: markActiveWhen(asciidoctorExtensionsAuthorsTrusted === true) + localize('security.trustAsciidoctorExtensionsAuthors.title', 'Trusted'),
+          description: localize('security.trustAsciidoctorExtensionsAuthors.description', 'Allow code execution by activating Asciidoctor.js extensions.'),
         },
       ], {
         placeHolder: localize(
-          'asciidoctorExtensionsTrustModeSelector.title',
-          'Select the trust mode for the Asciidoctor.js extensions in this workspace'),
+          'security.asciidoctorExtensionsTrustModeSelector.title',
+          'Select the trust mode for the Asciidoctor.js extensions in this workspace.'),
       })
 
     if (!userChoice) {

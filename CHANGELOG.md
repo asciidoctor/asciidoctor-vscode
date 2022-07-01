@@ -14,6 +14,10 @@
 - add code folding on single line comment by @marieflorescontact (#565)
 - update preview icons and use codicons by @Mogztter (#54)
 - use load instead of convert for performance by @Mogztter (#542)
+- normalize setting names and group settings by category by @Mogztter (#577)
+- do not offer to download an outdated version of `wkhtmltopdf` by @Mogztter (#577)
+- add a new setting to add command line arguments for `wkhtmltopdf` by @Mogztter (#577)
+- offer to install locally the latest version of `asciidoctor-pdf` by @Mogztter (#577)
 
 ### Bug fixes
 

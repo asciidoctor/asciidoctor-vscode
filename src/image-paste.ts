@@ -220,7 +220,7 @@ export namespace Import {
           } else if (error.message === 'no filename exception') {
             vscode.window.showErrorMessage('Missing image filename argument.')
           } else if (error.message === 'no xclip') {
-            vscode.window.showErrorMessage('To use this feature you must install xclip')
+            vscode.window.showErrorMessage('To use this feature, you must install xclip.')
           }
         } else { vscode.window.showErrorMessage(error.toString()) }
         return

@@ -11,8 +11,6 @@ export class AsciidocPreviewConfiguration {
 
   public readonly scrollBeyondLastLine: boolean
   public readonly wordWrap: boolean
-  public readonly previewFrontMatter: string
-  public readonly lineBreaks: boolean
   public readonly doubleClickToSwitchToEditor: boolean
   public readonly scrollEditorWithPreview: boolean
   public readonly scrollPreviewWithEditor: boolean
@@ -38,10 +36,8 @@ export class AsciidocPreviewConfiguration {
       this.wordWrap = asciidocEditorConfig['editor.wordWrap'] !== 'off'
     }
 
-    this.previewFrontMatter = asciidocConfig.get<string>('previewFrontMatter', 'hide')
     this.scrollPreviewWithEditor = !!asciidocConfig.get<boolean>('preview.scrollPreviewWithEditor', true)
     this.scrollEditorWithPreview = !!asciidocConfig.get<boolean>('preview.scrollEditorWithPreview', true)
-    this.lineBreaks = !!asciidocConfig.get<boolean>('preview.breaks', false)
     this.doubleClickToSwitchToEditor = !!asciidocConfig.get<boolean>('preview.doubleClickToSwitchToEditor', true)
     this.markEditorSelection = !!asciidocConfig.get<boolean>('preview.markEditorSelection', true)
 

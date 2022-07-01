@@ -1,0 +1,19 @@
+{
+  "security.strict.title": "Strict",
+  "security.strict.description": "Only load secure content.",
+  "security.insecureLocalContent.title": "Allow insecure local content",
+  "security.insecureLocalContent.description": "Enable loading content over HTTP served from localhost.",
+  "security.insecureContent.title": "Allow insecure content",
+  "security.insecureContent.description": "Enable loading content over HTTP.",
+  "security.disable.title": "Disable",
+  "security.disable.description": "Allow all content and script execution. Not recommended.",
+  "security.enableSecurityWarning.title": "Enable preview security warnings in this workspace",
+  "security.disableSecurityWarning.title": "Disable preview security warning in this workspace",
+  "security.toggleSecurityWarning.title": "Please note that it does not affect the content security level.",
+  "security.showPreviewSecuritySelector.title": "Select security settings for Asciidoc previews in this workspace.",
+  "security.restrictAsciidoctorExtensionsAuthors.title": "Untrusted",
+  "security.restrictAsciidoctorExtensionsAuthors.description": "Prevent code execution by disabling Asciidoctor.js extensions.",
+  "security.trustAsciidoctorExtensionsAuthors.title": "Trusted",
+  "security.trustAsciidoctorExtensionsAuthors.description": "Allow code execution by activating Asciidoctor.js extensions.",
+  "security.asciidoctorExtensionsTrustModeSelector.title": "Select the trust mode for the Asciidoctor.js extensions in this workspace."
+}

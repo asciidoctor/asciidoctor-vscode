@@ -1,7 +1,8 @@
 /*---------------------------------------------------------------------------------------------
   *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-
+// This must be the first import in the main entry file
+import './i18n'
 import * as vscode from 'vscode'
 import { CommandManager } from './commandManager'
 import * as commands from './commands/index'
@@ -62,7 +63,7 @@ export function activate (context: vscode.ExtensionContext) {
   commandManager.register(new commands.ShowPreviewSecuritySelectorCommand(previewSecuritySelector, previewManager))
   commandManager.register(new commands.ShowAsciidoctorExtensionsTrustModeSelectorCommand(asciidocExtSelector))
   commandManager.register(new commands.OpenDocumentLinkCommand(engine))
-  commandManager.register(new commands.ExportAsPDF(engine, logger))
+  commandManager.register(new commands.ExportAsPDF(engine, context, logger))
   commandManager.register(new commands.PasteImage())
   commandManager.register(new commands.ToggleLockCommand(previewManager))
   commandManager.register(new commands.ShowPreviewCommand(previewManager))

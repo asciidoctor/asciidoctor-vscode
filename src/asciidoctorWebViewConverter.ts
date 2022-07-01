@@ -1,5 +1,5 @@
 import vscode from 'vscode'
-import * as nls from 'vscode-nls'
+import { localize } from './i18n'
 import { dirname, isAbsolute, join } from './util/path'
 import { AsciidocPreviewSecurityLevel, ContentSecurityPolicyArbiter } from './security'
 import { AsciidocPreviewConfiguration, AsciidocPreviewConfigurationManager } from './features/previewConfig'
@@ -26,8 +26,6 @@ function isSchemeBlacklisted (href: string): boolean {
   }
   return false
 }
-
-const localize = nls.loadMessageBundle()
 
 /**
  * Strings used inside the asciidoc preview.
