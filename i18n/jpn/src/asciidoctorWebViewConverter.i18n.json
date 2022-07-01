@@ -1,5 +1,5 @@
 {
-  "preview.securityMessage.text": "Some content has been disabled in this document",
-  "preview.securityMessage.title": "Potentially unsafe or insecure content has been disabled in the Asciidoc preview. Change the Asciidoc preview security setting to allow insecure content or enable scripts",
-  "preview.securityMessage.label": "Content Disabled Security Warning"
+  "preview.securityMessage.text": "このドキュメントの一部のコンテンツを無効にします。",
+  "preview.securityMessage.title": "プレビューで、安全ではないコンテンツを無効にしています。安全ではないコンテンツやスクリプトを有効化するには、プレビューのセキュリティー設定を許可に変更してください。",
+  "preview.securityMessage.label": "コンテンツ無効化のセキュリティ警告"
 }
