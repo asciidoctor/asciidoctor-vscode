@@ -439,7 +439,7 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
       // Relative path. Resolve relative to the file
       hrefPath = path.join(path.dirname(this.resource.fsPath), hrefPath)
     }
-    return { path: hrefPath, fragment: fragment }
+    return { path: hrefPath, fragment }
   }
 
   private async onDidClickPreviewLink (href: string) {

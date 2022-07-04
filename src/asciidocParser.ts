@@ -155,7 +155,7 @@ export class AsciidocParser {
 
     const baseDir = this.getBaseDir(doc.fileName)
     const options: { [key: string]: any } = {
-      attributes: attributes,
+      attributes,
       backend: 'webview-html5',
       extension_registry: registry,
       header_footer: true,
