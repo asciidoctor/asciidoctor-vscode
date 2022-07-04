@@ -68,5 +68,18 @@ Released by: @${releaseActor}
 
 **Full Changelog**: https://github.com/asciidoctor/asciidoctor-vscode/compare/${previousTag}...${releaseTag}
 `
+  const releaseDate = new Date()
   await fsp.writeFile(ospath.join(__dirname, '..', 'release-notes.md'), notes, 'utf8')
+  const content = await fsp.readFile('CHANGELOG.md', 'utf8')
+  const lines = content.split('\n')
+  // update CHANGELOG.md
+  lines.map((line) => {
+    if (line.startsWith('## Unreleased')) {
+      return `## Unreleased
+
+## ${pkg.version} (${releaseDate.getUTCFullYear()}-${releaseDate.getUTCMonth()}-${releaseDate.getUTCDate()}) - @${releaseActor}`
+    }
+    return line
+  }).join('\n')
+  await fsp.writeFile(ospath.join(__dirname, '..', 'CHANGELOG.md'), notes, 'utf8')
 })()
