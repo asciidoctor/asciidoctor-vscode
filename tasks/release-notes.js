@@ -53,8 +53,7 @@ async function getReleaseChangelog() {
 }
 
 ;(async () => {
-  const previousTag = await execute('sh', ['-c', 'git tag -l --sort -taggerdate | head -n1'])
-  console.log({ previousTag })
+  const previousTag = await execute('sh', ['-c', 'git tag -l --sort -taggerdate | head -n2 | tail -n +2'])
   const releaseChangelog = await getReleaseChangelog()
 
   const notes = `## What's Changed
@@ -69,6 +68,5 @@ Released by: @${releaseActor}
 
 **Full Changelog**: https://github.com/asciidoctor/asciidoctor-vscode/compare/${previousTag}...${releaseTag}
 `
-  console.log({ notes })
   await fsp.writeFile(ospath.join(__dirname, '..', 'release-notes.md'), notes, 'utf8')
 })()
