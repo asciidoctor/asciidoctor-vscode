@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 3.0.0 "pre-release" (2002-07-06) - @mogztter
+
 ### Improvements
 
 - add Japanese localisation by @YoshihideShirai (#581)
