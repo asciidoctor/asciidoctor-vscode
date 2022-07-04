@@ -27,8 +27,7 @@ git config --local user.email "$RELEASE_GIT_EMAIL"
   # > Support for this will arrive in the future.
   # https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
   RELEASE_VERSION_WITHOUT_PRERELEASE=$(node -e "console.log(require('semver').coerce('$RELEASE_VERSION').version)")
-  npm version $RELEASE_VERSION_WITHOUT_PRERELEASE
-  git commit -a -m "release $RELEASE_VERSION_WITHOUT_PRERELEASE [no ci]"
+  npm version $RELEASE_VERSION_WITHOUT_PRERELEASE --message "release $RELEASE_VERSION_WITHOUT_PRERELEASE [no ci]"
   git push origin $(git describe --tags --exact-match)
   npm run package
   npx vsce publish -p $RELEASE_VSCE_TOKEN $(node -e "console.log(require('semver').parse('$RELEASE_VERSION').prerelease.length > 0 ? '--pre-release' : '')")
