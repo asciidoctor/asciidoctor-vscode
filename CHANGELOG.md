@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Bug fixes
+
+- fix base directory when exporting to PDF on Windows (#593)
+
 ## 3.0.0 "pre-release" (2002-07-06) - @mogztter
 
 ### Improvements
