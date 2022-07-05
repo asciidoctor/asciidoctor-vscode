@@ -142,14 +142,14 @@ export class ExportAsPDF implements Command {
         command: asciidoctorPdfCommandPath,
       }
     }
-    if (this.isAsciidoctorPdfAvailable(workspacePath)) {
+    if (await this.isAsciidoctorPdfAvailable(workspacePath)) {
       // `asciidoctor-pdf` is available
       return {
         cwd: workspacePath,
         command: 'asciidoctor-pdf',
       }
     }
-    if (this.isBundlerAvailable()) {
+    if (await this.isBundlerAvailable()) {
       const globalStorageUri = this.context.globalStorageUri
       const installDirectory = path.join(globalStorageUri.fsPath, 'asciidoctor-pdf-install')
       try {
