@@ -2,9 +2,11 @@
   *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { localize } from './i18n'
 import * as vscode from 'vscode'
 import { AsciidocPreviewManager } from './features/previewManager'
+import * as nls from 'vscode-nls'
+
+const localize = nls.loadMessageBundle()
 
 export const enum AsciidocPreviewSecurityLevel {
   Strict = 0,

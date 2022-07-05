@@ -15,5 +15,6 @@
   "security.restrictAsciidoctorExtensionsAuthors.description": "Désactive l'exécution du code des extensions Asciidoctor.js.",
   "security.trustAsciidoctorExtensionsAuthors.title": "Approuvé",
   "security.trustAsciidoctorExtensionsAuthors.description": "Autorise l'exécution du code des extensions Asciidoctor.js.",
-  "security.asciidoctorExtensionsTrustModeSelector.title": "Séléctionner le niveau de confiance adapté aux extensions Asciidoctor.js présentes sur cet espace de travail."
+  "security.asciidoctorExtensionsTrustModeSelector.title": "Séléctionner le niveau de confiance adapté aux extensions Asciidoctor.js présentes sur cet espace de travail.",
+  "security.toggleSecurityWarning.description": "Please note that it does not affect the content security level."
 }

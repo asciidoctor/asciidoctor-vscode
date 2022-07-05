@@ -1,11 +1,13 @@
 import vscode from 'vscode'
-import { localize } from './i18n'
 import { dirname, isAbsolute, join } from './util/path'
 import { AsciidocPreviewSecurityLevel, ContentSecurityPolicyArbiter } from './security'
 import { AsciidocPreviewConfiguration, AsciidocPreviewConfigurationManager } from './features/previewConfig'
 import { WebviewResourceProvider } from './util/resources'
 import { Asciidoctor } from '@asciidoctor/core'
 import { SkinnyTextDocument } from './util/document'
+import * as nls from 'vscode-nls'
+
+const localize = nls.loadMessageBundle()
 
 const { Opal } = require('asciidoctor-opal-runtime')
 const processor = require('@asciidoctor/core')()

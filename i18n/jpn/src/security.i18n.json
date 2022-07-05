@@ -15,5 +15,6 @@
   "security.restrictAsciidoctorExtensionsAuthors.description": "Asciidoctor.js拡張を無効にして、コードの実行を抑止します。",
   "security.trustAsciidoctorExtensionsAuthors.title": "信頼済み",
   "security.trustAsciidoctorExtensionsAuthors.description": "Asciidoctor.js拡張を有効化して、コードの実行を許可します。",
-  "security.asciidoctorExtensionsTrustModeSelector.title": "Asciidoctor.js拡張の信頼モードの選択"
+  "security.asciidoctorExtensionsTrustModeSelector.title": "Asciidoctor.js拡張の信頼モードの選択",
+  "security.toggleSecurityWarning.description": "コンテンツのセキュリティレベルには影響しませんので、ご注意ください。"
 }

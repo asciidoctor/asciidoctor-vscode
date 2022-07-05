@@ -2,7 +2,6 @@
   *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { localize } from '../i18n'
 import * as vscode from 'vscode'
 import * as path from 'path'
 
@@ -15,6 +14,9 @@ import { AsciidocPreviewConfigurationManager } from './previewConfig'
 import { AsciidocContributions } from '../asciidocExtensions'
 import { isAsciidocFile } from '../util/file'
 import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink'
+import * as nls from 'vscode-nls'
+
+const localize = nls.loadMessageBundle()
 
 export class AsciidocPreview extends Disposable implements WebviewResourceProvider {
   public static viewType = 'asciidoc.preview'
