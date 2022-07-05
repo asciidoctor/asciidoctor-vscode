@@ -2,13 +2,15 @@
   *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { localize } from '../i18n'
 import * as path from 'path'
 import * as vscode from 'vscode'
 import { OpenDocumentLinkCommand } from '../commands/openDocumentLink'
 import { getUriForLinkWithKnownExternalScheme } from '../util/links'
 import { similarArrayMatch } from '../similarArrayMatch'
 import { isSchemeBlacklisted } from '../linkSanitizer'
+import * as nls from 'vscode-nls'
+
+const localize = nls.loadMessageBundle()
 
 export interface AsciidoctorLinkRegexes {
   [key: string]: RegExp

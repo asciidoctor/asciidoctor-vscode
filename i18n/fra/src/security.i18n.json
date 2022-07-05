@@ -9,11 +9,11 @@
   "security.disable.description": "Autorise le chargement de l'ensemble des contenus ainsi que l'exécution des scripts. Pas recommandé.",
   "security.enableSecurityWarning.title": "Activer les alertes de sécurité de la prévisualisation sur cet espace de travail",
   "security.disableSecurityWarning.title": "Désactiver les alertes de sécurité de la prévisualisation sur cet espace de travail",
-  "security.toggleSecurityWarning.title": "À noter que cela n'affecte pas le niveau de securité configuré.",
   "security.showPreviewSecuritySelector.title": "Sélectionner le niveau de securité adapté aux prévisualisations des documents AsciiDoc sur cet espace de travail.",
   "security.restrictAsciidoctorExtensionsAuthors.title": "Non approuvé",
   "security.restrictAsciidoctorExtensionsAuthors.description": "Désactive l'exécution du code des extensions Asciidoctor.js.",
   "security.trustAsciidoctorExtensionsAuthors.title": "Approuvé",
   "security.trustAsciidoctorExtensionsAuthors.description": "Autorise l'exécution du code des extensions Asciidoctor.js.",
-  "security.asciidoctorExtensionsTrustModeSelector.title": "Séléctionner le niveau de confiance adapté aux extensions Asciidoctor.js présentes sur cet espace de travail."
+  "security.asciidoctorExtensionsTrustModeSelector.title": "Séléctionner le niveau de confiance adapté aux extensions Asciidoctor.js présentes sur cet espace de travail.",
+  "security.toggleSecurityWarning.description": "À noter que cela n'affecte pas le niveau de securité configuré."
 }
