@@ -4,6 +4,7 @@
 
 ### Bug fixes
 
+- fix the logic that detects if `asciidoctor-pdf` and/or `bundler` are available in the `PATH`
 - fix base directory when exporting to PDF on Windows (#593)
 - fix localization generation by @YoshihideShirai (#594)
 
