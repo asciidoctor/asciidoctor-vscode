@@ -29,9 +29,11 @@ export class ExportAsPDF implements Command {
       return
     }
     const workspacePath = workspaceFolder.uri.fsPath
-    const docUri = path.parse(path.resolve(doc.fileName))
-    const baseDirectory = path.join(docUri.root, docUri.dir)
-    const pdfFilename = vscode.Uri.file(path.join(baseDirectory, docUri.name + '.pdf'))
+    const docPath = doc.uri.fsPath
+    const docNameWithoutExtension = path.parse(docPath).name
+
+    const baseDirectory = path.dirname(docPath)
+    const pdfFilename = vscode.Uri.file(path.join(baseDirectory, docNameWithoutExtension + '.pdf'))
 
     const asciidocPdfConfig = vscode.workspace.getConfiguration('asciidoc.pdf')
     const pdfOutputUri = await vscode.window.showSaveDialog({ defaultUri: pdfFilename })
