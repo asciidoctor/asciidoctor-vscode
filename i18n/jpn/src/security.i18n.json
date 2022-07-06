@@ -9,7 +9,6 @@
   "security.disable.description": "すべてのコンテンツとスクリプトの実行を許可します。非推奨です。",
   "security.enableSecurityWarning.title": "プレビューのセキュリティ警告の有効にします。",
   "security.disableSecurityWarning.title": "プレビューのセキュリティ警告の無効にします。",
-  "security.toggleSecurityWarning.title": "コンテンツのセキュリティレベルには影響しませんので、ご注意ください。",
   "security.showPreviewSecuritySelector.title": "本ワークスペースのAsciidocのプレビューのセキュリティ設定を選択してください。",
   "security.restrictAsciidoctorExtensionsAuthors.title": "制限",
   "security.restrictAsciidoctorExtensionsAuthors.description": "Asciidoctor.js拡張を無効にして、コードの実行を抑止します。",
