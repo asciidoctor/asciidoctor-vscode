@@ -7,8 +7,9 @@
 - fix the logic that detects if `asciidoctor-pdf` and/or `bundler` are available in the `PATH`
 - fix base directory when exporting to PDF on Windows (#593)
 - fix localization generation by @YoshihideShirai (#594)
+- fix typo Recomendations -> Recommendations in snippets by @apupier
 
-## 3.0.0 "pre-release" (2002-07-06) - @mogztter
+## 3.0.0 "pre-release" (2022-07-06) - @mogztter
 
 ### Improvements
 
