@@ -53,12 +53,10 @@ async function getReleaseChangelog() {
 }
 
 ;(async () => {
-  const previousTag = await execute('sh', ['-c', 'git tag -l --sort -taggerdate | head -n2 | tail -n +2'])
+  const previousTag = await execute('sh', ['-c', 'git -c versionsort.suffix=. -c versionsort.suffix=- ls-remote --tags --refs --sort -v:refname origin | head -n+2 | tail -n +2 | cut -d" " -f2 | cut -d"/" -f3'])
   const releaseChangelog = await getReleaseChangelog()
 
   const notes = `## What's Changed
-
-Write summary...
 
 ## Changelog
 ${releaseChangelog}
