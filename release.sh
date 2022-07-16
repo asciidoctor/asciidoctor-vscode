@@ -27,13 +27,16 @@ git config --local user.email "$RELEASE_GIT_EMAIL"
   # > Support for this will arrive in the future.
   # https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
   RELEASE_VERSION_WITHOUT_PRERELEASE=$(node -e "console.log(require('semver').coerce('$RELEASE_VERSION').version)")
+  PRERELEASE_VERSION=$(node -e "console.log(require('semver').parse('$RELEASE_VERSION').prerelease.length > 0)")
   npm version $RELEASE_VERSION_WITHOUT_PRERELEASE --message "release $RELEASE_VERSION_WITHOUT_PRERELEASE [no ci]"
   git push origin $(git describe --tags --exact-match)
   npm run package
-  npx vsce publish -p $RELEASE_VSCE_TOKEN $(node -e "console.log(require('semver').parse('$RELEASE_VERSION').prerelease.length > 0 ? '--pre-release' : '')")
+  RELEASE_VSCE_PRERELEASE_OPT=$([[ "$PRERELEASE_VERSION" == "true" ]] && echo "--pre-release" || echo "")
+  npx vsce publish -p $RELEASE_VSCE_TOKEN $RELEASE_VSCE_PRERELEASE_OPT
   git push origin $RELEASE_BRANCH
   node tasks/release-notes.js
-  gh release create v$RELEASE_VERSION_WITHOUT_PRERELEASE -t v$RELEASE_VERSION_WITHOUT_PRERELEASE -F release-notes.md -d
+  RELEASE_GH_PRERELEASE_OPT=$([[ "$PRERELEASE_VERSION" == "true" ]] && echo "--prerelease" || echo "")
+  gh release create v$RELEASE_VERSION_WITHOUT_PRERELEASE -t v$RELEASE_VERSION_WITHOUT_PRERELEASE -F release-notes.md $RELEASE_GH_PRERELEASE_OPT
   gh release upload v$RELEASE_VERSION_WITHOUT_PRERELEASE asciidoctor-vscode-$RELEASE_VERSION_WITHOUT_PRERELEASE.vsix
   npm pkg set version="$(npx semver -i patch $RELEASE_VERSION_WITHOUT_PRERELEASE)-dev"
   git commit -a -m 'prepare branch for development [no ci]'
