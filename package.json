@@ -284,67 +284,74 @@
 						"order": 2,
 						"scope": "resource"
 					},
+					"asciidoc.preview.preservePreviewWhenHidden": {
+						"type": "boolean",
+						"default": false,
+						"description": "%asciidoc.preview.preservePreviewWhenHidden.desc%",
+						"order": 3,
+						"scope": "resource"
+					},
 					"asciidoc.preview.style": {
 						"type": "string",
 						"default": "",
 						"markdownDescription": "%asciidoc.preview.style.desc%",
-						"order": 3,
+						"order": 4,
 						"scope": "resource"
 					},
 					"asciidoc.preview.useEditorStyle": {
 						"type": "boolean",
 						"default": true,
 						"markdownDescription": "%asciidoc.preview.useEditorStyle.desc%",
-						"order": 4,
+						"order": 5,
 						"scope": "resource"
 					},
 					"asciidoc.preview.fontFamily": {
 						"type": "string",
 						"default": "-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif",
 						"markdownDescription": "%asciidoc.preview.fontFamily.desc%",
-						"order": 5,
+						"order": 6,
 						"scope": "resource"
 					},
 					"asciidoc.preview.fontSize": {
 						"type": "number",
 						"default": 14,
 						"markdownDescription": "%asciidoc.preview.fontSize.desc%",
-						"order": 6,
+						"order": 7,
 						"scope": "resource"
 					},
 					"asciidoc.preview.lineHeight": {
 						"type": "number",
 						"default": 1.6,
 						"markdownDescription": "%asciidoc.preview.lineHeight.desc%",
-						"order": 7,
+						"order": 8,
 						"scope": "resource"
 					},
 					"asciidoc.preview.scrollPreviewWithEditor": {
 						"type": "boolean",
 						"default": true,
 						"markdownDescription": "%asciidoc.preview.scrollPreviewWithEditor.desc%",
-						"order": 8,
+						"order": 9,
 						"scope": "resource"
 					},
 					"asciidoc.preview.scrollEditorWithPreview": {
 						"type": "boolean",
 						"default": true,
 						"markdownDescription": "%asciidoc.preview.scrollEditorWithPreview.desc%",
-						"order": 9,
+						"order": 10,
 						"scope": "resource"
 					},
 					"asciidoc.preview.markEditorSelection": {
 						"type": "boolean",
 						"default": true,
 						"markdownDescription": "%asciidoc.preview.markEditorSelection.desc%",
-						"order": 10,
+						"order": 11,
 						"scope": "resource"
 					},
 					"asciidoc.preview.doubleClickToSwitchToEditor": {
 						"type": "boolean",
 						"default": true,
 						"markdownDescription": "%asciidoc.preview.doubleClickToSwitchToEditor.desc%",
-						"order": 11,
+						"order": 12,
 						"scope": "resource"
 					},
 					"asciidoc.preview.openLinksToAsciidocFiles": {
@@ -359,7 +366,7 @@
 							"%asciidoc.preview.openLinksToAsciidocFiles.inPreview%",
 							"%asciidoc.preview.openLinksToAsciidocFiles.inEditor%"
 						],
-						"order": 12,
+						"order": 13,
 						"scope": "resource"
 					},
 					"asciidoc.preview.openAsciiDocLinks": {
