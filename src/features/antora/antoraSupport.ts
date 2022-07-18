@@ -4,6 +4,9 @@ import yaml from 'js-yaml'
 import * as path from 'path'
 import AntoraCompletionProvider from './antoraCompletionProvider'
 import { disposeAll } from '../../util/dispose'
+import * as nls from 'vscode-nls'
+
+const localize = nls.loadMessageBundle()
 
 export class AntoraSupportManager implements vscode.Disposable {
   private readonly _disposables: vscode.Disposable[] = []
@@ -23,11 +26,17 @@ export class AntoraSupportManager implements vscode.Disposable {
       // choice has not been made
       const onDidOpenAsciiDocFileAskAntoraSupport = vscode.workspace.onDidOpenTextDocument(async (textDocument) => {
         if (await getValidConfig(textDocument)) {
-          const answer = await vscode.window.showInformationMessage('We detect that you are working with Antora. Do you want to active Antora support?', 'yes', 'no thanks')
+          const yesAnswer = localize('antora.activateSupport.yes', 'Yes')
+          const noAnswer = localize('antora.activateSupport.no', 'No, thanks')
+          const answer = await vscode.window.showInformationMessage(
+            localize('antora.activateSupport.message', 'We detect that you are working with Antora. Do you want to active Antora support?'),
+            yesAnswer,
+            noAnswer
+          )
           await workspaceState.update('antoraSupportSetting', true)
-          const enableAntoraSupport = answer === 'yes' ? true : (answer === 'no thanks' ? false : undefined)
+          const enableAntoraSupport = answer === yesAnswer ? true : (answer === noAnswer ? false : undefined)
           await workspaceConfiguration.update('antora.enableAntoraSupport', enableAntoraSupport)
-          if (answer === 'yes') {
+          if (enableAntoraSupport) {
             this.activate()
           }
           // do not ask again to avoid bothering users
