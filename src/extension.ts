@@ -49,10 +49,8 @@ export function activate (context: vscode.ExtensionContext) {
   const symbolProvider = new AdocDocumentSymbolProvider(engine, null)
   const previewManager = new AsciidocPreviewManager(contentProvider, logger, contributions)
   context.subscriptions.push(previewManager)
-  const includeAutoCompletionMonitor = new AsciidocFileIncludeAutoCompletionMonitor()
-  context.subscriptions.push(includeAutoCompletionMonitor)
-  const antora = new AntoraSupportManager(context)
-  context.subscriptions.push(antora)
+  context.subscriptions.push(new AsciidocFileIncludeAutoCompletionMonitor())
+  context.subscriptions.push(new AntoraSupportManager(context))
 
   context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider))
   context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider(engine)))

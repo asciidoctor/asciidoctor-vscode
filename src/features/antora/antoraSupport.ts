@@ -5,11 +5,40 @@ import * as path from 'path'
 import AntoraCompletionProvider from './antoraCompletionProvider'
 import { disposeAll } from '../../util/dispose'
 
-export class AntoraSupportManager {
+export class AntoraSupportManager implements vscode.Disposable {
   private readonly _disposables: vscode.Disposable[] = []
 
   public constructor (private readonly context: vscode.ExtensionContext) {
     this.context = context
+    const workspaceConfiguration = vscode.workspace.getConfiguration('asciidoc', null)
+    // look for Antora support setting in workspace state
+    const workspaceState: vscode.Memento = this.context.workspaceState
+    const isEnableAntoraSupportSettingDefined = workspaceState.get('antoraSupportSetting')
+    if (isEnableAntoraSupportSettingDefined === true) {
+      const enableAntoraSupport = workspaceConfiguration.get('antora.enableAntoraSupport')
+      if (enableAntoraSupport === true) {
+        this.activate()
+      }
+    } else if (isEnableAntoraSupportSettingDefined === undefined) {
+      // choice has not been made
+      const onDidOpenAsciiDocFileAskAntoraSupport = vscode.workspace.onDidOpenTextDocument(async (textDocument) => {
+        if (await getValidConfig(textDocument)) {
+          const answer = await vscode.window.showInformationMessage('We detect that you are working with Antora. Do you want to active Antora support?', 'yes', 'no thanks')
+          await workspaceState.update('antoraSupportSetting', true)
+          const enableAntoraSupport = answer === 'yes' ? true : (answer === 'no thanks' ? false : undefined)
+          await workspaceConfiguration.update('antora.enableAntoraSupport', enableAntoraSupport)
+          if (answer === 'yes') {
+            this.activate()
+          }
+          // do not ask again to avoid bothering users
+          onDidOpenAsciiDocFileAskAntoraSupport.dispose()
+        }
+      })
+      this._disposables.push(onDidOpenAsciiDocFileAskAntoraSupport)
+    }
+  }
+
+  private activate (): void {
     const completionProvider = vscode.languages.registerCompletionItemProvider(
       {
         language: 'asciidoc',
@@ -18,42 +47,7 @@ export class AntoraSupportManager {
       new AntoraCompletionProvider(),
       '{'
     )
-
-    const onDidOpenAsciiDocFileAskAntoraSupport = vscode.workspace.onDidOpenTextDocument(async (textDocument) => {
-      const workspaceConfiguration = vscode.workspace.getConfiguration('asciidoc', null)
-      // look for Antora settings in workspaceState
-      const workspaceState: vscode.Memento = this.context.workspaceState
-      const isEnableAntoraSupportSettingDefined = await workspaceState.get('antoraSupportSetting')
-      let enableAntoraSupport
-      if (isEnableAntoraSupportSettingDefined === true) { // choice has already been made
-        enableAntoraSupport = workspaceConfiguration.get('antora.enableAntoraSupport')
-        if (enableAntoraSupport === true) { // User does want Antora Support
-          this._disposables.push(completionProvider)
-        }
-        if (enableAntoraSupport === false) { // User does not want Antora Support
-          onDidOpenAsciiDocFileAskAntoraSupport.dispose()
-        }
-      }
-      if (isEnableAntoraSupportSettingDefined === undefined) { // choice has not been made
-        if (await getValidConfig(textDocument)) {
-          const answer = await vscode.window.showInformationMessage('We detect that you are working with Antora. Do you want to active Antora support?', 'yes', 'no thanks')
-          await workspaceState.update('antoraSupportSetting', true)
-          enableAntoraSupport = answer === 'yes' ? true : (answer === 'no thanks' ? false : undefined)
-          await workspaceConfiguration.update('antora.enableAntoraSupport', enableAntoraSupport)
-          if (answer === 'yes') {
-            this._disposables.push(completionProvider)
-            onDidOpenAsciiDocFileAskAntoraSupport.dispose()
-          }
-          if (answer === 'no thanks') {
-            onDidOpenAsciiDocFileAskAntoraSupport.dispose()
-          }
-          if (answer === undefined) {
-            onDidOpenAsciiDocFileAskAntoraSupport.dispose()
-          }
-        }
-      }
-    })
-    this._disposables.push(onDidOpenAsciiDocFileAskAntoraSupport)
+    this._disposables.push(completionProvider)
   }
 
   public dispose (): void {
