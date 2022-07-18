@@ -81,13 +81,20 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     topmostLineMonitor: AsciidocFileTopmostLineMonitor,
     contributions: AsciidocContributions
   ): AsciidocPreview {
+    const retainContextWhenHidden = vscode.workspace
+      .getConfiguration('asciidoc', null)
+      .get<boolean>('preview.preservePreviewWhenHidden', false)
+
     const webview = vscode.window.createWebviewPanel(
       AsciidocPreview.viewType,
       AsciidocPreview.getPreviewTitle(resource, locked),
-      previewColumn, {
+      previewColumn,
+      {
         enableFindWidget: true,
+        retainContextWhenHidden,
         ...AsciidocPreview.getWebviewOptions(resource, contributions),
-      })
+      }
+    )
 
     return new AsciidocPreview(
       webview,
