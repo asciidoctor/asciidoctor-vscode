@@ -530,7 +530,7 @@
 				"asciidoc.antora.enableAntoraSupport": {
 					"type": "boolean",
 					"default": false,
-					"markdownDescription": "%asciidoc.antora.desc%"
+					"markdownDescription": "%asciidoc.antora.enableAntoraSupport.desc%"
 				}
 			}
 		],
