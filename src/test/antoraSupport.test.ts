@@ -17,7 +17,7 @@ suite('Antora Support', () => {
   const root = vscode.workspace.workspaceFolders[0].uri.fsPath
   const testCases = [
     {
-      title: 'Should return Antora config for document inside "pages" directory wich is inside another directory',
+      title: 'Should return Antora config for document inside "pages" directory which is inside another directory',
       asciidocPath: 'antora/multiComponents/cli/modules/commands/pages/page1.adoc',
       antoraConfigExpectedFsPath: `${root}/antora/multiComponents/cli/antora.yml`,
     },
@@ -37,12 +37,12 @@ suite('Antora Support', () => {
       antoraConfigExpectedFsPath: `${root}/antora/multiComponents/api/antora.yml`,
     },
     {
-      title: 'Should return Antora config for document inside a "modules" directory, inside an Antora modules in a composant named "modules"',
+      title: 'Should return Antora config for document inside a "modules" directory which is inside an Antora modules in a composant named "modules"',
       asciidocPath: 'antora/multiComponents/modules/api/docs/modules/asciidoc/pages/modules/page5.adoc',
       antoraConfigExpectedFsPath: `${root}/antora/multiComponents/modules/api/docs/antora.yml`,
     },
     {
-      title: 'Should return Antora config for document inside a directory wich has the same name as the workspace',
+      title: 'Should return Antora config for document inside a directory which has the same name as the workspace',
       asciidocPath: 'antora/multiComponents/api/modules/auth/pages/modules/multiComponents/page6.adoc',
       antoraConfigExpectedFsPath: `${root}/antora/multiComponents/api/antora.yml`,
     },
@@ -53,7 +53,7 @@ suite('Antora Support', () => {
     },
     {
       title: 'Should not return Antora config for document outside of workspace',
-      asciidocPath: 'antora/outsideOfWorkspaceDoc.adoc',
+      asciidocPath: 'antora/contributing.adoc',
       antoraConfigExpectedFsPath: undefined,
     },
   ]
