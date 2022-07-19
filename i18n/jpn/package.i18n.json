@@ -78,5 +78,8 @@
 	"asciidoc.useWorkspaceRoot.desc": "**非推奨:** ワークスペースのルートパスをベースディレクトリとして使用します。",
 	"asciidoc.useWorkspaceRoot.deprecationMessage": "本設定は、`#asciidoc.useWorkspaceRootAsBaseDirectory#`に置き換えられ、動作しません。",
 	"asciidoc.use_kroki.desc": "**非推奨:** ダイアグラム生成Krokiを使用します。",
-	"asciidoc.use_kroki.deprecationMessage": "本設定は、`#asciidoc.extensions.enableKroki#`に置き換えられ、動作しません。"
+	"asciidoc.use_kroki.deprecationMessage": "本設定は、`#asciidoc.extensions.enableKroki#`に置き換えられ、動作しません。",
+
+	"asciidoc.antora.title": "Antora",
+	"asciidoc.antora.enableAntoraSupport.desc": "Enable [Antora](https://antora.org/) support."
 }

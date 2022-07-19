@@ -78,5 +78,9 @@
 	"asciidoc.useWorkspaceRoot.desc": "**Obsolète:** Quand on est dans un espace de travail, utilise la racine de l'espace de travail en tant que répertoire de base pour Asciidoctor",
 	"asciidoc.useWorkspaceRoot.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.useWorkspaceRootAsBaseDirectory#` et n'a plus aucun effet.",
 	"asciidoc.use_kroki.desc": "**Obsolète:** Active l'extension Kroki afin de générer des diagrammes.",
-	"asciidoc.use_kroki.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.extensions.enableKroki#` et n'a plus aucun effet."
+	"asciidoc.use_kroki.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.extensions.enableKroki#` et n'a plus aucun effet.",
+
+	"asciidoc.antora.title": "Antora",
+	"asciidoc.antora.enableAntoraSupport.desc": "Active le support [Antora](https://antora.org/)."
+
 }

@@ -45,10 +45,10 @@ export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer {
     }
   }
 
-  public preview (
+  public async preview (
     resource: vscode.Uri,
     previewSettings: PreviewSettings
-  ): void {
+  ): Promise<void> {
     let preview = this.getExistingPreview(resource, previewSettings)
     if (preview) {
       preview.reveal(previewSettings.previewColumn)

@@ -1,1 +1,7 @@
 = Page 3
+
+
+// resolveAntoraImageIds test for image in different component
+// "../../../../cli/modules/commands/images/seaswell.png"
+
+image::2.0@cli:commands:seaswell.png[]

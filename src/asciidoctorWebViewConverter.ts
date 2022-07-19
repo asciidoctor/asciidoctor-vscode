@@ -1,12 +1,12 @@
 import vscode from 'vscode'
 import * as uri from 'vscode-uri'
-import { AsciidocPreviewSecurityLevel, ContentSecurityPolicyArbiter } from './security'
-import { AsciidocPreviewConfiguration, AsciidocPreviewConfigurationManager } from './features/previewConfig'
+import { AsciidocPreviewSecurityLevel } from './security'
+import { AsciidocPreviewConfiguration } from './features/previewConfig'
 import { WebviewResourceProvider } from './util/resources'
 import { Asciidoctor } from '@asciidoctor/core'
 import { SkinnyTextDocument } from './util/document'
 import * as nls from 'vscode-nls'
-import { AsciidocContributionProvider } from './asciidocExtensions'
+import { AsciidocContributions } from './asciidocExtensions'
 
 const localize = nls.loadMessageBundle()
 
@@ -54,8 +54,8 @@ const previewStrings = {
  * @param securityLevel
  * @param nonce
  */
-function getCspForResource (provider: WebviewResourceProvider, securityLevel: AsciidocPreviewSecurityLevel, nonce: string): string {
-  const rule = provider.cspSource
+function getCspForResource (webviewResourceProvider: WebviewResourceProvider, securityLevel: AsciidocPreviewSecurityLevel, nonce: string): string {
+  const rule = webviewResourceProvider.cspSource
   const highlightjsInlineScriptHash = 'sha256-ZrDBcrmObbqhVV/Mag2fT/y08UJGejdW7UWyEsi4DXw='
   switch (securityLevel) {
     case AsciidocPreviewSecurityLevel.AllowInsecureContent:
@@ -97,13 +97,14 @@ export class AsciidoctorWebViewConverter {
     cspArbiter: ContentSecurityPolicyArbiter,
     private readonly contributionProvider: AsciidocContributionProvider,
     previewConfigurations: AsciidocPreviewConfigurationManager,
+    private readonly antoraDocumentContext: AntoraDocumentContext | undefined,
     line: number | undefined = undefined,
     state?: any
   ) {
+    const textDocumentUri = textDocument.uri
     this.basebackend = 'html'
     this.outfilesuffix = '.html'
     this.baseConverter = processor.Html5Converter.create()
-    const textDocumentUri = textDocument.uri
     this.securityLevel = cspArbiter.getSecurityLevelForResource(textDocumentUri)
     this.config = previewConfigurations.loadAndCacheConfiguration(textDocumentUri)
     this.initialData = {
@@ -120,6 +121,10 @@ export class AsciidoctorWebViewConverter {
     this.backendTraits = {
       supports_templates: true,
     }
+  }
+
+  $convert (node, transform) {
+    return this.convert(node, transform)
   }
 
   /**
@@ -204,6 +209,16 @@ export class AsciidoctorWebViewConverter {
         }
         const role = node.hasAttribute('role') ? ` class="${node.role}"` : ''
         return `<a href="${node.target}"${role} data-href="${node.target}">${text}</a>`
+      }
+    }
+    if (nodeName === 'image') {
+      const nodeAttributes = node.getAttributes()
+      const target = nodeAttributes.target
+      const resourceUri = this.antoraDocumentContext?.resolveAntoraResourceIds(target, 'image')
+      if (resourceUri !== undefined) {
+        const alt = resourceUri.split('/').pop().split('.').shift()
+        node.setAttribute('target', resourceUri)
+        node.setAttribute('alt', alt)
       }
     }
     return this.baseConverter.convert(node, transform)
@@ -406,7 +421,8 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
     return webviewResource.toString()
   }
 
-  private getStyles (node: Asciidoctor.Document, resourceProvider: WebviewResourceProvider, resource: vscode.Uri, config: AsciidocPreviewConfiguration, state?: any): string {
+  private getStyles (node: Asciidoctor.Document, resourceProvider: WebviewResourceProvider, resource: vscode.Uri,
+                     config: AsciidocPreviewConfiguration, state?: any): string {
     const baseStyles: string[] = []
     for (const resource of this.contributionProvider.contributions.previewStyles) {
       baseStyles.push(`<link rel="stylesheet" type="text/css" href="${escapeAttribute(resourceProvider.asWebviewUri(resource))}">`)

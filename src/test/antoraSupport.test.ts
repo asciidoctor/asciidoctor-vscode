@@ -1,11 +1,10 @@
 import * as assert from 'assert'
 import 'mocha'
 import * as vscode from 'vscode'
-import { getAntoraConfig } from '../features/antora/antoraSupport'
+import { findAntoraConfigFile } from '../features/antora/antoraSupport'
 
 async function testGetAntoraConfig (asciidocPath, antoraConfigExpectedFsPath, root) {
-  const file = await vscode.workspace.openTextDocument(vscode.Uri.file(`${root}/${asciidocPath}`))
-  const antoraConfigUri = await getAntoraConfig(file)
+  const antoraConfigUri = await findAntoraConfigFile(vscode.Uri.file(`${root}/${asciidocPath}`))
   if (antoraConfigExpectedFsPath === undefined) {
     assert.strictEqual(antoraConfigUri, undefined)
   } else {
