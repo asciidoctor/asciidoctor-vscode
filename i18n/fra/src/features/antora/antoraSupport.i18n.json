@@ -1,0 +1,5 @@
+{
+  "antora.activateSupport.yes":  "Oui",
+  "antora.activateSupport.no":  "Non merci",
+  "antora.activateSupport.message": "L'extension AsciiDoc a détecté la présence d'Antora. Voulez-vous activer le support Antora ?"
+}
