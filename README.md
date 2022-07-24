@@ -109,7 +109,7 @@ and [asciidoctor-kroki](https://github.com/Mogztter/asciidoctor-kroki).
 
 You can [see the full range](https://kroki.io/#support) on the Kroki website.
 
-Note that this extension will send graph information to https://kroki.io. 
+Note that this extension will send graph information to <https://kroki.io>.
 If this is an issue it is also possible to use your own Kroki instance (see [the instructions](https://github.com/Mogztter/asciidoctor-kroki#using-your-own-kroki) for further information).
 
 To enable diagram support, set the `asciidoc.extensions.enableKroki` setting to `true`.
@@ -146,7 +146,7 @@ The first time, you will also need to confirm that you trust the authors of the 
 
 **💡 Tip:** You can always update the trust mode using the command "Manage Asciidoctor.js Extensions Trust Mode".
 
-You can create a new extension by creating a JavaScript file in the `.asciidoctor/lib` directory or use an existing one.  
+You can create a new extension by creating a JavaScript file in the `.asciidoctor/lib` directory or use an existing one.
 Here's an example of how to use the [asciidoctor-emoji](https://github.com/mogztter/asciidoctor-emoji) extension:
 
 1. Install the npm package in the workspace directory:
@@ -184,6 +184,7 @@ This extension contributes the following settings:
 | `asciidoc.preview.scrollEditorWithPreview`     | When the editor is scrolled, update the view of the preview.                                                                       | `true`                                                                                                                    |
 | `asciidoc.preview.markEditorSelection`         | Mark the current editor selection in the preview.                                                                                  | `true`                                                                                                                    |
 | `asciidoc.preview.doubleClickToSwitchToEditor` | Double click in the preview to switch to the editor.                                                                               | `true`                                                                                                                    |
+| `asciidoc.preview.preservePreviewWhenHidden` | Keep the AsciiDoc preview in memory when it's hidden so that it reloads faster, at the expense of increased memory use. | `false` |
 | `asciidoc.preview.openLinksToAsciidocFiles`    | Control how links to other AsciiDoc files in the preview should be opened. Possible values: `"inPreview"`, `"inEditor"`.           | `"inPreview"`                                                                                                             |
 
 ### PDF

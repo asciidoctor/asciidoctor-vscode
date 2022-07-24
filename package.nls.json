@@ -3,7 +3,7 @@
 	"description": "Provides rich language support for AsciiDoc.",
 
 	"asciidoc.exportAsPDF.title": "Export Document as PDF",
-	"asciidoc.pasteImage.title" : "Paste Image",
+	"asciidoc.pasteImage.title": "Paste Image",
 	"asciidoc.preview.title": "Open Preview",
 	"asciidoc.preview.refresh.title": "Refresh Preview",
 	"asciidoc.preview.toggleLock.title": "Toggle Preview Locking",
@@ -15,9 +15,9 @@
 	"asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Manage Asciidoctor.js Extensions Trust Mode",
 	"asciidoc.showSource.title": "Show Source",
 
-	"asciidoc.preview.title": "Preview",
 	"asciidoc.preview.asciidoctorAttributes.desc": "Sets Asciidoctor attributes used in the preview. Attributes need to be written as an object of type {string: string}.",
 	"asciidoc.preview.refreshInterval.desc": "Interval in miliseconds between two consecutive updates of the preview. The value 0 means it will only update the preview on save.",
+	"asciidoc.preview.preservePreviewWhenHidden.desc": "Whether to keep the AsciiDoc preview in memory even when it's hidden (such as when switching tabs). If enabled, the preview will reload more quickly when restored from the background at the expense of increased memory usage. This setting only affects a hidden/background AsciiDoc preview; closing the preview will always discard it entirely, regardless of this setting.",
 	"asciidoc.preview.style.desc": "An URL or a local path to CSS style sheets to use from the preview. Relative paths are interpreted relative to the folder open in the Explorer. If there is no open folder, they are interpreted relative to the location of the AsciiDoc file. All `\\` need to be written as `\\\\`.",
 	"asciidoc.preview.useEditorStyle.desc": "Uses VS Code editor style instead of the default Asciidoctor style.",
 	"asciidoc.preview.fontFamily.desc": "Controls the font family used in the preview.",

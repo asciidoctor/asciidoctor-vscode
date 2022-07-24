@@ -37,6 +37,16 @@ window.onload = () => {
 }
 
 onceDocumentLoaded(() => {
+  if (!settings.preservePreviewWhenHidden) {
+    window.addEventListener('scroll', throttle(
+      () => {
+        vscode.setState({ ...vscode.getState(), scrollX: window.scrollX, scrollY: window.scrollY })
+      },
+      250,
+      { leading: true, trailing: true })
+    )
+  }
+
   if (settings.scrollPreviewWithEditor) {
     setTimeout(() => {
       const initialLine = +settings.line
@@ -45,6 +55,10 @@ onceDocumentLoaded(() => {
         scrollToRevealSourceLine(initialLine)
       }
     }, 0)
+  } else if (!settings.preservePreviewWhenHidden) {
+    const { scrollX, scrollY } = vscode.getState()
+    const scrollOptions = { top: scrollY, left: scrollX, behavior: 'auto' as ScrollBehavior }
+    window.scrollTo(scrollOptions)
   }
 })
 

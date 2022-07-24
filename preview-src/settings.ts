@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 export interface PreviewSettings {
@@ -10,6 +10,7 @@ export interface PreviewSettings {
   scrollEditorWithPreview: boolean;
   disableSecurityWarnings: boolean;
   doubleClickToSwitchToEditor: boolean;
+  preservePreviewWhenHidden: boolean;
 }
 
 let cachedSettings: PreviewSettings | undefined
