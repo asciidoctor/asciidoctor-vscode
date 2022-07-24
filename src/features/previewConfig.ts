@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
@@ -15,6 +15,7 @@ export class AsciidocPreviewConfiguration {
   public readonly scrollEditorWithPreview: boolean
   public readonly scrollPreviewWithEditor: boolean
   public readonly markEditorSelection: boolean
+  public readonly preservePreviewWhenHidden: boolean
 
   public readonly lineHeight: number
   public readonly fontSize: number
@@ -40,6 +41,7 @@ export class AsciidocPreviewConfiguration {
     this.scrollEditorWithPreview = !!asciidocConfig.get<boolean>('preview.scrollEditorWithPreview', true)
     this.doubleClickToSwitchToEditor = !!asciidocConfig.get<boolean>('preview.doubleClickToSwitchToEditor', true)
     this.markEditorSelection = !!asciidocConfig.get<boolean>('preview.markEditorSelection', true)
+    this.preservePreviewWhenHidden = !!asciidocConfig.get<boolean>('preview.preservePreviewWhenHidden', false)
 
     this.fontFamily = asciidocConfig.get<string | undefined>('preview.fontFamily', undefined)
     this.fontSize = Math.max(8, +asciidocConfig.get<number>('preview.fontSize', NaN))

@@ -109,6 +109,7 @@ export class AsciidoctorWebViewConverter {
       scrollPreviewWithEditor: this.config.scrollPreviewWithEditor,
       scrollEditorWithPreview: this.config.scrollEditorWithPreview,
       doubleClickToSwitchToEditor: this.config.doubleClickToSwitchToEditor,
+      preservePreviewWhenHidden: this.config.preservePreviewWhenHidden,
       disableSecurityWarnings: cspArbiter.shouldDisableSecurityWarnings(),
     }
     this.state = state || {}
