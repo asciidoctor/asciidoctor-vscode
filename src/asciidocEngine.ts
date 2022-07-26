@@ -35,11 +35,12 @@ export class AsciidocEngine {
     documentUri: vscode.Uri,
     text: string,
     context: vscode.ExtensionContext,
-    editor: vscode.WebviewPanel
+    editor: vscode.WebviewPanel,
+    line?: number
   ): Promise<{output: string, document?: Asciidoctor.Document}> {
     const parser = this.getEngine()
     const textDocument = await vscode.workspace.openTextDocument(documentUri)
-    const { html: output, document } = await parser.convertUsingJavascript(text, textDocument, context, editor)
+    const { html: output, document } = await parser.convertUsingJavascript(text, textDocument, context, editor, line)
     return { output, document }
   }
 

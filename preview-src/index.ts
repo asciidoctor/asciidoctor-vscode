@@ -20,6 +20,7 @@ const vscode = acquireVsCodeApi()
 const originalState = vscode.getState()
 
 const state = {
+  line: settings.line, // shadow settings.line with vscode.getState().line if the latter exists
   ...(typeof originalState === 'object' ? originalState : {}),
   ...getData<any>('data-state'),
 }
@@ -37,7 +38,9 @@ window.onload = () => {
 }
 
 onceDocumentLoaded(() => {
-  if (!settings.preservePreviewWhenHidden) {
+  const windowNeedsRestoration = !settings.preservePreviewWhenHidden
+
+  if (windowNeedsRestoration) {
     window.addEventListener('scroll', throttle(
       () => {
         vscode.setState({ ...vscode.getState(), scrollX: window.scrollX, scrollY: window.scrollY })
@@ -49,13 +52,13 @@ onceDocumentLoaded(() => {
 
   if (settings.scrollPreviewWithEditor) {
     setTimeout(() => {
-      const initialLine = +settings.line
+      const initialLine = vscode.getState().line
       if (!isNaN(initialLine)) {
         scrollDisabled = true
         scrollToRevealSourceLine(initialLine)
       }
     }, 0)
-  } else if (!settings.preservePreviewWhenHidden) {
+  } else if (windowNeedsRestoration) {
     const { scrollX, scrollY } = vscode.getState()
     const scrollOptions = { top: scrollY, left: scrollX, behavior: 'auto' as ScrollBehavior }
     window.scrollTo(scrollOptions)
@@ -68,9 +71,9 @@ const onUpdateView = (() => {
     scrollToRevealSourceLine(line)
   }, 50)
 
-  return (line: number, settings: any) => {
+  return (line: number) => {
     if (!isNaN(line)) {
-      settings.line = line
+      vscode.setState({ ...vscode.getState(), line })
       doScroll(line)
     }
   }
@@ -110,12 +113,15 @@ window.addEventListener('message', (event) => {
   }
 
   switch (event.data.type) {
-    case 'onDidChangeTextEditorSelection':
-      marker.onDidChangeTextEditorSelection(event.data.line)
+    case 'onDidChangeTextEditorSelection': {
+      const line = event.data.line
+      marker.onDidChangeTextEditorSelection(line)
+      vscode.setState({ ...vscode.getState(), line })
       break
+    }
 
     case 'updateView':
-      onUpdateView(event.data.line, settings)
+      onUpdateView(event.data.line)
       break
   }
 }, false)
@@ -174,12 +180,14 @@ document.addEventListener('click', (event) => {
   }
 }, true)
 
-if (settings.scrollEditorWithPreview) {
-  window.addEventListener('scroll', throttle(() => {
+window.addEventListener('scroll', throttle(() => {
+  const line = getEditorLineNumberForPageOffset(window.scrollY)
+  vscode.setState({ ...vscode.getState(), line })
+
+  if (settings.scrollEditorWithPreview) {
     if (scrollDisabled) {
       scrollDisabled = false
     } else {
-      const line = getEditorLineNumberForPageOffset(window.scrollY)
       if (window.scrollY === 0) {
         // scroll to top, document title does not have a data-line attribute
         messaging.postMessage('revealLine', { line: 0 })
@@ -187,5 +195,5 @@ if (settings.scrollEditorWithPreview) {
         messaging.postMessage('revealLine', { line })
       }
     }
-  }, 50))
-}
+  }
+}, 50))
