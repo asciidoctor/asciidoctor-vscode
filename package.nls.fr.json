@@ -15,6 +15,7 @@
 	"asciidoc.showSource.title": "Afficher la source",
 	"asciidoc.preview.asciidoctorAttributes.desc": "Positionne les attributs Asciidoctor utilisés pour la prévisualisation. Les attributs doivent être déclarés en tant qu'objet JSON {string: string}.",
 	"asciidoc.preview.refreshInterval.desc": "Intervalle en millisecondes entre deux mises à jour consécutives de la prévisualisation. La valeur 0 signifie que la prévisualisation sera mise à jour uniquement lors de l'enregistrement du document.",
+	"asciidoc.preview.preservePreviewWhenHidden.desc": "Conserve la prévisualisation AsciiDoc en mémoire même quand elle est non visible (par exemple, quand on change d'onglets). Si activé, la prévisualisation se recharge plus rapidement mais la consommation mémoire est plus importante. Ce paramètre affecte uniquement les prévisulisations en tâche de fond; fermer la prévisualisation libérera les ressources quelle que soit la valeur de ce paramètre.",
 	"asciidoc.preview.style.desc": "Une URL ou un chemin local vers une feuille de styles CSS qui sera utilisée pour la prévisualisation. Les chemins relatifs sont résolues par rapport au dossier ouvert dans l'Explorateur. Si il n'y a aucun dossier ouvert, les chemins sont résolus par rapport au document AsciiDoc. Les caractères `\\` doivent être échappés `\\\\`.",
 	"asciidoc.preview.useEditorStyle.desc": "Utilise le style de l'éditeur VS Code editor plutôt que le style par défaut d'Asciidoctor.",
 	"asciidoc.preview.fontFamily.desc": "Contrôle le nom des polices de caractères utilisées pour la prévisualisation.",
