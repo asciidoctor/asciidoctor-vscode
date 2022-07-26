@@ -1,0 +1,3 @@
+= Contributing
+
+This document is outside the VS Code workspace.

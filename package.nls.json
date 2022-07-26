@@ -70,5 +70,6 @@
 	"asciidoc.useWorkspaceRoot.desc": "**Deprecated:** When in a workspace, uses the workspace root path as the base directory.",
 	"asciidoc.useWorkspaceRoot.deprecationMessage": "This setting has been replaced by `#asciidoc.useWorkspaceRootAsBaseDirectory#` and no longer has any effect.",
 	"asciidoc.use_kroki.desc": "**Deprecated:** Enables Kroki integration to generate diagrams.",
-	"asciidoc.use_kroki.deprecationMessage": "This setting has been replaced by `#asciidoc.extensions.enableKroki#` and no longer has any effect."
+	"asciidoc.use_kroki.deprecationMessage": "This setting has been replaced by `#asciidoc.extensions.enableKroki#` and no longer has any effect.",
+	"asciidoc.antora.enableAntoraSupport.desc": "Enable [Antora](https://antora.org/) support"
 }

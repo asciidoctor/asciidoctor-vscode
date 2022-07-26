@@ -533,6 +533,11 @@
 						"order": 2,
 						"scope": "resource"
 					}
+				},
+				"asciidoc.antora.enableAntoraSupport": {
+					"type": "boolean",
+					"default": false,
+					"markdownDescription": "%asciidoc.antora.enableAntoraSupport.desc%"
 				}
 			}
 		],
@@ -590,6 +595,7 @@
 		"eslint-plugin-n": "^15.2.4",
 		"eslint-plugin-node": "11.1.0",
 		"eslint-plugin-promise": "6.0.0",
+		"js-yaml": "^4.1.0",
 		"font-awesome": "^4.7.0",
 		"gulp": "^4.0.2",
 		"lodash.throttle": "4.1.1",
@@ -614,5 +620,11 @@
 		"asciidoctor-kroki": "0.15.4",
 		"uuid": "8.3.2",
 		"vscode-nls": "5.0.0"
+	},
+	"__metadata": {
+		"id": "c1309cc2-f420-46a3-b2be-ca04f4d9e51b",
+		"publisherDisplayName": "asciidoctor",
+		"publisherId": "b139f5ca-8a7c-4029-b14a-59f66583c82c",
+		"isPreReleaseVersion": false
 	}
 }

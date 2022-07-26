@@ -37,7 +37,7 @@ class VSCodeWorkspaceAsciidocDocumentProvider implements WorkspaceAsciidocDocume
   }
 
   async getAllAsciidocDocuments () {
-    const resources = await vscode.workspace.findFiles('**/*.md', '**/node_modules/**')
+    const resources = await vscode.workspace.findFiles('**/*.adoc', '**/node_modules/**')
     const docs = await Promise.all(resources.map((doc) => this.getAsciidocDocument(doc)))
     return docs.filter((doc) => !!doc) as SkinnyTextDocument[]
   }
@@ -62,7 +62,7 @@ class VSCodeWorkspaceAsciidocDocumentProvider implements WorkspaceAsciidocDocume
       return
     }
 
-    this._watcher = vscode.workspace.createFileSystemWatcher('**/*.md')
+    this._watcher = vscode.workspace.createFileSystemWatcher('**/*.adoc')
 
     this._watcher.onDidChange(async (resource) => {
       const document = await this.getAsciidocDocument(resource)

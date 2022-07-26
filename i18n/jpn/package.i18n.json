@@ -15,9 +15,9 @@
 	"asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Asciidoctor.js拡張の信頼モード設定",
 	"asciidoc.showSource.title": "ソース表示",
 
-	"asciidoc.preview.title": "プレビュー",
 	"asciidoc.preview.asciidoctorAttributes.desc": "プレビューで使用するAsciidoctorのAttributeを指定します。 Attributeは、{string: string} の形式で入力してください。",
 	"asciidoc.preview.refreshInterval.desc": "ドキュメント変更時にプレビューのリフレッシュ間隔(ミリ秒)を指定します。0を指定した場合は、保存時のみ更新します。",
+	"asciidoc.preview.preservePreviewWhenHidden.desc": "Whether to keep the AsciiDoc preview in memory even when it's hidden (such as when switching tabs). If enabled, the preview will reload more quickly when restored from the background at the expense of increased memory usage. This setting only affects a hidden/background AsciiDoc preview; closing the preview will always discard it entirely, regardless of this setting.",
 	"asciidoc.preview.style.desc": "プレビューで使用するCSSスタイルシートのURLまたはローカルパスを指定します。相対パスは、エクスプローラで開いているフォルダからの相対パスとして解釈されます。フォルダーを開いていない場合は、AsciiDocファイルからの相対パスとして解釈されます。'\\\\'は、 '\\\\\\\\'と記述する必要があります。",
 	"asciidoc.preview.useEditorStyle.desc": "デフォルトスタイルであるasciidoctor.cssではなく、エディターのスタイルを使用します。",
 	"asciidoc.preview.fontFamily.desc": "プレビューで使用するフォントを指定します。",
@@ -70,5 +70,6 @@
 	"asciidoc.useWorkspaceRoot.desc": "**非推奨:** ワークスペースのルートパスをベースディレクトリとして使用します。",
 	"asciidoc.useWorkspaceRoot.deprecationMessage": "本設定は、`#asciidoc.useWorkspaceRootAsBaseDirectory#`に置き換えられ、動作しません。",
 	"asciidoc.use_kroki.desc": "**非推奨:** ダイアグラム生成Krokiを使用します。",
-	"asciidoc.use_kroki.deprecationMessage": "本設定は、`#asciidoc.extensions.enableKroki#`に置き換えられ、動作しません。"
+	"asciidoc.use_kroki.deprecationMessage": "本設定は、`#asciidoc.extensions.enableKroki#`に置き換えられ、動作しません。",
+	"asciidoc.antora.enableAntoraSupport.desc": "Enable [Antora](https://antora.org/) support."
 }
