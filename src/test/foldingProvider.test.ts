@@ -7,7 +7,6 @@ import * as assert from 'assert'
 import 'mocha'
 import * as vscode from 'vscode'
 import AsciidocFoldingProvider from '../features/foldingProvider'
-import { createNewAsciidocEngine } from './engine'
 import { InMemoryDocument } from './inMemoryDocument'
 
 const testFileName = vscode.Uri.file('test.adoc')
@@ -399,6 +398,6 @@ this is the same paragraph`)
 
 function getFoldsForDocument (contents: string) {
   const doc = new InMemoryDocument(testFileName, contents)
-  const provider = new AsciidocFoldingProvider(createNewAsciidocEngine())
+  const provider = new AsciidocFoldingProvider()
   return provider.provideFoldingRanges(doc, new vscode.CancellationTokenSource().token)
 }

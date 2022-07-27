@@ -334,8 +334,7 @@ export namespace Import {
         return dir
       }
 
-      const extensionUri = vscode.Uri.file('') // won't be used anyway... needs refactoring!
-      const { document } = new AsciidocParser(extensionUri).load(textDocument)
+      const { document } = AsciidocParser.load(textDocument)
       return document.getAttribute('imagesdir', '')
     }
 

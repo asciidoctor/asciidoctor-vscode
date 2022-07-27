@@ -9,6 +9,7 @@ import { getUriForLinkWithKnownExternalScheme } from '../util/links'
 import { similarArrayMatch } from '../similarArrayMatch'
 import { isSchemeBlacklisted } from '../linkSanitizer'
 import * as nls from 'vscode-nls'
+import { AsciidocParser } from '../asciidocParser'
 
 const localize = nls.loadMessageBundle()
 
@@ -43,15 +44,8 @@ function normalizeLink (
 }
 
 export default class LinkProvider implements vscode.DocumentLinkProvider {
-  private engine: any
-
-  constructor (engine) {
-    this.engine = engine
-  }
-
   public provideDocumentLinks (textDocument: vscode.TextDocument, _token: vscode.CancellationToken): vscode.DocumentLink[] {
-    const asciidocParser = this.engine.getEngine()
-    const { document, baseDocumentIncludeItems } = asciidocParser.load(textDocument)
+    const { document, baseDocumentIncludeItems } = AsciidocParser.load(textDocument)
 
     // includes from the reader are resolved correctly but the line numbers may be offset and not exactly match the document
     let baseDocumentProcessorIncludes = baseDocumentIncludeItems
@@ -88,7 +82,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
             // don't link to the include:: part or the square bracket contents
             new vscode.Position(lineNo, 9),
             new vscode.Position(lineNo, entry.length + 9)),
-          normalizeLink(document, entry.name, base))
+          normalizeLink(textDocument, entry.name, base))
         documentLink.tooltip = localize('documentLink.openFile.tooltip', 'Open file {0}', entry.name)
         results.push(documentLink)
       })

@@ -18,8 +18,7 @@ export interface TocEntry {
 export class TableOfContentsProvider {
   private toc?: TocEntry[]
 
-  public constructor (private engine: AsciidocEngine, private document: SkinnyTextDocument) {
-    this.engine = engine
+  public constructor (private document: SkinnyTextDocument) {
     this.document = document
   }
 
@@ -42,7 +41,7 @@ export class TableOfContentsProvider {
   }
 
   private buildToc (textDocument: SkinnyTextDocument): TocEntry[] {
-    const asciidocDocument = this.engine.load(textDocument)
+    const asciidocDocument = AsciidocEngine.load(textDocument)
 
     const toc = asciidocDocument
       .findBy({ context: 'section' })

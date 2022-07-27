@@ -4,7 +4,7 @@
 
 import * as vscode from 'vscode'
 import { Logger } from '../logger'
-import { AsciidocContributions } from '../asciidocExtensions'
+import { AsciidocContributionProvider } from '../asciidocExtensions'
 import { disposeAll } from '../util/dispose'
 import { AsciidocFileTopmostLineMonitor } from '../util/topmostLineMonitor'
 import { AsciidocPreview, PreviewSettings } from './preview'
@@ -23,7 +23,7 @@ export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer {
   public constructor (
     private readonly _contentProvider: AsciidocContentProvider,
     private readonly _logger: Logger,
-    private readonly _contributions: AsciidocContributions
+    private readonly _contributionProvider: AsciidocContributionProvider
   ) {
     this._disposables.push(vscode.window.registerWebviewPanelSerializer(AsciidocPreview.viewType, this))
   }
@@ -92,7 +92,7 @@ export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer {
       this._previewConfigurations,
       this._logger,
       this._topmostLineMonitor,
-      this._contributions)
+      this._contributionProvider)
 
     this.registerPreview(preview)
   }
@@ -118,7 +118,7 @@ export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer {
       this._previewConfigurations,
       this._logger,
       this._topmostLineMonitor,
-      this._contributions)
+      this._contributionProvider)
 
     this.setPreviewActiveContext(true)
     this._activePreview = preview

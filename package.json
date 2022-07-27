@@ -547,6 +547,12 @@
 				"editor.quickSuggestions": false
 			}
 		},
+		"asciidoc.previewStyles": [
+			"./media/editor-selection.css"
+		],
+		"asciidoc.previewScripts": [
+			"./dist/index.js"
+		],
 		"snippets": [
 			{
 				"language": "asciidoc",
@@ -586,8 +592,8 @@
 		"@types/mocha": "~9.1",
 		"@types/node": "~12.20",
 		"@types/vscode": "~1.64",
-		"@typescript-eslint/eslint-plugin": "5.11.0",
-		"@typescript-eslint/parser": "5.11.0",
+		"@typescript-eslint/eslint-plugin": "5.14.0",
+		"@typescript-eslint/parser": "5.14.0",
 		"copy-webpack-plugin": "10.2.4",
 		"eslint": "8.8.0",
 		"eslint-config-standard": "^17.0.0",

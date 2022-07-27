@@ -7,9 +7,8 @@ import 'mocha'
 import * as vscode from 'vscode'
 import AdocDocumentSymbolProvider from '../features/documentSymbolProvider'
 import AsciidocWorkspaceSymbolProvider, { WorkspaceAsciidocDocumentProvider } from '../features/workspaceSymbolProvider'
-import { createNewAsciidocEngine } from './engine'
 
-const symbolProvider = new AdocDocumentSymbolProvider(createNewAsciidocEngine(), null)
+const symbolProvider = new AdocDocumentSymbolProvider(null)
 
 suite('asciidoc.WorkspaceSymbolProvider', () => {
   test('Should not return anything for empty workspace', async () => {

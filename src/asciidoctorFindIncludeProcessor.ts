@@ -2,7 +2,7 @@ interface IncludeEntry {
   index: number,
   name: string,
   position: number,
-  length: string,
+  length: number,
 }
 
 export interface IncludeItems extends Array<IncludeEntry>{}

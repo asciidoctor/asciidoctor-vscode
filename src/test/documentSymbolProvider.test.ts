@@ -5,15 +5,14 @@
 import * as assert from 'assert'
 import 'mocha'
 import * as vscode from 'vscode'
-import SymbolProvider from '../features/documentSymbolProvider'
+import DocumentSymbolProvider from '../features/documentSymbolProvider'
 import { InMemoryDocument } from './inMemoryDocument'
-import { createNewAsciidocEngine } from './engine'
 
 const testFileName = vscode.Uri.file('test.adoc')
 
 function getSymbolsForFile (fileContents: string) {
   const doc = new InMemoryDocument(testFileName, fileContents)
-  const provider = new SymbolProvider(createNewAsciidocEngine(), null)
+  const provider = new DocumentSymbolProvider(null)
   return provider.provideDocumentSymbols(doc)
 }
 

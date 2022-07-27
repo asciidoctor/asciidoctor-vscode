@@ -22,7 +22,7 @@ import AsciidocFoldingRangeProvider from './features/foldingProvider'
 import { AntoraSupportManager } from './features/antora/antoraSupport'
 
 export function activate (context: vscode.ExtensionContext) {
-  const contributions = getAsciidocExtensionContributions(context)
+  const contributionProvider = getAsciidocExtensionContributions(context)
 
   const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState)
   const aespArbiter = new AsciidoctorExtensionsSecurityPolicyArbiter(context)
@@ -30,7 +30,7 @@ export function activate (context: vscode.ExtensionContext) {
 
   const errorCollection = vscode.languages.createDiagnosticCollection('asciidoc')
 
-  const engine = new AsciidocEngine(contributions, aespArbiter, errorCollection)
+  const engine = new AsciidocEngine(contributionProvider, aespArbiter, errorCollection)
   const logger = new Logger()
   logger.log('Extension was started')
 
@@ -46,18 +46,18 @@ export function activate (context: vscode.ExtensionContext) {
   ]
 
   const contentProvider = new AsciidocContentProvider(engine, context)
-  const symbolProvider = new AdocDocumentSymbolProvider(engine, null)
-  const previewManager = new AsciidocPreviewManager(contentProvider, logger, contributions)
+  const symbolProvider = new AdocDocumentSymbolProvider(null)
+  const previewManager = new AsciidocPreviewManager(contentProvider, logger, contributionProvider)
   context.subscriptions.push(previewManager)
   context.subscriptions.push(new AsciidocFileIncludeAutoCompletionMonitor())
   context.subscriptions.push(new AntoraSupportManager(context))
 
   context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider))
-  context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider(engine)))
+  context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider()))
   context.subscriptions.push(vscode.languages.registerWorkspaceSymbolProvider(new AsciidocWorkspaceSymbolProvider(symbolProvider)))
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new AttributeReferenceProvider(contributions.extensionUri), '{'))
-  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new BuiltinDocumentAttributeProvider(contributions.extensionUri), ':'))
-  context.subscriptions.push(vscode.languages.registerFoldingRangeProvider(selector, new AsciidocFoldingRangeProvider(engine)))
+  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new AttributeReferenceProvider(), '{'))
+  context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new BuiltinDocumentAttributeProvider(), ':'))
+  context.subscriptions.push(vscode.languages.registerFoldingRangeProvider(selector, new AsciidocFoldingRangeProvider()))
   const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager)
   const commandManager = new CommandManager()
   context.subscriptions.push(commandManager)

@@ -3,7 +3,6 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
-import { AsciidocEngine } from '../asciidocEngine'
 import { TableOfContentsProvider, TocEntry } from '../tableOfContentsProvider'
 import { SkinnyTextDocument } from '../util/document'
 
@@ -18,17 +17,16 @@ export default class AdocDocumentSymbolProvider implements vscode.DocumentSymbol
   private lastRunTime: number = 1000
   private RunTimeFactor: number = 1.5
 
-  constructor (private readonly engine: AsciidocEngine, private root: AsciidocSymbol = {
+  constructor (private root: AsciidocSymbol = {
     level: -Infinity,
     children: [],
     parent: undefined,
   }) {
-    this.engine = engine
     this.root = root
   }
 
   public async provideDocumentSymbolInformation (document: SkinnyTextDocument): Promise<vscode.SymbolInformation[]> {
-    const toc = await new TableOfContentsProvider(this.engine, document).getToc()
+    const toc = await new TableOfContentsProvider(document).getToc()
     return toc.map((entry) => this.toSymbolInformation(entry))
   }
 
@@ -37,7 +35,7 @@ export default class AdocDocumentSymbolProvider implements vscode.DocumentSymbol
     const startTime = (new Date()).getTime()
 
     if (this.lastSymbolCall === undefined || startTime > nextOKRunTime) {
-      const toc = await new TableOfContentsProvider(this.engine, document).getToc()
+      const toc = await new TableOfContentsProvider(document).getToc()
       this.root = {
         level: -Infinity,
         children: [],

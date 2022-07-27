@@ -6,6 +6,7 @@ import { WebviewResourceProvider } from './util/resources'
 import { Asciidoctor } from '@asciidoctor/core'
 import { SkinnyTextDocument } from './util/document'
 import * as nls from 'vscode-nls'
+import { AsciidocContributionProvider } from './asciidocExtensions'
 
 const localize = nls.loadMessageBundle()
 
@@ -93,6 +94,7 @@ export class AsciidoctorWebViewConverter {
     private readonly context: vscode.ExtensionContext,
     private readonly editor: vscode.WebviewPanel,
     cspArbiter: ContentSecurityPolicyArbiter,
+    private readonly contributionProvider: AsciidocContributionProvider,
     previewConfigurations: AsciidocPreviewConfigurationManager,
     line: number | undefined = undefined,
     state?: any
@@ -167,7 +169,7 @@ export class AsciidoctorWebViewConverter {
         ${this.generateFootnotes(node)}
         ${this.generateFooter(node)}
         <div class="code-line" data-line="${this.textDocument.lineCount}"></div>
-        <script async src="${this.extensionResourcePath('index.js')}" nonce="${nonce}" charset="UTF-8"></script>
+        ${this.getScripts(resourceProvider, nonce)}
         ${syntaxHighlighterFooterContent}
         ${this.generateMathJax(node, resourceProvider, nonce)}
         ${footerDocinfo}
@@ -382,8 +384,11 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
   }
 
   private getStyles (node: Asciidoctor.Document, resourceProvider: WebviewResourceProvider, resource: vscode.Uri, config: AsciidocPreviewConfiguration, state?: any): string {
-    // QUESTION: should we support `stylesdir` and `stylesheet` attributes?
     const baseStyles: string[] = []
+    for (const resource of this.contributionProvider.contributions.previewStyles) {
+      baseStyles.push(`<link rel="stylesheet" type="text/css" href="${escapeAttribute(resourceProvider.asWebviewUri(resource))}">`)
+    }
+    // QUESTION: should we support `stylesdir` and `stylesheet` attributes?
     if (config.previewStyle === '') {
       const builtinStylesheet = config.useEditorStylesheet ? 'asciidoctor-editor.css' : 'asciidoctor-default.css'
       baseStyles.push(`<link rel="stylesheet" type="text/css" href="${escapeAttribute(resourceProvider.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', builtinStylesheet)))}">`)
@@ -394,6 +399,14 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
     return `${baseStyles.join('\n')}
   ${this.computeCustomStyleSheetIncludes(resourceProvider, resource, config)}
   ${this.getImageStabilizerStyles(state)}`
+  }
+
+  private getScripts (resourceProvider: WebviewResourceProvider, nonce: string): string {
+    const out: string[] = []
+    for (const resource of this.contributionProvider.contributions.previewScripts) {
+      out.push(`<script async src="${escapeAttribute(resourceProvider.asWebviewUri(resource))}" nonce="${nonce}" charset="UTF-8"></script>`)
+    }
+    return out.join('\n')
   }
 
   private computeCustomStyleSheetIncludes (resourceProvider: WebviewResourceProvider, resource: vscode.Uri, config: AsciidocPreviewConfiguration): string {
