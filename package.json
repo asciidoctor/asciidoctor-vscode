@@ -588,9 +588,9 @@
 		"eslint-plugin-n": "^15.2.4",
 		"eslint-plugin-node": "11.1.0",
 		"eslint-plugin-promise": "6.0.0",
-		"js-yaml": "^4.1.0",
 		"font-awesome": "^4.7.0",
 		"gulp": "^4.0.2",
+		"js-yaml": "^4.1.0",
 		"lodash.throttle": "4.1.1",
 		"mathjax": "^2.7.9",
 		"mocha": "9.2.0",
@@ -612,7 +612,8 @@
 		"@orcid/bibtex-parse-js": "0.0.25",
 		"asciidoctor-kroki": "0.15.4",
 		"uuid": "8.3.2",
-		"vscode-nls": "5.0.0"
+		"vscode-nls": "5.0.0",
+		"vscode-uri": "3.0.3"
 	},
 	"__metadata": {
 		"id": "c1309cc2-f420-46a3-b2be-ca04f4d9e51b",
