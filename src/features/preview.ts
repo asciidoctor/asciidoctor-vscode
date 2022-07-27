@@ -82,13 +82,20 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     topmostLineMonitor: AsciidocFileTopmostLineMonitor,
     contributions: AsciidocContributions
   ): AsciidocPreview {
+    const retainContextWhenHidden = vscode.workspace
+      .getConfiguration('asciidoc', null)
+      .get<boolean>('preview.preservePreviewWhenHidden', false)
+
     const webview = vscode.window.createWebviewPanel(
       AsciidocPreview.viewType,
       AsciidocPreview.getPreviewTitle(resource, locked),
-      previewColumn, {
+      previewColumn,
+      {
         enableFindWidget: true,
+        retainContextWhenHidden,
         ...AsciidocPreview.getWebviewOptions(resource, contributions),
-      })
+      }
+    )
 
     return new AsciidocPreview(
       webview,
@@ -173,9 +180,12 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
 
     vscode.window.onDidChangeTextEditorSelection((event) => {
       if (this.isPreviewOf(event.textEditor.document.uri)) {
+        const line = event.selections[0].active.line
+        this.line = line
+
         this.postMessage({
           type: 'onDidChangeTextEditorSelection',
-          line: event.selections[0].active.line,
+          line,
           source: this.resource.toString(),
         })
       }
@@ -370,7 +380,7 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     }
     this.editor.iconPath = this.iconPath
     this.editor.webview.options = AsciidocPreview.getWebviewOptions(resource, this._contributions)
-    const content = await this._contentProvider.providePreviewHTML(document, this._previewConfigurations, this.editor)
+    const content = await this._contentProvider.providePreviewHTML(document, this._previewConfigurations, this.editor, this.line)
     this.editor.webview.html = content
   }
 

@@ -107,7 +107,8 @@ export class AsciidocParser {
     text: string,
     doc: SkinnyTextDocument,
     context: vscode.ExtensionContext,
-    editor: vscode.WebviewPanel
+    editor: vscode.WebviewPanel,
+    line?:number
   ): Promise<{ html: string, document: Asciidoctor.Document }> {
     // extension context should be at constructor
     const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState)
@@ -129,7 +130,8 @@ export class AsciidocParser {
       context,
       editor,
       cspArbiter,
-      previewConfigurationManager
+      previewConfigurationManager,
+      line
     )
     processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])
 

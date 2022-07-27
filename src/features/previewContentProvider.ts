@@ -9,10 +9,11 @@ export class AsciidocContentProvider {
   public async providePreviewHTML (
     asciidocDocument: vscode.TextDocument,
     previewConfigurations: AsciidocPreviewConfigurationManager,
-    editor: vscode.WebviewPanel
+    editor: vscode.WebviewPanel,
+    line?: number
   ): Promise<string> {
     const sourceUri = asciidocDocument.uri
-    const { output } = await this.engine.convert(sourceUri, asciidocDocument.getText(), this.context, editor)
+    const { output } = await this.engine.convert(sourceUri, asciidocDocument.getText(), this.context, editor, line)
     return output
   }
 }
