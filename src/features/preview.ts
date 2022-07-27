@@ -3,6 +3,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
+import * as uri from 'vscode-uri'
 import * as path from 'path'
 
 import { Logger } from '../logger'
@@ -391,11 +392,12 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     ]
     const folder = vscode.workspace.getWorkspaceFolder(resource)
     if (folder) {
-      return baseRoots.concat(folder.uri)
-    }
-
-    if (!resource.scheme || resource.scheme === 'file') {
-      return baseRoots.concat(vscode.Uri.file(path.dirname(resource.fsPath)))
+      const workspaceRoots = vscode.workspace.workspaceFolders?.map((folder) => folder.uri)
+      if (workspaceRoots) {
+        baseRoots.push(...workspaceRoots)
+      }
+    } else {
+      baseRoots.push(uri.Utils.dirname(resource))
     }
 
     return baseRoots
