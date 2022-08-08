@@ -30,6 +30,7 @@
 	"asciidoc.preview.openLinksToAsciidocFiles.desc": "Controls how links to other AsciiDoc files in the preview should be opened.",
 	"asciidoc.preview.openLinksToAsciidocFiles.inPreview": "Try to open links in the editor",
 	"asciidoc.preview.openLinksToAsciidocFiles.inEditor": "Try to open links in the preview",
+	"asciidoc.preview.templates.desc": "An URL or a local path to custom templates to use from the preview. Relative paths are interpreted relative to the folder open in the Explorer. If there is no open folder, they are interpreted relative to the location of the AsciiDoc file. All `\\` need to be written as `\\\\`.",
 
 	"asciidoc.pdf.title": "PDF",
 	"asciidoc.pdf.engine.desc": "Controls the PDF engine used to export as PDF.",

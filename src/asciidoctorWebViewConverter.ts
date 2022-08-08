@@ -88,6 +88,7 @@ export class AsciidoctorWebViewConverter {
   config: AsciidocPreviewConfiguration
   initialData: { [key: string]: any }
   state: object
+  backendTraits: { supports_templates: boolean }
 
   constructor (
     private readonly textDocument: SkinnyTextDocument,
@@ -116,6 +117,9 @@ export class AsciidoctorWebViewConverter {
       disableSecurityWarnings: cspArbiter.shouldDisableSecurityWarnings(),
     }
     this.state = state || {}
+    this.backendTraits = {
+      supports_templates: true
+    }
   }
 
   /**
