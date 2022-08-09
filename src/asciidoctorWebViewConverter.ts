@@ -118,7 +118,7 @@ export class AsciidoctorWebViewConverter {
     }
     this.state = state || {}
     this.backendTraits = {
-      supports_templates: true
+      supports_templates: true,
     }
   }
 
