@@ -385,9 +385,13 @@
 						"scope": "resource"
 					},
 					"asciidoc.preview.templates": {
-						"type": "string",
+						"type": "array",
 						"default": "",
 						"markdownDescription": "%asciidoc.preview.templates.desc%",
+						"items": {
+							"type": "string"
+						  },
+						  "uniqueItems": false,
 						"scope": "resource"
 					},
 					"asciidoc.use_kroki": {
@@ -630,7 +634,6 @@
 		"@asciidoctor/docbook-converter": "2.0.0",
 		"@orcid/bibtex-parse-js": "0.0.25",
 		"asciidoctor-kroki": "0.15.4",
-		"pug": "^3.0.2",
 		"uuid": "8.3.2",
 		"vscode-nls": "5.0.0",
 		"vscode-uri": "^3.0.3"
