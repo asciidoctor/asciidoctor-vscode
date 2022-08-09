@@ -24,7 +24,7 @@ export class AsciidocPreviewConfiguration {
   public readonly refreshInterval: number
   public readonly useEditorStylesheet: boolean
   public readonly previewStyle: string
-  public readonly previewTemplates: string
+  public readonly previewTemplates: string[]
 
   private constructor (resource: vscode.Uri) {
     const editorConfig = vscode.workspace.getConfiguration('editor', resource)
@@ -51,7 +51,7 @@ export class AsciidocPreviewConfiguration {
     this.styles = asciidocConfig.get<string[]>('styles', []) // REMIND: unused, we should either use it or remove it!
     this.useEditorStylesheet = asciidocConfig.get<boolean>('preview.useEditorStyle', false)
     this.previewStyle = asciidocConfig.get<string>('preview.style', '')
-    this.previewTemplates = asciidocConfig.get<string>('preview.templates', '')
+    this.previewTemplates = asciidocConfig.get<string[]>('preview.templates', [])
     this.refreshInterval = Math.max(0.6, +asciidocConfig.get<number>('preview.refreshInterval', NaN))
   }
 

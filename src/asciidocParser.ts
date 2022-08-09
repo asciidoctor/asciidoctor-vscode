@@ -270,7 +270,7 @@ export class AsciidocParser {
    * @private
    */
   private getTemplateDirs () {
-    const templatesDir = vscode.workspace.getConfiguration('asciidoc.preview', null).get<String []>('templates', [])
+    const templatesDir = vscode.workspace.getConfiguration('asciidoc.preview', null).get<string[]>('templates', [])
     return templatesDir
   }
 
