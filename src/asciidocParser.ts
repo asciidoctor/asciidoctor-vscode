@@ -157,6 +157,7 @@ export class AsciidocParser {
     attributes['env-vscode'] = ''
 
     const baseDir = AsciidocParser.getBaseDir(doc.fileName)
+    const templateDirs = this.getTemplateDirs()
     const options: { [key: string]: any } = {
       attributes,
       backend: 'webview-html5',
@@ -165,6 +166,9 @@ export class AsciidocParser {
       safe: 'unsafe',
       sourcemap: true,
       ...(baseDir && { base_dir: baseDir }),
+    }
+    if (templateDirs.length !== 0) {
+      options.template_dirs = templateDirs
     }
 
     try {
@@ -259,6 +263,15 @@ export class AsciidocParser {
     return useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined'
       ? vscode.workspace.rootPath
       : documentPath
+  }
+
+  /**
+   * Get user defined template directories from configuration.
+   * @private
+   */
+  private getTemplateDirs () {
+    const templatesDir = vscode.workspace.getConfiguration('asciidoc.preview', null).get<string[]>('templates', [])
+    return templatesDir
   }
 
   private async confirmAsciidoctorExtensionsTrusted (): Promise<boolean> {

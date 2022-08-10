@@ -384,6 +384,16 @@
 						],
 						"scope": "resource"
 					},
+					"asciidoc.preview.templates": {
+						"type": "array",
+						"default": "",
+						"markdownDescription": "%asciidoc.preview.templates.desc%",
+						"items": {
+							"type": "string"
+						  },
+						  "uniqueItems": false,
+						"scope": "resource"
+					},
 					"asciidoc.use_kroki": {
 						"type": "boolean",
 						"default": false,
@@ -626,7 +636,7 @@
 		"asciidoctor-kroki": "0.15.4",
 		"uuid": "8.3.2",
 		"vscode-nls": "5.0.0",
-		"vscode-uri": "3.0.3"
+		"vscode-uri": "^3.0.3"
 	},
 	"__metadata": {
 		"id": "c1309cc2-f420-46a3-b2be-ca04f4d9e51b",
