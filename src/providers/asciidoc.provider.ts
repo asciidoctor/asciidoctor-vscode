@@ -87,6 +87,7 @@ async function provide (
 
   return [
     levelUpCompletionItem,
+    ...variablePathSubstitutions,
     ...items.map((child) => {
       const result = createPathCompletionItem(child)
       result.insertText = result.kind === vscode.CompletionItemKind.File ? child.file + '[]' : child.file
@@ -99,7 +100,6 @@ async function provide (
       }
       return result
     }),
-    ...variablePathSubstitutions,
   ]
 }
 
