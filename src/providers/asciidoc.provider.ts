@@ -50,7 +50,6 @@ async function provide (
     }
   }
 
-  const workspace = vscode.workspace.getWorkspaceFolder(context.document.uri)
   const documentPath = context.document.uri.fsPath
   const rootPath = documentPath.substr(0, documentPath.lastIndexOf('/'))
   const searchPath = getPathOfFolderToLookupFiles(
