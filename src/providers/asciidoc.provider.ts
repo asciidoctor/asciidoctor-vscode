@@ -64,7 +64,7 @@ async function provide (
   const levelUpCompletionItem: vscode.CompletionItem = {
     label: '..',
     kind: vscode.CompletionItemKind.Folder,
-    sortText: '..',
+    sortText: '10_..',
   }
   const globalVariableDefinitions = documentText.match(/:\S+:.*/g)
 
@@ -78,7 +78,7 @@ async function provide (
       return {
         label: `{${label}}`,
         kind: vscode.CompletionItemKind.Variable,
-        sortText: `a_${label}`,
+        sortText: `10_${label}`,
         insertText: `{${label}${doAutoCloseBrackets ? '' : '}'}`, // } curly bracket will be closed automatically by default
       }
     })
@@ -108,6 +108,6 @@ function createPathCompletionItem (
   return {
     label: fileInfo.file,
     kind: fileInfo.isFile ? vscode.CompletionItemKind.File : vscode.CompletionItemKind.Folder,
-    sortText: fileInfo.file,
+    sortText: `10_${fileInfo.file}`,
   }
 }

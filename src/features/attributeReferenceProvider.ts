@@ -19,6 +19,7 @@ export class AttributeReferenceProvider {
       insertText = prefix !== '{' ? `{${insertText}` : insertText
       insertText = suffix !== '}' ? `${insertText}}` : insertText
       completionItem.insertText = insertText
+      completionItem.sortText = `20_${key}`
       return completionItem
     })
   }
