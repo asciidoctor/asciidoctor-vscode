@@ -72,5 +72,7 @@
 	"asciidoc.useWorkspaceRoot.deprecationMessage": "This setting has been replaced by `#asciidoc.useWorkspaceRootAsBaseDirectory#` and no longer has any effect.",
 	"asciidoc.use_kroki.desc": "**Deprecated:** Enables Kroki integration to generate diagrams.",
 	"asciidoc.use_kroki.deprecationMessage": "This setting has been replaced by `#asciidoc.extensions.enableKroki#` and no longer has any effect.",
-	"asciidoc.antora.enableAntoraSupport.desc": "Enable [Antora](https://antora.org/) support"
+	"asciidoc.antora.enableAntoraSupport.desc": "Enable [Antora](https://antora.org/) support",
+
+	"configuration.asciidoc.editor.drop.enabled": "Enable/disable dropping into the asciidoc editor to insert shift. Requires enabling `#editor.dropIntoEditor.enabled#`."
 }

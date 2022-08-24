@@ -64,5 +64,6 @@
 	"asciidoc.useWorkspaceRoot.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.useWorkspaceRootAsBaseDirectory#` et n'a plus aucun effet.",
 	"asciidoc.use_kroki.desc": "**Obsolète:** Active l'extension Kroki afin de générer des diagrammes.",
 	"asciidoc.use_kroki.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.extensions.enableKroki#` et n'a plus aucun effet.",
-	"asciidoc.antora.enableAntoraSupport.desc": "Active le support [Antora](https://antora.org/)."
+	"asciidoc.antora.enableAntoraSupport.desc": "Active le support [Antora](https://antora.org/).",
+	"asciidoc.editor.enableDrop.desc": "Active/desactive le glisser-déposer dans l'editeur Asciidoc. Nécessite l'activation `#editor.dropIntoEditor.enabled#`."
 }

@@ -21,7 +21,7 @@
 	"browser": "./dist/browser/extension",
 	"main": "./dist/src/extension.js",
 	"engines": {
-		"vscode": "^1.64.0",
+		"vscode": "^1.70.2",
 		"node": ">=14"
 	},
 	"categories": [
@@ -428,6 +428,12 @@
 						"markdownDescription": "%asciidoc.use_asciidoctorpdf.desc%",
 						"markdownDeprecationMessage": "%asciidoc.use_asciidoctorpdf.deprecationMessage%",
 						"scope": "resource"
+					},
+					"asciidoc.editor.enableDrop": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "%configuration.asciidoc.editor.drop.enabled%",
+						"scope": "resource"
 					}
 				}
 			},
@@ -601,7 +607,7 @@
 		"@types/lodash.throttle": "~4.1",
 		"@types/mocha": "~9.1",
 		"@types/node": "~12.20",
-		"@types/vscode": "~1.64",
+		"@types/vscode": "~1.70.0",
 		"@typescript-eslint/eslint-plugin": "5.14.0",
 		"@typescript-eslint/parser": "5.14.0",
 		"copy-webpack-plugin": "10.2.4",

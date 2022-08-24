@@ -20,6 +20,7 @@ import { AttributeReferenceProvider } from './features/attributeReferenceProvide
 import { BuiltinDocumentAttributeProvider } from './features/builtinDocumentAttributeProvider'
 import AsciidocFoldingRangeProvider from './features/foldingProvider'
 import { AntoraSupportManager } from './features/antora/antoraSupport'
+import { DropImageIntoEditorProvider } from './features/dropIntoEditor'
 
 export function activate (context: vscode.ExtensionContext) {
   const contributionProvider = getAsciidocExtensionContributions(context)
@@ -58,6 +59,7 @@ export function activate (context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new AttributeReferenceProvider(), '{'))
   context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new BuiltinDocumentAttributeProvider(), ':'))
   context.subscriptions.push(vscode.languages.registerFoldingRangeProvider(selector, new AsciidocFoldingRangeProvider()))
+  context.subscriptions.push(vscode.languages.registerDocumentDropEditProvider(selector, new DropImageIntoEditorProvider()))
   const previewSecuritySelector = new PreviewSecuritySelector(cspArbiter, previewManager)
   const commandManager = new CommandManager()
   context.subscriptions.push(commandManager)
