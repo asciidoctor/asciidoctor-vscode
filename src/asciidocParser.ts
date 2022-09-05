@@ -310,7 +310,7 @@ export class AsciidocParser {
     }
     const extfiles = await this.getExtensionFilesInWorkspace()
     for (const extfile of extfiles) {
-      const extPath = extfile.path
+      const extPath = extfile.fsPath
       try {
         delete require.cache[extPath]
         const extjs = require(extPath)
