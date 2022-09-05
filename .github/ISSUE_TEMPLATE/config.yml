@@ -1,0 +1,5 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Project Chat
+    url: https://asciidoctor.zulipchat.com/
+    about: Please ask for help, share feedback, or exchange ideas in the project chat

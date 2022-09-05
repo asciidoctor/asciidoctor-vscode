@@ -1,34 +1,17 @@
 ---
-name: Report a problem
-about: Create a report to help us improve
-title: ''
-labels: ''
-assignees: ''
-
+name: Bug Report
+about: If something isn't working the way you expect it to
+labels: '🐞 bug'
 ---
 
-This is an example issue. Use just the headings and fill out all necessary information. Screenshots & Files and Additional Context are optional.
+Please provide details about:
 
-## Description
+* What you're trying to do
+* What happened
+* What you expected to happen
 
-A clear and concise description of what the issue is.
+Please share relevant sample content. Or better yet, provide a link to a [minimal reproducible example](https://stackoverflow.com/help/minimal-reproducible-example).
 
-## System Information
+We'll also need your system information (get it under "Help" -> "About" in VS Code). Share the installed extension version (<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd> or <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd> on macOS).
 
-You can find the VSCode and OS information under Help -> About. To check the extension information go to the extension browser (CTRL+SHIFT+X, Mac CMD+SHIFT+X).
-
-## To Reproduce
-
-Steps to reproduce the issue:
-
-1. Go to '...'
-2. Click on '....'
-3. Etc...
-
-## Screenshots & Files
-
-If applicable, add screenshots to help explain your problem. If the problem occurs only in a specific file, attach the file to the issue (do not copy the contents here).
-
-## Additional Context
-
-Add any other context about the problem here.
+Provide steps to reproduce the issue and, if applicable, add screenshots to make it easier to understand.
