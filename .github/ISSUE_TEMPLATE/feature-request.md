@@ -1,7 +1,7 @@
 ---
 name: Feature Request
 about: Suggest a formal proposal for an enhancement
-labels: 'enhancement, discussion'
+labels: '✨ enhancement, 💬 discussion'
 ---
 
 Please provide details about:
