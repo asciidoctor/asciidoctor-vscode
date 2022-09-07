@@ -390,8 +390,8 @@
 						"markdownDescription": "%asciidoc.preview.templates.desc%",
 						"items": {
 							"type": "string"
-						  },
-						  "uniqueItems": false,
+						},
+						"uniqueItems": false,
 						"scope": "resource"
 					},
 					"asciidoc.use_kroki": {
@@ -613,7 +613,6 @@
 		"eslint-plugin-promise": "6.0.0",
 		"font-awesome": "^4.7.0",
 		"gulp": "^4.0.2",
-		"js-yaml": "^4.1.0",
 		"lodash.throttle": "4.1.1",
 		"mathjax": "^2.7.9",
 		"mocha": "9.2.0",
@@ -634,6 +633,7 @@
 		"@asciidoctor/docbook-converter": "2.0.0",
 		"@orcid/bibtex-parse-js": "0.0.25",
 		"asciidoctor-kroki": "0.15.4",
+		"js-yaml": "^4.1.0",
 		"uuid": "8.3.2",
 		"vscode-nls": "5.0.0",
 		"vscode-uri": "^3.0.3"
