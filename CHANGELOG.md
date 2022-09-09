@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Improvements
+
+- support .asciidoctorconfig at root of the workspace by @apupier (#380)
+
 ### Bug fixes
 
 - fix the logic that detects if `asciidoctor-pdf` and/or `bundler` are available in the `PATH`

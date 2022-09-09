@@ -1,4 +1,5 @@
 import * as vscode from 'vscode'
+import * as fs from 'fs'
 import * as path from 'path'
 import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
 import { Asciidoctor } from '@asciidoctor/core'
@@ -172,6 +173,17 @@ export class AsciidocParser {
     }
 
     try {
+      const workspaceFolder = vscode.workspace.getWorkspaceFolder(doc.uri)
+      if (workspaceFolder !== undefined) {
+        const asciiDoctorConfig = vscode.Uri.joinPath(workspaceFolder.uri, '.asciidoctorconfig')
+        if (fs.existsSync(asciiDoctorConfig.fsPath)) {
+          const asciiDoctorConfigContent = await vscode.workspace.fs.readFile(asciiDoctorConfig)
+          text =
+            ':asciidoctorconfigdir: ' + asciiDoctorConfig.fsPath + '\n\n' +
+            asciiDoctorConfigContent + '\n\n' +
+            text
+        }
+      }
       const document = processor.load(text, options)
       const blocksWithLineNumber = document.findBy(function (b) {
         return typeof b.getLineNumber() !== 'undefined'
