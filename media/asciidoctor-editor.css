@@ -978,8 +978,8 @@ body.toc2 #header>h1:nth-last-child(2) {
   #toc.toc2 {
     margin-top: 0 !important;
     /* DISABLED background: #f8f8f7; */
-    background: white; /* TODO: fix transparent toc background */
-    color: rgba(0, 0, 0, .8); /* TODO: fix transparent toc background */
+    background: var(--vscode-editor-background);
+    color: var(--vscode-editor-color);
     position: fixed;
     width: 15em;
     left: 0;

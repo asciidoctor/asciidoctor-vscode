@@ -7,6 +7,7 @@
 - fix the logic that detects if `asciidoctor-pdf` and/or `bundler` are available in the `PATH`
 - fix base directory when exporting to PDF on Windows (#593)
 - fix localization generation by @YoshihideShirai (#594)
+- fix Table Of Content sidebar color not aligned with the active theme by @apupier (#340)
 - fix typo Recomendations -> Recommendations in snippets by @apupier
 
 ## 3.0.0 "pre-release" (2022-07-06) - @mogztter
