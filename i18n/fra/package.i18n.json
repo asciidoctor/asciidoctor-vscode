@@ -2,9 +2,10 @@
 	"displayName": "AsciiDoc",
 	"description": "Facilite l'édition et la publication de documents AsciiDoc.",
 
+	"asciidoc.preview.title": "Prévisualisation",
 	"asciidoc.exportAsPDF.title": "Exporter le document en PDF",
 	"asciidoc.pasteImage.title" : "Coller l'image",
-	"asciidoc.preview.title": "Ouvrir la prévisualisation",
+	"asciidoc.showPreview.title": "Ouvrir la prévisualisation",
 	"asciidoc.preview.refresh.title": "Rafraîchir la prévisualisation",
 	"asciidoc.preview.toggleLock.title": "Verrouille/déverrouille la prévisualisation",
 	"asciidoc.previewSide.title": "Ouvrir la prévisualisation sur le côté",
