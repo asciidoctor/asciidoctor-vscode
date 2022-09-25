@@ -1,5 +1,4 @@
 import * as vscode from 'vscode'
-import * as fs from 'fs'
 import * as path from 'path'
 import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
 import { Asciidoctor } from '@asciidoctor/core'
@@ -8,6 +7,7 @@ import { AsciidocPreviewConfigurationManager } from './features/previewConfig'
 import { SkinnyTextDocument } from './util/document'
 import { IncludeItems } from './asciidoctorFindIncludeProcessor'
 import { AsciidocContributionProvider } from './asciidocExtensions'
+import { getAsciidoctorConfigContent } from './features/asciidoctorConfig'
 
 const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcessor')
 
@@ -26,12 +26,25 @@ const previewConfigurationManager = new AsciidocPreviewConfigurationManager()
 export class AsciidocParser {
   private stylesdir: string
   private apsArbiter: AsciidoctorExtensionsSecurityPolicyArbiter
+  public prependExtension: Asciidoctor.Extensions.PreprocessorKlass
 
   constructor (
     readonly contributionProvider: AsciidocContributionProvider,
     readonly aspArbiter: AsciidoctorExtensionsSecurityPolicyArbiter = null,
     private errorCollection: vscode.DiagnosticCollection = null
   ) {
+    this.prependExtension = processor.Extensions.createPreprocessor('PreprendConfigPreprocessorExtension', {
+      postConstruct: function () {
+        this.asciidoctorConfigContent = ''
+      },
+      process: function (doc, reader) {
+        if (this.asciidoctorConfigContent.length > 0) {
+          // otherwise an empty line at the beginning breaks level 0 detection
+          reader.pushInclude(this.asciidoctorConfigContent, undefined, undefined, 1, {})
+        }
+      },
+    }).$new()
+
     // Asciidoctor.js in the browser environment works with URIs however for desktop clients
     // the stylesdir attribute is expected to look like a file system path (especially on Windows)
     if (process.env.BROWSER_ENV) {
@@ -173,16 +186,9 @@ export class AsciidocParser {
     }
 
     try {
-      const workspaceFolder = vscode.workspace.getWorkspaceFolder(doc.uri)
-      if (workspaceFolder !== undefined) {
-        const asciiDoctorConfig = vscode.Uri.joinPath(workspaceFolder.uri, '.asciidoctorconfig')
-        if (fs.existsSync(asciiDoctorConfig.fsPath)) {
-          const asciiDoctorConfigContent = await vscode.workspace.fs.readFile(asciiDoctorConfig)
-          text =
-            ':asciidoctorconfigdir: ' + asciiDoctorConfig.fsPath + '\n\n' +
-            asciiDoctorConfigContent + '\n\n' +
-            text
-        }
+      const asciidoctorConfigContent = await getAsciidoctorConfigContent(doc.uri)
+      if (asciidoctorConfigContent !== undefined) {
+        (this.prependExtension as any).asciidoctorConfigContent = asciidoctorConfigContent
       }
       const document = processor.load(text, options)
       const blocksWithLineNumber = document.findBy(function (b) {
@@ -304,6 +310,7 @@ export class AsciidocParser {
       const kroki = require('asciidoctor-kroki')
       kroki.register(registry)
     }
+    registry.preprocessor(this.prependExtension)
     await this.registerExtensionsInWorkspace(registry)
   }
 

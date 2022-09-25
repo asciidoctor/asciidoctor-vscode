@@ -23,6 +23,8 @@ import { AntoraSupportManager } from './features/antora/antoraSupport'
 import { DropImageIntoEditorProvider } from './features/dropIntoEditor'
 
 export function activate (context: vscode.ExtensionContext) {
+  // Set context as a global as some tests depend on it
+  (global as any).testExtensionContext = context
   const contributionProvider = getAsciidocExtensionContributions(context)
 
   const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState)
