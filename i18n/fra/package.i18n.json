@@ -30,6 +30,13 @@
 	"asciidoc.preview.openLinksToAsciidocFiles.desc": "Contrôle comment les liens vers des documents AsciiDoc doivent être ouverts.",
 	"asciidoc.preview.openLinksToAsciidocFiles.inPreview": "Essayer d'ouvrir les liens dans l'éditeur",
 	"asciidoc.preview.openLinksToAsciidocFiles.inEditor": "Essayer d'ouvrir les liens dans la prévisualisation",
+	"asciidoc.preview.templates.desc": "Liste de chemins locaux vers des répertoires contenant des modèles personnalisés qui seront utilisés pour la prévisualisation. Les chemins relatifs sont interprétés comme relatifs au répertoire ouvert dans l'Explorer. Si il n'y a pas de répertoire ouvert, ils sont interprétés comme relatifs au fichier AsciiDoc. Les caractères `\\` doivent être échappés `\\\\`.",
+
+	"asciidoc.editor.title": "Éditeur",
+	"asciidoc.editor.enableDrop.desc": "Active le glisser/déposer d'images. Maintenir la touche Shift appuyée afin de déposer un fichier dans l'éditeur de texte.",
+
+	"asciidoc.antora.title": "Antora",
+	"asciidoc.antora.enableAntoraSupport.desc": "Active le support [Antora](https://antora.org/).",
 
 	"asciidoc.pdf.title": "PDF",
 	"asciidoc.pdf.engine.desc": "Contrôle le moteur PDF à utiliser pour l'export PDF.",
@@ -70,6 +77,5 @@
 	"asciidoc.useWorkspaceRoot.desc": "**Obsolète:** Quand on est dans un espace de travail, utilise la racine de l'espace de travail en tant que répertoire de base pour Asciidoctor",
 	"asciidoc.useWorkspaceRoot.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.useWorkspaceRootAsBaseDirectory#` et n'a plus aucun effet.",
 	"asciidoc.use_kroki.desc": "**Obsolète:** Active l'extension Kroki afin de générer des diagrammes.",
-	"asciidoc.use_kroki.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.extensions.enableKroki#` et n'a plus aucun effet.",
-	"asciidoc.antora.enableAntoraSupport.desc": "Active le support [Antora](https://antora.org/)."
+	"asciidoc.use_kroki.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.extensions.enableKroki#` et n'a plus aucun effet."
 }

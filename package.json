@@ -21,7 +21,7 @@
 	"browser": "./dist/browser/extension",
 	"main": "./dist/src/extension.js",
 	"engines": {
-		"vscode": "^1.64.0",
+		"vscode": "^1.70.2",
 		"node": ">=14"
 	},
 	"categories": [
@@ -267,6 +267,19 @@
 		"configuration": [
 			{
 				"order": 20,
+				"id": "editor",
+				"title": "%asciidoc.editor.title%",
+				"properties": {
+					"asciidoc.editor.enableDrop": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "%asciidoc.editor.enableDrop.desc%",
+						"scope": "resource"
+					}
+				}
+			},
+			{
+				"order": 21,
 				"id": "preview",
 				"title": "%asciidoc.preview.title%",
 				"properties": {
@@ -432,7 +445,7 @@
 				}
 			},
 			{
-				"order": 21,
+				"order": 22,
 				"id": "pdf",
 				"title": "%asciidoc.pdf.title%",
 				"properties": {
@@ -487,7 +500,7 @@
 				}
 			},
 			{
-				"order": 22,
+				"order": 23,
 				"id": "extensions",
 				"title": "%asciidoc.extensions.title%",
 				"properties": {
@@ -507,7 +520,7 @@
 				}
 			},
 			{
-				"order": 23,
+				"order": 24,
 				"id": "common",
 				"title": "%asciidoc.common.title%",
 				"properties": {
@@ -521,7 +534,7 @@
 				}
 			},
 			{
-				"order": 24,
+				"order": 25,
 				"id": "debug",
 				"title": "%asciidoc.debug.title%",
 				"properties": {
@@ -543,11 +556,18 @@
 						"order": 2,
 						"scope": "resource"
 					}
-				},
-				"asciidoc.antora.enableAntoraSupport": {
-					"type": "boolean",
-					"default": false,
-					"markdownDescription": "%asciidoc.antora.enableAntoraSupport.desc%"
+				}
+			},
+			{
+				"order": 26,
+				"id": "antora",
+				"title": "%asciidoc.antora.title%",
+				"properties": {
+					"asciidoc.antora.enableAntoraSupport": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "%asciidoc.antora.enableAntoraSupport.desc%"
+					}
 				}
 			}
 		],
@@ -601,7 +621,7 @@
 		"@types/lodash.throttle": "~4.1",
 		"@types/mocha": "~9.1",
 		"@types/node": "~12.20",
-		"@types/vscode": "~1.64",
+		"@types/vscode": "~1.70.0",
 		"@typescript-eslint/eslint-plugin": "5.14.0",
 		"@typescript-eslint/parser": "5.14.0",
 		"copy-webpack-plugin": "10.2.4",
