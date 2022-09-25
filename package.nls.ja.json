@@ -1,9 +1,10 @@
 {
 	"displayName": "AsciiDoc",
 	"description": "リッチで軽量なマークアップであるAsciiDocをサポートします。",
+	"asciidoc.preview.title": "プレビューを",
 	"asciidoc.exportAsPDF.title": "PDFへエキスポート",
 	"asciidoc.pasteImage.title": "イメージの貼り付け",
-	"asciidoc.preview.title": "プレビューを開く",
+	"asciidoc.showPreview.title": "プレビューを開く",
 	"asciidoc.preview.refresh.title": "プレビューの更新",
 	"asciidoc.preview.toggleLock.title": "プレビューのロック切り替え",
 	"asciidoc.previewSide.title": "サイドにプレビューを開く",

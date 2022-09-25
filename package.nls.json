@@ -2,9 +2,10 @@
 	"displayName": "AsciiDoc",
 	"description": "Provides rich language support for AsciiDoc.",
 
+	"asciidoc.preview.title": "Preview",
 	"asciidoc.exportAsPDF.title": "Export Document as PDF",
 	"asciidoc.pasteImage.title": "Paste Image",
-	"asciidoc.preview.title": "Open Preview",
+	"asciidoc.showPreview.title": "Open Preview",
 	"asciidoc.preview.refresh.title": "Refresh Preview",
 	"asciidoc.preview.toggleLock.title": "Toggle Preview Locking",
 	"asciidoc.previewSide.title": "Open Preview to the Side",
