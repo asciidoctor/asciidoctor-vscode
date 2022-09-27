@@ -380,7 +380,7 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     }
     this.editor.iconPath = this.iconPath
     this.editor.webview.options = AsciidocPreview.getWebviewOptions(resource, this._contributionProvider)
-    const content = await this._contentProvider.providePreviewHTML(document, this._previewConfigurations, this.editor, this.line)
+    const content = await this._contentProvider.providePreviewHTML(document, this._previewConfigurations, this, this.line)
     this.editor.webview.html = content
   }
 
@@ -477,8 +477,16 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     return this.editor.webview.asWebviewUri(resource)
   }
 
+  asMediaWebViewSrc (...pathSegments: string[]): string {
+    return this.escapeAttribute(this.asWebviewUri(vscode.Uri.joinPath(this._contributionProvider.extensionUri, ...pathSegments)))
+  }
+
   get cspSource () {
     return this.editor.webview.cspSource
+  }
+
+  private escapeAttribute (value: string | vscode.Uri): string {
+    return value.toString().replace(/"/g, '&quot;')
   }
 }
 

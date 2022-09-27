@@ -8,8 +8,8 @@ import * as assert from 'assert'
 import * as vscode from 'vscode'
 import { AsciidocParser } from '../asciidocParser'
 import { AsciidocContributionProvider, AsciidocContributions } from '../asciidocExtensions'
-import { AsciidocPreview } from '../features/preview'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
+import { WebviewResourceProvider } from '../util/resources'
 
 class EmptyAsciidocContributions implements AsciidocContributions {
   readonly previewScripts = []
@@ -33,6 +33,18 @@ class AsciidocContributionProviderTest implements AsciidocContributionProvider {
   }
 }
 
+class TestWebviewResourceProvider implements WebviewResourceProvider {
+  asWebviewUri (resource: vscode.Uri): vscode.Uri {
+    return vscode.Uri.file(resource.path)
+  }
+
+  asMediaWebViewSrc (...pathSegments: string[]): string {
+    return pathSegments.toString()
+  }
+
+  cspSource = 'aaaa'
+}
+
 suite('asciidoc.Asciidoctorconfig', () => {
   let extensionContext: vscode.ExtensionContext
   suiteSetup(async () => {
@@ -44,11 +56,6 @@ suite('asciidoc.Asciidoctorconfig', () => {
   const configFileNames = ['.asciidoctorconfig', '.asciidoctorconfig.adoc']
   configFileNames.forEach((configFileName) => {
     test(`Pick up ${configFileName} from root workspace folder`, async () => {
-      const webview = vscode.window.createWebviewPanel(
-        AsciidocPreview.viewType,
-        `Test pick up ${configFileName} from root workspace folder`,
-        vscode.ViewColumn.One
-      )
       let configFile: vscode.Uri
       try {
         const root = vscode.workspace.workspaceFolders[0].uri.fsPath
@@ -57,10 +64,14 @@ suite('asciidoc.Asciidoctorconfig', () => {
         const file = await vscode.workspace.openTextDocument(vscode.Uri.file(`${root}/attributes.adoc`))
         // eslint-disable-next-line max-len
         const asciidocParser = new AsciidocParser(new AsciidocContributionProviderTest(extensionContext.extensionUri), new AsciidoctorExtensionsSecurityPolicyArbiter(extensionContext))
-        const { html } = await asciidocParser.convertUsingJavascript(file.getText(), file, extensionContext, webview)
+        const { html } = await asciidocParser.convertUsingJavascript(
+          file.getText(),
+          file,
+          extensionContext,
+          new TestWebviewResourceProvider()
+        )
         assert.strictEqual(html.includes('<h1>Asciidoctor VS Code Extension</h1>'), true, `{application-name} should be substituted by the value defined in ${configFileName}`)
       } finally {
-        webview.dispose()
         if (configFile !== undefined) {
           await vscode.workspace.fs.delete(configFile)
         }
@@ -70,15 +81,9 @@ suite('asciidoc.Asciidoctorconfig', () => {
 
   suite('Pick up .asciidoctorconfig and .asciidoctorconfig.adoc from root workspace folder', async () => {
     let html: string
-    let webview: vscode.WebviewPanel
     const createdFiles: vscode.Uri[] = []
 
     suiteSetup(async () => {
-      webview = vscode.window.createWebviewPanel(
-        AsciidocPreview.viewType,
-        'Test .asciidoctorconfig and .asciidoctorconfig.adoc from root workspace folder',
-        vscode.ViewColumn.One
-      )
       const root = vscode.workspace.workspaceFolders[0].uri.fsPath
 
       createdFiles.push(await createFileWithContentAtWorkspaceRoot(root, '.asciidoctorconfig',
@@ -98,11 +103,10 @@ suite('asciidoc.Asciidoctorconfig', () => {
       const file = await vscode.workspace.openTextDocument(adocForTest)
       // eslint-disable-next-line max-len
       const asciidocParser = new AsciidocParser(new AsciidocContributionProviderTest(extensionContext.extensionUri), new AsciidoctorExtensionsSecurityPolicyArbiter(extensionContext))
-      html = (await asciidocParser.convertUsingJavascript(file.getText(), file, extensionContext, webview)).html
+      html = (await asciidocParser.convertUsingJavascript(file.getText(), file, extensionContext, new TestWebviewResourceProvider())).html
     })
 
     suiteTeardown(async () => {
-      webview.dispose()
       for (const createdFile of createdFiles) {
         await vscode.workspace.fs.delete(createdFile)
       }
@@ -129,15 +133,9 @@ suite('asciidoc.Asciidoctorconfig', () => {
 
   suite('Pick up .asciidocConfig file recursively', async () => {
     let html: string
-    let webview: vscode.WebviewPanel
     const createdFiles: vscode.Uri[] = []
 
     suiteSetup(async () => {
-      webview = vscode.window.createWebviewPanel(
-        AsciidocPreview.viewType,
-        'Test recursive access to .asciidoc files',
-        vscode.ViewColumn.One
-      )
       const root = vscode.workspace.workspaceFolders[0].uri.fsPath
       const configFileName = '.asciidoctorconfig'
       const rootConfigFile = vscode.Uri.file(`${root}/${configFileName}`)
@@ -177,11 +175,10 @@ suite('asciidoc.Asciidoctorconfig', () => {
       const file = await vscode.workspace.openTextDocument(adocFile)
       // eslint-disable-next-line max-len
       const asciidocParser = new AsciidocParser(new AsciidocContributionProviderTest(extensionContext.extensionUri), new AsciidoctorExtensionsSecurityPolicyArbiter(extensionContext))
-      html = (await asciidocParser.convertUsingJavascript(file.getText(), file, extensionContext, webview)).html
+      html = (await asciidocParser.convertUsingJavascript(file.getText(), file, extensionContext, new TestWebviewResourceProvider())).html
     })
 
     suiteTeardown(async () => {
-      webview.dispose()
       for (const createdFile of createdFiles) {
         await vscode.workspace.fs.delete(createdFile)
       }

@@ -7,6 +7,7 @@ import { Asciidoctor } from '@asciidoctor/core'
 import { SkinnyTextDocument } from './util/document'
 import * as nls from 'vscode-nls'
 import { AsciidocContributions } from './asciidocExtensions'
+import { AntoraDocumentContext } from './features/antora/antoraSupport'
 
 const localize = nls.loadMessageBundle()
 
@@ -92,11 +93,11 @@ export class AsciidoctorWebViewConverter {
 
   constructor (
     private readonly textDocument: SkinnyTextDocument,
-    private readonly context: vscode.ExtensionContext,
-    private readonly editor: vscode.WebviewPanel,
-    cspArbiter: ContentSecurityPolicyArbiter,
-    private readonly contributionProvider: AsciidocContributionProvider,
-    previewConfigurations: AsciidocPreviewConfigurationManager,
+    private readonly webviewResourceProvider: WebviewResourceProvider,
+    cspArbitergetSecurityLevelForResource: AsciidocPreviewSecurityLevel,
+    cspArbiterShouldDisableSecurityWarnings: boolean,
+    private readonly contributions: AsciidocContributions,
+    previewConfigurations: AsciidocPreviewConfiguration,
     private readonly antoraDocumentContext: AntoraDocumentContext | undefined,
     line: number | undefined = undefined,
     state?: any
@@ -105,8 +106,8 @@ export class AsciidoctorWebViewConverter {
     this.basebackend = 'html'
     this.outfilesuffix = '.html'
     this.baseConverter = processor.Html5Converter.create()
-    this.securityLevel = cspArbiter.getSecurityLevelForResource(textDocumentUri)
-    this.config = previewConfigurations.loadAndCacheConfiguration(textDocumentUri)
+    this.securityLevel = cspArbitergetSecurityLevelForResource
+    this.config = previewConfigurations
     this.initialData = {
       source: textDocumentUri.toString(),
       line,
@@ -115,7 +116,7 @@ export class AsciidoctorWebViewConverter {
       scrollEditorWithPreview: this.config.scrollEditorWithPreview,
       doubleClickToSwitchToEditor: this.config.doubleClickToSwitchToEditor,
       preservePreviewWhenHidden: this.config.preservePreviewWhenHidden,
-      disableSecurityWarnings: cspArbiter.shouldDisableSecurityWarnings(),
+      disableSecurityWarnings: cspArbiterShouldDisableSecurityWarnings,
     }
     this.state = state || {}
     this.backendTraits = {
@@ -123,6 +124,7 @@ export class AsciidoctorWebViewConverter {
     }
   }
 
+  // alias to $convert method to use AsciidoctorWebViewConverter as option in processor.convert method in Asciidoctor.js
   $convert (node, transform) {
     return this.convert(node, transform)
   }
@@ -138,8 +140,8 @@ export class AsciidoctorWebViewConverter {
     if (nodeName === 'document') {
       // Content Security Policy
       const nonce = new Date().getTime() + '' + new Date().getMilliseconds()
-      const resourceProvider = this.editor.webview
-      const csp = getCspForResource(resourceProvider, this.securityLevel, nonce)
+      const webviewResourceProvider = this.webviewResourceProvider
+      const csp = getCspForResource(webviewResourceProvider, this.securityLevel, nonce)
       const content = node.getContent()
       const syntaxHighlighter = node.$syntax_highlighter()
       let assetUriScheme = node.getAttribute('asset-uri-scheme', 'https')
@@ -164,10 +166,10 @@ export class AsciidoctorWebViewConverter {
           data-strings="${escapeAttribute(JSON.stringify(previewStrings))}"
           data-state="${escapeAttribute(JSON.stringify(this.state))}">
         <script src="${this.extensionResourcePath('pre.js')}" nonce="${nonce}"></script>
-        ${this.getStyles(node, resourceProvider, this.textDocument.uri, this.config, this.state)}
+        ${this.getStyles(node, webviewResourceProvider, this.textDocument.uri, this.config, this.state)}
         ${syntaxHighlighterHeadContent}
         ${node.getDocinfo()}
-        <base href="${resourceProvider.asWebviewUri(this.textDocument.uri)}">
+        <base href="${webviewResourceProvider.asWebviewUri(this.textDocument.uri)}">
       </head>
       <body${node.getId() ? ` id="${node.getId()}"` : ''} class="${this.getBodyCssClasses(node)}">
         ${headerDocinfo}
@@ -178,38 +180,19 @@ export class AsciidoctorWebViewConverter {
         ${this.generateFootnotes(node)}
         ${this.generateFooter(node)}
         <div class="code-line" data-line="${this.textDocument.lineCount}"></div>
-        ${this.getScripts(resourceProvider, nonce)}
+        ${this.getScripts(webviewResourceProvider, nonce)}
         ${syntaxHighlighterFooterContent}
-        ${this.generateMathJax(node, resourceProvider, nonce)}
+        ${this.generateMathJax(node, webviewResourceProvider, nonce)}
         ${footerDocinfo}
       </body>
       </html>`
     }
-    if (nodeName === 'inline_anchor') {
-      if (node.type === 'link') {
-        const href = isSchemeBlacklisted(node.target) ? '#' : node.target
-        const id = node.hasAttribute('id') ? ` id="${node.id}"` : ''
-        const role = node.hasAttribute('role') ? ` class="${node.role}"` : ''
-        const title = node.hasAttribute('title') ? ` title="${node.title}"` : ''
-        return `<a href="${href}"${id}${role}${title} data-href="${href}">${node.text}</a>`
-      }
-      if (node.type === 'xref') {
-        const path = node.getAttributes().path
-        let text
-        if (path) {
-          text = node.getText() || path
-        } else {
-          text = node.getText()
-          if (text) {
-            // noop
-          } else {
-            // todo: resolve xref text
-            text = `[${node.getAttributes().refid}]`
-          }
-        }
-        const role = node.hasAttribute('role') ? ` class="${node.role}"` : ''
-        return `<a href="${node.target}"${role} data-href="${node.target}">${text}</a>`
-      }
+    if (nodeName === 'inline_anchor' && node.type === 'link') {
+      const href = isSchemeBlacklisted(node.target) ? '#' : node.target
+      const id = node.hasAttribute('id') ? ` id="${node.id}"` : ''
+      const role = node.hasAttribute('role') ? ` class="${node.role}"` : ''
+      const title = node.hasAttribute('title') ? ` title="${node.title}"` : ''
+      return `<a href="${href}"${id}${role}${title} data-href="${href}">${node.text}</a>`
     }
     if (nodeName === 'image') {
       const nodeAttributes = node.getAttributes()
@@ -224,7 +207,7 @@ export class AsciidoctorWebViewConverter {
     return this.baseConverter.convert(node, transform)
   }
 
-  private generateMathJax (node, resourceProvider, nonce) {
+  private generateMathJax (node, webviewResourceProvider, nonce) {
     if (node.isAttribute('stem')) {
       let eqnumsVal = node.getAttribute('eqnums', 'none')
       if (eqnumsVal && eqnumsVal.trim().length === 0) {
@@ -248,7 +231,7 @@ MathJax = {
   TeX: {${eqnumsOpt}}
 }
 </script>
-<script src="${escapeAttribute(resourceProvider.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'mathjax', 'MathJax.js')))}?config=TeX-MML-AM_HTMLorMML" nonce="${nonce}"></script>
+<script src="${webviewResourceProvider.asMediaWebViewSrc('media', 'mathjax', 'MathJax.js')}?config=TeX-MML-AM_HTMLorMML" nonce="${nonce}"></script>
 <script nonce="${nonce}">
 MathJax.Hub.Register.StartupHook("AsciiMath Jax Ready", function () {
   MathJax.InputJax.AsciiMath.postfilterHooks.Add(function (data, node) {
@@ -417,44 +400,43 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
   }
 
   private extensionResourcePath (mediaFile: string): string {
-    const webviewResource = this.editor.webview.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'dist', mediaFile))
-    return webviewResource.toString()
+    return this.webviewResourceProvider.asMediaWebViewSrc('dist', mediaFile)
   }
 
-  private getStyles (node: Asciidoctor.Document, resourceProvider: WebviewResourceProvider, resource: vscode.Uri,
-                     config: AsciidocPreviewConfiguration, state?: any): string {
+  private getStyles (node: Asciidoctor.Document, webviewResourceProvider: WebviewResourceProvider, resource: vscode.Uri,
+    config: AsciidocPreviewConfiguration, state?: any): string {
     const baseStyles: string[] = []
-    for (const resource of this.contributionProvider.contributions.previewStyles) {
-      baseStyles.push(`<link rel="stylesheet" type="text/css" href="${escapeAttribute(resourceProvider.asWebviewUri(resource))}">`)
+    for (const previewStyle of this.contributions.previewStyles) {
+      baseStyles.push(`<link rel="stylesheet" type="text/css" href="${escapeAttribute(webviewResourceProvider.asWebviewUri(previewStyle))}">`)
     }
     // QUESTION: should we support `stylesdir` and `stylesheet` attributes?
     if (config.previewStyle === '') {
       const builtinStylesheet = config.useEditorStylesheet ? 'asciidoctor-editor.css' : 'asciidoctor-default.css'
-      baseStyles.push(`<link rel="stylesheet" type="text/css" href="${escapeAttribute(resourceProvider.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', builtinStylesheet)))}">`)
+      baseStyles.push(`<link rel="stylesheet" type="text/css" href="${webviewResourceProvider.asMediaWebViewSrc('media', builtinStylesheet)}">`)
     }
     if (node.isAttribute('icons', 'font')) {
-      baseStyles.push(`<link rel="stylesheet" href="${escapeAttribute(resourceProvider.asWebviewUri(vscode.Uri.joinPath(this.context.extensionUri, 'media', 'font-awesome', 'css', 'font-awesome.css')))}">`)
+      baseStyles.push(`<link rel="stylesheet" href="${webviewResourceProvider.asMediaWebViewSrc('media', 'font-awesome', 'css', 'font-awesome.css')}">`)
     }
     return `${baseStyles.join('\n')}
-  ${this.computeCustomStyleSheetIncludes(resourceProvider, resource, config)}
+  ${this.computeCustomStyleSheetIncludes(webviewResourceProvider, resource, config)}
   ${this.getImageStabilizerStyles(state)}`
   }
 
-  private getScripts (resourceProvider: WebviewResourceProvider, nonce: string): string {
+  private getScripts (webviewResourceProvider: WebviewResourceProvider, nonce: string): string {
     const out: string[] = []
-    for (const resource of this.contributionProvider.contributions.previewScripts) {
-      out.push(`<script async src="${escapeAttribute(resourceProvider.asWebviewUri(resource))}" nonce="${nonce}" charset="UTF-8"></script>`)
+    for (const previewScript of this.contributions.previewScripts) {
+      out.push(`<script async src="${escapeAttribute(webviewResourceProvider.asWebviewUri(previewScript))}" nonce="${nonce}" charset="UTF-8"></script>`)
     }
     return out.join('\n')
   }
 
-  private computeCustomStyleSheetIncludes (resourceProvider: WebviewResourceProvider, resource: vscode.Uri, config: AsciidocPreviewConfiguration): string {
+  private computeCustomStyleSheetIncludes (webviewResourceProvider: WebviewResourceProvider, resource: vscode.Uri, config: AsciidocPreviewConfiguration): string {
     const style = config.previewStyle
     if (style === '') {
       return ''
     }
     const out: string[] = []
-    out.push(`<link rel="stylesheet" class="code-user-style" data-source="${escapeAttribute(style)}" href="${escapeAttribute(this.fixHref(resourceProvider, resource, style))}" type="text/css" media="screen">`)
+    out.push(`<link rel="stylesheet" class="code-user-style" data-source="${escapeAttribute(style)}" href="${escapeAttribute(this.fixHref(webviewResourceProvider, resource, style))}" type="text/css" media="screen">`)
     return out.join('\n')
   }
 
@@ -473,7 +455,7 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
     return ret
   }
 
-  private fixHref (resourceProvider: WebviewResourceProvider, resource: vscode.Uri, href: string): string {
+  private fixHref (webviewResourceProvider: WebviewResourceProvider, resource: vscode.Uri, href: string): string {
     // QUESTION: should we use `stylesdir` attribute in here?
     if (!href) {
       return href
@@ -485,16 +467,16 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
 
     // Assume it must be a local file
     if (href.startsWith('/') || /^[a-z]:\\/i.test(href)) {
-      return resourceProvider.asWebviewUri(vscode.Uri.file(href)).toString()
+      return webviewResourceProvider.asWebviewUri(vscode.Uri.file(href)).toString()
     }
 
     // Use a workspace relative path if there is a workspace
     const root = vscode.workspace.getWorkspaceFolder(resource)
     if (root) {
-      return resourceProvider.asWebviewUri(vscode.Uri.joinPath(root.uri, href)).toString()
+      return webviewResourceProvider.asWebviewUri(vscode.Uri.joinPath(root.uri, href)).toString()
     }
 
     // Otherwise look relative to the AsciiDoc file
-    return resourceProvider.asWebviewUri(vscode.Uri.joinPath(uri.Utils.dirname(resource), href)).toString()
+    return webviewResourceProvider.asWebviewUri(vscode.Uri.joinPath(uri.Utils.dirname(resource), href)).toString()
   }
 }

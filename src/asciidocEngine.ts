@@ -8,6 +8,7 @@ import { AsciidocParser, AsciidoctorBuiltInBackends } from './asciidocParser'
 import { Asciidoctor } from '@asciidoctor/core'
 import { SkinnyTextDocument } from './util/document'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from './security'
+import { WebviewResourceProvider } from './util/resources'
 
 export class AsciidocEngine {
   private ad?: AsciidocParser
@@ -31,7 +32,7 @@ export class AsciidocEngine {
     documentUri: vscode.Uri,
     text: string,
     context: vscode.ExtensionContext,
-    editor: vscode.WebviewPanel,
+    editor: WebviewResourceProvider,
     line?: number
   ): Promise<{output: string, document?: Asciidoctor.Document}> {
     const parser = this.getEngine()

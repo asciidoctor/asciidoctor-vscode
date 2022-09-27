@@ -1,7 +1,8 @@
 import * as vscode from 'vscode'
+import { WebviewResourceProvider } from './util/resources'
 const { Opal } = require('asciidoctor-opal-runtime')
 
-module.exports.register = (highlightjsBuiltInSyntaxHighlighter, context: vscode.ExtensionContext, webviewPanel: vscode.WebviewPanel) => {
+module.exports.register = (highlightjsBuiltInSyntaxHighlighter, context: vscode.ExtensionContext, webviewPanel: WebviewResourceProvider) => {
   const customHighlightJsAdapter = Opal.klass(Opal.nil, highlightjsBuiltInSyntaxHighlighter, 'CustomHighlightJsAdapter')
   customHighlightJsAdapter.$register_for('highlight.js', 'highlightjs')
 
@@ -12,18 +13,18 @@ module.exports.register = (highlightjsBuiltInSyntaxHighlighter, context: vscode.
     if (location === 'head') {
       const theme = doc.$attr('highlightjs-theme', 'github')
       const themeStyleSheetResource = vscode.Uri.joinPath(context.extensionUri, 'media', 'highlightjs', 'styles', `${theme}.min.css`)
-      return `<link rel="stylesheet" href="${webviewPanel.webview.asWebviewUri(themeStyleSheetResource)}">`
+      return `<link rel="stylesheet" href="${webviewPanel.asWebviewUri(themeStyleSheetResource)}">`
     }
     // footer
     let languageScripts = ''
     if (doc['$attr?']('highlightjs-languages')) {
       languageScripts = doc.$attr('highlightjs-languages').split(',').map((lang) => {
         const languageScriptResource = vscode.Uri.joinPath(context.extensionUri, 'media', 'highlightjs', 'languages', `${lang.trim()}.min.js`)
-        return `<script src="${webviewPanel.webview.asWebviewUri(languageScriptResource)}"></script>`
+        return `<script src="${webviewPanel.asWebviewUri(languageScriptResource)}"></script>`
       }).join('\n')
     }
     const highlightjsScriptResource = vscode.Uri.joinPath(context.extensionUri, 'media', 'highlightjs', 'highlight.min.js')
-    return `<script src="${webviewPanel.webview.asWebviewUri(highlightjsScriptResource)}"></script>
+    return `<script src="${webviewPanel.asWebviewUri(highlightjsScriptResource)}"></script>
 ${languageScripts}
 <script>
 if (!hljs.initHighlighting.called) {

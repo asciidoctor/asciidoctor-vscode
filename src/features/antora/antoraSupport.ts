@@ -1,4 +1,4 @@
-import vscode, { CancellationTokenSource, ExtensionContext, Uri, workspace } from 'vscode'
+import vscode, { CancellationTokenSource, Memento, Uri, workspace } from 'vscode'
 import fs from 'fs'
 import yaml from 'js-yaml'
 import * as path from 'path'
@@ -67,11 +67,11 @@ export class AntoraContext {
 export class AntoraSupportManager implements vscode.Disposable {
   private readonly _disposables: vscode.Disposable[] = []
 
-  public constructor (private readonly context: vscode.ExtensionContext) {
+  public constructor (private readonly context: Memento) {
     this.context = context
     const workspaceConfiguration = vscode.workspace.getConfiguration('asciidoc', null)
     // look for Antora support setting in workspace state
-    const workspaceState: vscode.Memento = this.context.workspaceState
+    const workspaceState: vscode.Memento = this.context
     const isEnableAntoraSupportSettingDefined = workspaceState.get('antoraSupportSetting')
     if (isEnableAntoraSupportSettingDefined === true) {
       const enableAntoraSupport = workspaceConfiguration.get('antora.enableAntoraSupport')
@@ -166,8 +166,8 @@ export async function getAttributes (textDocumentUri: Uri): Promise<{ [key: stri
   return doc.config.asciidoc?.attributes || {}
 }
 
-export async function getAntoraDocumentContext (textDocumentUri: Uri, extensionContext: ExtensionContext): Promise<AntoraDocumentContext | undefined> {
-  const contentCatalog = await getContentCatalog(textDocumentUri, extensionContext)
+export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceState: Memento): Promise<AntoraDocumentContext | undefined> {
+  const contentCatalog = await getContentCatalog(textDocumentUri, workspaceState)
   if (contentCatalog === undefined) {
     return undefined
   }
@@ -179,9 +179,9 @@ export async function getAntoraDocumentContext (textDocumentUri: Uri, extensionC
   return new AntoraDocumentContext(antoraContext, antoraResourceContext)
 }
 
-async function getContentCatalog (textDocumentUri: Uri, extensionContext: ExtensionContext): Promise<ContentCatalog | undefined> {
+export async function getContentCatalog (textDocumentUri: Uri, workspaceState: Memento): Promise<ContentCatalog | undefined> {
   try {
-    const playbook = await createPlaybook(textDocumentUri, extensionContext)
+    const playbook = await createPlaybook(textDocumentUri, workspaceState)
     if (playbook === undefined) {
       return undefined
     }
@@ -193,7 +193,7 @@ async function getContentCatalog (textDocumentUri: Uri, extensionContext: Extens
   }
 }
 
-async function createPlaybook (textDocumentUri: Uri, extensionContext: ExtensionContext): Promise<{
+async function createPlaybook (textDocumentUri: Uri, workspaceState: Memento): Promise<{
   site: {};
   runtime: {};
   content: {
@@ -204,7 +204,7 @@ async function createPlaybook (textDocumentUri: Uri, extensionContext: Extension
     }[]
   }
 } | undefined> {
-  const activeAntoraConfig = await getActiveAntoraConfig(textDocumentUri, extensionContext)
+  const activeAntoraConfig = await getActiveAntoraConfig(textDocumentUri, workspaceState)
   if (activeAntoraConfig === undefined) {
     return undefined
   }
@@ -225,9 +225,8 @@ async function createPlaybook (textDocumentUri: Uri, extensionContext: Extension
   }
 }
 
-function getActiveAntoraConfig (textDocumentUri: Uri, extensionContext: ExtensionContext): Promise<Uri | undefined> {
+function getActiveAntoraConfig (textDocumentUri: Uri, workspaceState: Memento): Promise<Uri | undefined> {
   // look for Antora support setting in workspace state
-  const workspaceState: vscode.Memento = extensionContext.workspaceState
   const isEnableAntoraSupportSettingDefined = workspaceState.get('antoraSupportSetting')
   if (isEnableAntoraSupportSettingDefined === true) {
     const workspaceConfiguration = vscode.workspace.getConfiguration('asciidoc', null)
