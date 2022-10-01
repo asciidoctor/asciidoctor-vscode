@@ -74,7 +74,7 @@ The extension provides a quick command to export your AsciiDoc file as HTML usin
 * Select _AsciiDoc: Save HTML document_
 * The file is generated in the same folder as the source document
 
-The shortcout key of `ctrl+alt+s` (Mac: `cmd+alt+s`) will also save the document.
+The shortcut key of `ctrl+alt+s` (Mac: `cmd+alt+s`) will also save the document.
 
 ### Save to Docbook
 
@@ -175,7 +175,7 @@ This extension contributes the following settings:
 | Name                                           | Description                                                                                                                        | Default Value                                                                                                             |
 |:-----------------------------------------------|:-----------------------------------------------------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------------|
 | `asciidoc.preview.asciidoctorAttribute`        | Asciidoctor attributes used in the preview (object of `{string: string}`).                                                         | `{}`                                                                                                                      |
-| `asciidoc.preview.refreshInterval`             | Interval in miliseconds between two consecutive updates of the preview. The value 0 means it will only update the preview on save. | `2000`                                                                                                                    |
+| `asciidoc.preview.refreshInterval`             | Interval in milliseconds between two consecutive updates of the preview. The value 0 means it will only update the preview on save. | `2000`                                                                                                                    |
 | `asciidoc.preview.style`                       | An URL or a local path to CSS style sheets to use from the preview.                                                                |                                                                                                                           |
 | `asciidoc.preview.useEditorStyle`              | Use VS Code editor style instead of the default Asciidoctor style.                                                                 |                                                                                                                           |
 | `asciidoc.preview.fontFamily`                  | Control the font family used in the preview.                                                                                       | `"-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif"` |
