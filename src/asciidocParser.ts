@@ -158,6 +158,7 @@ export class AsciidocParser {
     })
     attributes['env-vscode'] = ''
     attributes.env = 'vscode'
+    attributes['relfilesuffix@'] = '.adoc'
 
     const baseDir = AsciidocParser.getBaseDir(doc.fileName)
     const templateDirs = this.getTemplateDirs()

@@ -180,12 +180,31 @@ export class AsciidoctorWebViewConverter {
       </body>
       </html>`
     }
-    if (nodeName === 'inline_anchor' && node.type === 'link') {
-      const href = isSchemeBlacklisted(node.target) ? '#' : node.target
-      const id = node.hasAttribute('id') ? ` id="${node.id}"` : ''
-      const role = node.hasAttribute('role') ? ` class="${node.role}"` : ''
-      const title = node.hasAttribute('title') ? ` title="${node.title}"` : ''
-      return `<a href="${href}"${id}${role}${title} data-href="${href}">${node.text}</a>`
+    if (nodeName === 'inline_anchor') {
+      if (node.type === 'link') {
+        const href = isSchemeBlacklisted(node.target) ? '#' : node.target
+        const id = node.hasAttribute('id') ? ` id="${node.id}"` : ''
+        const role = node.hasAttribute('role') ? ` class="${node.role}"` : ''
+        const title = node.hasAttribute('title') ? ` title="${node.title}"` : ''
+        return `<a href="${href}"${id}${role}${title} data-href="${href}">${node.text}</a>`
+      }
+      if (node.type === 'xref') {
+        const path = node.getAttributes().path
+        let text
+        if (path) {
+          text = node.getText() || path
+        } else {
+          text = node.getText()
+          if (text) {
+            // noop
+          } else {
+            // todo: resolve xref text
+            text = `[${node.getAttributes().refid}]`
+          }
+        }
+        const role = node.hasAttribute('role') ? ` class="${node.role}"` : ''
+        return `<a href="${node.target}"${role} data-href="${node.target}">${text}</a>`
+      }
     }
     return this.baseConverter.convert(node, transform)
   }
