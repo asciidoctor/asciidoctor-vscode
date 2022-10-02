@@ -63,6 +63,7 @@ export class AsciidocParser {
     const options: { [key: string]: any } = {
       attributes: {
         'env-vscode': '',
+        env: 'vscode',
         ...asciidoctorAttributes,
       },
       backend,
@@ -91,6 +92,7 @@ export class AsciidocParser {
     const document = processor.load(textDocument.getText(), {
       attributes: {
         'env-vscode': '',
+        env: 'vscode',
       },
       extension_registry: registry,
       sourcemap: true,
@@ -144,7 +146,7 @@ export class AsciidocParser {
       highlightjsBuiltInSyntaxHighlighter.$register_for('highlight.js', 'highlightjs')
     }
 
-    const attributes = {}
+    const attributes: { [key: string]: any } = {}
     Object.keys(previewAttributes).forEach((key) => {
       const attributeValue = previewAttributes[key]
       if (typeof attributeValue === 'string') {
@@ -155,6 +157,7 @@ export class AsciidocParser {
       }
     })
     attributes['env-vscode'] = ''
+    attributes.env = 'vscode'
 
     const baseDir = AsciidocParser.getBaseDir(doc.fileName)
     const templateDirs = this.getTemplateDirs()
