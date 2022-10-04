@@ -166,6 +166,14 @@ Here's an example of how to use the [asciidoctor-emoji](https://github.com/mogzt
 
 ![Asciidoctor.js Emoji extension enabled!](images/asciidoctor-vscode-emoji-ext.png)
 
+### Asciidoctor Config File
+
+To provide a common set of variables when rendering the preview, the extension reads an `.asciidoctorconfig` configuration file. Use this to optimize the preview when the project contains a document that is split out to multiple include-files.
+
+It is inspired by the implementation provided in [IntelliJ AsciiDoc Plugin](https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/features/advanced/asciidoctorconfig-file.html) and reused in [Eclipse AsciiDoc plugin](https://github.com/de-jcup/eclipse-asciidoctor-editor/wiki/Asciidoctor-configfiles).
+
+The current scope is limited to an `.asciidoctorconfig` configuration file provided at the root of the workspace.
+
 ## Extension Settings
 
 This extension contributes the following settings:
