@@ -5,7 +5,7 @@ async function exists (uri: vscode.Uri) {
     await vscode.workspace.fs.stat(uri)
     return true
   } catch (err) {
-    if (err instanceof vscode.FileSystemError.FileNotFound) {
+    if (err && err.code === 'FileNotFound') {
       return false
     }
     throw err
