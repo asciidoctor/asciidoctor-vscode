@@ -4,7 +4,8 @@ import { WebviewResourceProvider } from '../util/resources'
 import { AsciidocPreviewConfigurationManager } from '../features/previewConfig'
 import { AsciidocContributions } from '../asciidocExtensions'
 import assert from 'assert'
-import { getAntoraDocumentContext } from '../features/antora/antoraSupport'
+import sinon from 'sinon'
+import { AntoraDocumentContext } from '../features/antora/antoraSupport'
 
 const asciidoctor = require('@asciidoctor/core')
 const processor = asciidoctor()
@@ -27,21 +28,21 @@ class TestAsciidocContributions implements AsciidocContributions {
   readonly previewStyles: ReadonlyArray<vscode.Uri> = []
 }
 
-async function testAsciidoctorWebViewConverter (input, expected, root, filePath, extensionContext) {
+function createAntoraDocumentContextStub (resourceUri) {
+  const antoraDocumentContextStub = sinon.createStubInstance(AntoraDocumentContext)
+  antoraDocumentContextStub.resolveAntoraResourceIds.returns(resourceUri)
+  return antoraDocumentContextStub
+}
+
+async function testAsciidoctorWebViewConverter (input, antoraDocumentContext, expected, root, filePath) {
   const file = await vscode.workspace.openTextDocument(vscode.Uri.file(`${root}/${filePath}`))
-  const webviewResourceProvider = new TestWebviewResourceProvider()
-  const cspArbitergetSecurityLevelForResource = 2
-  const cspArbiterShouldDisableSecurityWarnings = false
-  const contributions = new TestAsciidocContributions()
-  const previewConfigurations = new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(file.uri)
-  const antoraDocumentContext = await getAntoraDocumentContext(file.uri, extensionContext.workspaceState)
   const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter(
     file,
-    webviewResourceProvider,
-    cspArbitergetSecurityLevelForResource,
-    cspArbiterShouldDisableSecurityWarnings,
-    contributions,
-    previewConfigurations,
+    new TestWebviewResourceProvider(),
+    2,
+    false,
+    new TestAsciidocContributions(),
+    new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(file.uri),
     antoraDocumentContext,
     undefined
   )
@@ -50,42 +51,38 @@ async function testAsciidoctorWebViewConverter (input, expected, root, filePath,
 }
 
 suite('AsciidoctorWebViewConverter', async () => {
-  let extensionContext: vscode.ExtensionContext
-  suiteSetup(async () => {
-    // Trigger extension activation and grab the context as some tests depend on it
-    await vscode.extensions.getExtension('vscode.vscode-api-tests')?.activate()
-    extensionContext = (global as any).testExtensionContext
-  })
-
   const root = vscode.workspace.workspaceFolders[0].uri.fsPath
   // WIP need to find more interesting test cases
   const testCases = [
     // images
     {
-      title: 'Should resolve image src',
+      title: 'Unresolved image resource id from Antora (fallback to base converter)',
       filePath: 'asciidoctorWebViewConverterTest.adoc',
-      input: 'image::images/web-console.png[Couchbase Web Console login]',
+      input: 'image::1.0@wyoming:sierra-madre:panorama.png[]',
+      antoraDocumentContext: createAntoraDocumentContextStub(undefined),
       expected: `<div class="imageblock">
 <div class="content">
-<img src="images/web-console.png" alt="Couchbase Web Console login">
+<img src="1.0@wyoming:sierra-madre:panorama.png" alt="1.0@wyoming:sierra madre:panorama">
 </div>
 </div>`,
     },
-    /*    {
+    {
       title: 'Should resolve image src with Antora id\'s input and Antora support activated',
       filePath: 'antora/multiComponents/cli/modules/commands/pages/page1.adoc',
       input: 'image::2.0@cli:commands:seaswell.png[]',
+      antoraDocumentContext: createAntoraDocumentContextStub(`${root}/antora/multiComponents/cli/modules/commands/images/seaswell.png`),
       expected: `<div class="imageblock">
 <div class="content">
 <img src="${root}/antora/multiComponents/cli/modules/commands/images/seaswell.png" alt="seaswell">
 </div>
 </div>`,
-    },*/
+    },
     // links
     {
       title: 'Should resolve macro link',
       filePath: 'asciidoctorWebViewConverterTest.adoc',
       input: 'link:full.adoc[]',
+      antoraDocumentContext: undefined, // Antora not enabled
       expected: `<div class="paragraph">
 <p><a href="full.adoc" class="undefined" data-href="full.adoc">full.adoc</a></p>
 </div>`,
@@ -93,6 +90,6 @@ suite('AsciidoctorWebViewConverter', async () => {
   ]
 
   for (const testCase of testCases) {
-    test(testCase.title, async () => testAsciidoctorWebViewConverter(testCase.input, testCase.expected, root, testCase.filePath, extensionContext))
+    test(testCase.title, async () => testAsciidoctorWebViewConverter(testCase.input, testCase.antoraDocumentContext, testCase.expected, root, testCase.filePath))
   }
 })
