@@ -68,24 +68,26 @@ suite('asciidoc.Asciidoctorconfig', () => {
     })
   })
 
-  test('Pick up .asciidoctorconfig and .asciidoctorconfig.adoc from root workspace folder', async () => {
-    const webview = vscode.window.createWebviewPanel(
-      AsciidocPreview.viewType,
-      'Test',
-      vscode.ViewColumn.One
-    )
+  suite('Pick up .asciidoctorconfig and .asciidoctorconfig.adoc from root workspace folder', async () => {
+    let html: string
+    let webview: vscode.WebviewPanel
     const createdFiles: vscode.Uri[] = []
-    try {
+
+    suiteSetup(async () => {
+      console.log('starting setup of second test suite')
+      webview = vscode.window.createWebviewPanel(
+        AsciidocPreview.viewType,
+        'Test',
+        vscode.ViewColumn.One
+      )
       const root = vscode.workspace.workspaceFolders[0].uri.fsPath
 
       createdFiles.push(await createFileWithContentAtWorkspaceRoot(root, '.asciidoctorconfig',
         `:var-only-in-asciidoctorconfig: From .asciidoctorconfig
-:var-in-both: var-in-both value from .asciidoctorconfig
-        `))
+:var-in-both: var-in-both value from .asciidoctorconfig`))
       createdFiles.push(await createFileWithContentAtWorkspaceRoot(root, '.asciidoctorconfig.adoc',
         `:var-only-in-asciidoctorconfig-adoc: From .asciidoctorconfig.adoc
-:var-in-both: var-in-both value from .asciidoctorconfig.adoc
-        `))
+:var-in-both: var-in-both value from .asciidoctorconfig.adoc`))
 
       const adocForTest = await createFileWithContentAtWorkspaceRoot(root, 'test-pickup-both-asciidoctorconfig-at-workspace-root.adoc',
         `{var-in-both}
@@ -97,17 +99,28 @@ suite('asciidoc.Asciidoctorconfig', () => {
       const file = await vscode.workspace.openTextDocument(adocForTest)
       // eslint-disable-next-line max-len
       const asciidocParser = new AsciidocParser(new AsciidocContributionProviderTest(extensionContext.extensionUri), new AsciidoctorExtensionsSecurityPolicyArbiter(extensionContext))
-      const { html } = await asciidocParser.convertUsingJavascript(file.getText(), file, extensionContext, webview)
+      html = (await asciidocParser.convertUsingJavascript(file.getText(), file, extensionContext, webview)).html
       console.log(html)
-      assert.strictEqual(html.includes('<p>From .asciidoctorconfig</p>'), true, '{var-only-in-asciidoctorconfig} should be substituted by the value defined in .asciidoctorconfig')
-      assert.strictEqual(html.includes('<p>From .asciidoctorconfig.adoc</p>'), true, '{var-only-in-asciidoctorconfig.adoc} should be substituted by the value defined in .asciidoctorconfig.adoc')
-      assert.strictEqual(html.includes('<p>var-in-both value from .asciidoctorconfig.adoc</p>'), true, '{var-in-both} should be substituted by the value defined in .asciidoctorconfig.adoc')
-    } finally {
+    })
+
+    suiteTeardown(async () => {
       webview.dispose()
       for (const createdFile of createdFiles) {
         await vscode.workspace.fs.delete(createdFile)
       }
-    }
+    })
+
+    test('Var from .asciidocforconfig is used', async () => {
+      assert.strictEqual(html.includes('<p>From .asciidoctorconfig</p>'), true, '{var-only-in-asciidoctorconfig} should be substituted by the value defined in .asciidoctorconfig')
+    })
+
+    test('Var from .asciidocforconfig.adoc is used', async () => {
+      assert.strictEqual(html.includes('<p>From .asciidoctorconfig.adoc</p>'), true, '{var-only-in-asciidoctorconfig.adoc} should be substituted by the value defined in .asciidoctorconfig.adoc')
+    })
+
+    test('Var from .asciidocforconfig.adoc has precedence on .asciidoctorconfig.adoc', async () => {
+      assert.strictEqual(html.includes('<p>var-in-both value from .asciidoctorconfig.adoc</p>'), true, '{var-in-both} should be substituted by the value defined in .asciidoctorconfig.adoc')
+    })
 
     async function createFileWithContentAtWorkspaceRoot (root: string, configFileName: string, fileContent: string) {
       const configFile = vscode.Uri.file(`${root}/${configFileName}`)
