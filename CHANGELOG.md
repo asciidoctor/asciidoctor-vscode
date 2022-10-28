@@ -4,7 +4,7 @@
 
 ### Improvements
 
-- support .asciidoctorconfig at root of the workspace by @apupier (#380)
+- support `.asciidoctorconfig` and `.asciidoctorconfig.adoc` at root of the workspace by @apupier, @mogztter and @ahus1 (#380)
 
 ### Bug fixes
 

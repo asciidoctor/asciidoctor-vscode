@@ -172,7 +172,7 @@ To provide a common set of variables when rendering the preview, the extension r
 
 It is inspired by the implementation provided in [IntelliJ AsciiDoc Plugin](https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/features/advanced/asciidoctorconfig-file.html) and reused in [Eclipse AsciiDoc plugin](https://github.com/de-jcup/eclipse-asciidoctor-editor/wiki/Asciidoctor-configfiles).
 
-The current scope is limited to an `.asciidoctorconfig` configuration file provided at the root of the workspace.
+The current scope is limited to an `.asciidoctorconfig` or `.asciidoctorconfig.adoc` configuration file provided at the root of the workspace.
 
 ## Extension Settings
 
