@@ -35,7 +35,7 @@ async function getConfigContent (workspaceFolder: vscode.WorkspaceFolder, config
   const asciidoctorConfigUri = vscode.Uri.joinPath(workspaceFolder.uri, configFilename)
   if (await exists(asciidoctorConfigUri)) {
     const asciidoctorConfigContent = new TextDecoder().decode(await vscode.workspace.fs.readFile(asciidoctorConfigUri))
-    return `${asciidoctorConfigContent.trim()}\n\n`
+    return `:asciidoctorconfigdir: ${workspaceFolder.uri.fsPath}\n\n${asciidoctorConfigContent.trim()}\n\n`
   }
   return undefined
 }
