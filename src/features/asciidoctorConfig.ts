@@ -1,4 +1,7 @@
+import * as path from 'path'
 import * as vscode from 'vscode'
+
+const MAX_DEPTH_SEARCH_ASCIIDOCCONFIG = 100
 
 async function exists (uri: vscode.Uri) {
   try {
@@ -17,25 +20,32 @@ export async function getAsciidoctorConfigContent (documentUri: vscode.Uri): Pro
   if (workspaceFolder === undefined) {
     return undefined
   }
-  const configContentFromAsciidoctorConfig = await getConfigContent(workspaceFolder, '.asciidoctorconfig')
-  const configContentFromAsciidoctorConfigDotAdoc = await getConfigContent(workspaceFolder, '.asciidoctorconfig.adoc')
 
-  const configContents = [
-    configContentFromAsciidoctorConfig,
-    configContentFromAsciidoctorConfigDotAdoc,
-  ].filter((config) => config !== undefined)
+  const configContents: string[] = []
+  let currentFile: string = documentUri.fsPath
+  let increment = 0
+  while (currentFile !== undefined && currentFile !== workspaceFolder.uri.fsPath && increment < MAX_DEPTH_SEARCH_ASCIIDOCCONFIG) {
+    increment++
+    currentFile = path.dirname(currentFile)
+    configContents.push(await getConfigContent(currentFile, '.asciidoctorconfig.adoc'))
+    configContents.push(await getConfigContent(currentFile, '.asciidoctorconfig'))
+  }
 
-  if (configContents.length > 0) {
-    return configContents.join('\n\n')
+  const configContentsOrderedAndFiltered = configContents
+    .filter((config) => config !== undefined)
+    .reverse()
+
+  if (configContentsOrderedAndFiltered.length > 0) {
+    return configContentsOrderedAndFiltered.join('\n\n')
   }
   return undefined
 }
 
-async function getConfigContent (workspaceFolder: vscode.WorkspaceFolder, configFilename: string) {
-  const asciidoctorConfigUri = vscode.Uri.joinPath(workspaceFolder.uri, configFilename)
+async function getConfigContent (folderPath: string, configFilename: string) {
+  const asciidoctorConfigUri = vscode.Uri.joinPath(vscode.Uri.file(folderPath), configFilename)
   if (await exists(asciidoctorConfigUri)) {
     const asciidoctorConfigContent = new TextDecoder().decode(await vscode.workspace.fs.readFile(asciidoctorConfigUri))
-    return `:asciidoctorconfigdir: ${workspaceFolder.uri.fsPath}\n\n${asciidoctorConfigContent.trim()}\n\n`
+    return `:asciidoctorconfigdir: ${folderPath}\n\n${asciidoctorConfigContent.trim()}\n\n`
   }
   return undefined
 }

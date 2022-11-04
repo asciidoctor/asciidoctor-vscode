@@ -46,7 +46,7 @@ suite('asciidoc.Asciidoctorconfig', () => {
     test(`Pick up ${configFileName} from root workspace folder`, async () => {
       const webview = vscode.window.createWebviewPanel(
         AsciidocPreview.viewType,
-        'Test',
+        `Test pick up ${configFileName} from root workspace folder`,
         vscode.ViewColumn.One
       )
       let configFile: vscode.Uri
@@ -74,10 +74,9 @@ suite('asciidoc.Asciidoctorconfig', () => {
     const createdFiles: vscode.Uri[] = []
 
     suiteSetup(async () => {
-      console.log('starting setup of second test suite')
       webview = vscode.window.createWebviewPanel(
         AsciidocPreview.viewType,
-        'Test',
+        'Test .asciidoctorconfig and .asciidoctorconfig.adoc from root workspace folder',
         vscode.ViewColumn.One
       )
       const root = vscode.workspace.workspaceFolders[0].uri.fsPath
@@ -100,7 +99,6 @@ suite('asciidoc.Asciidoctorconfig', () => {
       // eslint-disable-next-line max-len
       const asciidocParser = new AsciidocParser(new AsciidocContributionProviderTest(extensionContext.extensionUri), new AsciidoctorExtensionsSecurityPolicyArbiter(extensionContext))
       html = (await asciidocParser.convertUsingJavascript(file.getText(), file, extensionContext, webview)).html
-      console.log(html)
     })
 
     suiteTeardown(async () => {
@@ -127,5 +125,96 @@ suite('asciidoc.Asciidoctorconfig', () => {
       await vscode.workspace.fs.writeFile(configFile, Buffer.from(fileContent))
       return configFile
     }
+  })
+
+  suite('Pick up .asciidocConfig file recursively', async () => {
+    let html: string
+    let webview: vscode.WebviewPanel
+    const createdFiles: vscode.Uri[] = []
+
+    suiteSetup(async () => {
+      webview = vscode.window.createWebviewPanel(
+        AsciidocPreview.viewType,
+        'Test recursive access to .asciidoc files',
+        vscode.ViewColumn.One
+      )
+      const root = vscode.workspace.workspaceFolders[0].uri.fsPath
+      const configFileName = '.asciidoctorconfig'
+      const rootConfigFile = vscode.Uri.file(`${root}/${configFileName}`)
+      await vscode.workspace.fs.writeFile(rootConfigFile, Buffer.from(
+        `:only-root: Only root. Should appear.
+:root-and-level1: Value of root-and-level1 specified in root. Should not appear.
+:root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in root. Should not appear.`))
+      createdFiles.push(rootConfigFile)
+
+      const level1ConfigFile = vscode.Uri.file(`${root}/level-empty/level1/${configFileName}`)
+      await vscode.workspace.fs.writeFile(level1ConfigFile, Buffer.from(
+        `:only-level1: Only level 1. Should appear.
+:root-and-level1: Value of root-and-level1 specified in level1. Should appear.
+:root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in level1. Should not appear.`))
+      createdFiles.push(level1ConfigFile)
+
+      const level2ConfigFile = vscode.Uri.file(`${root}/level-empty/level1/level2/${configFileName}`)
+      await vscode.workspace.fs.writeFile(level2ConfigFile, Buffer.from(
+        `:only-level2: Only level 2. Should appear.
+:root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in level2. Should appear.`))
+      createdFiles.push(level2ConfigFile)
+
+      const adocFile = vscode.Uri.file(`${root}/level-empty/level1/level2/fileToTestRecursiveAsciidoctorConfigs.adoc`)
+      await vscode.workspace.fs.writeFile(adocFile, Buffer.from(
+        `{only-root}
+
+{only-level1}
+
+{only-level2}
+
+{root-and-level1}
+
+{root-and-level1-and-level2}
+              `))
+      createdFiles.push(adocFile)
+
+      const file = await vscode.workspace.openTextDocument(adocFile)
+      // eslint-disable-next-line max-len
+      const asciidocParser = new AsciidocParser(new AsciidocContributionProviderTest(extensionContext.extensionUri), new AsciidoctorExtensionsSecurityPolicyArbiter(extensionContext))
+      html = (await asciidocParser.convertUsingJavascript(file.getText(), file, extensionContext, webview)).html
+    })
+
+    suiteTeardown(async () => {
+      webview.dispose()
+      for (const createdFile of createdFiles) {
+        await vscode.workspace.fs.delete(createdFile)
+      }
+    })
+
+    test('Var from root level is substituted', async () => {
+      assert.strictEqual(
+        html.includes('<p>Only root. Should appear.</p>'), true,
+        '{only-root} should be substituted by the value defined at root level')
+    })
+
+    test('Var from level1 is substituted', async () => {
+      assert.strictEqual(
+        html.includes('<p>Only level 1. Should appear.</p>'), true,
+        '{only-level1} should be substituted by the value defined at level 1')
+    })
+
+    test('Var from level2 is substituted', async () => {
+      assert.strictEqual(
+        html.includes('<p>Only level 2. Should appear.</p>'), true,
+        '{only-level2} should be substituted by the value defined at level 2')
+    })
+
+    test('Deepest level should be use to substitue var', async () => {
+      assert.strictEqual(
+        html.includes('<p>Value of root-and-level1-and-level2 specified in level2. Should appear.</p>'), true,
+        '{root-and-level1-and-level2} should be substituted by the value defined at level 2')
+    })
+
+    test('Intermediate but deepest level defined should be use to substitue var', async () => {
+      assert.strictEqual(
+        html.includes('<p>Value of root-and-level1 specified in level1. Should appear.</p>'), true,
+        '{root-and-level1} should be substituted by the value defined at level 1')
+    })
   })
 })
