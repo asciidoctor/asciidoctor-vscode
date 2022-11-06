@@ -3,19 +3,33 @@
 :uri-atom-textmate-language-raw: https://raw.githubusercontent.com/asciidoctor/atom-language-asciidoc/master/grammars/language-asciidoc.cson
 :uri-npm-package-cson: https://www.npmjs.com/package/cson
 
-== Hacking and Testing the Extension
+This guide describes how to develop changes for this Visual Studio Code plugin and how to test them locally.
 
-. Clone the repository from Github
+== Prerequisites
+
+Before developing changes, install the following prerequisites:
+
+. https://nodejs.org/en/[Node 16 or later]
+. https://code.visualstudio.com/[Visual Studio Code]
+. https://git-scm.com/[Git]
+
+== Developing Changes and Testing the Extension
+
+. Clone the repository from GitHub.
 +
  $ git clone https://github.com/asciidoctor/asciidoctor-vscode.git
 
 . Open the folder within Visual Studio Code.
 
+. Download NPM package dependencies.
++
+ $ npm install
+
 . Make changes (ideally on a separate branch).
 
 Testing is done differently on the desktop client and the web client.
 
-=== Desktop
+=== Running the Desktop version
 
 . With the folder open in Visual Studio code, from the menu bar, select Run > 'Start Debugging' (or click the Run and Debug icon on the left sidebar and click on the green 'Run Extension' play button)
 . A new Visual Studio Code instance will open with '[Extension Development Host]' in the header.
@@ -34,7 +48,7 @@ To run the tests suite, select 'Run Extension Tests' in the 'Run' view then, cli
 You can also run the tests suite from a terminal using:
 
  $ npm t
- 
+
 [NOTE]
 ====
 In that case, you must close your Visual Studio code instance otherwise you will get an error:
@@ -42,12 +56,12 @@ In that case, you must close your Visual Studio code instance otherwise you will
  Running extension tests from the command line is currently only supported if no other instance of Code is running.
 ====
 
-=== Web
+=== Running the Web version
 
 On Linux to test the extension run the following command within the repository folder from the command line:
 
  $ npm run build-web && npm run build-preview && npx @vscode/test-web --browserType=chromium --extensionDevelopmentPath=${PWD}
- 
+
 IMPORTANT: In development, you will need to disable security because resources are loaded through http://localhost:3000/static/devextensions
 
 TIP: Looking at the browser's Web Developer tools can often help locate errors.
