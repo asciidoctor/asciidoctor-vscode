@@ -1,0 +1,21 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "dependencyDashboard": true,
+  "separateMajorMinor": true,
+  "extends": [
+    ":preserveSemverRanges"
+  ],
+  "packageRules": [
+    {
+      "matchManagers": ["github-actions"],
+      "groupName": "GitHub Actions"
+    },
+    {
+      "matchManagers": ["npm"],
+      "groupName": "Node dependencies"
+    },
+  ],
+  "lockFileMaintenance": {
+    "enabled": true
+  }
+}
