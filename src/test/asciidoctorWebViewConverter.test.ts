@@ -84,7 +84,16 @@ suite('AsciidoctorWebViewConverter', async () => {
       input: 'link:full.adoc[]',
       antoraDocumentContext: undefined, // Antora not enabled
       expected: `<div class="paragraph">
-<p><a href="full.adoc" class="undefined" data-href="full.adoc">full.adoc</a></p>
+<p><a href="full.adoc" class="bare" data-href="full.adoc">full.adoc</a></p>
+</div>`,
+    },
+    {
+      title: 'Should resolve macro link with roles',
+      filePath: 'asciidoctorWebViewConverterTest.adoc',
+      input: 'link:full.adoc[role="action button"]',
+      antoraDocumentContext: undefined, // Antora not enabled
+      expected: `<div class="paragraph">
+<p><a href="full.adoc" class="bare action button" data-href="full.adoc">full.adoc</a></p>
 </div>`,
     },
   ]

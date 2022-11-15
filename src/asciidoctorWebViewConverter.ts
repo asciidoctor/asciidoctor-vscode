@@ -190,7 +190,7 @@ export class AsciidoctorWebViewConverter {
     if (nodeName === 'inline_anchor' && node.type === 'link') {
       const href = isSchemeBlacklisted(node.target) ? '#' : node.target
       const id = node.hasAttribute('id') ? ` id="${node.id}"` : ''
-      const role = node.hasAttribute('role') ? ` class="${node.role}"` : ''
+      const role = node.hasAttribute('role') ? ` class="${node.getRole()}"` : ''
       const title = node.hasAttribute('title') ? ` title="${node.title}"` : ''
       return `<a href="${href}"${id}${role}${title} data-href="${href}">${node.text}</a>`
     }
