@@ -1,1 +1,11 @@
 = Page 1
+
+// resolveAntoraImageIds test for image in same component:
+// "../images/seaswell.png"
+
+image::2.0@cli:commands:seaswell.png[]
+
+image::commands:seaswell.png[]
+
+image::seaswell.png[]
+

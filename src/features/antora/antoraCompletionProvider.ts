@@ -6,7 +6,7 @@ export default class AntoraCompletionProvider {
     const lineText = textDocument.lineAt(position).text
     const prefix = lineText.substring(position.character - 1, position.character)
     const suffix = lineText.substring(position.character, position.character + 1)
-    const attributes = await getAttributes(textDocument)
+    const attributes = await getAttributes(textDocument.uri)
     return Object.entries(attributes).map(([key, value]) => {
       const completionItem = new vscode.CompletionItem({
         label: key,

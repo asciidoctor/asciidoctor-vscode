@@ -640,6 +640,7 @@
 		"mocha-multi-reporters": "1.5.1",
 		"path-browserify": "1.0.1",
 		"semver": "^7.3.7",
+		"sinon": "^14.0.1",
 		"ts-loader": "9.2.6",
 		"typescript": "4.5.5",
 		"vsce": "^2.9.2",
@@ -649,14 +650,19 @@
 		"webpack-cli": "4.9.2"
 	},
 	"dependencies": {
+		"@antora/content-aggregator": "^3.0.3",
+		"@antora/content-classifier": "^3.0.2",
 		"@asciidoctor/core": "2.2.6",
 		"@asciidoctor/docbook-converter": "2.0.0",
 		"@orcid/bibtex-parse-js": "0.0.25",
 		"asciidoctor-kroki": "0.15.4",
 		"js-yaml": "^4.1.0",
+		"querystring": "^0.2.1",
+		"tty-browserify": "^0.0.1",
 		"uuid": "8.3.2",
 		"vscode-nls": "5.0.0",
-		"vscode-uri": "^3.0.3"
+		"vscode-uri": "^3.0.3",
+		"worker-thread": "^1.1.0"
 	},
 	"__metadata": {
 		"id": "c1309cc2-f420-46a3-b2be-ca04f4d9e51b",

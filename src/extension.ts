@@ -53,7 +53,7 @@ export function activate (context: vscode.ExtensionContext) {
   const previewManager = new AsciidocPreviewManager(contentProvider, logger, contributionProvider)
   context.subscriptions.push(previewManager)
   context.subscriptions.push(new AsciidocFileIncludeAutoCompletionMonitor())
-  context.subscriptions.push(new AntoraSupportManager(context))
+  context.subscriptions.push(new AntoraSupportManager(context.workspaceState))
 
   context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider))
   context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider()))

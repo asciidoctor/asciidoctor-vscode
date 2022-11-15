@@ -36,7 +36,7 @@ async function showPreview (
   }
 
   const resourceColumn = (vscode.window.activeTextEditor && vscode.window.activeTextEditor.viewColumn) || vscode.ViewColumn.One
-  webviewManager.preview(resource, {
+  await webviewManager.preview(resource, {
     resourceColumn,
     previewColumn: previewSettings.sideBySide ? resourceColumn + 1 : resourceColumn,
     locked: !!previewSettings.locked,

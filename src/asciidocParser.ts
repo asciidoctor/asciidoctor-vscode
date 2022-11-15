@@ -7,6 +7,8 @@ import { AsciidocPreviewConfigurationManager } from './features/previewConfig'
 import { SkinnyTextDocument } from './util/document'
 import { IncludeItems } from './asciidoctorFindIncludeProcessor'
 import { AsciidocContributionProvider } from './asciidocExtensions'
+import { getAntoraDocumentContext } from './features/antora/antoraSupport'
+import { WebviewResourceProvider } from './util/resources'
 import { getAsciidoctorConfigContent } from './features/asciidoctorConfig'
 
 const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcessor')
@@ -123,7 +125,7 @@ export class AsciidocParser {
     text: string,
     doc: SkinnyTextDocument,
     context: vscode.ExtensionContext,
-    editor: vscode.WebviewPanel,
+    editor: WebviewResourceProvider,
     line?:number
   ): Promise<{ html: string, document: Asciidoctor.Document }> {
     // extension context should be at constructor
@@ -141,13 +143,17 @@ export class AsciidocParser {
 
     const registry = processor.Extensions.create()
 
+    // Antora IDs resolution:
+    const antoraDocumentContext = await getAntoraDocumentContext(doc.uri, context.workspaceState)
+
     const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter(
       doc,
-      context,
       editor,
-      cspArbiter,
-      this.contributionProvider,
-      previewConfigurationManager,
+      cspArbiter.getSecurityLevelForResource(doc.uri),
+      cspArbiter.shouldDisableSecurityWarnings(),
+      this.contributionProvider.contributions,
+      previewConfigurationManager.loadAndCacheConfiguration(doc.uri),
+      antoraDocumentContext,
       line
     )
     processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])

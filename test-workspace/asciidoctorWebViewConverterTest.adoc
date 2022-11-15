@@ -1,0 +1,7 @@
+image::antora/multiComponents/cli/modules/commands/images/seaswell.png[]
+
+image::images/web-console.png[Couchbase Web Console login]
+
+link:full.adoc[]
+
+
