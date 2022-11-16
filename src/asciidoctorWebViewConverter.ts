@@ -85,11 +85,11 @@ export class AsciidoctorWebViewConverter {
   baseConverter: any
   basebackend: string
   outfilesuffix: string
+  supports_templates: boolean
   securityLevel: AsciidocPreviewSecurityLevel
   config: AsciidocPreviewConfiguration
   initialData: { [key: string]: any }
   state: object
-  backendTraits: { supports_templates: boolean }
 
   constructor (
     private readonly textDocument: SkinnyTextDocument,
@@ -105,6 +105,7 @@ export class AsciidoctorWebViewConverter {
     const textDocumentUri = textDocument.uri
     this.basebackend = 'html'
     this.outfilesuffix = '.html'
+    this.supports_templates = true
     this.baseConverter = processor.Html5Converter.create()
     this.securityLevel = cspArbitergetSecurityLevelForResource
     this.config = previewConfigurations
@@ -119,9 +120,6 @@ export class AsciidoctorWebViewConverter {
       disableSecurityWarnings: cspArbiterShouldDisableSecurityWarnings,
     }
     this.state = state || {}
-    this.backendTraits = {
-      supports_templates: true,
-    }
   }
 
   // alias to $convert method to use AsciidoctorWebViewConverter as option in processor.convert method in Asciidoctor.js
