@@ -79,5 +79,5 @@ Released by: @${releaseActor}
     }
     return line
   }).join('\n')
-  await fsp.writeFile(ospath.join(__dirname, '..', 'CHANGELOG.md'), notes, 'utf8')
+  await fsp.writeFile(ospath.join(__dirname, '..', 'CHANGELOG.md'), content, 'utf8')
 })()
