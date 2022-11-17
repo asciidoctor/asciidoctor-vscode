@@ -2,7 +2,7 @@
 	"name": "asciidoctor-vscode",
 	"displayName": "%displayName%",
 	"description": "%description%",
-	"version": "3.0.3",
+	"version": "3.0.4-dev",
 	"publisher": "asciidoctor",
 	"author": "João Pinto <lamego.pinto@gmail.com>",
 	"license": "MIT",
