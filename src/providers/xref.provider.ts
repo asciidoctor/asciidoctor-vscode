@@ -30,14 +30,17 @@ function shouldProvide (context: Context): boolean {
 }
 
 async function getLabels (): Promise<string[]> {
-  const regex = /\\[\\[(\\w+)\\]\\]/g
-  const labels = await vscode.workspace.findFiles('**/*.adoc').then((files) =>
-    files
+  const regex = /\[\[(\w+)\]\]/g
+  const labels = await vscode.workspace.findFiles('**/*.adoc').then((files) => {
+    const contentOfFilesConcatenated = files
       .map((uri) => readFileSync(uri.path).toString('utf-8'))
       .join('\n')
-      .match(regex)
-      .map((result) => result.replace('[[', '').replace(']]', ''))
-  )
+    const matched = contentOfFilesConcatenated.match(regex)
+    if (matched) {
+      return matched.map((result) => result.replace('[[', '').replace(']]', ''))
+    }
+    return []
+  })
   return labels
 }
 
