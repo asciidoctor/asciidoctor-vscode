@@ -1,3 +1,4 @@
+import * as path from 'path'
 import * as vscode from 'vscode'
 import { createContext, Context } from './createContext'
 
@@ -31,20 +32,12 @@ function shouldProvide (context: Context, keyword :string): boolean {
   return occurence === context.position.character - keyword.length
 }
 
-async function getLabelsFromAllWorkspaceFiles (): Promise<string[]> {
-  const files = await vscode.workspace.findFiles('**/*.adoc')
-  return await getLabelsFromFiles(files)
-}
-
-async function getLabelsFromFiles (files: vscode.Uri[]) {
-  let contentOfFilesConcatenated = ''
-  for (const uri of files) {
-    const data = await vscode.workspace.fs.readFile(uri)
-    contentOfFilesConcatenated += Buffer.from(data).toString('utf8') + '\n'
-  }
-  const labelsFromLegacyBlock = await getLabelsFromLegacyBlock(contentOfFilesConcatenated)
-  const labelsFromShorthandNotation = await getLabelsFromShorthandNotation(contentOfFilesConcatenated)
-  const labelsFromLonghandNotation = await getLabelsFromLonghandNotation(contentOfFilesConcatenated)
+async function getIdsFromFile (file: vscode.Uri) {
+  const data = await vscode.workspace.fs.readFile(file)
+  const content = Buffer.from(data).toString('utf8')
+  const labelsFromLegacyBlock = await getLabelsFromLegacyBlock(content)
+  const labelsFromShorthandNotation = await getLabelsFromShorthandNotation(content)
+  const labelsFromLonghandNotation = await getLabelsFromLonghandNotation(content)
   return labelsFromLegacyBlock.concat(labelsFromShorthandNotation, labelsFromLonghandNotation)
 }
 
@@ -88,14 +81,27 @@ async function provideCrossRef (context: Context): Promise<vscode.CompletionItem
     textFullLine.lastIndexOf(':', position.character + 1) + 1,
     indexOfNextWhiteSpace
   )
-  const xrefLabels = await getLabelsFromAllWorkspaceFiles()
 
-  return xrefLabels
-    .filter((label) => label.match(search))
-    .map((label) => ({
-      label: `${label}[]`,
-      kind: vscode.CompletionItemKind.Reference,
-    }))
+  const completionItems: vscode.CompletionItem[] = []
+  const workspacesAdocFiles = await vscode.workspace.findFiles('**/*.adoc')
+  for (const adocFile of workspacesAdocFiles) {
+    const labels = await getIdsFromFile(adocFile)
+    for (const label of labels) {
+      if (label.match(search)) {
+        if (adocFile.fsPath === context.document.uri.fsPath) {
+          completionItems.push(new vscode.CompletionItem(
+            label + '[]',
+            vscode.CompletionItemKind.Reference))
+        } else {
+          completionItems.push(new vscode.CompletionItem(
+            path.relative(path.dirname(context.document.uri.fsPath), adocFile.fsPath) + '#' + label + '[]',
+            vscode.CompletionItemKind.Reference))
+        }
+      }
+    }
+  }
+
+  return completionItems
 }
 
 async function provideInternalRef (context: Context): Promise<vscode.CompletionItem[]> {
@@ -108,9 +114,7 @@ async function provideInternalRef (context: Context): Promise<vscode.CompletionI
     indexOfNextWhiteSpace
   )
 
-  const files :vscode.Uri[] = []
-  files.push(document.uri)
-  const internalRefLabels = await getLabelsFromFiles(files)
+  const internalRefLabels = await getIdsFromFile(document.uri)
 
   return internalRefLabels
     .filter((label) => label.match(search))
