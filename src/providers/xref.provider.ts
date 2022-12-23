@@ -30,18 +30,41 @@ function shouldProvide (context: Context): boolean {
 }
 
 async function getLabels (): Promise<string[]> {
+  const files = await vscode.workspace.findFiles('**/*.adoc')
+  const contentOfFilesConcatenated = files
+    .map((uri) => readFileSync(uri.path).toString('utf-8'))
+    .join('\n')
+  const labelsFromLegacyBlock = await getLabelsFromLegacyBlock(contentOfFilesConcatenated)
+  const labelsFromShorthandNotation = await getLabelsFromShorthandNotation(contentOfFilesConcatenated)
+  const labelsFromLonghandNotation = await getLabelsFromLonghandNotation(contentOfFilesConcatenated)
+  return labelsFromLegacyBlock.concat(labelsFromShorthandNotation, labelsFromLonghandNotation)
+}
+
+async function getLabelsFromLonghandNotation (content: string): Promise<string[]> {
+  const regex = /\[id=(\w+)\]/g
+  const matched = content.match(regex)
+  if (matched) {
+    return matched.map((result) => result.replace('[id=', '').replace(']', ''))
+  }
+  return []
+}
+
+async function getLabelsFromShorthandNotation (content: string): Promise<string[]> {
+  const regex = /\[#(\w+)\]/g
+  const matched = content.match(regex)
+  if (matched) {
+    return matched.map((result) => result.replace('[#', '').replace(']', ''))
+  }
+  return []
+}
+
+async function getLabelsFromLegacyBlock (content: string): Promise<string[]> {
   const regex = /\[\[(\w+)\]\]/g
-  const labels = await vscode.workspace.findFiles('**/*.adoc').then((files) => {
-    const contentOfFilesConcatenated = files
-      .map((uri) => readFileSync(uri.path).toString('utf-8'))
-      .join('\n')
-    const matched = contentOfFilesConcatenated.match(regex)
-    if (matched) {
-      return matched.map((result) => result.replace('[[', '').replace(']]', ''))
-    }
-    return []
-  })
-  return labels
+  const matched = content.match(regex)
+  if (matched) {
+    return matched.map((result) => result.replace('[[', '').replace(']]', ''))
+  }
+  return []
 }
 
 /**
