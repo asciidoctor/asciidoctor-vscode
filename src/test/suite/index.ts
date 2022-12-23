@@ -5,7 +5,7 @@ import glob from 'glob'
 export function run (): Promise<void> {
   // Create the mocha test
   // eslint-disable-next-line new-cap
-  const mocha = new Mocha.default({
+  const mocha = new Mocha({
     ui: 'tdd',
     color: true,
   })
