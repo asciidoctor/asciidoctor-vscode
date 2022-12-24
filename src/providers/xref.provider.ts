@@ -1,4 +1,3 @@
-import { readFileSync } from 'fs'
 import * as vscode from 'vscode'
 import { createContext, Context } from './createContext'
 
@@ -31,9 +30,11 @@ function shouldProvide (context: Context): boolean {
 
 async function getLabels (): Promise<string[]> {
   const files = await vscode.workspace.findFiles('**/*.adoc')
-  const contentOfFilesConcatenated = files
-    .map((uri) => readFileSync(uri.path).toString('utf-8'))
-    .join('\n')
+  let contentOfFilesConcatenated = ''
+  for (const uri of files) {
+    const data = await vscode.workspace.fs.readFile(uri)
+    contentOfFilesConcatenated += Buffer.from(data).toString('utf8') + '\n'
+  }
   const labelsFromLegacyBlock = await getLabelsFromLegacyBlock(contentOfFilesConcatenated)
   const labelsFromShorthandNotation = await getLabelsFromShorthandNotation(contentOfFilesConcatenated)
   const labelsFromLonghandNotation = await getLabelsFromLonghandNotation(contentOfFilesConcatenated)
