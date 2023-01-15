@@ -1,5 +1,5 @@
 {
-  "antora.activateSupport.yes":  "Yes",
-  "antora.activateSupport.no":  "No, thanks",
-  "antora.activateSupport.message": "We detect that you are working with Antora. Do you want to active Antora support?"
+  "antora.activateSupport.yes":  "はい",
+  "antora.activateSupport.no":  "いいえ、結構です",
+  "antora.activateSupport.message": "Antoraの構成を検出しました。Antoraサポートを有効にしますか？"
 }
