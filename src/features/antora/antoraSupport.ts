@@ -35,6 +35,14 @@ export class AntoraDocumentContext {
     }
     return undefined
   }
+
+  public getComponents () {
+    return this.antoraContext.contentCatalog.getComponents()
+  }
+
+  public getImages () {
+    return this.antoraContext.contentCatalog.findBy({ family: 'image' })
+  }
 }
 
 export class AntoraContext {
@@ -65,18 +73,28 @@ export class AntoraContext {
 }
 
 export class AntoraSupportManager implements vscode.Disposable {
+  // eslint-disable-next-line no-use-before-define
+  private static instance: AntoraSupportManager
+  private static workspaceState: Memento
   private readonly _disposables: vscode.Disposable[] = []
 
-  public constructor (private readonly context: Memento) {
-    this.context = context
+  private constructor () {
+  }
+
+  public static getInstance (workspaceState: Memento) {
+    if (AntoraSupportManager.instance) {
+      AntoraSupportManager.workspaceState = workspaceState
+      return AntoraSupportManager.instance
+    }
+    AntoraSupportManager.instance = new AntoraSupportManager()
+    AntoraSupportManager.workspaceState = workspaceState
     const workspaceConfiguration = vscode.workspace.getConfiguration('asciidoc', null)
     // look for Antora support setting in workspace state
-    const workspaceState: vscode.Memento = this.context
     const isEnableAntoraSupportSettingDefined = workspaceState.get('antoraSupportSetting')
     if (isEnableAntoraSupportSettingDefined === true) {
       const enableAntoraSupport = workspaceConfiguration.get('antora.enableAntoraSupport')
       if (enableAntoraSupport === true) {
-        this.activate()
+        AntoraSupportManager.instance.registerFeatures()
       }
     } else if (isEnableAntoraSupportSettingDefined === undefined) {
       // choice has not been made
@@ -93,26 +111,51 @@ export class AntoraSupportManager implements vscode.Disposable {
           const enableAntoraSupport = answer === yesAnswer ? true : (answer === noAnswer ? false : undefined)
           await workspaceConfiguration.update('antora.enableAntoraSupport', enableAntoraSupport)
           if (enableAntoraSupport) {
-            this.activate()
+            AntoraSupportManager.instance.registerFeatures()
           }
           // do not ask again to avoid bothering users
           onDidOpenAsciiDocFileAskAntoraSupport.dispose()
         }
       })
-      this._disposables.push(onDidOpenAsciiDocFileAskAntoraSupport)
+      AntoraSupportManager.instance._disposables.push(onDidOpenAsciiDocFileAskAntoraSupport)
     }
   }
 
-  private activate (): void {
-    const completionProvider = vscode.languages.registerCompletionItemProvider(
-      {
-        language: 'asciidoc',
-        scheme: 'file',
-      },
-      new AntoraCompletionProvider(),
-      '{'
+  public static async isEnabled (workspaceState: Memento): Promise<Boolean> {
+    return (await AntoraSupportManager.getInstance(workspaceState)).isEnabled()
+  }
+
+  public async getAttributes (textDocumentUri: Uri): Promise<{ [key: string]: string }> {
+    const antoraEnabled = this.isEnabled()
+    if (antoraEnabled) {
+      return getAttributes(textDocumentUri)
+    }
+    return {}
+  }
+
+  public isEnabled (): Boolean {
+    const workspaceConfiguration = vscode.workspace.getConfiguration('asciidoc', null)
+    // look for Antora support setting in workspace state
+    const isEnableAntoraSupportSettingDefined = AntoraSupportManager.workspaceState.get('antoraSupportSetting')
+    if (isEnableAntoraSupportSettingDefined === true) {
+      const enableAntoraSupport = workspaceConfiguration.get('antora.enableAntoraSupport')
+      if (enableAntoraSupport === true) {
+        return true
+      }
+    }
+    // choice has not been made or Antora is explicitly disabled
+    return false
+  }
+
+  private registerFeatures (): void {
+    const attributesCompletionProvider = vscode.languages.registerCompletionItemProvider({
+      language: 'asciidoc',
+      scheme: 'file',
+    },
+    new AntoraCompletionProvider(),
+    '{'
     )
-    this._disposables.push(completionProvider)
+    this._disposables.push(attributesCompletionProvider)
   }
 
   public dispose (): void {
@@ -159,11 +202,11 @@ export async function getAntoraConfig (textDocumentUri: Uri): Promise<AntoraConf
 }
 
 export async function getAttributes (textDocumentUri: Uri): Promise<{ [key: string]: string }> {
-  const doc = await getAntoraConfig(textDocumentUri)
-  if (doc === undefined) {
+  const antoraConfig = await getAntoraConfig(textDocumentUri)
+  if (antoraConfig === undefined) {
     return {}
   }
-  return doc.config.asciidoc?.attributes || {}
+  return antoraConfig.config.asciidoc?.attributes || {}
 }
 
 export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceState: Memento): Promise<AntoraDocumentContext | undefined> {

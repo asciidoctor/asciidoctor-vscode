@@ -22,7 +22,7 @@ import AsciidocFoldingRangeProvider from './features/foldingProvider'
 import { AntoraSupportManager } from './features/antora/antoraSupport'
 import { DropImageIntoEditorProvider } from './features/dropIntoEditor'
 
-export function activate (context: vscode.ExtensionContext) {
+export async function activate (context: vscode.ExtensionContext) {
   // Set context as a global as some tests depend on it
   (global as any).testExtensionContext = context
   const contributionProvider = getAsciidocExtensionContributions(context)
@@ -53,7 +53,7 @@ export function activate (context: vscode.ExtensionContext) {
   const previewManager = new AsciidocPreviewManager(contentProvider, logger, contributionProvider)
   context.subscriptions.push(previewManager)
   context.subscriptions.push(new AsciidocFileIncludeAutoCompletionMonitor())
-  context.subscriptions.push(new AntoraSupportManager(context.workspaceState))
+  context.subscriptions.push(await AntoraSupportManager.getInstance(context.workspaceState))
 
   context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider))
   context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider()))

@@ -6,3 +6,4 @@ asciidoc:
     source-language: asciidoc@
     xrefstyle: short@
     example-caption: false
+    experimental: ''

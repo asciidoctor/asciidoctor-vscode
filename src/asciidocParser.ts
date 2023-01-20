@@ -7,7 +7,7 @@ import { AsciidocPreviewConfigurationManager } from './features/previewConfig'
 import { SkinnyTextDocument } from './util/document'
 import { IncludeItems } from './asciidoctorFindIncludeProcessor'
 import { AsciidocContributionProvider } from './asciidocExtensions'
-import { getAntoraDocumentContext } from './features/antora/antoraSupport'
+import { AntoraSupportManager, getAntoraDocumentContext } from './features/antora/antoraSupport'
 import { WebviewResourceProvider } from './util/resources'
 import { getAsciidoctorConfigContent } from './features/asciidoctorConfig'
 
@@ -180,10 +180,15 @@ export class AsciidocParser {
     attributes.env = 'vscode'
     attributes['relfilesuffix@'] = '.adoc'
 
+    const antoraSupport = await AntoraSupportManager.getInstance(context.workspaceState)
+    const antoraAttributes = await antoraSupport.getAttributes(doc.uri)
     const baseDir = AsciidocParser.getBaseDir(doc.fileName)
     const templateDirs = this.getTemplateDirs()
     const options: { [key: string]: any } = {
-      attributes,
+      attributes: {
+        ...attributes,
+        ...antoraAttributes,
+      },
       backend: 'webview-html5',
       extension_registry: registry,
       header_footer: true,
