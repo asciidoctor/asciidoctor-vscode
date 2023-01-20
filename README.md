@@ -1,8 +1,8 @@
 # AsciiDoc support for Visual Studio Code
 
-[![Version](https://vsmarketplacebadge.apphb.com/version/asciidoctor.asciidoctor-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode)
-[![Installs](https://vsmarketplacebadge.apphb.com/installs/asciidoctor.asciidoctor-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode)
-[![Ratings](https://vsmarketplacebadge.apphb.com/rating/asciidoctor.asciidoctor-vscode.svg)](https://vsmarketplacebadge.apphb.com/rating/asciidoctor.asciidoctor-vscode.svg)
+[![Version](https://vsmarketplacebadges.dev/version/asciidoctor.asciidoctor-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode)
+[![Installs](https://vsmarketplacebadges.dev/installs/asciidoctor.asciidoctor-vscode.svg)](https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode)
+[![Ratings](https://vsmarketplacebadges.dev/rating/asciidoctor.asciidoctor-vscode.svg)](https://vsmarketplacebadges.dev/rating/asciidoctor.asciidoctor-vscode.svg)
 [![Project chat](https://img.shields.io/badge/zulip-join_chat-brightgreen.svg)](https://asciidoctor.zulipchat.com/)
 
 An extension that provides live preview, syntax highlighting and snippets for the AsciiDoc format using Asciidoctor.
