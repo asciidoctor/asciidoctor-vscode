@@ -1,11 +1,11 @@
-import * as path from 'path'
-import * as Mocha from 'mocha'
-import * as glob from 'glob'
+import path from 'path'
+import Mocha from 'mocha'
+import glob from 'glob'
 
 export function run (): Promise<void> {
   // Create the mocha test
   // eslint-disable-next-line new-cap
-  const mocha = new Mocha.default({
+  const mocha = new Mocha({
     ui: 'tdd',
     color: true,
   })

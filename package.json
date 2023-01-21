@@ -18,8 +18,8 @@
 	"bugs": "https://github.com/asciidoctor/asciidoctor-vscode/issues",
 	"homepage": "https://github.com/asciidoctor/asciidoctor-vscode/blob/master/README.md",
 	"icon": "images/icon.png",
+	"main": "./out/extension.js",
 	"browser": "./dist/browser/extension",
-	"main": "./dist/src/extension.js",
 	"engines": {
 		"vscode": "^1.70.2",
 		"node": ">=14"
@@ -591,6 +591,7 @@
 		]
 	},
 	"scripts": {
+		"vscode:prepublish": "npm run build-ext -- --minify",
 		"copy-fonts:all": "npm run copy-fonts:noto-serif && npm run copy-fonts:open-sans && npm run copy-fonts:roboto-mono",
 		"copy-fonts:noto-serif": "cp -r node_modules/@fontsource/noto-serif/files/noto-serif-all-400-italic.woff media/fonts && cp -r node_modules/@fontsource/noto-serif/files/noto-serif-all-400-normal.woff media/fonts && cp -r node_modules/@fontsource/noto-serif/files/noto-serif-all-700-normal.woff media/fonts && cp -r node_modules/@fontsource/noto-serif/files/noto-serif-all-700-italic.woff media/fonts",
 		"copy-fonts:open-sans": "cp -r node_modules/@fontsource/open-sans/files/open-sans-latin-variable-full-italic.woff2 media/fonts && cp -r node_modules/@fontsource/open-sans/files/open-sans-latin-variable-full-normal.woff2 media/fonts",
@@ -605,12 +606,13 @@
 		"build": "npm run copy-assets && npm run build-ext && npm run i18n:generate-localize-files && npm run build-preview",
 		"build-web": "webpack --config extension-browser.webpack.config --mode none",
 		"build-preview": "webpack --config extension-preview.webpack.config --mode production",
-		"build-ext": "tsc -p ./",
+		"build-ext": "esbuild ./src/extension.ts --bundle --outfile=out/extension.js --external:vscode --format=cjs --platform=node",
+		"build-ext:watch": "npm run build-ext -- --sourcemap --watch",
 		"package": "npm run build && npm run build-web && npm run i18n:generate-package-nls && vsce package",
 		"deploy": "vsce publish -p",
 		"lint": "eslint 'src/**/*.ts' 'preview-src/**/*.ts' --format unix",
 		"lint:fix": "npm run lint -- --fix",
-		"pretest": "npm run build",
+		"pretest": "tsc -p ./ && npm run build",
 		"test": "node ./dist/src/test/runTest.js"
 	},
 	"devDependencies": {
@@ -626,6 +628,7 @@
 		"@typescript-eslint/parser": "5.14.0",
 		"copy-webpack-plugin": "10.2.4",
 		"eslint": "8.8.0",
+		"esbuild": "0.16.10",
 		"eslint-config-standard": "^17.0.0",
 		"eslint-plugin-import": "2.25.4",
 		"eslint-plugin-n": "^15.2.4",
