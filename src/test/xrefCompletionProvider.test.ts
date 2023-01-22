@@ -83,4 +83,26 @@ xref:`))
       label: 'anInlinedAnchor[]',
     })
   })
+  test('Should return id for element in same document after <<', async () => {
+    const fileToAutoComplete = vscode.Uri.file(`${root}/fileToTest<<AutoComplete.adoc`)
+    await vscode.workspace.fs.writeFile(fileToAutoComplete, Buffer.from(`[#anIDFromSameFile]
+
+<<`))
+    createdFiles.push(fileToAutoComplete)
+
+    const fileThatShouldntAppearInAutoComplete = vscode.Uri.file(`${root}/fileToNotAppearInAutoComplete.adoc`)
+    await vscode.workspace.fs.writeFile(fileThatShouldntAppearInAutoComplete, Buffer.from('[#shouldNotAppear]'))
+    createdFiles.push(fileThatShouldntAppearInAutoComplete)
+
+    const file = await vscode.workspace.openTextDocument(fileToAutoComplete)
+    const completionsItems = await xrefProvider.provideCompletionItems(file, new Position(2, 2))
+    const filteredCompletionItems = completionsItems.filter((completionItem) => completionItem.label === 'anIDFromSameFile')
+    assert.deepStrictEqual(filteredCompletionItems[0], {
+      kind: vscode.CompletionItemKind.Reference,
+      label: 'anIDFromSameFile',
+      insertText: 'anIDFromSameFile>>',
+    })
+
+    assert.strictEqual(completionsItems.filter((completionItem) => completionItem.label === 'shouldNotAppear').length, 0)
+  })
 })

@@ -10,17 +10,20 @@ export async function provideCompletionItems (
   position: vscode.Position
 ): Promise<vscode.CompletionItem[]> {
   const context = createContext(document, position)
-
-  return shouldProvide(context) ? provide(context) : Promise.resolve([])
+  if (shouldProvide(context, 'xref:')) {
+    return provideCrossRef(context)
+  } else if (shouldProvide(context, '<<')) {
+    return provideInternalRef(context)
+  } else {
+    return Promise.resolve([])
+  }
 }
 
 /**
  * Checks if we should provide any CompletionItems
  * @param context
  */
-function shouldProvide (context: Context): boolean {
-  const keyword = 'xref:'
-  // Check if cursor is after citenp:
+function shouldProvide (context: Context, keyword :string): boolean {
   const occurence = context.textFullLine.indexOf(
     keyword,
     context.position.character - keyword.length
@@ -28,8 +31,12 @@ function shouldProvide (context: Context): boolean {
   return occurence === context.position.character - keyword.length
 }
 
-async function getLabels (): Promise<string[]> {
+async function getLabelsFromAllWorkspaceFiles (): Promise<string[]> {
   const files = await vscode.workspace.findFiles('**/*.adoc')
+  return await getLabelsFromFiles(files)
+}
+
+async function getLabelsFromFiles (files: vscode.Uri[]) {
   let contentOfFilesConcatenated = ''
   for (const uri of files) {
     const data = await vscode.workspace.fs.readFile(uri)
@@ -71,7 +78,7 @@ async function getLabelsFromLegacyBlock (content: string): Promise<string[]> {
 /**
  * Provide Completion Items
  */
-async function provide (context: Context): Promise<vscode.CompletionItem[]> {
+async function provideCrossRef (context: Context): Promise<vscode.CompletionItem[]> {
   const { textFullLine, position } = context
   const indexOfNextWhiteSpace = textFullLine.includes(' ', position.character)
     ? textFullLine.indexOf(' ', position.character)
@@ -81,12 +88,35 @@ async function provide (context: Context): Promise<vscode.CompletionItem[]> {
     textFullLine.lastIndexOf(':', position.character + 1) + 1,
     indexOfNextWhiteSpace
   )
-  const xrefLabels = await getLabels()
+  const xrefLabels = await getLabelsFromAllWorkspaceFiles()
 
   return xrefLabels
     .filter((label) => label.match(search))
     .map((label) => ({
       label: `${label}[]`,
       kind: vscode.CompletionItemKind.Reference,
+    }))
+}
+
+async function provideInternalRef (context: Context): Promise<vscode.CompletionItem[]> {
+  const { textFullLine, position, document } = context
+  const indexOfNextWhiteSpace = textFullLine.includes(' ', position.character)
+    ? textFullLine.indexOf(' ', position.character)
+    : textFullLine.length
+  const search = textFullLine.substring(
+    textFullLine.lastIndexOf('<', position.character + 1) + 1,
+    indexOfNextWhiteSpace
+  )
+
+  const files :vscode.Uri[] = []
+  files.push(document.uri)
+  const internalRefLabels = await getLabelsFromFiles(files)
+
+  return internalRefLabels
+    .filter((label) => label.match(search))
+    .map((label) => ({
+      label: `${label}`,
+      kind: vscode.CompletionItemKind.Reference,
+      insertText: `${label}>>`,
     }))
 }
