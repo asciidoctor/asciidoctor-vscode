@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 import 'mocha'
 
 import * as assert from 'assert'
@@ -10,6 +6,7 @@ import { AsciidocParser } from '../asciidocParser'
 import { AsciidocContributionProvider, AsciidocContributions } from '../asciidocExtensions'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
 import { WebviewResourceProvider } from '../util/resources'
+import { extensionContext } from './helper'
 
 class EmptyAsciidocContributions implements AsciidocContributions {
   readonly previewScripts = []
@@ -46,13 +43,6 @@ class TestWebviewResourceProvider implements WebviewResourceProvider {
 }
 
 suite('asciidoc.Asciidoctorconfig', () => {
-  let extensionContext: vscode.ExtensionContext
-  suiteSetup(async () => {
-    // Trigger extension activation and grab the context as some tests depend on it
-    await vscode.extensions.getExtension('vscode.vscode-api-tests')?.activate()
-    extensionContext = (global as any).testExtensionContext
-  })
-
   const configFileNames = ['.asciidoctorconfig', '.asciidoctorconfig.adoc']
   configFileNames.forEach((configFileName) => {
     test(`Pick up ${configFileName} from root workspace folder`, async () => {
