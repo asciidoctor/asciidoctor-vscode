@@ -7,3 +7,4 @@ asciidoc:
     xrefstyle: short@
     example-caption: false
     experimental: ''
+    url-vscode-marketplace: https://marketplace.visualstudio.com/vscode

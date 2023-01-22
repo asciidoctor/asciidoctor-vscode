@@ -27,7 +27,6 @@ const previewConfigurationManager = new AsciidocPreviewConfigurationManager()
 
 export class AsciidocParser {
   private stylesdir: string
-  private apsArbiter: AsciidoctorExtensionsSecurityPolicyArbiter
   public prependExtension: Asciidoctor.Extensions.PreprocessorKlass
 
   constructor (

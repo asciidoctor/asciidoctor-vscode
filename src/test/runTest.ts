@@ -1,10 +1,12 @@
 import * as path from 'path'
 
-import { runTests } from 'vscode-test'
+import { runTests } from '@vscode/test-electron'
 
 async function main () {
   try {
+    // from dist/src/test/index.js
     const projectRootPath = path.join(__dirname, '..', '..', '..')
+
     // The folder containing the Extension Manifest package.json
     // Passed to `--extensionDevelopmentPath`
     const extensionDevelopmentPath = projectRootPath
