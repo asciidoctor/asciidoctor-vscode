@@ -650,7 +650,6 @@
 		"webpack-cli": "4.9.2"
 	},
 	"dependencies": {
-		"@antora/content-aggregator": "^3.0.3",
 		"@antora/content-classifier": "3.1.2",
 		"@asciidoctor/core": "2.2.6",
 		"@asciidoctor/docbook-converter": "2.0.0",
