@@ -100,7 +100,8 @@ export class AsciidoctorWebViewConverter {
     previewConfigurations: AsciidocPreviewConfiguration,
     private readonly antoraDocumentContext: AntoraDocumentContext | undefined,
     line: number | undefined = undefined,
-    state?: any
+    state?: any,
+    private readonly krokiServerUrl?: string
   ) {
     const textDocumentUri = textDocument.uri
     this.basebackend = 'html'

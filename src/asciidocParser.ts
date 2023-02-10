@@ -144,6 +144,9 @@ export class AsciidocParser {
 
     // Antora IDs resolution:
     const antoraDocumentContext = await getAntoraDocumentContext(doc.uri, context.workspaceState)
+    // load the Asciidoc header only to get kroki-server-url attribute
+    const document = processor.load(text, { header_only: true })
+    const krokiServerUrl = document.getAttribute('kroki-server-url') || 'https://kroki.io'
 
     const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter(
       doc,
@@ -154,6 +157,7 @@ export class AsciidocParser {
       previewConfigurationManager.loadAndCacheConfiguration(doc.uri),
       antoraDocumentContext,
       line
+      krokiServerUrl
     )
     processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])
 
