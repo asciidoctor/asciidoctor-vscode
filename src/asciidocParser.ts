@@ -156,7 +156,7 @@ export class AsciidocParser {
       this.contributionProvider.contributions,
       previewConfigurationManager.loadAndCacheConfiguration(doc.uri),
       antoraDocumentContext,
-      line
+      line,
       krokiServerUrl
     )
     processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])
