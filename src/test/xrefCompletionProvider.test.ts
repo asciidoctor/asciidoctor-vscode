@@ -28,11 +28,8 @@ suite('Xref CompletionsProvider', () => {
 
     const file = await vscode.workspace.openTextDocument(fileToAutoComplete)
     const completionsItems = await xrefProvider.provideCompletionItems(file, new Position(0, 5))
-    const filteredCompletionItems = completionsItems.filter((completionItem) => completionItem.label === 'anOldStyleID[]')
-    assert.deepStrictEqual(filteredCompletionItems[0], {
-      kind: vscode.CompletionItemKind.Reference,
-      label: 'anOldStyleID[]',
-    })
+    const filteredCompletionItems = completionsItems.filter((completionItem) => completionItem.label === 'fileToAppearInAutoComplete.adoc#anOldStyleID[]')
+    assert.deepStrictEqual(filteredCompletionItems[0], new vscode.CompletionItem('fileToAppearInAutoComplete.adoc#anOldStyleID[]', vscode.CompletionItemKind.Reference))
   })
   test('Should return ids declared using the shorthand syntax as completion after "xref:"', async () => {
     const fileToAutoComplete = vscode.Uri.file(`${root}/fileToAutoComplete.adoc`)
@@ -45,13 +42,10 @@ suite('Xref CompletionsProvider', () => {
 
     const file = await vscode.workspace.openTextDocument(fileToAutoComplete)
     const completionsItems = await xrefProvider.provideCompletionItems(file, new Position(0, 5))
-    const filteredCompletionItems = completionsItems.filter((completionItem) => completionItem.label === 'aShortHandID[]')
-    assert.deepStrictEqual(filteredCompletionItems[0], {
-      kind: vscode.CompletionItemKind.Reference,
-      label: 'aShortHandID[]',
-    })
+    const filteredCompletionItems = completionsItems.filter((completionItem) => completionItem.label === 'fileToAppearInAutoComplete.adoc#aShortHandID[]')
+    assert.deepStrictEqual(filteredCompletionItems[0], new vscode.CompletionItem('fileToAppearInAutoComplete.adoc#aShortHandID[]', vscode.CompletionItemKind.Reference))
   })
-  test('Should return ids declared using the longhand syntax as completion after "xref:"', async () => {
+  test('Should return ids declared using the longhand syntax as completion after "xref:" from other document', async () => {
     const fileToAutoComplete = vscode.Uri.file(`${root}/fileToAutoComplete.adoc`)
     await vscode.workspace.fs.writeFile(fileToAutoComplete, Buffer.from('xref:'))
     createdFiles.push(fileToAutoComplete)
@@ -62,11 +56,22 @@ suite('Xref CompletionsProvider', () => {
 
     const file = await vscode.workspace.openTextDocument(fileToAutoComplete)
     const completionsItems = await xrefProvider.provideCompletionItems(file, new Position(0, 5))
+    const filteredCompletionItems = completionsItems.filter((completionItem) => completionItem.label === 'fileToAppearInAutoComplete.adoc#longHandID[]')
+    assert.deepStrictEqual(filteredCompletionItems[0], new vscode.CompletionItem(
+      'fileToAppearInAutoComplete.adoc#longHandID[]',
+      vscode.CompletionItemKind.Reference))
+  })
+  test('Should return ids declared using the longhand syntax as completion after "xref:" from same document', async () => {
+    const fileToAutoComplete = vscode.Uri.file(`${root}/fileToAutoCompleteFromSameFile.adoc`)
+    await vscode.workspace.fs.writeFile(fileToAutoComplete, Buffer.from(`[id=longHandID]
+
+xref:`))
+    createdFiles.push(fileToAutoComplete)
+
+    const file = await vscode.workspace.openTextDocument(fileToAutoComplete)
+    const completionsItems = await xrefProvider.provideCompletionItems(file, new Position(2, 5))
     const filteredCompletionItems = completionsItems.filter((completionItem) => completionItem.label === 'longHandID[]')
-    assert.deepStrictEqual(filteredCompletionItems[0], {
-      kind: vscode.CompletionItemKind.Reference,
-      label: 'longHandID[]',
-    })
+    assert.deepStrictEqual(filteredCompletionItems[0], new vscode.CompletionItem('longHandID[]', vscode.CompletionItemKind.Reference))
   })
   test('Should return id for inlined anchor', async () => {
     const fileToAutoComplete = vscode.Uri.file(`${root}/fileToTestXrefAutoComplete.adoc`)
@@ -78,10 +83,7 @@ xref:`))
     const file = await vscode.workspace.openTextDocument(fileToAutoComplete)
     const completionsItems = await xrefProvider.provideCompletionItems(file, new Position(2, 5))
     const filteredCompletionItems = completionsItems.filter((completionItem) => completionItem.label === 'anInlinedAnchor[]')
-    assert.deepStrictEqual(filteredCompletionItems[0], {
-      kind: vscode.CompletionItemKind.Reference,
-      label: 'anInlinedAnchor[]',
-    })
+    assert.deepStrictEqual(filteredCompletionItems[0], new vscode.CompletionItem('anInlinedAnchor[]', vscode.CompletionItemKind.Reference))
   })
   test('Should return id for element in same document after <<', async () => {
     const fileToAutoComplete = vscode.Uri.file(`${root}/fileToTest<<AutoComplete.adoc`)
