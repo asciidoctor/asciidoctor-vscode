@@ -1672,6 +1672,18 @@ table.grid-all>*>tr>.tableblock:last-child,
 table.grid-cols>*>tr>.tableblock:last-child {
   border-right-width: 0
 }
+ /* git issue - https://github.com/asciidoctor/asciidoctor-vscode/issues/609
+  If the last child cell was merged in the middle of three columns, then the middle cell of the three columns (but really last child cell)
+  would not contain a right side border due to css "thinking" the cell was the most right cell and therefor be bordered by
+  the frame element below this all.
+  table.grid-cols>*>tr>.tableblock[colspan]:last-child (below) sets a 1-pixel wide right border for the last cell in each row with a
+  colspan attribute. This is needed because table.grid-all>*>tr>.tableblock:last-child removes the border from the last cell,
+  but in the case of merged cells the border is actually needed. Note: This may cause a small double border on the bottom
+  most right cell of a colspanned row if it ends in the furthest right column.
+*/
+table.grid-cols>*>tr>.tableblock[colspan]:last-child {
+  border-right-width: 1px;
+}
 
 table.grid-all>tbody>tr:last-child>.tableblock,
 table.grid-all>thead:last-child>tr>.tableblock,
