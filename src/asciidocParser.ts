@@ -1,5 +1,4 @@
 import * as vscode from 'vscode'
-import * as path from 'path'
 import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
 import { Asciidoctor } from '@asciidoctor/core'
 import { ExtensionContentSecurityPolicyArbiter, AsciidoctorExtensionsSecurityPolicyArbiter } from './security'
@@ -35,7 +34,7 @@ export class AsciidocParser {
     readonly aspArbiter: AsciidoctorExtensionsSecurityPolicyArbiter = null,
     private errorCollection: vscode.DiagnosticCollection = null
   ) {
-    this.prependExtension = processor.Extensions.createPreprocessor('PreprendConfigPreprocessorExtension', {
+    this.prependExtension = processor.Extensions.createPreprocessor('PrependConfigPreprocessorExtension', {
       postConstruct: function () {
         this.asciidoctorConfigContent = ''
       },
@@ -76,6 +75,7 @@ export class AsciidocParser {
 
     highlightjsBuiltInSyntaxHighlighter.$register_for('highlight.js', 'highlightjs')
     const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).getBaseDir()
+    const templateDirs = this.getTemplateDirs()
     const options: { [key: string]: any } = {
       attributes: {
         'env-vscode': '',
@@ -88,6 +88,15 @@ export class AsciidocParser {
       safe: 'unsafe',
       ...(baseDir && { base_dir: baseDir }),
     }
+    if (templateDirs.length !== 0) {
+      options.template_dirs = templateDirs
+    }
+
+    const asciidoctorConfigContent = await getAsciidoctorConfigContent(textDocument.uri)
+    if (asciidoctorConfigContent !== undefined) {
+      (this.prependExtension as any).asciidoctorConfigContent = asciidoctorConfigContent
+    }
+
     const document = processor.load(text, options)
     const output = document.convert(options)
     if (asciidocConfig.get('enableErrorDiagnostics')) {

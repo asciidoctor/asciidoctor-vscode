@@ -9,6 +9,7 @@ import { Command } from '../commandManager'
 import { Logger } from '../logger'
 import { Asciidoctor } from '@asciidoctor/core'
 import { AsciidocTextDocument } from '../asciidocTextDocument'
+import { getAsciidoctorConfigContent } from '../features/asciidoctorConfig'
 
 export class ExportAsPDF implements Command {
   public readonly id = 'asciidoc.exportAsPDF'
@@ -43,7 +44,13 @@ export class ExportAsPDF implements Command {
     }
 
     const pdfOutputPath = pdfOutputUri.fsPath
-    const text = doc.getText()
+    const asciidoctorConfigContent = await getAsciidoctorConfigContent(doc.uri)
+    let text = doc.getText()
+    if (asciidoctorConfigContent !== undefined) {
+      text = `${asciidoctorConfigContent}
+${text}`
+    }
+
     const pdfEnfine = asciidocPdfConfig.get('engine')
     if (pdfEnfine === 'asciidoctor-pdf') {
       const asciidoctorPdfCommand = await this.resolveAsciidoctorPdfCommand(asciidocPdfConfig, workspacePath)

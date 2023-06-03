@@ -6,6 +6,11 @@
 
 - `pdf-themesdir` is now relative to the working directory (i.e., workspace folder) not relative to the document (#703)
 - remove Asciidoctor CLI support (#539)
+- `stylesdir` and `stylesheet` attributes are now _ignored_ in the preview. Instead, you should define `asciidoc.preview.style`.
+Please note that when exporting to HTML, `stylesdir` and `stylesheet` will be used and should be defined in an `.asciidoctorconfig` file.
+
+**NOTE:** We strongly recommend to use [`.asciidoctorconfig` file](https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/features/advanced/asciidoctorconfig-file.html) to define common attributes.
+This file will be used in the preview and when exporting to HTML and PDF (using `asciidoctor-pdf`).
 
 ### Bug fixes
 
