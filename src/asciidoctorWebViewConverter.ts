@@ -304,7 +304,7 @@ ${headerContent}
         content.push(details)
       }
     }
-    if (node.hasSections() && node.hasAttribute('toc') && node.hasAttribute('toc-placement', 'auto')) {
+    if (node.hasSections() && node.hasAttribute('toc') && node.isAttribute('toc-placement', 'auto')) {
       content.push(`<div id="toc" class="${node.getAttribute('toc-class', 'toc')}">
   <div id="toctitle">${node.getAttribute('toc-title')}</div>
   ${node.getConverter().convert(node, 'outline')}
