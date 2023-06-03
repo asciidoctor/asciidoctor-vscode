@@ -180,8 +180,8 @@ export async function findAntoraConfigFile (textDocumentUri: Uri): Promise<Uri |
   const antoraConfigs = await vscode.workspace.findFiles('**/antora.yml', '/node_modules/', 100, cancellationToken.token)
   // check for Antora configuration
   for (const antoraConfig of antoraConfigs) {
-    const modulesPath = path.join(path.dirname(antoraConfig.path), 'modules')
-    if (pathToAsciidocFile.startsWith(modulesPath) && pathToAsciidocFile.slice(modulesPath.length).match(/^\/[^/]+\/pages\/.*/)) {
+    const modulesUri = antoraConfig.with({ path: path.join(path.dirname(antoraConfig.path), 'modules') })
+    if (pathToAsciidocFile.startsWith(modulesUri.toString()) && pathToAsciidocFile.slice(modulesUri.toString().length).match(/^\/[^/]+\/pages\/.*/)) {
       console.log(`Found an Antora configuration file at ${antoraConfig.toString()} for the AsciiDoc document ${pathToAsciidocFile}`)
       return antoraConfig
     }
