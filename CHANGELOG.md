@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Breaking changes
+
+- `pdf-themesdir` is now relative to the working directory (i.e., workspace folder) not relative to the document (#703)
+- remove Asciidoctor CLI support (#539)
+
 ### Bug fixes
 
 - declare `supports_templates` as attribute otherwise `backendTraits` overrides other values, as a result syntax highlighting wasn't working anymore! (#666)
