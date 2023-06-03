@@ -172,7 +172,7 @@ export class AntoraSupportManager implements vscode.Disposable {
 }
 
 export async function findAntoraConfigFile (textDocumentUri: Uri): Promise<Uri | undefined> {
-  const pathToAsciidocFile = textDocumentUri.fsPath
+  const pathToAsciidocFile = textDocumentUri.toString()
   const cancellationToken = new CancellationTokenSource()
   cancellationToken.token.onCancellationRequested((e) => {
     console.log('Cancellation requested, cause: ' + e)
@@ -182,7 +182,7 @@ export async function findAntoraConfigFile (textDocumentUri: Uri): Promise<Uri |
   for (const antoraConfig of antoraConfigs) {
     const modulesPath = path.join(path.dirname(antoraConfig.path), 'modules')
     if (pathToAsciidocFile.startsWith(modulesPath) && pathToAsciidocFile.slice(modulesPath.length).match(/^\/[^/]+\/pages\/.*/)) {
-      console.log(`Found an Antora configuration file at ${antoraConfig.fsPath} for the AsciiDoc document ${pathToAsciidocFile}`)
+      console.log(`Found an Antora configuration file at ${antoraConfig.toString()} for the AsciiDoc document ${pathToAsciidocFile}`)
       return antoraConfig
     }
   }
@@ -202,14 +202,13 @@ export async function getAntoraConfigs (): Promise<AntoraConfig[]> {
   const antoraConfigUris = await vscode.workspace.findFiles('**/antora.yml', '/node_modules/', 100, cancellationToken.token)
   // check for Antora configuration
   return Promise.all(antoraConfigUris.map(async (antoraConfigUri) => {
-    const antoraConfigPath = antoraConfigUri.fsPath
     let config = {}
     try {
-      config = yaml.load(await vscode.workspace.fs.readFile(vscode.Uri.file(antoraConfigPath))) || {}
+      config = yaml.load(await vscode.workspace.fs.readFile(antoraConfigUri)) || {}
     } catch (err) {
-      console.log(`Unable to parse ${antoraConfigPath}, cause:` + err.toString())
+      console.log(`Unable to parse ${antoraConfigUri}, cause:` + err.toString())
     }
-    return new AntoraConfig(antoraConfigPath, config)
+    return new AntoraConfig(antoraConfigUri.fsPath, config)
   }))
 }
 
