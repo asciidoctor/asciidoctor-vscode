@@ -297,7 +297,8 @@ ${headerContent}
     const content = []
     if (node.hasHeader()) {
       if (!node.getNotitle()) {
-        content.push(`<h1>${node.getHeader().getTitle()}</h1>`)
+        const doctitle = node.getDoctitle({ partition: true, sanitize: true })
+        content.push(`<h1>${doctitle.getMain()}${doctitle.hasSubtitle() ? ` <small class="subtitle">${doctitle.getSubtitle()}</small>` : ''}</h1>`)
       }
       const details = this.generateHeaderDetails(node)
       if (details) {
