@@ -126,25 +126,6 @@ window.addEventListener('message', (event) => {
   }
 }, false)
 
-document.addEventListener('dblclick', (event) => {
-  if (!settings.doubleClickToSwitchToEditor) {
-    return
-  }
-
-  // Ignore clicks on links
-  for (let node = event.target as HTMLElement; node; node = node.parentNode as HTMLElement) {
-    if (node.tagName === 'A') {
-      return
-    }
-  }
-
-  const offset = event.pageY
-  const line = getEditorLineNumberForPageOffset(offset)
-  if (typeof line === 'number' && !isNaN(line)) {
-    messaging.postMessage('didClick', { line: Math.floor(line) })
-  }
-})
-
 const passThroughLinkSchemes = ['http:', 'https:', 'mailto:', 'vscode:', 'vscode-insiders:']
 
 document.addEventListener('click', (event) => {
