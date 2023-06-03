@@ -32,8 +32,6 @@
 	"asciidoc.preview.templates.desc": "List of local paths to custom templates to use from the preview. Relative paths are interpreted relative to the folder open in the Explorer. If there is no open folder, they are interpreted relative to the location of the AsciiDoc file. All `\\` need to be written as `\\\\`.",
 	"asciidoc.editor.title": "エディタ",
 	"asciidoc.editor.enableDrop.desc": "ドラッグアンドドロップによる画像挿入を有効にします。シフトキーを押しながら、テキストエディタにドラッグアンドドロップしてください。",
-	"asciidoc.antora.title": "Antora",
-	"asciidoc.antora.enableAntoraSupport.desc": "[Antora](https://antora.org/)サポートを有効にします。",
 	"asciidoc.pdf.title": "PDF",
 	"asciidoc.pdf.engine.desc": "PDFエキスポートで使用するPDFエンジンを選択します。",
 	"asciidoc.pdf.engine.asciidoctorPdf.desc": "asciidoctor-pdfコマンドライン",
@@ -69,5 +67,7 @@
 	"asciidoc.useWorkspaceRoot.desc": "**非推奨:** ワークスペースのルートパスをベースディレクトリとして使用します。",
 	"asciidoc.useWorkspaceRoot.deprecationMessage": "本設定は、`#asciidoc.useWorkspaceRootAsBaseDirectory#`に置き換えられ、動作しません。",
 	"asciidoc.use_kroki.desc": "**非推奨:** ダイアグラム生成Krokiを使用します。",
-	"asciidoc.use_kroki.deprecationMessage": "本設定は、`#asciidoc.extensions.enableKroki#`に置き換えられ、動作しません。"
+	"asciidoc.use_kroki.deprecationMessage": "本設定は、`#asciidoc.extensions.enableKroki#`に置き換えられ、動作しません。",
+	"asciidoc.antora.title": "Antora",
+	"asciidoc.antora.enableAntoraSupport.desc": "[Antora](https://antora.org/)サポートを有効にします。"
 }

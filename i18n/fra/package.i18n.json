@@ -53,7 +53,7 @@
 	"asciidoc.extensions.registerWorkspaceExtensions.desc": "Active l'enregistrement des extensions Asciidoctor.js déclarés dans le répertoire `.asciidoctor/lib` de l'espace de travail.",
 
 	"asciidoc.common.title": "Général",
-	"asciidoc.useWorkspaceRootAsBaseDirectory.desc": "Quand on est dans un espace de travail, utilise la racine de l'espace de travail en tant que répertoire de base pour Asciidoctor.",
+	"asciidoc.useWorkspaceRootAsBaseDirectory.desc": "Quand on est dans un espace de travail, utilise la racine de l'espace de travail en tant que répertoire de base pour Asciidoctor. S'applique sur la prévisualisation et lors de l'export PDF.",
 
 	"asciidoc.debug.title": "Debug",
 	"asciidoc.debug.trace.desc": "Active les traces de debug de cette extension.",

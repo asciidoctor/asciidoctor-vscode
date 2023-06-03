@@ -8,6 +8,7 @@ import { AsciidocEngine } from '../asciidocEngine'
 import { Command } from '../commandManager'
 import { Logger } from '../logger'
 import { Asciidoctor } from '@asciidoctor/core'
+import { AsciidocTextDocument } from '../asciidocTextDocument'
 
 export class ExportAsPDF implements Command {
   public readonly id = 'asciidoc.exportAsPDF'
@@ -29,10 +30,9 @@ export class ExportAsPDF implements Command {
       return
     }
     const workspacePath = workspaceFolder.uri.fsPath
-    const docPath = doc.uri.fsPath
-    const docNameWithoutExtension = path.parse(docPath).name
+    const docNameWithoutExtension = path.parse(doc.uri.fsPath).name
 
-    const baseDirectory = path.dirname(docPath)
+    const baseDirectory = AsciidocTextDocument.fromTextDocument(doc).getBaseDir()
     const pdfFilename = vscode.Uri.file(path.join(baseDirectory, docNameWithoutExtension + '.pdf'))
 
     const asciidocPdfConfig = vscode.workspace.getConfiguration('asciidoc.pdf')

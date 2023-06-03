@@ -10,6 +10,7 @@ import { AsciidocContributionProvider } from './asciidocExtensions'
 import { AntoraSupportManager, getAntoraDocumentContext } from './features/antora/antoraSupport'
 import { WebviewResourceProvider } from './util/resources'
 import { getAsciidoctorConfigContent } from './features/asciidoctorConfig'
+import { AsciidocTextDocument } from './asciidocTextDocument'
 
 const asciidoctorFindIncludeProcessor = require('./asciidoctorFindIncludeProcessor')
 
@@ -74,7 +75,7 @@ export class AsciidocParser {
     await this.registerAsciidoctorExtensions(registry)
 
     highlightjsBuiltInSyntaxHighlighter.$register_for('highlight.js', 'highlightjs')
-    const baseDir = AsciidocParser.getBaseDir(textDocument.fileName)
+    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).getBaseDir()
     const options: { [key: string]: any } = {
       attributes: {
         'env-vscode': '',
@@ -92,7 +93,10 @@ export class AsciidocParser {
     if (asciidocConfig.get('enableErrorDiagnostics')) {
       this.reportErrors(memoryLogger, textDocument)
     }
-    return { output, document }
+    return {
+      output,
+      document,
+    }
   }
 
   // Load
@@ -103,7 +107,7 @@ export class AsciidocParser {
     const registry = processor.Extensions.create()
     asciidoctorFindIncludeProcessor.register(registry)
     asciidoctorFindIncludeProcessor.resetIncludes()
-    const baseDir = AsciidocParser.getBaseDir(textDocument.fileName)
+    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).getBaseDir()
     const document = processor.load(textDocument.getText(), {
       attributes: {
         'env-vscode': '',
@@ -115,7 +119,10 @@ export class AsciidocParser {
       ...(baseDir && { base_dir: baseDir }),
     })
     // QUESTION: should we report error?
-    return { document, baseDocumentIncludeItems: asciidoctorFindIncludeProcessor.getBaseDocIncludes() }
+    return {
+      document,
+      baseDocumentIncludeItems: asciidoctorFindIncludeProcessor.getBaseDocIncludes(),
+    }
   }
 
   // Convert (preview)
@@ -125,7 +132,7 @@ export class AsciidocParser {
     doc: SkinnyTextDocument,
     context: vscode.ExtensionContext,
     editor: WebviewResourceProvider,
-    line?:number
+    line?: number
   ): Promise<{ html: string, document: Asciidoctor.Document }> {
     // extension context should be at constructor
     const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState)
@@ -185,7 +192,7 @@ export class AsciidocParser {
 
     const antoraSupport = await AntoraSupportManager.getInstance(context.workspaceState)
     const antoraAttributes = await antoraSupport.getAttributes(doc.uri)
-    const baseDir = AsciidocParser.getBaseDir(doc.fileName)
+    const baseDir = AsciidocTextDocument.fromTextDocument(doc).getBaseDir()
     const templateDirs = this.getTemplateDirs()
     const options: { [key: string]: any } = {
       attributes: {
@@ -219,7 +226,10 @@ export class AsciidocParser {
       if (enableErrorDiagnostics) {
         this.reportErrors(memoryLogger, doc)
       }
-      return { html: resultHTML, document }
+      return {
+        html: resultHTML,
+        document,
+      }
     } catch (e) {
       vscode.window.showErrorMessage(e.toString())
       throw e
@@ -287,27 +297,11 @@ export class AsciidocParser {
   }
 
   /**
-   * Get the base directory.
-   * @param documentFileName The file system path of the text document.
-   * @private
-   */
-  private static getBaseDir (documentFilePath: string): string | undefined {
-    const documentPath = process.env.BROWSER_ENV
-      ? undefined
-      : path.dirname(path.resolve(documentFilePath))
-    const useWorkspaceAsBaseDir = vscode.workspace.getConfiguration('asciidoc', null).get('useWorkspaceRootAsBaseDirectory')
-    return useWorkspaceAsBaseDir && typeof vscode.workspace.rootPath !== 'undefined'
-      ? vscode.workspace.rootPath
-      : documentPath
-  }
-
-  /**
    * Get user defined template directories from configuration.
    * @private
    */
   private getTemplateDirs () {
-    const templatesDir = vscode.workspace.getConfiguration('asciidoc.preview', null).get<string[]>('templates', [])
-    return templatesDir
+    return vscode.workspace.getConfiguration('asciidoc.preview', null).get<string[]>('templates', [])
   }
 
   private async confirmAsciidoctorExtensionsTrusted (): Promise<boolean> {

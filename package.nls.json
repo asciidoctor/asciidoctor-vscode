@@ -36,9 +36,6 @@
 	"asciidoc.editor.title": "Editor",
 	"asciidoc.editor.enableDrop.desc": "Enable drag and drop to insert images. Hold down Shift key to drop file into the text editor.",
 
-	"asciidoc.antora.title": "Antora",
-	"asciidoc.antora.enableAntoraSupport.desc": "Enable [Antora](https://antora.org/) support.",
-
 	"asciidoc.pdf.title": "PDF",
 	"asciidoc.pdf.engine.desc": "Controls the PDF engine used to export as PDF.",
 	"asciidoc.pdf.engine.asciidoctorPdf.desc": "asciidoctor-pdf CLI",
@@ -53,7 +50,7 @@
 	"asciidoc.extensions.registerWorkspaceExtensions.desc": "Enables Asciidoctor.js extensions registration from the workspace directory `.asciidoctor/lib`.",
 
 	"asciidoc.common.title": "General",
-	"asciidoc.useWorkspaceRootAsBaseDirectory.desc": "When in a workspace, uses the workspace root path as the base directory.",
+	"asciidoc.useWorkspaceRootAsBaseDirectory.desc": "When in a workspace, uses the workspace root path as the base directory. It applies in the preview and when exporting to PDF.",
 
 	"asciidoc.debug.title": "Debug",
 	"asciidoc.debug.trace.desc": "Enables debug logging for this extension.",
