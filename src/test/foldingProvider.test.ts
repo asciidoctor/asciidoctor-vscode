@@ -352,11 +352,12 @@ this is the same paragraph`)
 
 // A single-line comment.
 // Another single-line comment.
+// A third single-line comment.
 
 this is a paragraph`)
       assert.strictEqual(folds.length, 1, 'expecting 1 fold')
       assert.deepStrictEqual(folds, [
-        new vscode.FoldingRange(2, 3, vscode.FoldingRangeKind.Region),
+        new vscode.FoldingRange(2, 4, vscode.FoldingRangeKind.Comment),
       ])
     })
 
@@ -390,7 +391,7 @@ this is the same paragraph`)
 // The last line of the document is also a comment!`)
       assert.strictEqual(folds.length, 1, 'expecting 1 fold')
       assert.deepStrictEqual(folds, [
-        new vscode.FoldingRange(1, 2, vscode.FoldingRangeKind.Region),
+        new vscode.FoldingRange(1, 2, vscode.FoldingRangeKind.Comment),
       ])
     })
   })

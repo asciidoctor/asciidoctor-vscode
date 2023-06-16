@@ -96,16 +96,17 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
   private static handleSingleLineCommentFoldingRanges (singleLineCommentStartIndexes: any[], foldingRanges: any[], lineIndex: number, lineText: string,
     documentLineCount: number) {
     if (lineText.startsWith('//')) {
-      if (singleLineCommentStartIndexes.length === 0 && lineIndex < documentLineCount - 1) {
+      if (singleLineCommentStartIndexes.length === 0) {
         singleLineCommentStartIndexes.push(lineIndex)
-      } else {
+      }
+      if (lineIndex >= documentLineCount - 1) {
         // comment on last line of the document
         const startIndex = singleLineCommentStartIndexes.pop()
         if (lineIndex > startIndex) {
           foldingRanges.push(new vscode.FoldingRange(
             startIndex,
             lineIndex,
-            FoldingRangeKind.Region)
+            FoldingRangeKind.Comment)
           )
         }
       }
@@ -117,7 +118,7 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
           foldingRanges.push(new vscode.FoldingRange(
             startIndex,
             endIndex,
-            FoldingRangeKind.Region))
+            FoldingRangeKind.Comment))
         }
       }
     }
