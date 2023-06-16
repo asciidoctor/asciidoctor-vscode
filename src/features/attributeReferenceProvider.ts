@@ -20,6 +20,7 @@ export class AttributeReferenceProvider {
       insertText = suffix !== '}' ? `${insertText}}` : insertText
       completionItem.insertText = insertText
       completionItem.sortText = `20_${key}`
+      completionItem.filterText = key + ' ' + attributes[key]?.toString()
       return completionItem
     })
   }
