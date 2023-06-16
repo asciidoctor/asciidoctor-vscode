@@ -12,6 +12,10 @@ Please note that when exporting to HTML, `stylesdir` and `stylesheet` will be us
 **NOTE:** We strongly recommend to use [`.asciidoctorconfig` file](https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/features/advanced/asciidoctorconfig-file.html) to define common attributes.
 This file will be used in the preview and when exporting to HTML and PDF (using `asciidoctor-pdf`).
 
+### Improvements
+
+- provide folding for list of sibling attributes by @apupier (#719)
+
 ### Bug fixes
 
 - declare `supports_templates` as attribute otherwise `backendTraits` overrides other values, as a result syntax highlighting wasn't working anymore! (#666)
