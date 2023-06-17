@@ -15,6 +15,7 @@ This file will be used in the preview and when exporting to HTML and PDF (using 
 ### Bug fixes
 
 - declare `supports_templates` as attribute otherwise `backendTraits` overrides other values, as a result syntax highlighting wasn't working anymore! (#666)
+- folding of several single line comments is not working for more than 2 lines (#722)
 
 ## 3.0.2 "pre-release" (2022-11-17) - @mogztter
 
