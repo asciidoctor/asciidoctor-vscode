@@ -2,8 +2,19 @@
 
 ## Unreleased
 
+### Improvements
+
+- provide folding for list of sibling attributes by @apupier (#719)
+
+### Bug fixes
+
+- folding of several single line comments is not working for more than 2 lines (#722)
+
+## 3.0.5 "pre-release" (2023-06-03)
+
 ### Breaking changes
 
+- use vscode fs api instead of Node fs by @apupier in https://github.com/asciidoctor/asciidoctor-vscode/pull/669
 - `pdf-themesdir` is now relative to the working directory (i.e., workspace folder) not relative to the document (#703)
 - remove Asciidoctor CLI support (#539)
 - `stylesdir` and `stylesheet` attributes are now _ignored_ in the preview. Instead, you should define `asciidoc.preview.style`.
@@ -14,18 +25,29 @@ This file will be used in the preview and when exporting to HTML and PDF (using 
 
 ### Improvements
 
-- provide folding for list of sibling attributes by @apupier (#719)
+- Include path to completion item for xref by @apupier in https://github.com/asciidoctor/asciidoctor-vscode/pull/671
+- add ability for asciidocParser to pass the krokiServerUrl  by @haydencbarnes in https://github.com/asciidoctor/asciidoctor-vscode/pull/701
+-  provide completion short hand and long hand notation with similar scope of legacy by @apupier in https://github.com/asciidoctor/asciidoctor-vscode/pull/668
+- append AsciiDoc attributes defined in antora.yml by @ggrossetie in https://github.com/asciidoctor/asciidoctor-vscode/pull/694
+- add UI message with Japanese locale by @YoshihideShirai in https://github.com/asciidoctor/asciidoctor-vscode/pull/689
+- support non-Git workspace by @ggrossetie in https://github.com/asciidoctor/asciidoctor-vscode/pull/696
+- provide completion after<<from same document by @apupier in https://github.com/asciidoctor/asciidoctor-vscode/pull/670
+
+### Bug fixes
+
+- Fix completion after xref: for old double-square bracket notation by @apupier in https://github.com/asciidoctor/asciidoctor-vscode/pull/667
+
+## 3.0.3 "pre-release" (2022-11-17) - @ggrossetie
 
 ### Bug fixes
 
 - declare `supports_templates` as attribute otherwise `backendTraits` overrides other values, as a result syntax highlighting wasn't working anymore! (#666)
-- folding of several single line comments is not working for more than 2 lines (#722)
 
-## 3.0.2 "pre-release" (2022-11-17) - @mogztter
+## 3.0.2 "pre-release" (2022-11-15) - @ggrossetie
 
 ### Improvements
 
-- support `.asciidoctorconfig` and `.asciidoctorconfig.adoc` by @apupier, @mogztter and @ahus1 (#380)
+- support `.asciidoctorconfig` and `.asciidoctorconfig.adoc` by @apupier, @ggrossetie and @ahus1 (#380)
 - initial support for Antora by @marieflorescontact
 - resolve Antora resources IDs on images by @marieflorescontact in https://github.com/asciidoctor/asciidoctor-vscode/pull/614
 - add an option to preserve the preview window to avoid refreshing when switching away, and added setting to control this behavior by @rben01 in https://github.com/asciidoctor/asciidoctor-vscode/pull/607
@@ -34,8 +56,8 @@ This file will be used in the preview and when exporting to HTML and PDF (using 
 - provide sorttext on include suggestions by @eiswind in https://github.com/asciidoctor/asciidoctor-vscode/pull/626
 - search path for included files by @eiswind in https://github.com/asciidoctor/asciidoctor-vscode/pull/618
 - add drop images into editor feature by @marieflorescontact in https://github.com/asciidoctor/asciidoctor-vscode/pull/627
-- set env attribute to vscode by @Mogztter in https://github.com/asciidoctor/asciidoctor-vscode/pull/644
-- open xref from preview by @Mogztter in https://github.com/asciidoctor/asciidoctor-vscode/pull/643
+- set env attribute to vscode by @ggrossetie in https://github.com/asciidoctor/asciidoctor-vscode/pull/644
+- open xref from preview by @ggrossetie in https://github.com/asciidoctor/asciidoctor-vscode/pull/643
 
 ### Bug fixes
 
@@ -48,44 +70,44 @@ This file will be used in the preview and when exporting to HTML and PDF (using 
 - fix autocompletion on files (by replacing `.md` by `.adoc`)
 - allow loading local resources from all workspace folders
 - fix extensions loading on Windows (using `fsPath` otherwise Node require doesn't work on Windows) https://github.com/asciidoctor/asciidoctor-vscode/pull/630
-- fix show preview/preview localization by @Mogztter in https://github.com/asciidoctor/asciidoctor-vscode/pull/640
+- fix show preview/preview localization by @ggrossetie in https://github.com/asciidoctor/asciidoctor-vscode/pull/640
 
 ### Infrastructure
 
-- improve pull request and issue templates by @Mogztter in https://github.com/asciidoctor/asciidoctor-vscode/pull/633
-- add renovate config by @Mogztter in https://github.com/asciidoctor/asciidoctor-vscode/pull/657
+- improve pull request and issue templates by @ggrossetie in https://github.com/asciidoctor/asciidoctor-vscode/pull/633
+- add renovate config by @ggrossetie in https://github.com/asciidoctor/asciidoctor-vscode/pull/657
 
 ### Documentation
 
 - fix 2 small typos in readme by @apupier in https://github.com/asciidoctor/asciidoctor-vscode/pull/642
 - add an introduction and a prerequisite section. by @ahus1 in https://github.com/asciidoctor/asciidoctor-vscode/pull/656
 
-## 3.0.0 "pre-release" (2022-07-06) - @mogztter
+## 3.0.0 "pre-release" (2022-07-06) - @ggrossetie
 
 ### Improvements
 
 - add Japanese localisation by @YoshihideShirai (#581)
 - register Asciidoctor.js extensions by @YoshihideShirai (#569)
-- create a complete HTML document using the WebView converter by @Mogztter (#547)
+- create a complete HTML document using the WebView converter by @ggrossetie (#547)
 - add code folding based on sections by @marieflorescontact (#550)
 - add code folding on conditionals by @marieflorescontact (#555)
 - add code folding on open blocks by @marieflorescontact (#559)
 - add code folding on comment blocks by @marieflorescontact (#561)
 - add code folding on single line comment by @marieflorescontact (#565)
-- update preview icons and use codicons by @Mogztter (#54)
-- use load instead of convert for performance by @Mogztter (#542)
-- normalize setting names and group settings by category by @Mogztter (#577)
-- do not offer to download an outdated version of `wkhtmltopdf` by @Mogztter (#577)
-- add a new setting to add command line arguments for `wkhtmltopdf` by @Mogztter (#577)
-- offer to install locally the latest version of `asciidoctor-pdf` by @Mogztter (#577)
+- update preview icons and use codicons by @ggrossetie (#54)
+- use load instead of convert for performance by @ggrossetie (#542)
+- normalize setting names and group settings by category by @ggrossetie (#577)
+- do not offer to download an outdated version of `wkhtmltopdf` by @ggrossetie (#577)
+- add a new setting to add command line arguments for `wkhtmltopdf` by @ggrossetie (#577)
+- offer to install locally the latest version of `asciidoctor-pdf` by @ggrossetie (#577)
 
 ### Bug fixes
 
 - set `basebackend` and `outfilesuffix` on the WebView converter otherwise Docinfo are not correctly included (#522)
-- activate completion only when `:` is at the start of the line by @Mogztter (#529)
+- activate completion only when `:` is at the start of the line by @ggrossetie (#529)
 - correctly pass the `--footer-center` option to `wkthtmltopdf` by @gurbindersingh (#526)
 - fix asciidoctor-pdf and wkhtmltopdf user settings by @meznom (#533)
-- set CSS variables for font size, font family and line height by @Mogztter (#530)
+- set CSS variables for font size, font family and line height by @ggrossetie (#530)
 - fix format of paste image default filename by @Zhou-Yicheng (#558)
 - show source action does not open a new pane (if the source is already opened) by @marieflorescontact (#562)
 - fix for opening links to local files in preview window by @tombolano & @marieflorescontact (#572 #573)
@@ -93,19 +115,19 @@ This file will be used in the preview and when exporting to HTML and PDF (using 
 ### Infrastructure
 
 - upgrade dependencies (#515)
-- extract the report errors logic into a dedicated function by @Mogztter (#534)
-- extract get baseDir logic by @Mogztter (#535)
-- remove superfluous `copycss` by @Mogztter (#538)
-- unwrap convertUsingJavascript function by @Mogztter (#537)
-- introduce a load function by @Mogztter (#541)
-- remove slugifier (unused) from AsciidocEngine by @Mogztter (#545)
-- introduce an export function by @Mogztter (#546)
+- extract the report errors logic into a dedicated function by @ggrossetie (#534)
+- extract get baseDir logic by @ggrossetie (#535)
+- remove superfluous `copycss` by @ggrossetie (#538)
+- unwrap convertUsingJavascript function by @ggrossetie (#537)
+- introduce a load function by @ggrossetie (#541)
+- remove slugifier (unused) from AsciidocEngine by @ggrossetie (#545)
+- introduce an export function by @ggrossetie (#546)
 
 ### Documentation
 
 - add basic instructions on how to develop/test the extension by @danyill (#540)
 - fix manual install command in README by @marieflorescontact (#544)
-- update contributing guide by @Mogztter (#554)
+- update contributing guide by @ggrossetie (#554)
 
 ## 2.9.8
 
@@ -332,7 +354,7 @@ This file will be used in the preview and when exporting to HTML and PDF (using 
 * Fix errors with the preview security setting
 * Fix an error with jsonValidation (thanks to @shaneknysh <shane.knysh@gmail.com>)
 * Fix descriptions still using "Markdown" instead of "AsciiDoc" (thanks to @ygra <joey@muhkuhsaft.de>)
-* Update preview to ascidoctor.js v1.5.9 (thanks to @Mogztter <ggrossetie@gmail.com>)
+* Update preview to ascidoctor.js v1.5.9 (thanks to @ggrossetie <ggrossetie@gmail.com>)
 * Fix encoding errors (thanks to @mojavelinux <dan.j.allen@gmail.com>)
 
 ## 2.3.3
