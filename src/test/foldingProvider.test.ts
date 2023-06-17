@@ -395,6 +395,24 @@ this is the same paragraph`)
       ])
     })
   })
+
+  suite('getMultiAttributesFoldingRanges', () => {
+    test('Should fold on a group of attributes ', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+:attribute1: value 1
+:attribute2: value 2
+:attribute3: value 3
+:attribute4: value 4
+
+this is a paragraph`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 fold')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(2, 5),
+      ])
+    })
+  })
 })
 
 function getFoldsForDocument (contents: string) {
