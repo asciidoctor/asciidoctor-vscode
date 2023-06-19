@@ -1,4 +1,3 @@
-
 const BAD_PROTO_RE = /^(vbscript|javascript|data):/i
 const GOOD_DATA_RE = /^data:image\/(gif|png|jpeg|webp);/i
 

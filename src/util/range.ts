@@ -1,4 +1,3 @@
-
 export const range = function (min, max) {
   // If only one number is provided, start at one
   if (max === undefined) {
