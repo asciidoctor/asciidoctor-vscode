@@ -5,6 +5,7 @@
 ### Improvements
 
 - provide folding for list of sibling attributes by @apupier (#719)
+- provide folding for mix of attributes and single line comments by @apupier (#719)
 
 ### Bug fixes
 
