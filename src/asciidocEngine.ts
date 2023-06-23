@@ -51,7 +51,6 @@ export class AsciidocEngine {
   }
 
   public static load (textDocument: SkinnyTextDocument): Asciidoctor.Document {
-    const { document } = AsciidocParser.load(textDocument)
-    return document
+    return AsciidocParser.load(textDocument)
   }
 }

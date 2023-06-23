@@ -76,17 +76,13 @@ export class AsciidocParser {
     highlightjsBuiltInSyntaxHighlighter.$register_for('highlight.js', 'highlightjs')
     const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).getBaseDir()
     const templateDirs = this.getTemplateDirs()
-    const options: { [key: string]: any } = {
-      attributes: {
-        'env-vscode': '',
-        env: 'vscode',
-        ...asciidoctorAttributes,
-      },
-      backend,
-      extension_registry: registry,
-      header_footer: true,
-      safe: 'unsafe',
-      ...(baseDir && { base_dir: baseDir }),
+    const options: { [key: string]: any } = AsciidocParser.getDefaultAsciidoctorOptions(baseDir)
+    options.extension_registry = registry
+    options.header_footer = true
+    options.attributes = {
+      'env-vscode': '',
+      env: 'vscode',
+      ...asciidoctorAttributes,
     }
     if (templateDirs.length !== 0) {
       options.template_dirs = templateDirs
@@ -110,27 +106,37 @@ export class AsciidocParser {
 
   // Load
 
-  public static load (textDocument: SkinnyTextDocument): { document: Asciidoctor.Document, baseDocumentIncludeItems: IncludeItems } {
+  public static getBaseDocumentIncludeItems (textDocument: SkinnyTextDocument): IncludeItems {
     const memoryLogger = processor.MemoryLogger.create()
     processor.LoggerManager.setLogger(memoryLogger)
     const registry = processor.Extensions.create()
     asciidoctorFindIncludeProcessor.register(registry)
     asciidoctorFindIncludeProcessor.resetIncludes()
     const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).getBaseDir()
-    const document = processor.load(textDocument.getText(), {
+    const options = this.getDefaultAsciidoctorOptions(baseDir)
+    options.extension_registry = registry
+    processor.load(textDocument.getText(), options)
+    // QUESTION: should we report error?
+    return asciidoctorFindIncludeProcessor.getBaseDocIncludes()
+  }
+
+  public static load (textDocument: SkinnyTextDocument): Asciidoctor.Document {
+    const memoryLogger = processor.MemoryLogger.create()
+    processor.LoggerManager.setLogger(memoryLogger)
+    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).getBaseDir()
+    return processor.load(textDocument.getText(), AsciidocParser.getDefaultAsciidoctorOptions(baseDir))
+  }
+
+  private static getDefaultAsciidoctorOptions (baseDir: string): any {
+    return {
       attributes: {
         'env-vscode': '',
         env: 'vscode',
       },
-      extension_registry: registry,
       sourcemap: true,
       safe: 'unsafe',
+      parse: true,
       ...(baseDir && { base_dir: baseDir }),
-    })
-    // QUESTION: should we report error?
-    return {
-      document,
-      baseDocumentIncludeItems: asciidoctorFindIncludeProcessor.getBaseDocIncludes(),
     }
   }
 
