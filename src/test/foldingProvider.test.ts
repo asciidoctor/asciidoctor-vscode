@@ -413,6 +413,77 @@ this is a paragraph`)
       ])
     })
   })
+
+  suite('getMultiAttributeAndSingleLineCommentsFoldingRanges', () => {
+    test('Should fold on a group of mix of attributes and single line comments ', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+// A single-line comment.
+:an-attribute: value of attribute
+// A second single-line comment.
+:a-second-attribute: value of second attribute
+
+this is a paragraph`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 fold')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(2, 5),
+      ])
+    })
+    test('Should fold on a group of mix of attributes and single line comments starting with 2 attributes', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+:an-attribute1: value of attribute
+:an-attribute2: value of attribute
+// A single-line comment.
+:an-attribute: value of attribute
+// A second single-line comment.
+:a-second-attribute: value of second attribute
+
+this is a paragraph`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 fold')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(2, 7),
+      ])
+    })
+    test('Should fold on a group of mix of attributes and single line comments starting with 2 line comments', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+// A single-line comment.
+// A second single-line comment.
+:an-attribute: value of attribute
+// A third line comment
+:a-second-attribute: value of second attribute
+
+this is a paragraph`)
+      assert.strictEqual(folds.length, 1, 'expecting 1 fold')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(2, 6),
+      ])
+    })
+    test('Should fold on a group of mix of attributes and single line comments and include next groups', () => {
+      const folds = getFoldsForDocument(
+        `this is a paragraph
+
+// A single-line comment.
+// A second single-line comment.
+:an-attribute: value of attribute
+:another-attribute:
+// A third line comment
+// as a potential folded group
+:a-third-attribute: value of third attribute
+
+this is a paragraph`)
+      assert.strictEqual(folds.length, 3, 'expecting 3 folds')
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(4, 5),
+        new vscode.FoldingRange(6, 7, vscode.FoldingRangeKind.Comment),
+        new vscode.FoldingRange(2, 8),
+      ])
+    })
+  })
 })
 
 function getFoldsForDocument (contents: string) {

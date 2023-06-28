@@ -93,7 +93,12 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
     }
   }
 
-  private static handleSingleLineCommentFoldingRanges (singleLineCommentStartIndexes: any[], foldingRanges: any[], lineIndex: number, lineText: string,
+  private static handleSingleLineCommentFoldingRanges (
+    singleLineCommentStartIndexes: any[],
+    mixOfMultiAttributesAndSingleLineCommentsIndexes: any[],
+    foldingRanges: any[],
+    lineIndex: number,
+    lineText: string,
     documentLineCount: number) {
     if (lineText.startsWith('//')) {
       if (singleLineCommentStartIndexes.length === 0) {
@@ -102,7 +107,7 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
       if (lineIndex >= documentLineCount - 1) {
         // comment on last line of the document
         const startIndex = singleLineCommentStartIndexes.pop()
-        if (lineIndex > startIndex) {
+        if (lineIndex > startIndex && !(lineText.startsWith(':') && mixOfMultiAttributesAndSingleLineCommentsIndexes[0] === startIndex)) {
           foldingRanges.push(new vscode.FoldingRange(
             startIndex,
             lineIndex,
@@ -114,7 +119,7 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
       if (singleLineCommentStartIndexes.length !== 0) {
         const startIndex = singleLineCommentStartIndexes.pop()
         const endIndex = lineIndex - 1
-        if (endIndex > startIndex) {
+        if (endIndex > startIndex && !(lineText.startsWith(':') && mixOfMultiAttributesAndSingleLineCommentsIndexes[0] === startIndex)) {
           foldingRanges.push(new vscode.FoldingRange(
             startIndex,
             endIndex,
@@ -124,7 +129,13 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
     }
   }
 
-  private static handleMultiAttributesFoldingRanges (multiAttributesIndexes: any[], foldingRanges: any[], lineIndex: number, lineText: string, documentLineCount: number) {
+  private static handleMultiAttributesFoldingRanges (
+    multiAttributesIndexes: any[],
+    mixOfMultiAttributesAndSingleLineCommentsIndexes: any[],
+    foldingRanges: any[],
+    lineIndex: number,
+    lineText: string,
+    documentLineCount: number) {
     if (lineText.startsWith(':')) {
       if (multiAttributesIndexes.length === 0) {
         multiAttributesIndexes.push(lineIndex)
@@ -132,7 +143,7 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
       if (lineIndex >= documentLineCount - 1) {
         // Attribute on last line of the document
         const startIndex = multiAttributesIndexes.pop()
-        if (lineIndex > startIndex) {
+        if (lineIndex > startIndex && !(lineText.startsWith('//') && mixOfMultiAttributesAndSingleLineCommentsIndexes[0] === startIndex)) {
           foldingRanges.push(new vscode.FoldingRange(
             startIndex,
             lineIndex)
@@ -143,11 +154,47 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
       if (multiAttributesIndexes.length !== 0) {
         const startIndex = multiAttributesIndexes.pop()
         const endIndex = lineIndex - 1
-        if (endIndex > startIndex) {
+        if (endIndex > startIndex && !(lineText.startsWith('//') && mixOfMultiAttributesAndSingleLineCommentsIndexes[0] === startIndex)) {
           foldingRanges.push(new vscode.FoldingRange(
             startIndex,
             endIndex))
         }
+      }
+    }
+  }
+
+  private static handleMixOfMultiAttributesAndSingleLineCommentsFoldingRanges (
+    mixOfMultiAttributesAndSingleLineCommentsIndexes: any[],
+    mixOfMultiAttributesAndSingleLineCommentsCharacters: Set<string>,
+    foldingRanges: any[],
+    lineIndex: number,
+    lineText: string,
+    documentLineCount: number) {
+    if (lineText.startsWith(':') || lineText.startsWith('//')) {
+      if (mixOfMultiAttributesAndSingleLineCommentsIndexes.length === 0) {
+        mixOfMultiAttributesAndSingleLineCommentsIndexes.push(lineIndex)
+      }
+      mixOfMultiAttributesAndSingleLineCommentsCharacters.add(lineText.charAt(0))
+      if (lineIndex >= documentLineCount - 1) {
+        // Attribute on last line of the document
+        const startIndex = mixOfMultiAttributesAndSingleLineCommentsIndexes.pop()
+        if (lineIndex > startIndex && mixOfMultiAttributesAndSingleLineCommentsCharacters.size === 2) {
+          foldingRanges.push(new vscode.FoldingRange(
+            startIndex,
+            lineIndex)
+          )
+        }
+      }
+    } else {
+      if (mixOfMultiAttributesAndSingleLineCommentsIndexes.length !== 0) {
+        const startIndex = mixOfMultiAttributesAndSingleLineCommentsIndexes.pop()
+        const endIndex = lineIndex - 1
+        if (endIndex > startIndex && mixOfMultiAttributesAndSingleLineCommentsCharacters.size === 2) {
+          foldingRanges.push(new vscode.FoldingRange(
+            startIndex,
+            endIndex))
+        }
+        mixOfMultiAttributesAndSingleLineCommentsCharacters.clear()
       }
     }
   }
@@ -158,14 +205,29 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
     const commentBlockIndexes = []
     const singleLineCommentStartIndexes = []
     const multiAttributesIndexes = []
+    const mixOfMultiAttributesAndSingleLineCommentsIndexes = []
+    const mixOfMultiAttributesAndSingleLineCommentsCharacters = new Set<string>()
     const documentLineCount = document.lineCount
     for (let lineIndex = 0; lineIndex < documentLineCount; lineIndex++) {
       const line = document.lineAt(lineIndex)
       const lineText = line.text
       this.handleOpenBlockFoldingRanges(openBlockIndexes, foldingRanges, lineIndex, lineText, documentLineCount)
       this.handleCommentBlockFoldingRanges(commentBlockIndexes, foldingRanges, lineIndex, lineText, documentLineCount)
-      this.handleSingleLineCommentFoldingRanges(singleLineCommentStartIndexes, foldingRanges, lineIndex, lineText, documentLineCount)
-      this.handleMultiAttributesFoldingRanges(multiAttributesIndexes, foldingRanges, lineIndex, lineText, documentLineCount)
+      this.handleSingleLineCommentFoldingRanges(
+        singleLineCommentStartIndexes,
+        mixOfMultiAttributesAndSingleLineCommentsIndexes,
+        foldingRanges,
+        lineIndex,
+        lineText,
+        documentLineCount)
+      this.handleMultiAttributesFoldingRanges(multiAttributesIndexes, mixOfMultiAttributesAndSingleLineCommentsIndexes, foldingRanges, lineIndex, lineText, documentLineCount)
+      this.handleMixOfMultiAttributesAndSingleLineCommentsFoldingRanges(
+        mixOfMultiAttributesAndSingleLineCommentsIndexes,
+        mixOfMultiAttributesAndSingleLineCommentsCharacters,
+        foldingRanges,
+        lineIndex,
+        lineText,
+        documentLineCount)
     }
     return foldingRanges
   }
