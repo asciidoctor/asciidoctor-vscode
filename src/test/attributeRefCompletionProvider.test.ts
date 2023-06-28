@@ -18,7 +18,7 @@ suite('Attribute ref CompletionsProvider', () => {
     createdFiles = []
   })
   test('Should return attribute key defined in same file', async () => {
-    const fileToAutoComplete = vscode.Uri.file(`${root}/fileToAutoComplete-attributeRef-samfile.adoc`)
+    const fileToAutoComplete = vscode.Uri.file(`${root}/fileToAutoComplete-attributeRef-samefile.adoc`)
     await vscode.workspace.fs.writeFile(fileToAutoComplete, Buffer.from(`:my-attribute-to-find-in-completion: dummy value
 `))
     createdFiles.push(fileToAutoComplete)
