@@ -334,7 +334,7 @@ export namespace Import {
         return dir
       }
 
-      const { document } = AsciidocParser.load(textDocument)
+      const document = AsciidocParser.load(textDocument)
       return document.getAttribute('imagesdir', '')
     }
 

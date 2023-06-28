@@ -45,20 +45,22 @@ function normalizeLink (
 
 export default class LinkProvider implements vscode.DocumentLinkProvider {
   public provideDocumentLinks (textDocument: vscode.TextDocument, _token: vscode.CancellationToken): vscode.DocumentLink[] {
-    const { document, baseDocumentIncludeItems } = AsciidocParser.load(textDocument)
+    const baseDocumentIncludeItems = AsciidocParser.getBaseDocumentIncludeItems(textDocument)
 
     // includes from the reader are resolved correctly but the line numbers may be offset and not exactly match the document
     let baseDocumentProcessorIncludes = baseDocumentIncludeItems
     const includeDirective = /^(\\)?include::([^[][^[]*)\[([^\n]+)?\]$/
     // get includes from document text. These may be inside ifeval or ifdef but the line numbers are correct.
     const baseDocumentRegexIncludes = new Map()
-    document.getSourceLines().forEach((line, index) => {
+    const splittedLines = textDocument.getText().split('\n')
+    for (let index = 0; index < splittedLines.length; index++) {
+      const line = splittedLines[index]
       const match = includeDirective.exec(line)
       if (match) {
         // match[2] is the include reference
         baseDocumentRegexIncludes.set(index, match[2].length)
       }
-    })
+    }
 
     // find a corrected mapping for line numbers
     const betterIncludeMatching = similarArrayMatch(

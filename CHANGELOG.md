@@ -9,6 +9,7 @@
 ### Bug fixes
 
 - folding of several single line comments is not working for more than 2 lines (#722)
+- attribute coming from include files are missing in completion with 3.0.x (#727)
 
 ## 3.0.5 "pre-release" (2023-06-03)
 
