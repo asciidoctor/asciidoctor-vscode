@@ -5,6 +5,7 @@
 ### Improvements
 
 - provide folding for list of sibling attributes by @apupier (#719)
+- support remote includes when exporting in PDF without additional setting configuration (#731)
 
 ### Bug fixes
 
