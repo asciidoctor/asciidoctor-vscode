@@ -64,6 +64,8 @@ ${text}`
         `"${baseDirectory.replace('"', '\\"')}"`, // base directory
         '-o',
         `"${pdfOutputPath.replace('"', '\\"')}"`, // output file
+        '-a',
+        'allow-uri-read',
       ]
       const args = defaultArgs.concat(asciidoctorPdfCommandArgs)
         .concat(['-']) // read from stdin
