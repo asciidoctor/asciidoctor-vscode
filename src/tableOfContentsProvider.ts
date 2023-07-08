@@ -45,14 +45,20 @@ export class TableOfContentsProvider {
 
     const toc = asciidocDocument
       .findBy({ context: 'section' })
-      .map((section) => ({
-        slug: new Slug(section.getId()),
-        text: section.getTitle(),
-        level: section.getLevel(),
-        line: section.getLineNumber() - 1,
-        location: new vscode.Location(textDocument.uri,
-          new vscode.Position(section.getLineNumber() - 1, 1)),
-      }))
+      .map((section) => {
+        let lineNumber = section.getLineNumber() // Asciidoctor is 1-based but can return 0 (probably a bug/limitation)
+        if (lineNumber > 0) {
+          lineNumber = lineNumber - 1
+        }
+        return {
+          slug: new Slug(section.getId()),
+          text: section.getTitle(),
+          level: section.getLevel(),
+          line: lineNumber,
+          location: new vscode.Location(textDocument.uri,
+            new vscode.Position(lineNumber, 1)),
+        }
+      })
 
     // Get full range of section
     return toc.map((entry, startIndex): TocEntry => {
