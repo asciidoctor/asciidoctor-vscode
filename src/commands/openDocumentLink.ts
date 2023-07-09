@@ -56,14 +56,12 @@ export class OpenDocumentLinkCommand implements Command {
 
   private async tryRevealLine (editor: vscode.TextEditor, fragment?: string) {
     if (editor && fragment) {
-      console.log('tryRevealLine', { fragment })
       const toc = new TableOfContentsProvider(editor.document)
       const entry = await toc.lookup(fragment)
       if (entry) {
         return editor.revealRange(new vscode.Range(entry.line, 0, entry.line, 0), vscode.TextEditorRevealType.AtTop)
       }
       const lineNumberFragment = fragment.match(/^L(\d+)$/i)
-      console.log('lineNumberFragment', { lineNumberFragment })
       if (lineNumberFragment) {
         const line = +lineNumberFragment[1] - 1
         if (!isNaN(line)) {
