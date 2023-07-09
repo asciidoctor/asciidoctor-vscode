@@ -8,7 +8,8 @@
     "lib": [
       "es6",
       "dom",
-      "es2019"
+      "es2019",
+      "es2020.string"
     ],
     "sourceMap": true,
     "rootDir": "."
