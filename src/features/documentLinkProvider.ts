@@ -11,7 +11,9 @@ import { AsciidocParser } from '../asciidocParser'
  * Reference: https://gist.github.com/dperini/729294
  */
 // eslint-disable-next-line max-len
-const urlRx = /(?:(?:https?|ftp|irc):)?\/\/(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4])|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+[a-z\u00a1-\uffff]{2,}\.?)(?::\d{2,5})?(?:[/?#]\S*)?/ig
+const urlRx = /(?:(?:https?|ftp|irc):)?\/\/(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4])|(?:(?:[a-z0-9\u00a1-\uffff][a-z0-9\u00a1-\uffff_-]{0,62})?[a-z0-9\u00a1-\uffff]\.)+[a-z\u00a1-\uffff]{2,}\.?)(?::\d{2,5})?(?:[/?#][^[]*)?/ig
+const inlineAnchorRx = /^\[\[(?<id>[^,]+)(?:,[^\]]+)*]]$/m
+const xrefRx = /xref:(?<target>[^#|^[]+)(?<fragment>#[^[]+)?\[[^\]]*]/ig
 const localize = nls.loadMessageBundle()
 
 function normalizeLink (
@@ -49,6 +51,9 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
     const baseDocumentRegexIncludes = new Map()
     const results: vscode.DocumentLink[] = []
     const lines = textDocument.getText().split('\n')
+    const anchors = {}
+    const xrefProxies = []
+    const base = textDocument.uri.path.substring(0, textDocument.uri.path.lastIndexOf('/'))
     for (let lineNumber = 0; lineNumber < lines.length; lineNumber++) {
       const line = lines[lineNumber]
       const match = includeDirective.exec(line)
@@ -74,6 +79,66 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
           }
         }
       }
+      if (line.startsWith('[[') && line.endsWith(']]')) {
+        const inlineAnchorFound = line.match(inlineAnchorRx)
+        if (inlineAnchorFound) {
+          const inlineAnchorId = inlineAnchorFound.groups.id
+          anchors[`${textDocument.uri.path}#${inlineAnchorId}`] = {
+            lineNumber: lineNumber + 1,
+          }
+        }
+      }
+      if (line.includes('xref:')) {
+        const xrefsFound = line.matchAll(xrefRx)
+        if (xrefsFound) {
+          for (const xrefFound of xrefsFound) {
+            const index = xrefFound.index
+            const target = xrefFound.groups.target
+            let fragment = xrefFound.groups.fragment || ''
+            const originalTarget = `${target}${fragment}`
+            let targetUri
+            if (path.isAbsolute(target)) {
+              targetUri = vscode.Uri.parse(target)
+            } else {
+              targetUri = vscode.Uri.parse(base + '/' + target)
+            }
+            if (targetUri.path === textDocument.uri.path) {
+              xrefProxies.push((anchors) => {
+                const anchorFound = anchors[`${targetUri.path}${fragment}`]
+                if (anchorFound) {
+                  fragment = `#L${anchorFound.lineNumber}`
+                }
+                const documentLink = new vscode.DocumentLink(
+                  new vscode.Range(
+                    // exclude xref: prefix
+                    new vscode.Position(lineNumber, index + 5),
+                    new vscode.Position(lineNumber, originalTarget.length + index + 5)
+                  ),
+                  normalizeLink(textDocument, `${target}${fragment}`, base)
+                )
+                documentLink.tooltip = localize('documentLink.openFile.tooltip', 'Open file {0}', target)
+                return documentLink
+              })
+            } else {
+              const documentLink = new vscode.DocumentLink(
+                new vscode.Range(
+                  new vscode.Position(lineNumber, index + 5),
+                  new vscode.Position(lineNumber, originalTarget.length + index + 5)
+                ),
+                normalizeLink(textDocument, `${target}${fragment}`, base)
+              )
+              documentLink.tooltip = localize('documentLink.openFile.tooltip', 'Open file {0}', target)
+              results.push(documentLink)
+            }
+          }
+        }
+      }
+    }
+
+    if (xrefProxies && xrefProxies.length > 0) {
+      for (const xrefProxy of xrefProxies) {
+        results.push(xrefProxy(anchors))
+      }
     }
 
     // find a corrected mapping for line numbers
@@ -94,7 +159,6 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
 
     // create include links
     if (baseDocumentProcessorIncludes) {
-      const base = path.dirname(textDocument.uri.fsPath)
       baseDocumentProcessorIncludes.forEach((entry) => {
         const lineNo = entry.position - 1
         const documentLink = new vscode.DocumentLink(

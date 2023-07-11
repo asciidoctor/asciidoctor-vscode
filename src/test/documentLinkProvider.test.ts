@@ -1,14 +1,8 @@
-/*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 import * as assert from 'assert'
 import 'mocha'
 import * as vscode from 'vscode'
 import LinkProvider from '../features/documentLinkProvider'
 import { InMemoryDocument } from './inMemoryDocument'
-
-const testFileName = vscode.Uri.file('test.md')
 
 const noopToken = new class implements vscode.CancellationToken {
   private _onCancellationRequestedEmitter = new vscode.EventEmitter<void>()
@@ -17,8 +11,8 @@ const noopToken = new class implements vscode.CancellationToken {
   get isCancellationRequested () { return false }
 }()
 
-async function getLinksForFile (fileContents: string) {
-  const doc = new InMemoryDocument(testFileName, fileContents)
+async function getLinksForFile (fileContents: string, testFileName?: vscode.Uri) {
+  const doc = new InMemoryDocument(testFileName || vscode.Uri.file('test.adoc'), fileContents)
   const provider = new LinkProvider()
   return provider.provideDocumentLinks(doc, noopToken)
 }
@@ -81,5 +75,53 @@ b
       const [link] = links
       assertRangeEqual(link.range, new vscode.Range(4, 9, 4, 16))
     }
+  })
+
+  test('Should detect inline anchor using [[idname]] syntax and xref', async () => {
+    const links = await getLinksForFile(`= Title
+
+[[first-section]]
+== Section Title
+
+Paragraph.
+
+== Second Section Title
+
+See xref:test.adoc#first-section[]
+`)
+    assert.strictEqual(links.length, 1)
+    const [link] = links
+
+    assert.strictEqual(link.target.scheme, 'command')
+    assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
+    assert.strictEqual(link.target.query, JSON.stringify({
+      path: 'test.adoc',
+      fragment: 'L3',
+    }))
+    assertRangeEqual(link.range, new vscode.Range(9, 9, 9, 32))
+  })
+
+  test('Should detect xref and inline anchor using [[idname]] syntax', async () => {
+    const links = await getLinksForFile(`= Title
+
+[[first-section]]
+== Section Title
+
+Paragraph.
+See xref:test.adoc#second-section[]
+
+[[second-section]]
+== Second Section Title
+
+`)
+    assert.strictEqual(links.length, 1)
+    const [link] = links
+    assert.strictEqual(link.target.scheme, 'command')
+    assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
+    assert.strictEqual(link.target.query, JSON.stringify({
+      path: 'test.adoc',
+      fragment: 'L9',
+    }))
+    assertRangeEqual(link.range, new vscode.Range(6, 9, 6, 33))
   })
 })
