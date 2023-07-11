@@ -1,0 +1,3 @@
+= Quick Start
+
+The extension activates automatically when opening an AsciiDoc file (.adoc, .ad, .asc, .asciidoc).

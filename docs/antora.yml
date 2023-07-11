@@ -1,0 +1,10 @@
+name: vscode-extension
+title: Visual Studio Code Extension
+version: ~
+asciidoc:
+  attributes:
+    project-name: VS Code Extension
+    experimental: ''
+    url-marketplace: https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode
+nav:
+- modules/ROOT/nav.adoc

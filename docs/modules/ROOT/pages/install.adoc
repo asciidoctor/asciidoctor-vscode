@@ -1,0 +1,12 @@
+= Install and Update
+
+Launch Visual Studio Code "Quick Open" (kbd:[Ctrl+P]), paste the following command, and press kbd:[Enter]:
+
+[source]
+----
+ext install asciidoctor.asciidoctor-vscode
+----
+
+Alternatively, you can use the built-in extension browser to find the {url-marketplace}[_AsciiDoc_ extension] by _asciidoctor_ and install it.
+
+This extension is also available as a pre-version (alpha) in Visual Studio Code for the Web and can be installed using the same procedure.
