@@ -50,12 +50,11 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
     // get includes from document text. These may be inside ifeval or ifdef but the line numbers are correct.
     const baseDocumentRegexIncludes = new Map()
     const results: vscode.DocumentLink[] = []
-    const lines = textDocument.getText().split('\n')
     const anchors = {}
     const xrefProxies = []
     const base = textDocument.uri.path.substring(0, textDocument.uri.path.lastIndexOf('/'))
-    for (let lineNumber = 0; lineNumber < lines.length; lineNumber++) {
-      const line = lines[lineNumber]
+    for (let lineNumber = 0; lineNumber < textDocument.lineCount; lineNumber++) {
+      const line = textDocument.lineAt(lineNumber).text
       const match = includeDirective.exec(line)
       if (match) {
         const includeReference = match[2]
