@@ -55,7 +55,7 @@ function findNearest (haystack, adjacency) {
   const selectedEntries = []
   const removals = []
   let errorSum = 0
-  if (adjacency && adjacency.length)  {
+  if (adjacency && adjacency.length) {
     adjacency[0].forEach((_entry, idx) => {
       const [removedEntry, errorTerm] = columnMin(adjacency, idx, removals)
       selectedEntries.push(haystack[removedEntry])
