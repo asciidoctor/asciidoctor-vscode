@@ -1,0 +1,40 @@
+= AsciiDoc Editor Specification
+
+== Specification Goals
+
+The AsciiDoc Editor Specification outlines the desired goals, functionalities, and features of an ideal text editor specifically designed for AsciiDoc authors and writers. This specification aims to define the standards and guidelines for creating a comprehensive Integrated Development Environment (IDE) tailored to the unique needs of AsciiDoc users.
+
+By describing how the text editor should work, how features should be implemented, and what capabilities should be available, this specification provides a clear roadmap for the development of a powerful and intuitive AsciiDoc editing tool.
+
+
+== AsciiDoc Language Support
+
+// AsciiDoc Syntax highlighting
+// 
+
+== User Experience
+
+// Text folding
+// Attributes completion
+// Target completion (images, videos, include)
+
+
+== Advanced Editing Capabilities
+
+// Shortcuts to apply text formatting and punctuation?
+// Tool to generate a table structure
+
+== Customization and Extensibility
+
+// Load Asciidoctor extension
+// Asciidoctor Config file .asciidoctorconfig
+// 
+
+== Collaboration and Version Control Integration
+
+
+== Preview
+
+
+== Export
+
