@@ -1,14 +1,20 @@
-/*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 import * as assert from 'assert'
 import 'mocha'
 import * as vscode from 'vscode'
 import AdocDocumentSymbolProvider from '../features/documentSymbolProvider'
 import AsciidocWorkspaceSymbolProvider, { WorkspaceAsciidocDocumentProvider } from '../features/workspaceSymbolProvider'
+import { AsciidocLoader } from '../asciidocLoader'
+import { AsciidoctorConfig } from '../features/asciidoctorConfig'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
+import { extensionContext } from './helper'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
 
-const symbolProvider = new AdocDocumentSymbolProvider(null)
+const symbolProvider = new AdocDocumentSymbolProvider(null, new AsciidocLoader(
+  new AsciidoctorConfig(),
+  new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+  new AsciidoctorDiagnostic('text')
+))
 
 suite('asciidoc.WorkspaceSymbolProvider', () => {
   test('Should not return anything for empty workspace', async () => {
@@ -20,6 +26,12 @@ suite('asciidoc.WorkspaceSymbolProvider', () => {
 
 class InMemoryWorkspaceAsciidocDocumentProvider implements WorkspaceAsciidocDocumentProvider {
   private readonly _documents = new Map<string, vscode.TextDocument>()
+  private readonly _onDidChangeAsciidocDocumentEmitter = new vscode.EventEmitter<vscode.TextDocument>()
+  public onDidChangeAsciidocDocument = this._onDidChangeAsciidocDocumentEmitter.event
+  private readonly _onDidCreateAsciidocDocumentEmitter = new vscode.EventEmitter<vscode.TextDocument>()
+  public onDidCreateAsciidocDocument = this._onDidCreateAsciidocDocumentEmitter.event
+  private readonly _onDidDeleteAsciidocDocumentEmitter = new vscode.EventEmitter<vscode.Uri>()
+  public onDidDeleteAsciidocDocument = this._onDidDeleteAsciidocDocumentEmitter.event
 
   constructor (documents: vscode.TextDocument[]) {
     for (const doc of documents) {
@@ -30,15 +42,6 @@ class InMemoryWorkspaceAsciidocDocumentProvider implements WorkspaceAsciidocDocu
   async getAllAsciidocDocuments () {
     return Array.from(this._documents.values())
   }
-
-  private readonly _onDidChangeAsciidocDocumentEmitter = new vscode.EventEmitter<vscode.TextDocument>()
-  public onDidChangeAsciidocDocument = this._onDidChangeAsciidocDocumentEmitter.event
-
-  private readonly _onDidCreateAsciidocDocumentEmitter = new vscode.EventEmitter<vscode.TextDocument>()
-  public onDidCreateAsciidocDocument = this._onDidCreateAsciidocDocumentEmitter.event
-
-  private readonly _onDidDeleteAsciidocDocumentEmitter = new vscode.EventEmitter<vscode.Uri>()
-  public onDidDeleteAsciidocDocument = this._onDidDeleteAsciidocDocumentEmitter.event
 
   public updateDocument (document: vscode.TextDocument) {
     this._documents.set(document.fileName, document)

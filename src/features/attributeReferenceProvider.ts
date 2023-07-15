@@ -1,7 +1,7 @@
 import * as vscode from 'vscode'
 
-import { AsciidocParser } from '../asciidocParser'
 import { Asciidoctor } from '@asciidoctor/core'
+import { AsciidocLoader } from '../asciidocLoader'
 
 function findNearestBlock (document: Asciidoctor.Document, lineNumber: number) {
   let nearestBlock
@@ -23,8 +23,10 @@ function findNearestBlock (document: Asciidoctor.Document, lineNumber: number) {
 }
 
 export class AttributeReferenceProvider {
-  provideCompletionItems (textDocument: vscode.TextDocument, position: vscode.Position): vscode.CompletionItem[] {
-    const document = AsciidocParser.load(textDocument)
+  constructor (private readonly asciidocLoader: AsciidocLoader) {}
+
+  async provideCompletionItems (textDocument: vscode.TextDocument, position: vscode.Position): Promise<vscode.CompletionItem[]> {
+    const document = await this.asciidocLoader.load(textDocument)
     const attributes = document.getAttributes()
     const lineText = textDocument.lineAt(position).text
     const nearestBlock = findNearestBlock(document, position.line + 1) // 0-based on VS code but 1-based on Asciidoctor (hence the + 1)

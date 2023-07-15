@@ -2,11 +2,15 @@ import 'mocha'
 
 import * as assert from 'assert'
 import * as vscode from 'vscode'
-import { AsciidocParser } from '../asciidocParser'
 import { AsciidocContributionProvider, AsciidocContributions } from '../asciidocExtensions'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
 import { WebviewResourceProvider } from '../util/resources'
 import { extensionContext } from './helper'
+import { AsciidocEngine } from '../asciidocEngine'
+import { AsciidoctorConfig } from '../features/asciidoctorConfig'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
+import { createFile } from './workspaceHelper'
 
 class EmptyAsciidocContributions implements AsciidocContributions {
   readonly previewScripts = []
@@ -16,14 +20,12 @@ class EmptyAsciidocContributions implements AsciidocContributions {
 
 class AsciidocContributionProviderTest implements AsciidocContributionProvider {
   readonly extensionUri
+  onContributionsChanged: vscode.Event<this>
+  readonly contributions = new EmptyAsciidocContributions()
 
   constructor (extensionUri: vscode.Uri) {
     this.extensionUri = extensionUri
   }
-
-  onContributionsChanged: vscode.Event<this>
-
-  readonly contributions = new EmptyAsciidocContributions()
 
   dispose () {
     // noop
@@ -31,6 +33,8 @@ class AsciidocContributionProviderTest implements AsciidocContributionProvider {
 }
 
 class TestWebviewResourceProvider implements WebviewResourceProvider {
+  cspSource = 'aaaa'
+
   asWebviewUri (resource: vscode.Uri): vscode.Uri {
     return vscode.Uri.file(resource.path)
   }
@@ -38,34 +42,35 @@ class TestWebviewResourceProvider implements WebviewResourceProvider {
   asMediaWebViewSrc (...pathSegments: string[]): string {
     return pathSegments.toString()
   }
-
-  cspSource = 'aaaa'
 }
 
 suite('asciidoc.Asciidoctorconfig', () => {
+  let createdFiles: vscode.Uri[] = []
+  teardown(async () => {
+    for (const createdFile of createdFiles) {
+      await vscode.workspace.fs.delete(createdFile)
+    }
+    createdFiles = []
+  })
   const configFileNames = ['.asciidoctorconfig', '.asciidoctorconfig.adoc']
   configFileNames.forEach((configFileName) => {
     test(`Pick up ${configFileName} from root workspace folder`, async () => {
-      let configFile: vscode.Uri
-      try {
-        const root = vscode.workspace.workspaceFolders[0].uri.fsPath
-        configFile = vscode.Uri.file(`${root}/${configFileName}`)
-        await vscode.workspace.fs.writeFile(configFile, Buffer.from(':application-name: Asciidoctor VS Code Extension'))
-        const file = await vscode.workspace.openTextDocument(vscode.Uri.file(`${root}/attributes.adoc`))
-        // eslint-disable-next-line max-len
-        const asciidocParser = new AsciidocParser(new AsciidocContributionProviderTest(extensionContext.extensionUri), new AsciidoctorExtensionsSecurityPolicyArbiter(extensionContext))
-        const { html } = await asciidocParser.convertUsingJavascript(
-          file.getText(),
-          file,
-          extensionContext,
-          new TestWebviewResourceProvider()
-        )
-        assert.strictEqual(html.includes('<h1>Asciidoctor VS Code Extension</h1>'), true, `{application-name} should be substituted by the value defined in ${configFileName}`)
-      } finally {
-        if (configFile !== undefined) {
-          await vscode.workspace.fs.delete(configFile)
-        }
-      }
+      const configFile = await createFile('.asciidoctorconfig', ':application-name: Asciidoctor VS Code Extension')
+      createdFiles.push(configFile)
+      const textDocument = await createFile('attribute-defined-in-asciidoctorconfig.adoc', '= {application-name}')
+      createdFiles.push(textDocument)
+      const asciidocParser = new AsciidocEngine(
+        new AsciidocContributionProviderTest(extensionContext.extensionUri),
+        new AsciidoctorConfig(),
+        new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+        new AsciidoctorDiagnostic('test')
+      )
+      const { html } = await asciidocParser.convertFromUri(
+        textDocument,
+        extensionContext,
+        new TestWebviewResourceProvider()
+      )
+      assert.strictEqual(html.includes('<h1>Asciidoctor VS Code Extension</h1>'), true, `{application-name} should be substituted by the value defined in ${configFileName}`)
     })
   })
 
@@ -90,10 +95,14 @@ suite('asciidoc.Asciidoctorconfig', () => {
 
 {var-only-in-asciidoctorconfig}`)
       createdFiles.push(adocForTest)
-      const file = await vscode.workspace.openTextDocument(adocForTest)
-      // eslint-disable-next-line max-len
-      const asciidocParser = new AsciidocParser(new AsciidocContributionProviderTest(extensionContext.extensionUri), new AsciidoctorExtensionsSecurityPolicyArbiter(extensionContext))
-      html = (await asciidocParser.convertUsingJavascript(file.getText(), file, extensionContext, new TestWebviewResourceProvider())).html
+      const textDocument = await vscode.workspace.openTextDocument(adocForTest)
+      const asciidocParser = new AsciidocEngine(
+        new AsciidocContributionProviderTest(extensionContext.extensionUri),
+        new AsciidoctorConfig(),
+        new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+        new AsciidoctorDiagnostic('test')
+      )
+      html = (await asciidocParser.convertFromTextDocument(textDocument, extensionContext, new TestWebviewResourceProvider())).html
     })
 
     suiteTeardown(async () => {
@@ -162,10 +171,14 @@ suite('asciidoc.Asciidoctorconfig', () => {
               `))
       createdFiles.push(adocFile)
 
-      const file = await vscode.workspace.openTextDocument(adocFile)
-      // eslint-disable-next-line max-len
-      const asciidocParser = new AsciidocParser(new AsciidocContributionProviderTest(extensionContext.extensionUri), new AsciidoctorExtensionsSecurityPolicyArbiter(extensionContext))
-      html = (await asciidocParser.convertUsingJavascript(file.getText(), file, extensionContext, new TestWebviewResourceProvider())).html
+      const textDocument = await vscode.workspace.openTextDocument(adocFile)
+      const asciidocParser = new AsciidocEngine(
+        new AsciidocContributionProviderTest(extensionContext.extensionUri),
+        new AsciidoctorConfig(),
+        new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+        new AsciidoctorDiagnostic('test')
+      )
+      html = (await asciidocParser.convertFromTextDocument(textDocument, extensionContext, new TestWebviewResourceProvider())).html
     })
 
     suiteTeardown(async () => {

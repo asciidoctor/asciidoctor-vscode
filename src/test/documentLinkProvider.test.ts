@@ -3,6 +3,13 @@ import 'mocha'
 import * as vscode from 'vscode'
 import LinkProvider from '../features/documentLinkProvider'
 import { InMemoryDocument } from './inMemoryDocument'
+import { AsciidocIncludeItemsLoader } from '../asciidocLoader'
+import { AsciidoctorIncludeItems } from '../features/asciidoctorIncludeItems'
+import { AsciidoctorConfig } from '../features/asciidoctorConfig'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
+import { extensionContext } from './helper'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
 
 const noopToken = new class implements vscode.CancellationToken {
   private _onCancellationRequestedEmitter = new vscode.EventEmitter<void>()
@@ -13,7 +20,14 @@ const noopToken = new class implements vscode.CancellationToken {
 
 async function getLinksForFile (fileContents: string, testFileName?: vscode.Uri) {
   const doc = new InMemoryDocument(testFileName || vscode.Uri.file('test.adoc'), fileContents)
-  const provider = new LinkProvider()
+  const provider = new LinkProvider(
+    new AsciidocIncludeItemsLoader(
+      new AsciidoctorIncludeItems(),
+      new AsciidoctorConfig(),
+      new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+      new AsciidoctorDiagnostic('test')
+    )
+  )
   return provider.provideDocumentLinks(doc, noopToken)
 }
 

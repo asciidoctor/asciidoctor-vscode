@@ -1,33 +1,34 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 import * as assert from 'assert'
 import 'mocha'
 import * as vscode from 'vscode'
 import AsciidocFoldingProvider from '../features/foldingProvider'
 import { InMemoryDocument } from './inMemoryDocument'
+import { AsciidocLoader } from '../asciidocLoader'
+import { AsciidoctorConfig } from '../features/asciidoctorConfig'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
+import { extensionContext } from './helper'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
 
 const testFileName = vscode.Uri.file('test.adoc')
 
 suite('asciidoc.FoldingProvider', () => {
   suite('getHeaderFoldingRanges', () => {
-    test('Should not return anything for empty document', () => {
-      const folds = getFoldsForDocument('')
+    test('Should not return anything for empty document', async () => {
+      const folds = await getFoldsForDocument('')
       assert.strictEqual(folds.length, 0)
     })
 
-    test('Should not return anything for document without headers', () => {
-      const folds = getFoldsForDocument(`a
+    test('Should not return anything for document without headers', async () => {
+      const folds = await getFoldsForDocument(`a
 *b* afas
 a=b
 a`)
       assert.strictEqual(folds.length, 0)
     })
 
-    test('Should fold from header to end of document', () => {
-      const folds = getFoldsForDocument(`= a
+    test('Should fold from header to end of document', async () => {
+      const folds = await getFoldsForDocument(`= a
 
 == b
 
@@ -39,8 +40,8 @@ d`)
       assert.strictEqual(firstFold.end, 5)
     })
 
-    test('Should leave single newline before next header', () => {
-      const folds = getFoldsForDocument(`
+    test('Should leave single newline before next header', async () => {
+      const folds = await getFoldsForDocument(`
 == a
 x
 
@@ -52,8 +53,8 @@ y`)
       assert.strictEqual(firstFold.end, 3)
     })
 
-    test('Should collapse multiple newlines to single newline before next header', () => {
-      const folds = getFoldsForDocument(`
+    test('Should collapse multiple newlines to single newline before next header', async () => {
+      const folds = await getFoldsForDocument(`
 == a
 x
 
@@ -70,8 +71,8 @@ y`)
       assert.strictEqual(secondFold.end, 7)
     })
 
-    test('Should not collapse if there is no newline before next header', () => {
-      const folds = getFoldsForDocument(`= a
+    test('Should not collapse if there is no newline before next header', async () => {
+      const folds = await getFoldsForDocument(`= a
 x
 == b
 y`)
@@ -83,8 +84,8 @@ y`)
   })
 
   suite('getConditionalFoldingRanges', () => {
-    test('Should fold from ifeval conditional beginning to its end', () => {
-      const folds = getFoldsForDocument(`ifeval::["{lang}" == "de"]
+    test('Should fold from ifeval conditional beginning to its end', async () => {
+      const folds = await getFoldsForDocument(`ifeval::["{lang}" == "de"]
 Das ist mein Text.
 endif::[]`)
       assert.strictEqual(folds.length, 1)
@@ -93,8 +94,8 @@ endif::[]`)
       assert.strictEqual(firstFold.end, 2)
     })
 
-    test('Should fold from ifndef conditional beginning to its end', () => {
-      const folds = getFoldsForDocument(`ifndef::env-github[]
+    test('Should fold from ifndef conditional beginning to its end', async () => {
+      const folds = await getFoldsForDocument(`ifndef::env-github[]
 This content is not shown on GitHub.
 endif::[]`)
       assert.strictEqual(folds.length, 1)
@@ -103,8 +104,8 @@ endif::[]`)
       assert.strictEqual(firstFold.end, 2)
     })
 
-    test('Should fold from ifdef multi conditionals beginning to its end', () => {
-      const folds = getFoldsForDocument(`ifeval::["{InstallOS}"=="Linux"]
+    test('Should fold from ifdef multi conditionals beginning to its end', async () => {
+      const folds = await getFoldsForDocument(`ifeval::["{InstallOS}"=="Linux"]
 :install-os-linux:
 endif::[]
 ifeval::["{InstallOS}"=="Solaris"]
@@ -126,8 +127,8 @@ endif::[]`)
       assert.strictEqual(firstFold.end, 2)
     })
 
-    test('Should fold nested conditionals', () => {
-      const folds = getFoldsForDocument(`ifdef::foo[]
+    test('Should fold nested conditionals', async () => {
+      const folds = await getFoldsForDocument(`ifdef::foo[]
 foo1
 ifdef::bar[]
 bar
@@ -143,8 +144,8 @@ endif::[]`)
   })
 
   suite('getOpenBlockFoldingRanges', () => {
-    test('Should fold open block', () => {
-      const folds = getFoldsForDocument(
+    test('Should fold open block', async () => {
+      const folds = await getFoldsForDocument(
         `this is a paragraph
 
 --
@@ -159,8 +160,8 @@ this is a paragraph`)
       ])
     })
 
-    test('Should fold open block from dashes to the end of the document if no end block dashes', () => {
-      const folds = getFoldsForDocument(
+    test('Should fold open block from dashes to the end of the document if no end block dashes', async () => {
+      const folds = await getFoldsForDocument(
         `this is a paragraph
 
 --
@@ -172,8 +173,8 @@ this is a paragraph`)
       assert.deepStrictEqual(folds, [new vscode.FoldingRange(2, 6, vscode.FoldingRangeKind.Region)])
     })
 
-    test('Should fold open block acting as a sidebar', () => {
-      const folds = getFoldsForDocument(
+    test('Should fold open block acting as a sidebar', async () => {
+      const folds = await getFoldsForDocument(
         `this is a paragraph
 
 [sidebar]
@@ -191,8 +192,8 @@ this is a paragraph`)
       ])
     })
 
-    test('Should fold open block acting as a source block', () => {
-      const folds = getFoldsForDocument(
+    test('Should fold open block acting as a source block', async () => {
+      const folds = await getFoldsForDocument(
         `this is a paragraph
 
 [source]
@@ -207,8 +208,8 @@ this is a paragraph`)
       ])
     })
 
-    test('Should fold open block if title is before sidebar', () => {
-      const folds = getFoldsForDocument(
+    test('Should fold open block if title is before sidebar', async () => {
+      const folds = await getFoldsForDocument(
         `before
 
 .Title
@@ -224,8 +225,8 @@ after`)
       ])
     })
 
-    test('Nested open blocks  should behave like 2 separate blocks', () => {
-      const folds = getFoldsForDocument(
+    test('Nested open blocks  should behave like 2 separate blocks', async () => {
+      const folds = await getFoldsForDocument(
         `this is a paragraph
 
 [source]
@@ -243,8 +244,8 @@ this is a paragraph`)
       ])
     })
 
-    test('Should not collapse if more or less than 2 dashes ', () => {
-      const folds = getFoldsForDocument(
+    test('Should not collapse if more or less than 2 dashes ', async () => {
+      const folds = await getFoldsForDocument(
         `this is a paragraph
 
 --
@@ -259,8 +260,8 @@ this is a paragraph`)
       ])
     })
 
-    test('Should not fold on title if it is not the block title ', () => {
-      const folds = getFoldsForDocument(
+    test('Should not fold on title if it is not the block title ', async () => {
+      const folds = await getFoldsForDocument(
         `.Title
 This is a paragraph.
 --
@@ -274,8 +275,8 @@ Open
   })
 
   suite('getCommentBlockFoldingRanges', () => {
-    test('Should fold comment block with 4 slashes ', () => {
-      const folds = getFoldsForDocument(
+    test('Should fold comment block with 4 slashes ', async () => {
+      const folds = await getFoldsForDocument(
         `this is a paragraph
 
 ////
@@ -290,8 +291,8 @@ this is a paragraph`)
       ])
     })
 
-    test('Should fold comment block with more than 4 slashes ', () => {
-      const folds = getFoldsForDocument(
+    test('Should fold comment block with more than 4 slashes ', async () => {
+      const folds = await getFoldsForDocument(
         `this is a paragraph
 
 /////
@@ -306,8 +307,8 @@ this is a paragraph`)
       ])
     })
 
-    test('Should not fold comment block with less than 4 slashes ', () => {
-      const folds = getFoldsForDocument(
+    test('Should not fold comment block with less than 4 slashes ', async () => {
+      const folds = await getFoldsForDocument(
         `this is a paragraph
 
 ///
@@ -319,8 +320,8 @@ this is another paragraph`)
       assert.strictEqual(folds.length, 0, 'expecting 0 fold')
     })
 
-    test('Should fold comment block from slashes to the end of the document if no end block ', () => {
-      const folds = getFoldsForDocument(
+    test('Should fold comment block from slashes to the end of the document if no end block ', async () => {
+      const folds = await getFoldsForDocument(
         `this is a paragraph
 
 ////
@@ -332,8 +333,8 @@ this is a paragraph`)
       assert.deepStrictEqual(folds, [new vscode.FoldingRange(2, 6, vscode.FoldingRangeKind.Region)])
     })
 
-    test('Should not fold comment block if slashes are part of literal text ', () => {
-      const folds = getFoldsForDocument(
+    test('Should not fold comment block if slashes are part of literal text ', async () => {
+      const folds = await getFoldsForDocument(
         `this is a paragraph
 
  ////
@@ -346,8 +347,8 @@ this is the same paragraph`)
   })
 
   suite('getSingleLineCommentFoldingRanges', () => {
-    test('Should fold on a group of single line comments ', () => {
-      const folds = getFoldsForDocument(
+    test('Should fold on a group of single line comments ', async () => {
+      const folds = await getFoldsForDocument(
         `this is a paragraph
 
 // A single-line comment.
@@ -361,8 +362,8 @@ this is a paragraph`)
       ])
     })
 
-    test('Should not fold single line comment if not contiguous ', () => {
-      const folds = getFoldsForDocument(
+    test('Should not fold single line comment if not contiguous ', async () => {
+      const folds = await getFoldsForDocument(
         `// A single-line comment.
 
 // Another single-line comment.
@@ -375,8 +376,8 @@ This is a paragraph.
       assert.strictEqual(folds.length, 0, 'expecting 0 fold')
     })
 
-    test('Should not fold single lines comments if slashes are part of literal text ', () => {
-      const folds = getFoldsForDocument(
+    test('Should not fold single lines comments if slashes are part of literal text ', async () => {
+      const folds = await getFoldsForDocument(
         `this is a paragraph
  // This is literal text
 // This is a single line comment
@@ -384,8 +385,8 @@ this is the same paragraph`)
       assert.strictEqual(folds.length, 0, 'expecting 0 fold')
     })
 
-    test('Should fold if last single line comment is on the last line of the document', () => {
-      const folds = getFoldsForDocument(
+    test('Should fold if last single line comment is on the last line of the document', async () => {
+      const folds = await getFoldsForDocument(
         `this is a paragraph
 // This is a comment.
 // The last line of the document is also a comment!`)
@@ -397,8 +398,8 @@ this is the same paragraph`)
   })
 
   suite('getMultiAttributesFoldingRanges', () => {
-    test('Should fold on a group of attributes ', () => {
-      const folds = getFoldsForDocument(
+    test('Should fold on a group of attributes ', async () => {
+      const folds = await getFoldsForDocument(
         `this is a paragraph
 
 :attribute1: value 1
@@ -415,8 +416,12 @@ this is a paragraph`)
   })
 })
 
-function getFoldsForDocument (contents: string) {
+async function getFoldsForDocument (contents: string) {
   const doc = new InMemoryDocument(testFileName, contents)
-  const provider = new AsciidocFoldingProvider()
+  const provider = new AsciidocFoldingProvider(new AsciidocLoader(
+    new AsciidoctorConfig(),
+    new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+    new AsciidoctorDiagnostic('text')
+  ))
   return provider.provideFoldingRanges(doc, new vscode.CancellationTokenSource().token)
 }
