@@ -2,14 +2,17 @@
 
 ## Unreleased
 
+
+## 3.1.2 (2023-07-15)
+
 ### Bug fixes
 
 - Use `textDocument.lineAt` to avoid issues with line separators discrepancy (#750)
 - Include .asciidoctorconfig, AsciiDoc attributes defined in the extension configuration and Antora AsciiDoc attributes in attributes completion (#754)
 
-## 3.1.0 "first stable release of 3.x" (2023-07-11)
+## 3.1.0 (2023-07-11)
 
-*Includes all changes from 3.0.x.*
+First stable release of 3.x which includes all changes from 3.0.x.
 
 ### Improvements
 
