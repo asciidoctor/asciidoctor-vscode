@@ -80,6 +80,7 @@ export class AsciidocParser {
     options.extension_registry = registry
     options.header_footer = true
     options.attributes = {
+      'allow-uri-read': '',
       'env-vscode': '',
       env: 'vscode',
       ...asciidoctorAttributes,
@@ -130,6 +131,7 @@ export class AsciidocParser {
   private static getDefaultAsciidoctorOptions (baseDir: string): any {
     return {
       attributes: {
+        'allow-uri-read': '',
         'env-vscode': '',
         env: 'vscode',
       },
@@ -204,6 +206,7 @@ export class AsciidocParser {
     attributes['env-vscode'] = ''
     attributes.env = 'vscode'
     attributes['relfilesuffix@'] = '.adoc'
+    attributes['allow-uri-read'] = ''
 
     const antoraSupport = await AntoraSupportManager.getInstance(context.workspaceState)
     const antoraAttributes = await antoraSupport.getAttributes(doc.uri)
