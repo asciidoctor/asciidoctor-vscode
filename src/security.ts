@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 import * as vscode from 'vscode'
 import { AsciidocPreviewManager } from './features/previewManager'
 import * as nls from 'vscode-nls'
@@ -157,8 +153,23 @@ export class AsciidoctorExtensionsSecurityPolicyArbiter {
   private readonly allowAsciidoctorExtensionsKey = 'asciidoc.allow_asciidoctor_extensions'
   public readonly trustAsciidoctorExtensionsAuthorsKey = 'asciidoc.trust_asciidoctor_extensions_authors'
 
-  constructor (private readonly context: vscode.ExtensionContext) {
+  // eslint-disable-next-line no-use-before-define
+  private static instance: AsciidoctorExtensionsSecurityPolicyArbiter
+
+  protected constructor (private readonly context: vscode.ExtensionContext) {
     this.context = context
+  }
+
+  public static activate (context: vscode.ExtensionContext): AsciidoctorExtensionsSecurityPolicyArbiter {
+    AsciidoctorExtensionsSecurityPolicyArbiter.instance = new AsciidoctorExtensionsSecurityPolicyArbiter(context)
+    return AsciidoctorExtensionsSecurityPolicyArbiter.instance
+  }
+
+  public static getInstance (): AsciidoctorExtensionsSecurityPolicyArbiter {
+    if (!AsciidoctorExtensionsSecurityPolicyArbiter.instance) {
+      throw new Error('AsciidoctorExtensionsSecurityPolicyArbiter must be activated by calling #activate()')
+    }
+    return AsciidoctorExtensionsSecurityPolicyArbiter.instance
   }
 
   public asciidoctorExtensionsAllowed (): boolean {
@@ -217,14 +228,9 @@ export class AsciidoctorExtensionsSecurityPolicyArbiter {
 }
 
 export class AsciidoctorExtensionsTrustModeSelector {
-  constructor (
-    private readonly aespArbiter: AsciidoctorExtensionsSecurityPolicyArbiter
-  ) {
-    this.aespArbiter = aespArbiter
-  }
-
   public async showSelector (): Promise<void> {
-    const asciidoctorExtensionsAuthorsTrusted = this.aespArbiter.asciidoctorExtensionsAuthorsTrusted()
+    const aespArbiter = AsciidoctorExtensionsSecurityPolicyArbiter.getInstance()
+    const asciidoctorExtensionsAuthorsTrusted = aespArbiter.asciidoctorExtensionsAuthorsTrusted()
 
     interface ExtensionPickItem extends vscode.QuickPickItem {
       readonly type: 'trust_asciidoctor_extensions_authors' | 'deny_asciidoctor_extensions_authors';
@@ -255,11 +261,11 @@ export class AsciidoctorExtensionsTrustModeSelector {
       return
     }
     if (userChoice.type === 'deny_asciidoctor_extensions_authors') {
-      await this.aespArbiter.denyAsciidoctorExtensionsAuthors()
+      await aespArbiter.denyAsciidoctorExtensionsAuthors()
     }
     if (userChoice.type === 'trust_asciidoctor_extensions_authors') {
-      await this.aespArbiter.enableAsciidoctorExtensions() // make sure that Asciidoctor.js extensions are enabled
-      await this.aespArbiter.trustAsciidoctorExtensionsAuthors()
+      await aespArbiter.enableAsciidoctorExtensions() // make sure that Asciidoctor.js extensions are enabled
+      await aespArbiter.trustAsciidoctorExtensionsAuthors()
     }
   }
 }

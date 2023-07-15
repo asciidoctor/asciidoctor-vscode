@@ -1,11 +1,7 @@
-/*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 import * as vscode from 'vscode'
-import { AsciidocEngine } from './asciidocEngine'
 import { githubSlugifier, Slug } from './slugify'
 import { SkinnyTextDocument } from './util/document'
+import { AsciidocLoader } from './asciidocLoader'
 
 export interface TocEntry {
   readonly slug: Slug;
@@ -18,14 +14,14 @@ export interface TocEntry {
 export class TableOfContentsProvider {
   private toc?: TocEntry[]
 
-  public constructor (private document: SkinnyTextDocument) {
+  public constructor (private readonly document: SkinnyTextDocument, private readonly asciidocLoader: AsciidocLoader) {
     this.document = document
   }
 
-  public getToc (): TocEntry[] {
+  public async getToc (): Promise<TocEntry[]> {
     if (!this.toc) {
       try {
-        this.toc = this.buildToc(this.document)
+        this.toc = await this.buildToc(this.document)
       } catch (e) {
         console.log(`Unable to build the Table Of Content for: ${this.document.fileName}`, e)
         this.toc = []
@@ -34,14 +30,14 @@ export class TableOfContentsProvider {
     return this.toc
   }
 
-  public lookup (fragment: string): TocEntry | undefined {
-    const toc = this.getToc()
+  public async lookup (fragment: string): Promise<TocEntry | undefined> {
+    const toc = await this.getToc()
     const slug = githubSlugifier.fromHeading(fragment)
     return toc.find((entry) => entry.slug.equals(slug))
   }
 
-  private buildToc (textDocument: SkinnyTextDocument): TocEntry[] {
-    const asciidocDocument = AsciidocEngine.load(textDocument)
+  private async buildToc (textDocument: SkinnyTextDocument): Promise<TocEntry[]> {
+    const asciidocDocument = await this.asciidocLoader.load(textDocument)
 
     const toc = asciidocDocument
       .findBy({ context: 'section' })
@@ -69,7 +65,10 @@ export class TableOfContentsProvider {
           break
         }
       }
-      const endLine = typeof end === 'number' ? end : textDocument.lineCount - 1
+      let endLine = typeof end === 'number' ? end : textDocument.lineCount - 1
+      if (endLine > textDocument.lineCount - 1) {
+        endLine = textDocument.lineCount - 1
+      }
       return {
         ...entry,
         location: new vscode.Location(textDocument.uri,

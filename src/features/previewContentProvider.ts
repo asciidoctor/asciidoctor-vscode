@@ -5,7 +5,7 @@ import { AsciidocPreviewConfigurationManager } from './previewConfig'
 import { WebviewResourceProvider } from '../util/resources'
 
 export class AsciidocContentProvider {
-  constructor (private readonly engine: AsciidocEngine, private readonly context: vscode.ExtensionContext) {}
+  constructor (private readonly asciidocEngine: AsciidocEngine, private readonly context: vscode.ExtensionContext) {}
 
   public async providePreviewHTML (
     asciidocDocument: vscode.TextDocument,
@@ -13,8 +13,7 @@ export class AsciidocContentProvider {
     editor: WebviewResourceProvider,
     line?: number
   ): Promise<string> {
-    const sourceUri = asciidocDocument.uri
-    const { output } = await this.engine.convert(sourceUri, asciidocDocument.getText(), this.context, editor, line)
-    return output
+    const { html } = await this.asciidocEngine.convertFromTextDocument(asciidocDocument, this.context, editor, line)
+    return html
   }
 }

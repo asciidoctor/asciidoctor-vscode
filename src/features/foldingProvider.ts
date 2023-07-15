@@ -1,11 +1,8 @@
-/*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 import * as vscode from 'vscode'
 import { FoldingRangeKind } from 'vscode'
 
 import { TableOfContentsProvider } from '../tableOfContentsProvider'
+import { AsciidocLoader } from '../asciidocLoader'
 
 //https://github.com/asciidoctor/asciidoctor/blob/0aad7459d1fe548219733b4a2b4f00fd3bf6f362/lib/asciidoctor/rx.rb#L76
 const conditionalStartRx = /^(\\)?(ifdef|ifndef|ifeval)::(\S*?(?:([,+])\S*?)?)\[(#{CC_ANY}+)?/
@@ -13,11 +10,14 @@ const conditionalEndRx = /^(\\)?(endif)::(\S*?(?:([,+])\S*?)?)\[(#{CC_ANY}+)?/
 const commentBlockRx = /^\/{4,}/
 
 export default class AsciidocFoldingRangeProvider implements vscode.FoldingRangeProvider {
-  public provideFoldingRanges (
+  constructor (private readonly asciidocLoader: AsciidocLoader) {
+  }
+
+  public async provideFoldingRanges (
     document: vscode.TextDocument,
     _token: vscode.CancellationToken
-  ): vscode.FoldingRange[] {
-    const foldingRanges = this.getHeaderFoldingRanges(document)
+  ): Promise<vscode.FoldingRange[]> {
+    const foldingRanges = await this.getHeaderFoldingRanges(document)
     return foldingRanges.concat(
       AsciidocFoldingRangeProvider.getConditionalFoldingRanges(document),
       AsciidocFoldingRangeProvider.getBlockFoldingRanges(document)
@@ -170,9 +170,9 @@ export default class AsciidocFoldingRangeProvider implements vscode.FoldingRange
     return foldingRanges
   }
 
-  private getHeaderFoldingRanges (document: vscode.TextDocument) {
-    const tableOfContentsProvider = new TableOfContentsProvider(document)
-    const tableOfContents = tableOfContentsProvider.getToc()
+  private async getHeaderFoldingRanges (document: vscode.TextDocument) {
+    const tableOfContentsProvider = new TableOfContentsProvider(document, this.asciidocLoader)
+    const tableOfContents = await tableOfContentsProvider.getToc()
 
     return tableOfContents.map((entry, startIndex) => {
       const start = entry.line

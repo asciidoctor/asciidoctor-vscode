@@ -1,11 +1,15 @@
 import * as assert from 'assert'
 import 'mocha'
 import * as vscode from 'vscode'
-import { AsciidocParser } from '../asciidocParser'
 import { AsciidocContributionProvider, AsciidocContributions } from '../asciidocExtensions'
-import { Range } from 'vscode'
 import { WebviewResourceProvider } from '../util/resources'
 import { extensionContext } from './helper'
+import { AsciidocEngine } from '../asciidocEngine'
+import { AsciidoctorConfig } from '../features/asciidoctorConfig'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
+import { InMemoryDocument } from './inMemoryDocument'
 
 class TestWebviewResourceProvider implements WebviewResourceProvider {
   asWebviewUri (resource: vscode.Uri): vscode.Uri {
@@ -47,26 +51,20 @@ suite('AsciiDoc parser with Antora support enabled', function () {
   test('convert Antora page', async () => {
     await extensionContext.workspaceState.update('antoraSupportSetting', true)
     await vscode.workspace.getConfiguration('asciidoc', null).update('antora.enableAntoraSupport', true)
-    const asciidocParser = new AsciidocParser(new AsciidocContributionProviderTest(extensionContext.extensionUri))
-    const result = await asciidocParser.convertUsingJavascript('Download from the {url-vscode-marketplace}[Visual Studio Code Marketplace].', {
-      uri: vscode.Uri.file(`${root}/antora/multiComponents/api/modules/auth/pages/page.adoc`),
-      fileName: 'page.adoc',
-      lineCount: 1,
-      getText (): string {
-        return ''
-      },
-      lineAt (line: number): vscode.TextLine {
-        return {
-          lineNumber: line,
-          text: 'string',
-          range: new Range(0, 0, 0, 0),
-          rangeIncludingLineBreak: new Range(0, 0, 0, 0),
-          firstNonWhitespaceCharacterIndex: 0,
-          isEmptyOrWhitespace: false,
-        }
-      },
-    },
-    extensionContext, new TestWebviewResourceProvider())
+    const asciidocParser = new AsciidocEngine(
+      new AsciidocContributionProviderTest(extensionContext.extensionUri),
+      new AsciidoctorConfig(),
+      new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+      new AsciidoctorDiagnostic('test')
+    )
+    const result = await asciidocParser.convertFromTextDocument(
+      new InMemoryDocument(
+        vscode.Uri.file(`${root}/antora/multiComponents/api/modules/auth/pages/page.adoc`),
+        'Download from the {url-vscode-marketplace}[Visual Studio Code Marketplace].'
+      ),
+      extensionContext,
+      new TestWebviewResourceProvider()
+    )
     assert.strictEqual(result.html.includes('<p>Download from the <a href="https://marketplace.visualstudio.com/vscode" data-href="https://marketplace.visualstudio.com/vscode">Visual Studio Code Marketplace</a>.</p>'), true)
   })
 })

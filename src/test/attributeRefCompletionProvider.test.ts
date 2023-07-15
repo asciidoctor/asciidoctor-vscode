@@ -1,9 +1,15 @@
 import 'mocha'
 import * as vscode from 'vscode'
+import { Position } from 'vscode'
 import assert from 'assert'
 import { AttributeReferenceProvider } from '../features/attributeReferenceProvider'
-import { Position } from 'vscode'
 import { createFile } from './workspaceHelper'
+import { AsciidocLoader } from '../asciidocLoader'
+import { AsciidoctorConfig } from '../features/asciidoctorConfig'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
+import { extensionContext } from './helper'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
 
 function filterByLabel (label: string): (CompletionItem) => boolean {
   return (item) => {
@@ -16,7 +22,12 @@ function filterByLabel (label: string): (CompletionItem) => boolean {
 
 async function findCompletionItems (uri: vscode.Uri, position: vscode.Position, filter?: (completionItem) => boolean) {
   const textDocument = await vscode.workspace.openTextDocument(uri)
-  const completionsItems = new AttributeReferenceProvider().provideCompletionItems(textDocument, position)
+  const asciidocLoader = new AsciidocLoader(
+    new AsciidoctorConfig(),
+    new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+    new AsciidoctorDiagnostic('test')
+  )
+  const completionsItems = await new AttributeReferenceProvider(asciidocLoader).provideCompletionItems(textDocument, position)
   if (filter) {
     return completionsItems.filter(filter)
   }
@@ -56,7 +67,7 @@ somethingVeryDifferent`)
     const items = await findCompletionItems(fileToAutoComplete, new Position(1, 22))
     assert.notStrictEqual(items.length, 0, 'There are completion provided although none are expected.')
   })
-  test('Should return attribute key defined in another file', async () => {
+  test('Should return an attribute defined in another file', async () => {
     const fileToAutoComplete = await createFile('fileToAutoComplete-attributeRef-differentFile.adoc', `= test
 include::file-referenced-with-an-attribute.adoc[]
 
@@ -134,5 +145,53 @@ Install version {
 
     completionsItems = await findCompletionItems(fileToAutoComplete, new Position(28, 17))
     assert.deepStrictEqual(completionsItems.length > 0, true, 'should provide attribute completion on paragraphs.')
+  })
+  test('Should return an attribute defined in .asciidoctorconfig', async () => {
+    const fileToAutoComplete = await createFile('autocompletion-from-asciidoctorconfig.adoc', `= test
+
+{
+    `)
+    createdFiles.push(fileToAutoComplete)
+    const asciidoctorConfigFile = await createFile('.asciidoctorconfig', ':attribute-defined-in-asciidoctorconfig: dummy value')
+    createdFiles.push(asciidoctorConfigFile)
+    const completionsItems = await findCompletionItems(fileToAutoComplete, new Position(3, 2), filterByLabel('attribute-defined-in-asciidoctorconfig'))
+    const completionItem = completionsItems[0]
+    assert.deepStrictEqual((completionItem.label as vscode.CompletionItemLabel).description, 'dummy value')
+    assert.deepStrictEqual(completionItem.insertText, '{attribute-defined-in-asciidoctorconfig}')
+  })
+  test('Should return an attribute defined in the plugin configuration', async () => {
+    const asciidocPreviewConfig = vscode.workspace.getConfiguration('asciidoc.preview', null)
+    await asciidocPreviewConfig.update('asciidoctorAttributes', {
+      'attribute-defined-in-config': 'dummy value',
+    })
+    const fileToAutoComplete = await createFile('autocompletion-from-plugin-configuration.adoc', `= test
+
+{
+    `)
+    createdFiles.push(fileToAutoComplete)
+    const completionsItems = await findCompletionItems(fileToAutoComplete, new Position(3, 2), filterByLabel('attribute-defined-in-config'))
+    const completionItem = completionsItems[0]
+    assert.deepStrictEqual((completionItem.label as vscode.CompletionItemLabel).description, 'dummy value')
+    assert.deepStrictEqual(completionItem.insertText, '{attribute-defined-in-config}')
+    // should remove test-workspace/.vscode/settings.json
+  })
+  test('Should return an attribute defined in another file (target contains an attribute reference)', async () => {
+    const asciidocPreviewConfig = vscode.workspace.getConfiguration('asciidoc.preview', null)
+    await asciidocPreviewConfig.update('asciidoctorAttributes', {
+      'include-target': 'attributes',
+    })
+    const fileToAutoComplete = await createFile('autocompletion-from-include-file-target-attrs.adoc', `= test
+include::autocompletion-{include-target}.adoc[]
+
+{
+    `)
+    createdFiles.push(fileToAutoComplete)
+    const fileReferencedWithAnAttribute = await createFile('autocompletion-attributes.adoc', ':foo: bar')
+    createdFiles.push(fileReferencedWithAnAttribute)
+    const completionsItems = await findCompletionItems(fileToAutoComplete, new Position(4, 2), filterByLabel('foo'))
+    const completionItem = completionsItems[0]
+    assert.deepStrictEqual((completionItem.label as vscode.CompletionItemLabel).description, 'bar')
+    assert.deepStrictEqual(completionItem.insertText, '{foo}')
+    // should remove test-workspace/.vscode/settings.json
   })
 })

@@ -1,10 +1,7 @@
-/*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 import * as vscode from 'vscode'
 import { TableOfContentsProvider, TocEntry } from '../tableOfContentsProvider'
 import { SkinnyTextDocument } from '../util/document'
+import { AsciidocLoader } from '../asciidocLoader'
 
 interface AsciidocSymbol {
   readonly level: number;
@@ -21,12 +18,12 @@ export default class AdocDocumentSymbolProvider implements vscode.DocumentSymbol
     level: -Infinity,
     children: [],
     parent: undefined,
-  }) {
+  }, private readonly asciidocLoader: AsciidocLoader) {
     this.root = root
   }
 
   public async provideDocumentSymbolInformation (document: SkinnyTextDocument): Promise<vscode.SymbolInformation[]> {
-    const toc = await new TableOfContentsProvider(document).getToc()
+    const toc = await new TableOfContentsProvider(document, this.asciidocLoader).getToc()
     return toc.map((entry) => this.toSymbolInformation(entry))
   }
 
@@ -35,7 +32,7 @@ export default class AdocDocumentSymbolProvider implements vscode.DocumentSymbol
     const startTime = (new Date()).getTime()
 
     if (this.lastSymbolCall === undefined || startTime > nextOKRunTime) {
-      const toc = await new TableOfContentsProvider(document).getToc()
+      const toc = await new TableOfContentsProvider(document, this.asciidocLoader).getToc()
       this.root = {
         level: -Infinity,
         children: [],

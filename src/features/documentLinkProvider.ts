@@ -5,7 +5,7 @@ import { getUriForLinkWithKnownExternalScheme } from '../util/links'
 import { similarArrayMatch } from '../similarArrayMatch'
 import { isSchemeBlacklisted } from '../linkSanitizer'
 import * as nls from 'vscode-nls'
-import { AsciidocParser } from '../asciidocParser'
+import { AsciidocIncludeItemsLoader } from '../asciidocLoader'
 
 /**
  * Reference: https://gist.github.com/dperini/729294
@@ -26,7 +26,7 @@ function normalizeLink (
     return externalSchemeUri
   }
 
-  // Assume it must be an relative or absolute file path
+  // Assume it must be a relative or absolute file path
   // Use a fake scheme to avoid parse warnings
   const tempUri = vscode.Uri.parse(`vscode-resource:${link}`)
 
@@ -43,9 +43,12 @@ function normalizeLink (
 }
 
 export default class LinkProvider implements vscode.DocumentLinkProvider {
-  public provideDocumentLinks (textDocument: vscode.TextDocument, _token: vscode.CancellationToken): vscode.DocumentLink[] {
+  constructor (private readonly asciidocIncludeItemsLoader: AsciidocIncludeItemsLoader) {
+  }
+
+  public async provideDocumentLinks (textDocument: vscode.TextDocument, _token: vscode.CancellationToken): Promise<vscode.DocumentLink[]> {
     // includes from the reader are resolved correctly but the line numbers may be offset and not exactly match the document
-    let baseDocumentProcessorIncludes = AsciidocParser.getBaseDocumentIncludeItems(textDocument)
+    let baseDocumentProcessorIncludes = await this.asciidocIncludeItemsLoader.getIncludeItems(textDocument)
     const includeDirective = /^(\\)?include::([^[]+)\[([^\n]+)?]$/
     // get includes from document text. These may be inside ifeval or ifdef but the line numbers are correct.
     const baseDocumentRegexIncludes = new Map()

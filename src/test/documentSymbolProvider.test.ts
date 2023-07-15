@@ -1,18 +1,24 @@
-/*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 import * as assert from 'assert'
 import 'mocha'
 import * as vscode from 'vscode'
 import DocumentSymbolProvider from '../features/documentSymbolProvider'
 import { InMemoryDocument } from './inMemoryDocument'
+import { AsciidocLoader } from '../asciidocLoader'
+import { AsciidoctorConfig } from '../features/asciidoctorConfig'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
+import { extensionContext } from './helper'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
 
 const testFileName = vscode.Uri.file('test.adoc')
 
 function getSymbolsForFile (fileContents: string) {
   const doc = new InMemoryDocument(testFileName, fileContents)
-  const provider = new DocumentSymbolProvider(null)
+  const provider = new DocumentSymbolProvider(null, new AsciidocLoader(
+    new AsciidoctorConfig(),
+    new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+    new AsciidoctorDiagnostic('text')
+  ))
   return provider.provideDocumentSymbols(doc)
 }
 

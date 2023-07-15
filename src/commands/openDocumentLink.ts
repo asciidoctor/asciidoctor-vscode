@@ -1,14 +1,10 @@
-/*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 import * as vscode from 'vscode'
 import { extname } from 'path'
 
 import { Command } from '../commandManager'
-import { AsciidocEngine } from '../asciidocEngine'
 import { TableOfContentsProvider } from '../tableOfContentsProvider'
 import { isAsciidocFile } from '../util/file'
+import { AsciidocLoader } from '../asciidocLoader'
 
 export interface OpenDocumentLinkArgs {
   path: string
@@ -19,8 +15,7 @@ export class OpenDocumentLinkCommand implements Command {
   private static readonly id = '_asciidoc.openDocumentLink'
   public readonly id = OpenDocumentLinkCommand.id
 
-  public constructor (private readonly engine: AsciidocEngine) {
-    this.engine = engine
+  public constructor (private readonly asciidocLoader: AsciidocLoader) {
   }
 
   public static createCommandUri (
@@ -56,7 +51,7 @@ export class OpenDocumentLinkCommand implements Command {
 
   private async tryRevealLine (editor: vscode.TextEditor, fragment?: string) {
     if (editor && fragment) {
-      const toc = new TableOfContentsProvider(editor.document)
+      const toc = new TableOfContentsProvider(editor.document, this.asciidocLoader)
       const entry = await toc.lookup(fragment)
       if (entry) {
         return editor.revealRange(new vscode.Range(entry.line, 0, entry.line, 0), vscode.TextEditorRevealType.AtTop)
