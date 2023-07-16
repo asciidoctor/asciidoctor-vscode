@@ -6,7 +6,22 @@ export function getWorkspaceUri (): vscode.Uri {
 
 export async function removeFiles (files: vscode.Uri[]) {
   for (const file of files) {
-    await vscode.workspace.fs.delete(file, { recursive: true })
+    if (await exists(file)) {
+      await vscode.workspace.fs.delete(file, { recursive: true })
+    }
+  }
+}
+
+async function exists (file: vscode.Uri): Promise<boolean> {
+  try {
+    await vscode.workspace.fs.stat(file)
+    return true
+  } catch (err) {
+    if (err instanceof FileSystemError && err.code === 'FileNotFound') {
+      return false
+    } else {
+      throw err
+    }
   }
 }
 

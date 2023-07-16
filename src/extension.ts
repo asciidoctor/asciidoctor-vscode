@@ -11,7 +11,7 @@ import AsciidocWorkspaceSymbolProvider from './features/workspaceSymbolProvider'
 import { Logger } from './logger'
 import { getAsciidocExtensionContributions } from './asciidocExtensions'
 import { AsciidoctorExtensionsSecurityPolicyArbiter, AsciidoctorExtensionsTrustModeSelector, ExtensionContentSecurityPolicyArbiter, PreviewSecuritySelector } from './security'
-import { AsciidocFileIncludeAutoCompletionMonitor } from './util/includeAutoCompletion'
+import { AsciidocTargetPathAutoCompletionMonitor } from './util/includeAutoCompletion'
 import { AttributeReferenceProvider } from './features/attributeReferenceProvider'
 import { BuiltinDocumentAttributeProvider } from './features/builtinDocumentAttributeProvider'
 import AsciidocFoldingRangeProvider from './features/foldingProvider'
@@ -71,7 +71,7 @@ export async function activate (context: vscode.ExtensionContext) {
   const symbolProvider = new AdocDocumentSymbolProvider(null, asciidocLoader)
   const previewManager = new AsciidocPreviewManager(contentProvider, logger, contributionProvider)
   context.subscriptions.push(previewManager)
-  context.subscriptions.push(new AsciidocFileIncludeAutoCompletionMonitor())
+  context.subscriptions.push(new AsciidocTargetPathAutoCompletionMonitor(asciidocLoader))
   context.subscriptions.push(await AntoraSupportManager.getInstance(context.workspaceState))
   context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider))
   context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider(asciidocIncludeItemsLoader)))
