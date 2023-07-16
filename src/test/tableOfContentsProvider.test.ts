@@ -55,7 +55,7 @@ suite('asciidoc.TableOfContentsProvider', () => {
     const mainContent = `= test
 
 content`
-    const mainFile = await createFile('tableofcontents-main-document.adoc', mainContent)
+    const mainFile = await createFile(mainContent, 'tableofcontents-main-document.adoc')
     createdFiles.push(mainFile)
     const provider = new TableOfContentsProvider(new InMemoryDocument(mainFile, mainContent), new AsciidocLoader(
       new AsciidoctorConfig(),
@@ -68,13 +68,13 @@ content`
   })
 
   test('Should include the document title in the TOC (when using an include just below it)', async () => {
-    createdFiles.push(await createFile('tableofcontents-attrs.adoc', `:attr: value
-`))
+    createdFiles.push(await createFile(`:attr: value
+`, 'tableofcontents-attrs.adoc'))
     const mainContent = `= test
 include::attrs.adoc[]
 
 content`
-    const mainFile = await createFile('tableofcontents-main-document.adoc', mainContent)
+    const mainFile = await createFile(mainContent, 'tableofcontents-main-document.adoc')
     createdFiles.push(mainFile)
     const provider = new TableOfContentsProvider(new InMemoryDocument(mainFile, mainContent), new AsciidocLoader(
       new AsciidoctorConfig(),
