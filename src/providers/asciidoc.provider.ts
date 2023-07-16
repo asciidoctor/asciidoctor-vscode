@@ -1,105 +1,99 @@
 import * as vscode from 'vscode'
 import * as path from 'path'
-import { createContext, Context } from './createContext'
+import { createContext } from './createContext'
 import {
   FileInfo,
   getPathOfFolderToLookupFiles,
   getChildrenOfPath,
   sortFilesAndDirectories,
 } from '../util/file'
+import { AsciidocLoader } from '../asciidocLoader'
 
-export const AsciidocProvider = {
-  provideCompletionItems,
-}
+const macroWithTargetPathRx = /(include::|image::|image:)\S*/gi
 
-export async function provideCompletionItems (
-  document: vscode.TextDocument,
-  position: vscode.Position
-): Promise<vscode.CompletionItem[]> {
-  const context = createContext(document, position)
-
-  return shouldProvide(context)
-    ? provide(context)
-    : Promise.resolve([])
-}
-
-/**
- * Checks if we should provide any CompletionItems
- * @param context
- */
-function shouldProvide (context: Context): boolean {
-  return /(include::|image::|image:)\S*/gi.test(context.textFullLine)
-}
-
-/**
- * Provide Completion Items
- */
-async function provide (
-  context: Context
-): Promise<vscode.CompletionItem[]> {
-  const documentText = context.document.getText()
-  const pathExtractedFromIncludeString = context.textFullLine.replace('include::', '').replace('image::', '').replace('image:', '')
-  let entryDir = pathExtractedFromIncludeString.substr(0, pathExtractedFromIncludeString.lastIndexOf('/'))
-
-  // use path defined in a variable used
-  if (entryDir.startsWith('{')) {
-    const variableName = entryDir.replace('{', '').replace('}', '')
-    const match = documentText.match(new RegExp(`:${variableName}:.*`, 'g'))
-    if (match && match[0]) {
-      entryDir = match[0].replace(`:${variableName}: `, '')
-    }
+export class TargetPathCompletionProvider {
+  constructor (private readonly asciidocLoader: AsciidocLoader) {
   }
 
-  const documentPath = context.document.uri.fsPath
-  const rootPath = documentPath.substr(0, documentPath.lastIndexOf('/'))
-  const searchPath = getPathOfFolderToLookupFiles(
-    context.document.uri.fsPath,
-    path.join(rootPath, entryDir)
-  )
+  async provideCompletionItems (textDocument: vscode.TextDocument, position: vscode.Position): Promise<vscode.CompletionItem[]> {
+    const context = createContext(textDocument, position)
+    if (macroWithTargetPathRx.test(context.textFullLine)) {
+      const documentText = context.document.getText()
+      const pathExtractedFromMacroString = context.textFullLine.replace('include::', '').replace('image::', '').replace('image:', '')
+      let entryDir = pathExtractedFromMacroString.slice(0, pathExtractedFromMacroString.lastIndexOf('/'))
 
-  const childrenOfPath = await getChildrenOfPath(searchPath)
-
-  const items = sortFilesAndDirectories(childrenOfPath)
-
-  const levelUpCompletionItem: vscode.CompletionItem = {
-    label: '..',
-    kind: vscode.CompletionItemKind.Folder,
-    sortText: '10_..',
-  }
-  const globalVariableDefinitions = documentText.match(/:\S+:.*/g)
-
-  let variablePathSubstitutions = []
-  // TODO: prevent editor.autoClosingBrackets at this point until finished inserting
-  const editorConfig = vscode.workspace.getConfiguration('editor')
-  const doAutoCloseBrackets = editorConfig.get('autoClosingBrackets') === 'always'
-  if (globalVariableDefinitions) {
-    variablePathSubstitutions = globalVariableDefinitions.map((variableDef) => {
-      const label = variableDef.match(/:\S+:/g)[0].replace(/:/g, '')
-      return {
-        label: `{${label}}`,
-        kind: vscode.CompletionItemKind.Variable,
-        sortText: `10_${label}`,
-        insertText: `{${label}${doAutoCloseBrackets ? '' : '}'}`, // } curly bracket will be closed automatically by default
-      }
-    })
-  }
-
-  return [
-    levelUpCompletionItem,
-    ...variablePathSubstitutions,
-    ...items.map((child) => {
-      const result = createPathCompletionItem(child)
-      result.insertText = result.kind === vscode.CompletionItemKind.File ? child.file + '[]' : child.file
-      if (result.kind === vscode.CompletionItemKind.Folder) {
-        result.command = {
-          command: 'default:type',
-          title: 'triggerSuggest',
-          arguments: [{ text: '/' }],
+      // use path defined in a variable used
+      if (entryDir.startsWith('{')) {
+        const variableName = entryDir.replace('{', '').replace('}', '')
+        const match = documentText.match(new RegExp(`:${variableName}:.*`, 'g'))
+        if (match && match[0]) {
+          entryDir = match[0].replace(`:${variableName}: `, '')
         }
       }
-      return result
-    }),
-  ]
+
+      const documentPath = context.document.uri.fsPath
+      let documentParentPath = documentPath.slice(0, documentPath.lastIndexOf('/'))
+      if (context.textFullLine.includes('image:')) {
+        const imagesDirValue = (await this.asciidocLoader.load(textDocument)).getAttribute('imagesdir', '')
+        if (imagesDirValue) {
+          documentParentPath = path.join(documentParentPath, imagesDirValue)
+        }
+      }
+
+      const searchPath = getPathOfFolderToLookupFiles(
+        context.document.uri.fsPath,
+        path.join(documentParentPath, entryDir)
+      )
+
+      const childrenOfPath = await getChildrenOfPath(searchPath)
+      const items = sortFilesAndDirectories(childrenOfPath)
+
+      const levelUpCompletionItem: vscode.CompletionItem = {
+        label: '..',
+        kind: vscode.CompletionItemKind.Folder,
+        sortText: '10_..',
+      }
+      // TODO: we should use `document.getAttributes()` (and remove built-in / unnecessary / unrelated attributes)
+      const globalVariableDefinitions = documentText.match(/:\S+:.*/g)
+
+      let variablePathSubstitutions = []
+      // TODO: prevent editor.autoClosingBrackets at this point until finished inserting
+      const editorConfig = vscode.workspace.getConfiguration('editor')
+      const doAutoCloseBrackets = editorConfig.get('autoClosingBrackets') === 'always'
+      if (globalVariableDefinitions) {
+        variablePathSubstitutions = globalVariableDefinitions.map((variableDef) => {
+          const label = variableDef.match(/:\S+:/g)[0].replace(/:/g, '')
+          if (label !== 'imagesdir') {
+            return {
+              label: `{${label}}`,
+              kind: vscode.CompletionItemKind.Variable,
+              sortText: `10_${label}`,
+              insertText: `{${label}${doAutoCloseBrackets ? '' : '}'}`, // } curly bracket will be closed automatically by default
+            }
+          }
+          return undefined
+        }).filter((e) => e) // remove undefined
+      }
+
+      return [
+        levelUpCompletionItem,
+        ...variablePathSubstitutions,
+        ...items.map((child) => {
+          const result = createPathCompletionItem(child)
+          result.insertText = result.kind === vscode.CompletionItemKind.File ? child.file + '[]' : child.file
+          if (result.kind === vscode.CompletionItemKind.Folder) {
+            result.command = {
+              command: 'default:type',
+              title: 'triggerSuggest',
+              arguments: [{ text: '/' }],
+            }
+          }
+          return result
+        }),
+      ]
+    }
+    return []
+  }
 }
 
 function createPathCompletionItem (
