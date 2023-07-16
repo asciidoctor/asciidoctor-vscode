@@ -55,9 +55,9 @@ suite('asciidoc.Asciidoctorconfig', () => {
   const configFileNames = ['.asciidoctorconfig', '.asciidoctorconfig.adoc']
   configFileNames.forEach((configFileName) => {
     test(`Pick up ${configFileName} from root workspace folder`, async () => {
-      const configFile = await createFile('.asciidoctorconfig', ':application-name: Asciidoctor VS Code Extension')
+      const configFile = await createFile(':application-name: Asciidoctor VS Code Extension', '.asciidoctorconfig')
       createdFiles.push(configFile)
-      const textDocument = await createFile('attribute-defined-in-asciidoctorconfig.adoc', '= {application-name}')
+      const textDocument = await createFile('= {application-name}', 'attribute-defined-in-asciidoctorconfig.adoc')
       createdFiles.push(textDocument)
       const asciidocParser = new AsciidocEngine(
         new AsciidocContributionProviderTest(extensionContext.extensionUri),
