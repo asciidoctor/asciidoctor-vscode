@@ -146,6 +146,7 @@ export class AsciidocEngine {
       attributes: {
         ...attributes,
         ...antoraAttributes,
+        '!data-uri': '', // disable data-uri since Asciidoctor.js is unable to read files from a VS Code workspace.
       },
       backend: 'webview-html5',
       extension_registry: registry,
