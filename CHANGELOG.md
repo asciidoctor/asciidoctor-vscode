@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Bug fixes
+
+- Ignore Antora documentation component symlinks (#755)
+- Disable data-uri in preview (not supported) (#756)
+- Provide image completion relative to the `imagesdir` attribute (#759)
+- Move `getContent` call after generating the document header (#762)
+- Remove the `imagesdir` attribute from image paths when drag and dropping images in the editor (#761)
 
 ## 3.1.2 (2023-07-15)
 
