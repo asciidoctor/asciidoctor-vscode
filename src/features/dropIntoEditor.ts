@@ -1,11 +1,7 @@
-/*---------------------------------------------------------------------------------------------
- *  Copyright (c) Microsoft Corporation. All rights reserved.
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 import * as path from 'path'
 import * as vscode from 'vscode'
 import * as URI from 'vscode-uri'
+import { AsciidocLoader } from '../asciidocLoader'
 
 const imageFileExtensions = new Set<string>([
   '.bmp',
@@ -23,26 +19,32 @@ const imageFileExtensions = new Set<string>([
 ])
 
 export class DropImageIntoEditorProvider implements vscode.DocumentDropEditProvider {
-  async provideDocumentDropEdits (document: vscode.TextDocument,
+  constructor (private asciidocLoader: AsciidocLoader) {
+  }
+
+  async provideDocumentDropEdits (
+    textDocument: vscode.TextDocument,
     _position: vscode.Position,
     dataTransfer: vscode.DataTransfer,
     token: vscode.CancellationToken): Promise<vscode.DocumentDropEdit | undefined> {
     // Check if drop config is enabled
-    const enabled = vscode.workspace.getConfiguration('asciidoc', document).get('editor.drop.enabled', true)
+    const enabled = vscode.workspace.getConfiguration('asciidoc', textDocument).get('editor.drop.enabled', true)
     if (!enabled) {
       return undefined
     }
 
     // Return the text or snippet to insert at the drop location.
-    const snippet = await tryGetUriListSnippet(document, dataTransfer, token)
+    const snippet = await tryGetUriListSnippet(textDocument, this.asciidocLoader, dataTransfer, token)
     return snippet ? new vscode.DocumentDropEdit(snippet) : undefined
   }
 }
 
-async function tryGetUriListSnippet (document: vscode.TextDocument,
+async function tryGetUriListSnippet (
+  textDocument: vscode.TextDocument,
+  asciidocLoader: AsciidocLoader,
   dataTransfer: vscode.DataTransfer,
   token: vscode.CancellationToken): Promise<vscode.SnippetString | undefined> {
-  // Get droped files uris
+  // Get dropped files uris
   const urlList = await dataTransfer.get('text/uri-list')?.asString()
   if (!urlList || token.isCancellationRequested) {
     return undefined
@@ -56,23 +58,33 @@ async function tryGetUriListSnippet (document: vscode.TextDocument,
   if (!uris.length) {
     return
   }
-  // Drop location uri
-  const docUri = document.uri
 
+  const document = await asciidocLoader.load(textDocument)
+  const imagesDirectory = document.getAttribute('imagesdir')
   const snippet = new vscode.SnippetString()
 
+  // Drop location uri
+  const docUri = textDocument.uri
   // Get uri for each uris list value
-  uris.forEach((uri, i) => {
-    const imagePath = docUri.scheme === uri.scheme && docUri.authority === uri.authority
-      ? encodeURI(path.relative(URI.Utils.dirname(docUri).fsPath, uri.fsPath).replace(/\\/g, '/'))
-      : uri.toString(false)
+  uris.forEach((uri, index) => {
+    let imagePath
+    if (docUri.scheme === uri.scheme && docUri.authority === uri.authority) {
+      const imageRelativePath = path.relative(URI.Utils.dirname(docUri).fsPath, uri.fsPath).replace(/\\/g, '/')
+      if (imagesDirectory && imageRelativePath.startsWith(imagesDirectory)) {
+        imagePath = encodeURI(imageRelativePath.substring(imagesDirectory.length))
+      } else {
+        imagePath = encodeURI(imageRelativePath)
+      }
+    } else {
+      imagePath = uri.toString(false)
+    }
 
-    // Check that the droped file is an image
+    // Check that the dropped file is an image
     const ext = URI.Utils.extname(uri).toLowerCase()
     snippet.appendText(imageFileExtensions.has(ext) ? `image::${imagePath}[]` : '')
 
-    // Add a line break if multiple droped documents
-    if (i <= uris.length - 1 && uris.length > 1) {
+    // Add a line break if multiple dropped documents
+    if (index <= uris.length - 1 && uris.length > 1) {
       snippet.appendText('\n')
     }
   })
