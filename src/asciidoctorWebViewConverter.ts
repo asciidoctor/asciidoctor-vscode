@@ -141,7 +141,6 @@ export class AsciidoctorWebViewConverter {
       const nonce = new Date().getTime() + '' + new Date().getMilliseconds()
       const webviewResourceProvider = this.webviewResourceProvider
       const csp = getCspForResource(webviewResourceProvider, this.securityLevel, nonce)
-      const content = node.getContent()
       const syntaxHighlighter = node.$syntax_highlighter()
       let assetUriScheme = node.getAttribute('asset-uri-scheme', 'https')
       if (assetUriScheme.trim() !== '') {
@@ -174,7 +173,7 @@ export class AsciidoctorWebViewConverter {
         ${headerDocinfo}
         ${this.getDocumentHeader(node)}
         <div id="content">
-          ${content}
+          ${node.getContent()}
         </div>
         ${this.generateFootnotes(node)}
         ${this.generateFooter(node)}
