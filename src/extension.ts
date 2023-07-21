@@ -79,7 +79,7 @@ export async function activate (context: vscode.ExtensionContext) {
   context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new AttributeReferenceProvider(asciidocLoader), '{'))
   context.subscriptions.push(vscode.languages.registerCompletionItemProvider(selector, new BuiltinDocumentAttributeProvider(), ':'))
   context.subscriptions.push(vscode.languages.registerFoldingRangeProvider(selector, new AsciidocFoldingRangeProvider(asciidocLoader)))
-  context.subscriptions.push(vscode.languages.registerDocumentDropEditProvider(selector, new DropImageIntoEditorProvider()))
+  context.subscriptions.push(vscode.languages.registerDocumentDropEditProvider(selector, new DropImageIntoEditorProvider(asciidocLoader)))
   const previewSecuritySelector = new PreviewSecuritySelector(extensionContentSecurityPolicy, previewManager)
   const commandManager = new CommandManager()
   context.subscriptions.push(commandManager)
