@@ -6,7 +6,6 @@ import * as path from 'path'
 import AntoraCompletionProvider from './antoraCompletionProvider'
 import { disposeAll } from '../../util/dispose'
 import * as nls from 'vscode-nls'
-import classifyContent from '@antora/content-classifier'
 import ContentCatalog from '@antora/content-classifier/lib/content-catalog'
 
 const localize = nls.loadMessageBundle()
@@ -279,6 +278,10 @@ export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceS
           files,
         }
       })))
+    let classifyContent = await import('@antora/content-classifier')
+    if ('default' in classifyContent) {
+      classifyContent = classifyContent.default // default export
+    }
     const contentCatalog = await classifyContent({
       site: {},
     }, contentAggregate)

@@ -2,7 +2,7 @@
 
 const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const { DefinePlugin } = require('webpack')
+const { ProvidePlugin } = require('webpack')
 
 module.exports = {
     entry: {
@@ -27,7 +27,7 @@ module.exports = {
             'crypto': false,
             'stream': false,
             'path': require.resolve('path-browserify'),
-            'util': false,
+            'util': require.resolve('util'),
             'querystring': require.resolve('querystring'),
             'tty': require.resolve('tty-browserify'),
             'worker_threads': require.resolve('worker-thread')
@@ -67,7 +67,7 @@ module.exports = {
     },
     amd: false, // disable amd
     // yes, really source maps
-    devtool: 'source-map',
+    devtool: 'nosources-source-map',
     plugins: [
         new CopyWebpackPlugin({
             patterns: [
@@ -79,9 +79,8 @@ module.exports = {
                 }
             ]
         }),
-        new DefinePlugin({
-            'process.env': JSON.stringify({}),
-            'process.env.BROWSER_ENV': JSON.stringify('true')
+        new ProvidePlugin({
+            process: 'process/browser' // provide a shim for the global `process` variable
         })
     ]
 }

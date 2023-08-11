@@ -29,7 +29,7 @@ export class AsciidocTextDocument {
         return workspaceFolder.uri.fsPath
       }
     }
-    return process.env.BROWSER_ENV
+    return 'browser' in process && (process as any).browser === true
       ? undefined
       : path.dirname(path.resolve(this.uri.fsPath))
   }
