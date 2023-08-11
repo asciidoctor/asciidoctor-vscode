@@ -63,6 +63,7 @@ export class AsciidocEngine {
         env: 'vscode',
         ...asciidoctorAttributes,
       },
+      backend,
       extension_registry: registry,
       header_footer: true,
       safe: 'unsafe',

@@ -19,13 +19,9 @@ export class SaveDocbook implements Command {
     const textDocument = editor.document
 
     const docPath = path.parse(path.resolve(textDocument.fileName))
-    let fsPath
-
-    if (textDocument.isUntitled) {
-      fsPath = path.join(docPath.dir, 'untitled.xml')
-    } else {
-      fsPath = path.join(docPath.dir, docPath.name + '.xml')
-    }
+    const fsPath = textDocument.isUntitled
+      ? path.join(docPath.dir, 'untitled.xml')
+      : path.join(docPath.dir, docPath.name + '.xml')
 
     const { output } = await this.engine.export(textDocument, 'docbook5')
 
@@ -34,7 +30,7 @@ export class SaveDocbook implements Command {
         vscode.window.showErrorMessage('Error writing file ' + fsPath + '\n' + err.toString())
         return
       }
-      vscode.window.showInformationMessage('Successfully converted to ', fsPath)
+      vscode.window.showInformationMessage('Successfully converted to DocBook 5', fsPath)
         .then((selection) => {
           if (selection === fsPath) {
             switch (process.platform) {
