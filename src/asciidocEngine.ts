@@ -31,7 +31,7 @@ export class AsciidocEngine {
   ) {
     // Asciidoctor.js in the browser environment works with URIs however for desktop clients
     // the "stylesdir" attribute is expected to look like a file system path (especially on Windows)
-    if (process.env.BROWSER_ENV) {
+    if ('browser' in process && (process as any).browser === true) {
       this.stylesdir = vscode.Uri.joinPath(contributionProvider.extensionUri, 'media').toString()
     } else {
       this.stylesdir = vscode.Uri.joinPath(contributionProvider.extensionUri, 'media').fsPath
