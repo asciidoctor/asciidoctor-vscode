@@ -14,4 +14,6 @@ Please share relevant sample content. Or better yet, provide a link to a [minima
 
 We'll also need your system information (get it under "Help" -> "About" in VS Code). Share the installed extension version (<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd> or <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd> on macOS).
 
-Provide steps to reproduce the issue and, if applicable, add screenshots to make it easier to understand.
+Provide steps to reproduce the issue and, if applicable, add screenshots to make it easier to understand. There is also extension logs where errors show up. Go to the Command Palette and select the option 'Developer: Open Extension Logs Folder'.
+
+Look among the logs there for errors.
