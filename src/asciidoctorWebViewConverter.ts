@@ -58,19 +58,20 @@ const previewStrings = {
 function getCspForResource (webviewResourceProvider: WebviewResourceProvider, securityLevel: AsciidocPreviewSecurityLevel, nonce: string): string {
   const rule = webviewResourceProvider.cspSource
   const highlightjsInlineScriptHash = 'sha256-ZrDBcrmObbqhVV/Mag2fT/y08UJGejdW7UWyEsi4DXw='
+  // add font-src about: as a workaround: https://github.com/mathjax/MathJax/issues/256#issuecomment-37990603
   switch (securityLevel) {
     case AsciidocPreviewSecurityLevel.AllowInsecureContent:
-      return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' ${rule} http: https: data:; media-src 'self' ${rule} http: https: data:; script-src 'nonce-${nonce}' '${highlightjsInlineScriptHash}'; style-src 'self' ${rule} 'unsafe-inline' http: https: data:; font-src 'self' ${rule} http: https: data:;">`
+      return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' ${rule} http: https: data:; media-src 'self' ${rule} http: https: data:; script-src 'nonce-${nonce}' '${highlightjsInlineScriptHash}' https://*.vscode-cdn.net/; style-src 'self' ${rule} 'unsafe-inline' http: https: data:; font-src 'self' ${rule} http: https: data: about:;">`
 
     case AsciidocPreviewSecurityLevel.AllowInsecureLocalContent:
-      return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' ${rule} https: data: http://localhost:* http://127.0.0.1:*; media-src 'self' ${rule} https: data: http://localhost:* http://127.0.0.1:*; script-src 'nonce-${nonce}' '${highlightjsInlineScriptHash}'; style-src 'self' ${rule} 'unsafe-inline' https: data: http://localhost:* http://127.0.0.1:*; font-src 'self' ${rule} https: data: http://localhost:* http://127.0.0.1:*;">`
+      return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' ${rule} https: data: http://localhost:* http://127.0.0.1:*; media-src 'self' ${rule} https: data: http://localhost:* http://127.0.0.1:*; script-src 'nonce-${nonce}' '${highlightjsInlineScriptHash}' https://*.vscode-cdn.net/; style-src 'self' ${rule} 'unsafe-inline' https: data: http://localhost:* http://127.0.0.1:*; font-src 'self' ${rule} https: data: http://localhost:* http://127.0.0.1:* about:;">`
 
     case AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent:
       return '<meta http-equiv="Content-Security-Policy" content="">'
 
     case AsciidocPreviewSecurityLevel.Strict:
     default:
-      return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' ${rule} https: data:; media-src 'self' ${rule} https: data:; script-src 'nonce-${nonce}' '${highlightjsInlineScriptHash}'; style-src 'self' ${rule} 'unsafe-inline' https: data:; font-src 'self' ${rule} https: data:;">`
+      return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' ${rule} https: data:; media-src 'self' ${rule} https: data:; script-src 'nonce-${nonce}' '${highlightjsInlineScriptHash}' https://*.vscode-cdn.net/; style-src 'self' ${rule} 'unsafe-inline' https: data:; font-src 'self' ${rule} https: data: about:;">`
   }
 }
 
