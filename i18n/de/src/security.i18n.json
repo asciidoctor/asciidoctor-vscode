@@ -1,0 +1,19 @@
+{
+  "security.strict.title": "Strikt",
+  "security.strict.description": "Nur sichere Inhalte laden.",
+  "security.insecureLocalContent.title": "Unsichere lokale Inhalte erlauben.",
+  "security.insecureLocalContent.description": "Erlaube das Laden von Inhalten über HTTP von localhost.",
+  "security.insecureContent.title": "Unsichere Inhalte erlauben.",
+  "security.insecureContent.description": "Erlaube das Laden von Inhalten über HTTP.",
+  "security.disable.title": "Deaktivieren",
+  "security.disable.description": "Alle Inhalte und Skriptausführung erlauben. Nicht empfohlen.",
+  "security.enableSecurityWarning.title": "Sicherheitswarnung im Arbeitsbereich aktivieren.",
+  "security.disableSecurityWarning.title": "Sicherheitswarnung im Arbeitsbereich deaktivieren.",
+  "security.showPreviewSecuritySelector.title": "Sicherheitseinstellung für Asciidoc Vorschau in diesem Arbeitsbereich auswählen.",
+  "security.restrictAsciidoctorExtensionsAuthors.title": "Nicht Vertrauenswürdig",
+  "security.restrictAsciidoctorExtensionsAuthors.description": "Ausführung von Asciidoctor.js Erweiterungen wird verhindert.",
+  "security.trustAsciidoctorExtensionsAuthors.title": "Vertrauenswürdig",
+  "security.trustAsciidoctorExtensionsAuthors.description": "Ausführung von Asciidoctor.js Erweiterungen wird gestattet.",
+  "security.asciidoctorExtensionsTrustModeSelector.title": "Einschränkungen für Asciidoctor.js Erweiterungen in diesen Arbeitsbereich auswählen.",
+  "security.toggleSecurityWarning.description": "Bitte beachten: Diese Einstellung hat keine Auswirkungen auf die Sicherheitsstufe für Inhalte."
+}
