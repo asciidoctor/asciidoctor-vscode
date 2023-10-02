@@ -85,4 +85,38 @@ content`
     const documentTitleEntry = toc.find((entry) => entry.text === 'test' && entry.line === 0)
     assert.deepStrictEqual(documentTitleEntry !== undefined, true, 'should include the document title in the TOC')
   })
+
+  test('Should properly decode HTML entities', async () => {
+    const doc = new InMemoryDocument(vscode.Uri.file('test.adoc'), `= Title
+
+== Dungeons & Dragons
+
+== Let's do it!`)
+    const provider = new TableOfContentsProvider(doc, new AsciidocLoader(
+      new AsciidoctorConfig(),
+      new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+      new AsciidoctorDiagnostic('test')
+    ))
+
+    const toc = await provider.getToc()
+    const ddEntry = toc.find((t) => t.text === 'Dungeons & Dragons')
+    assert.strictEqual(ddEntry !== null, true, 'should find an entry with title: Dungeons & Dragons')
+    assert.deepStrictEqual({
+      text: ddEntry.text,
+      slug: ddEntry.slug.value,
+    }, {
+      text: 'Dungeons & Dragons',
+      slug: '_dungeons_dragons',
+    })
+    console.log(toc.map((t) => t.text))
+    const ldiEntry = toc.find((t) => t.text === 'Let’s do it!')
+    assert.strictEqual(ldiEntry !== null, true, 'should find an entry with title: Let’s do it!')
+    assert.deepStrictEqual({
+      text: ldiEntry.text,
+      slug: ldiEntry.slug.value,
+    }, {
+      text: 'Let’s do it!',
+      slug: '_lets_do_it',
+    })
+  })
 })

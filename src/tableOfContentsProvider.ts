@@ -1,4 +1,5 @@
 import * as vscode from 'vscode'
+import { decode as htmlEntitiesDecode } from 'html-entities'
 import { githubSlugifier, Slug } from './slugify'
 import { SkinnyTextDocument } from './util/document'
 import { AsciidocLoader } from './asciidocLoader'
@@ -48,7 +49,7 @@ export class TableOfContentsProvider {
         }
         return {
           slug: new Slug(section.getId()),
-          text: section.getTitle(),
+          text: htmlEntitiesDecode(section.getTitle()),
           level: section.getLevel(),
           line: lineNumber,
           location: new vscode.Location(textDocument.uri,
