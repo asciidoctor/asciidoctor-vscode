@@ -1,6 +1,7 @@
 import * as vscode from 'vscode'
 import { AsciidocPreviewManager } from './features/previewManager'
 import * as nls from 'vscode-nls'
+import { getWorkspaceFolder, getWorkspaceFolders } from './util/workspace'
 
 const localize = nls.loadMessageBundle()
 
@@ -68,14 +69,15 @@ export class ExtensionContentSecurityPolicyArbiter implements ContentSecurityPol
   }
 
   private getRoot (resource: vscode.Uri): vscode.Uri {
-    if (vscode.workspace.workspaceFolders) {
-      const folderForResource = vscode.workspace.getWorkspaceFolder(resource)
+    const workspaceFolder = getWorkspaceFolders()
+    if (workspaceFolder) {
+      const folderForResource = getWorkspaceFolder(resource)
       if (folderForResource) {
         return folderForResource.uri
       }
 
-      if (vscode.workspace.workspaceFolders.length) {
-        return vscode.workspace.workspaceFolders[0].uri
+      if (workspaceFolder.length) {
+        return workspaceFolder[0].uri
       }
     }
 
@@ -172,16 +174,8 @@ export class AsciidoctorExtensionsSecurityPolicyArbiter {
     return AsciidoctorExtensionsSecurityPolicyArbiter.instance
   }
 
-  public asciidoctorExtensionsAllowed (): boolean {
-    return this.context.workspaceState.get<boolean>(this.allowAsciidoctorExtensionsKey, false)
-  }
-
   public async enableAsciidoctorExtensions (): Promise<void> {
     return this.setAllowAsciidoctorExtensions(true)
-  }
-
-  public async disableAsciidoctorExtensions (): Promise<void> {
-    return this.setAllowAsciidoctorExtensions(false)
   }
 
   public asciidoctorExtensionsAuthorsTrusted (): boolean {

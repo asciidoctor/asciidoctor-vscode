@@ -1,8 +1,6 @@
+import os from 'os'
 import vscode, { FileSystemError, FileType } from 'vscode'
-
-export function getWorkspaceUri (): vscode.Uri {
-  return vscode.workspace.workspaceFolders[0].uri
-}
+import { getDefaultWorkspaceFolderUri } from '../util/workspace'
 
 export async function removeFiles (files: vscode.Uri[]) {
   for (const file of files) {
@@ -26,8 +24,13 @@ async function exists (file: vscode.Uri): Promise<boolean> {
 }
 
 export async function createFile (content: string, ...pathSegments: string[]): Promise<vscode.Uri> {
-  const file = vscode.Uri.joinPath(getWorkspaceUri(), ...pathSegments)
+  let file = vscode.Uri.joinPath(getDefaultWorkspaceFolderUri(), ...pathSegments)
   await vscode.workspace.fs.writeFile(file, Buffer.from(content))
+  if (os.platform() === 'win32') {
+    // normalize Windows drive letter
+    // https://github.com/microsoft/vscode/issues/194692
+    file = file.with({ path: file.path.replace(/^\/([A-Z]):.*/, (v) => v.toLowerCase()) })
+  }
   return file
 }
 
@@ -35,7 +38,7 @@ export async function createDirectories (...pathSegments: string[]): Promise<voi
   const currentPath: string[] = []
   for (const pathSegment of pathSegments) {
     currentPath.push(pathSegment)
-    const dir = vscode.Uri.joinPath(getWorkspaceUri(), ...currentPath)
+    const dir = vscode.Uri.joinPath(getDefaultWorkspaceFolderUri(), ...currentPath)
     try {
       const stat = await vscode.workspace.fs.stat(dir)
       if (stat.type === (FileType.Directory | FileType.SymbolicLink)) {
@@ -54,16 +57,24 @@ export async function createDirectories (...pathSegments: string[]): Promise<voi
 }
 
 export async function createDirectory (...pathSegments: string[]): Promise<vscode.Uri> {
-  const dir = vscode.Uri.joinPath(getWorkspaceUri(), ...pathSegments)
+  let dir = vscode.Uri.joinPath(getDefaultWorkspaceFolderUri(), ...pathSegments)
   await vscode.workspace.fs.createDirectory(dir)
+  if (os.platform() === 'win32') {
+    // normalize Windows drive letter
+    // https://github.com/microsoft/vscode/issues/194692
+    dir = dir.with({ path: dir.path.replace(/^\/([A-Z]):.*/, (driverLetter) => driverLetter.toLowerCase()) })
+  }
   return dir
 }
 
 export async function createLink (existingPathSegments: string[], newPathSegments: string[]): Promise<vscode.Uri> {
   const fs = require('fs').promises
-  const workspaceUri = getWorkspaceUri()
+  const workspaceUri = getDefaultWorkspaceFolderUri()
   const existingPath = vscode.Uri.joinPath(workspaceUri, ...existingPathSegments)
-  const newPath = vscode.Uri.joinPath(workspaceUri, ...newPathSegments)
+  let newPath = vscode.Uri.joinPath(workspaceUri, ...newPathSegments)
   await fs.symlink(existingPath.fsPath, newPath.fsPath)
+  if (os.platform() === 'win32') {
+    newPath = newPath.with({ path: newPath.path.replace(/^\/([A-Z]):.*/, (driverLetter) => driverLetter.toLowerCase()) })
+  }
   return newPath
 }

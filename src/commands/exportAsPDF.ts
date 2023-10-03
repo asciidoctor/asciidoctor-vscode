@@ -10,6 +10,7 @@ import { Logger } from '../logger'
 import { Asciidoctor } from '@asciidoctor/core'
 import { AsciidocTextDocument } from '../asciidocTextDocument'
 import { getAsciidoctorConfigContent } from '../features/asciidoctorConfig'
+import { getWorkspaceFolder } from '../util/workspace'
 
 export class ExportAsPDF implements Command {
   public readonly id = 'asciidoc.exportAsPDF'
@@ -25,7 +26,7 @@ export class ExportAsPDF implements Command {
     }
 
     const doc = editor.document
-    const workspaceFolder = vscode.workspace.getWorkspaceFolder(doc.uri)
+    const workspaceFolder = getWorkspaceFolder(doc.uri)
     if (workspaceFolder === undefined) {
       await vscode.window.showWarningMessage('Unable to get the workspace folder, aborting.')
       return

@@ -11,6 +11,7 @@ import { AsciidoctorConfig } from '../features/asciidoctorConfig'
 import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
 import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
 import { createFile } from './workspaceHelper'
+import { getDefaultWorkspaceFolderUri } from '../util/workspace'
 
 class EmptyAsciidocContributions implements AsciidocContributions {
   readonly previewScripts = []
@@ -19,7 +20,7 @@ class EmptyAsciidocContributions implements AsciidocContributions {
 }
 
 class AsciidocContributionProviderTest implements AsciidocContributionProvider {
-  readonly extensionUri
+  readonly extensionUri: vscode.Uri
   onContributionsChanged: vscode.Event<this>
   readonly contributions = new EmptyAsciidocContributions()
 
@@ -36,7 +37,7 @@ class TestWebviewResourceProvider implements WebviewResourceProvider {
   cspSource = 'aaaa'
 
   asWebviewUri (resource: vscode.Uri): vscode.Uri {
-    return vscode.Uri.file(resource.path)
+    return resource
   }
 
   asMediaWebViewSrc (...pathSegments: string[]): string {
@@ -79,16 +80,16 @@ suite('asciidoc.Asciidoctorconfig', () => {
     const createdFiles: vscode.Uri[] = []
 
     suiteSetup(async () => {
-      const root = vscode.workspace.workspaceFolders[0].uri.fsPath
+      const workspaceUri = getDefaultWorkspaceFolderUri()
 
-      createdFiles.push(await createFileWithContentAtWorkspaceRoot(root, '.asciidoctorconfig',
+      createdFiles.push(await createFileWithContentAtWorkspaceRoot(workspaceUri, '.asciidoctorconfig',
         `:var-only-in-asciidoctorconfig: From .asciidoctorconfig
 :var-in-both: var-in-both value from .asciidoctorconfig`))
-      createdFiles.push(await createFileWithContentAtWorkspaceRoot(root, '.asciidoctorconfig.adoc',
+      createdFiles.push(await createFileWithContentAtWorkspaceRoot(workspaceUri, '.asciidoctorconfig.adoc',
         `:var-only-in-asciidoctorconfig-adoc: From .asciidoctorconfig.adoc
 :var-in-both: var-in-both value from .asciidoctorconfig.adoc`))
 
-      const adocForTest = await createFileWithContentAtWorkspaceRoot(root, 'test-pickup-both-asciidoctorconfig-at-workspace-root.adoc',
+      const adocForTest = await createFileWithContentAtWorkspaceRoot(workspaceUri, 'test-pickup-both-asciidoctorconfig-at-workspace-root.adoc',
         `{var-in-both}
 
 {var-only-in-asciidoctorconfig-adoc}
@@ -123,8 +124,8 @@ suite('asciidoc.Asciidoctorconfig', () => {
       assert.strictEqual(html.includes('<p>var-in-both value from .asciidoctorconfig.adoc</p>'), true, '{var-in-both} should be substituted by the value defined in .asciidoctorconfig.adoc')
     })
 
-    async function createFileWithContentAtWorkspaceRoot (root: string, configFileName: string, fileContent: string) {
-      const configFile = vscode.Uri.file(`${root}/${configFileName}`)
+    async function createFileWithContentAtWorkspaceRoot (workspaceUri: vscode.Uri, configFileName: string, fileContent: string) {
+      const configFile = vscode.Uri.joinPath(workspaceUri, configFileName)
       await vscode.workspace.fs.writeFile(configFile, Buffer.from(fileContent))
       return configFile
     }
@@ -135,29 +136,29 @@ suite('asciidoc.Asciidoctorconfig', () => {
     const createdFiles: vscode.Uri[] = []
 
     suiteSetup(async () => {
-      const root = vscode.workspace.workspaceFolders[0].uri.fsPath
+      const workspaceUri = getDefaultWorkspaceFolderUri()
       const configFileName = '.asciidoctorconfig'
-      const rootConfigFile = vscode.Uri.file(`${root}/${configFileName}`)
+      const rootConfigFile = vscode.Uri.joinPath(workspaceUri, configFileName)
       await vscode.workspace.fs.writeFile(rootConfigFile, Buffer.from(
         `:only-root: Only root. Should appear.
 :root-and-level1: Value of root-and-level1 specified in root. Should not appear.
 :root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in root. Should not appear.`))
       createdFiles.push(rootConfigFile)
 
-      const level1ConfigFile = vscode.Uri.file(`${root}/level-empty/level1/${configFileName}`)
+      const level1ConfigFile = vscode.Uri.joinPath(workspaceUri, 'level-empty', 'level1', configFileName)
       await vscode.workspace.fs.writeFile(level1ConfigFile, Buffer.from(
         `:only-level1: Only level 1. Should appear.
 :root-and-level1: Value of root-and-level1 specified in level1. Should appear.
 :root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in level1. Should not appear.`))
       createdFiles.push(level1ConfigFile)
 
-      const level2ConfigFile = vscode.Uri.file(`${root}/level-empty/level1/level2/${configFileName}`)
+      const level2ConfigFile = vscode.Uri.joinPath(workspaceUri, 'level-empty', 'level1', 'level2', configFileName)
       await vscode.workspace.fs.writeFile(level2ConfigFile, Buffer.from(
         `:only-level2: Only level 2. Should appear.
 :root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in level2. Should appear.`))
       createdFiles.push(level2ConfigFile)
 
-      const adocFile = vscode.Uri.file(`${root}/level-empty/level1/level2/fileToTestRecursiveAsciidoctorConfigs.adoc`)
+      const adocFile = vscode.Uri.joinPath(workspaceUri, 'level-empty', 'level1', 'level2', 'fileToTestRecursiveAsciidoctorConfigs.adoc')
       await vscode.workspace.fs.writeFile(adocFile, Buffer.from(
         `{only-root}
 

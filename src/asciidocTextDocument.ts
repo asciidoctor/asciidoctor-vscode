@@ -1,5 +1,6 @@
 import vscode, { Uri } from 'vscode'
 import path from 'path'
+import { getWorkspaceFolder } from './util/workspace'
 
 interface DocumentWithUri {
   readonly uri: Uri;
@@ -24,7 +25,7 @@ export class AsciidocTextDocument {
   public getBaseDir (): string | undefined {
     const useWorkspaceAsBaseDir = vscode.workspace.getConfiguration('asciidoc', null).get('useWorkspaceRootAsBaseDirectory')
     if (useWorkspaceAsBaseDir) {
-      const workspaceFolder = vscode.workspace.getWorkspaceFolder(this.uri)
+      const workspaceFolder = getWorkspaceFolder(this.uri)
       if (workspaceFolder) {
         return workspaceFolder.uri.fsPath
       }

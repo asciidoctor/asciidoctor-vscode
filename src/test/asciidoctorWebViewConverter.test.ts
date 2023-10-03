@@ -6,13 +6,14 @@ import { AsciidocContributions } from '../asciidocExtensions'
 import assert from 'assert'
 import sinon from 'sinon'
 import { AntoraDocumentContext } from '../features/antora/antoraSupport'
+import { getDefaultWorkspaceFolderUri } from '../util/workspace'
 
 const asciidoctor = require('@asciidoctor/core')
 const processor = asciidoctor()
 
 class TestWebviewResourceProvider implements WebviewResourceProvider {
   asWebviewUri (resource: vscode.Uri): vscode.Uri {
-    return vscode.Uri.file(resource.path)
+    return resource
   }
 
   asMediaWebViewSrc (...pathSegments: string[]): string {
@@ -28,14 +29,20 @@ class TestAsciidocContributions implements AsciidocContributions {
   readonly previewStyles: ReadonlyArray<vscode.Uri> = []
 }
 
-function createAntoraDocumentContextStub (resourceUri) {
+function createAntoraDocumentContextStub (resourcePath: string | undefined) {
   const antoraDocumentContextStub = sinon.createStubInstance(AntoraDocumentContext)
-  antoraDocumentContextStub.resolveAntoraResourceIds.returns(resourceUri)
+  antoraDocumentContextStub.resolveAntoraResourceIds.returns(resourcePath)
   return antoraDocumentContextStub
 }
 
-async function testAsciidoctorWebViewConverter (input, antoraDocumentContext, expected, root, filePath) {
-  const file = await vscode.workspace.openTextDocument(vscode.Uri.file(`${root}/${filePath}`))
+async function testAsciidoctorWebViewConverter (
+  input: string,
+  antoraDocumentContext: AntoraDocumentContext | undefined,
+  expected: string,
+  root: vscode.Uri,
+  pathSegments: string[]
+) {
+  const file = await vscode.workspace.openTextDocument(vscode.Uri.joinPath(root, ...pathSegments))
   const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter(
     file,
     new TestWebviewResourceProvider(),
@@ -51,13 +58,13 @@ async function testAsciidoctorWebViewConverter (input, antoraDocumentContext, ex
 }
 
 suite('AsciidoctorWebViewConverter', async () => {
-  const root = vscode.workspace.workspaceFolders[0].uri.fsPath
+  const workspaceUri = getDefaultWorkspaceFolderUri()
   // WIP need to find more interesting test cases
   const testCases = [
     // images
     {
       title: 'Unresolved image resource id from Antora (fallback to base converter)',
-      filePath: 'asciidoctorWebViewConverterTest.adoc',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: 'image::1.0@wyoming:sierra-madre:panorama.png[]',
       antoraDocumentContext: createAntoraDocumentContextStub(undefined),
       expected: `<div class="imageblock">
@@ -68,19 +75,19 @@ suite('AsciidoctorWebViewConverter', async () => {
     },
     {
       title: 'Should resolve image src with Antora id\'s input and Antora support activated',
-      filePath: 'antora/multiComponents/cli/modules/commands/pages/page1.adoc',
+      filePath: ['antora', 'multiComponents', 'cli', 'modules', 'commands', 'pages', 'page1.adoc'],
       input: 'image::2.0@cli:commands:seaswell.png[]',
-      antoraDocumentContext: createAntoraDocumentContextStub(`${root}/antora/multiComponents/cli/modules/commands/images/seaswell.png`),
+      antoraDocumentContext: createAntoraDocumentContextStub(`${workspaceUri.path}/antora/multiComponents/cli/modules/commands/images/seaswell.png`),
       expected: `<div class="imageblock">
 <div class="content">
-<img src="${root}/antora/multiComponents/cli/modules/commands/images/seaswell.png" alt="seaswell">
+<img src="${workspaceUri.path}/antora/multiComponents/cli/modules/commands/images/seaswell.png" alt="seaswell">
 </div>
 </div>`,
     },
     // links
     {
       title: 'Should resolve macro link',
-      filePath: 'asciidoctorWebViewConverterTest.adoc',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: 'link:full.adoc[]',
       antoraDocumentContext: undefined, // Antora not enabled
       expected: `<div class="paragraph">
@@ -89,7 +96,7 @@ suite('AsciidoctorWebViewConverter', async () => {
     },
     {
       title: 'Should resolve macro link with roles',
-      filePath: 'asciidoctorWebViewConverterTest.adoc',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: 'link:full.adoc[role="action button"]',
       antoraDocumentContext: undefined, // Antora not enabled
       expected: `<div class="paragraph">
@@ -99,6 +106,6 @@ suite('AsciidoctorWebViewConverter', async () => {
   ]
 
   for (const testCase of testCases) {
-    test(testCase.title, async () => testAsciidoctorWebViewConverter(testCase.input, testCase.antoraDocumentContext, testCase.expected, root, testCase.filePath))
+    test(testCase.title, async () => testAsciidoctorWebViewConverter(testCase.input, testCase.antoraDocumentContext, testCase.expected, workspaceUri, testCase.filePath))
   }
 })

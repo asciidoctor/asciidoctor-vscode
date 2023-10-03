@@ -8,6 +8,7 @@ import { SkinnyTextDocument } from './util/document'
 import * as nls from 'vscode-nls'
 import { AsciidocContributions } from './asciidocExtensions'
 import { AntoraDocumentContext } from './features/antora/antoraSupport'
+import { getWorkspaceFolder } from './util/workspace'
 
 const localize = nls.loadMessageBundle()
 
@@ -471,7 +472,7 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
     }
 
     // Use a workspace relative path if there is a workspace
-    const root = vscode.workspace.getWorkspaceFolder(resource)
+    const root = getWorkspaceFolder(resource)
     if (root) {
       return webviewResourceProvider.asWebviewUri(vscode.Uri.joinPath(root.uri, href)).toString()
     }

@@ -16,6 +16,7 @@ import { AsciidocContributionProvider } from '../asciidocExtensions'
 import { isAsciidocFile } from '../util/file'
 import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink'
 import * as nls from 'vscode-nls'
+import { getWorkspaceFolder, getWorkspaceFolders } from '../util/workspace'
 
 const localize = nls.loadMessageBundle()
 
@@ -396,9 +397,9 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
       vscode.Uri.joinPath(contributionProviderr.extensionUri, 'media'),
       vscode.Uri.joinPath(contributionProviderr.extensionUri, 'dist'),
     ]
-    const folder = vscode.workspace.getWorkspaceFolder(resource)
+    const folder = getWorkspaceFolder(resource)
     if (folder) {
-      const workspaceRoots = vscode.workspace.workspaceFolders?.map((folder) => folder.uri)
+      const workspaceRoots = getWorkspaceFolders()?.map((folder) => folder.uri)
       if (workspaceRoots) {
         baseRoots.push(...workspaceRoots)
       }

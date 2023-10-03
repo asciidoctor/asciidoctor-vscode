@@ -2,6 +2,7 @@ import * as path from 'path'
 import * as vscode from 'vscode'
 import { Asciidoctor } from '@asciidoctor/core'
 import { AsciidoctorProcessor } from '../asciidoctorProcessor'
+import { getWorkspaceFolder } from '../util/workspace'
 
 const MAX_DEPTH_SEARCH_ASCIIDOCCONFIG = 100
 
@@ -58,7 +59,7 @@ async function exists (uri: vscode.Uri) {
 }
 
 export async function getAsciidoctorConfigContent (documentUri: vscode.Uri): Promise<String | undefined> {
-  const workspaceFolder = vscode.workspace.getWorkspaceFolder(documentUri)
+  const workspaceFolder = getWorkspaceFolder(documentUri)
   if (workspaceFolder === undefined) {
     return undefined
   }
