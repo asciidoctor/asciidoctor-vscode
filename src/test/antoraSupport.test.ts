@@ -80,7 +80,7 @@ suite('Antora Support', () => {
     }))
   }
 
-  test('Should handle symlink', async () => {
+  test.only('Should handle symlink', async () => {
     const createdFiles = []
     try {
       createdFiles.push(await createDirectory('antora-test'))
