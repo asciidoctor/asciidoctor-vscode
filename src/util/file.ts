@@ -20,29 +20,6 @@ export class FileInfo {
   }
 }
 
-/**
- * @param currentPath  {string} current path to look up
- * @param text      {string} text in import string. e.g. './src/'
- */
-export function getPathOfFolderToLookupFiles (
-  currentPath: string,
-  text: string | undefined
-): string {
-  const normalizedText = ospath.normalize(text || '')
-  const normalizedPath = ospath.normalize(currentPath)
-
-  const isPathAbsolute = normalizedText.startsWith(ospath.sep)
-
-  let rootFolder = ospath.dirname(normalizedPath)
-  const pathEntered = normalizedText
-
-  if (isPathAbsolute) {
-    rootFolder = ''
-  }
-
-  return ospath.join(rootFolder, pathEntered)
-}
-
 export async function getChildrenOfPath (path: string) {
   try {
     const files: string[] = await new Promise((resolve, reject) => {

@@ -3,7 +3,6 @@ import ospath from 'path'
 import { createContext } from './createContext'
 import {
   FileInfo,
-  getPathOfFolderToLookupFiles,
   getChildrenOfPath,
   sortFilesAndDirectories,
 } from '../util/file'
@@ -40,19 +39,7 @@ export class TargetPathCompletionProvider {
           documentParentPath = ospath.join(documentParentPath, ospath.normalize(imagesDirValue))
         }
       }
-
-      const searchPath = getPathOfFolderToLookupFiles(
-        context.document.uri.fsPath,
-        ospath.join(documentParentPath, entryDir)
-      )
-      console.log('searchPath', {
-        searchPath,
-        currentPath: context.document.uri.fsPath,
-        text: ospath.join(documentParentPath, entryDir),
-        documentParentPath,
-        entryDir,
-      })
-
+      const searchPath = ospath.join(documentParentPath, entryDir)
       const childrenOfPath = await getChildrenOfPath(searchPath)
       console.log('childrenOfPath', util.inspect({ childrenOfPath }, false, null, true))
       const items = sortFilesAndDirectories(childrenOfPath)
