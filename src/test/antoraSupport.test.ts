@@ -6,7 +6,6 @@ import { findAntoraConfigFile, getAntoraDocumentContext } from '../features/anto
 import { createDirectories, createDirectory, createFile, createLink, removeFiles } from './workspaceHelper'
 import { extensionContext } from './helper'
 import { getDefaultWorkspaceFolderUri } from '../util/workspace'
-import * as util from 'util'
 
 async function testGetAntoraConfig ({
   asciidocPathUri,
@@ -90,8 +89,8 @@ suite('Antora Support', () => {
         const asciidocFile = await createFile('= Hello World', 'antora-test', 'docs', 'modules', 'ROOT', 'pages', 'index.adoc')
         await createLink(['antora-test', 'docs'], ['antora-test', 'docs-symlink']) // create a symlink!
         await createFile(`name: silver-leaf
-  version: '7.1'
-  `, 'antora-test', 'docs', 'antora.yml')
+version: '7.1'
+`, 'antora-test', 'docs', 'antora.yml')
         // enable Antora support
         const workspaceConfiguration = vscode.workspace.getConfiguration('asciidoc', null)
         await workspaceConfiguration.update('antora.enableAntoraSupport', true)
@@ -99,8 +98,8 @@ suite('Antora Support', () => {
         await workspaceState.update('antoraSupportSetting', true)
         // GO!
         const result = await getAntoraDocumentContext(asciidocFile, workspaceState)
-        console.log(`getAntoraDocumentContext(${asciidocFile})`, util.inspect({ result }, false, null, true))
         const components = result.getComponents()
+        assert.strictEqual(components !== undefined, true, 'Components must not be undefined')
         assert.strictEqual(components.length > 0, true, 'Must contains at least one component')
         const component = components.find((c) => c.versions.find((v) => v.name === 'silver-leaf' && v.version === '7.1') !== undefined)
         assert.strictEqual(component !== undefined, true, 'Component silver-leaf:7.1 must exists')
