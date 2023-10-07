@@ -263,7 +263,6 @@ export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceS
       .map(async (antoraConfig) => {
         const workspaceFolder = getWorkspaceFolder(antoraConfig.uri)
         const workspaceRelative = posixpath.relative(workspaceFolder.uri.path, antoraConfig.contentSourceRootPath)
-        console.log('vscode.workspace.findFiles' + workspaceRelative + '/modules/**/*')
         const files = await Promise.all((await vscode.workspace.findFiles(workspaceRelative + '/modules/**/*')).map(async (file) => {
           const contentSourceRootPath = antoraConfig.contentSourceRootPath
           const data = {
@@ -281,8 +280,6 @@ export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceS
               stem: posixpath.basename(file.path, posixpath.extname(file.path)),
             },
           }
-          const result = allocateSrc(data, 'component', 'version')
-          console.log('new File(data), allocateSrc.result', { data, result })
           return new File(data)
         }))
         const contentAggregate = {
@@ -291,7 +288,6 @@ export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceS
           ...antoraConfig.config,
           files,
         }
-        console.log('contentAggregate', util.inspect(contentAggregate, false, null, true))
         return contentAggregate
       })))
     let classifyContent = await import('@antora/content-classifier')
@@ -302,7 +298,6 @@ export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceS
       site: {},
     }, contentAggregate)
     const antoraContext = new AntoraContext(contentCatalog)
-    console.log('contentCatalog', util.inspect({ contentCatalog }, false, null, true))
     const antoraResourceContext = await antoraContext.getResource(textDocumentUri)
     if (antoraResourceContext === undefined) {
       return undefined
@@ -312,64 +307,4 @@ export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceS
     console.error(`Unable to get Antora context for ${textDocumentUri}`, err)
     return undefined
   }
-}
-
-function allocateSrc (file, component, version) {
-  const extname = file.src.extname
-  const filepath = file.path
-  const pathSegments = filepath.split('/')
-  if (pathSegments[0] === 'modules') {
-    let familyFolder = pathSegments[2]
-    switch (familyFolder) {
-      case 'pages':
-        // pages/_partials location for partials is @deprecated; special designation scheduled to be removed in Antora 4
-        if (pathSegments[3] === '_partials') {
-          file.src.family = 'partial'
-          // relative to modules/<module>/pages/_partials
-          file.src.relative = pathSegments.slice(4).join('/')
-        } else if (extname === '.adoc') {
-          file.src.family = 'page'
-          // relative to modules/<module>/pages
-          file.src.relative = pathSegments.slice(3).join('/')
-        } else {
-          return // ignore file
-        }
-        break
-      case 'assets':
-        switch ((familyFolder = pathSegments[3])) {
-          case 'attachments':
-          case 'images':
-            if (!extname) return // ignore file
-            file.src.family = familyFolder.substr(0, familyFolder.length - 1)
-            // relative to modules/<module>/assets/<family>s
-            file.src.relative = pathSegments.slice(4).join('/')
-            break
-          default:
-            return // ignore file
-        }
-        break
-      case 'attachments':
-      case 'images':
-        if (!extname) return
-        file.src.family = familyFolder.substr(0, familyFolder.length - 1)
-        // relative to modules/<module>/<family>s
-        file.src.relative = pathSegments.slice(3).join('/')
-        break
-      case 'examples':
-      case 'partials':
-        file.src.family = familyFolder.substr(0, familyFolder.length - 1)
-        // relative to modules/<module>/<family>s
-        file.src.relative = pathSegments.slice(3).join('/')
-        break
-      default:
-        return // ignore file
-    }
-    file.src.module = pathSegments[1]
-    file.src.moduleRootPath = 'calculateRootPath(pathSegments.length - 3)'
-  } else {
-    return // ignore file
-  }
-  file.src.component = component
-  file.src.version = version
-  return true
 }

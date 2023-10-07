@@ -80,35 +80,38 @@ suite('Antora Support', () => {
     }))
   }
 
-  test.only('Should handle symlink', async () => {
-    const createdFiles = []
-    try {
-      createdFiles.push(await createDirectory('antora-test'))
-      await createDirectories('antora-test', 'docs', 'modules', 'ROOT', 'pages')
-      const asciidocFile = await createFile('= Hello World', 'antora-test', 'docs', 'modules', 'ROOT', 'pages', 'index.adoc')
-      await createLink(['antora-test', 'docs'], ['antora-test', 'docs-symlink']) // create a symlink!
-      await createFile(`name: silver-leaf
-version: '7.1'
-`, 'antora-test', 'docs', 'antora.yml')
-      // enable Antora support
-      const workspaceConfiguration = vscode.workspace.getConfiguration('asciidoc', null)
-      await workspaceConfiguration.update('antora.enableAntoraSupport', true)
-      const workspaceState = extensionContext.workspaceState
-      await workspaceState.update('antoraSupportSetting', true)
-      // GO!
-      const result = await getAntoraDocumentContext(asciidocFile, workspaceState)
-      console.log(`getAntoraDocumentContext(${asciidocFile})`, util.inspect({ result }, false, null, true))
-      const components = result.getComponents()
-      assert.strictEqual(components.length > 0, true, 'Must contains at least one component')
-      const component = components.find((c) => c.versions.find((v) => v.name === 'silver-leaf' && v.version === '7.1') !== undefined)
-      assert.strictEqual(component !== undefined, true, 'Component silver-leaf:7.1 must exists')
-    } catch (err) {
-      console.error('Something bad happened!', err)
-      throw err
-    } finally {
-      await removeFiles(createdFiles)
-      await extensionContext.workspaceState.update('antoraSupportSetting', undefined)
-      await vscode.workspace.getConfiguration('asciidoc', null).update('antora.enableAntoraSupport', undefined)
+  test('Should handle symlink', async () => {
+    // symlink does not work on Windows
+    if (os.platform() !== 'win32') {
+      const createdFiles = []
+      try {
+        createdFiles.push(await createDirectory('antora-test'))
+        await createDirectories('antora-test', 'docs', 'modules', 'ROOT', 'pages')
+        const asciidocFile = await createFile('= Hello World', 'antora-test', 'docs', 'modules', 'ROOT', 'pages', 'index.adoc')
+        await createLink(['antora-test', 'docs'], ['antora-test', 'docs-symlink']) // create a symlink!
+        await createFile(`name: silver-leaf
+  version: '7.1'
+  `, 'antora-test', 'docs', 'antora.yml')
+        // enable Antora support
+        const workspaceConfiguration = vscode.workspace.getConfiguration('asciidoc', null)
+        await workspaceConfiguration.update('antora.enableAntoraSupport', true)
+        const workspaceState = extensionContext.workspaceState
+        await workspaceState.update('antoraSupportSetting', true)
+        // GO!
+        const result = await getAntoraDocumentContext(asciidocFile, workspaceState)
+        console.log(`getAntoraDocumentContext(${asciidocFile})`, util.inspect({ result }, false, null, true))
+        const components = result.getComponents()
+        assert.strictEqual(components.length > 0, true, 'Must contains at least one component')
+        const component = components.find((c) => c.versions.find((v) => v.name === 'silver-leaf' && v.version === '7.1') !== undefined)
+        assert.strictEqual(component !== undefined, true, 'Component silver-leaf:7.1 must exists')
+      } catch (err) {
+        console.error('Something bad happened!', err)
+        throw err
+      } finally {
+        await removeFiles(createdFiles)
+        await extensionContext.workspaceState.update('antoraSupportSetting', undefined)
+        await vscode.workspace.getConfiguration('asciidoc', null).update('antora.enableAntoraSupport', undefined)
+      }
     }
   })
 })
