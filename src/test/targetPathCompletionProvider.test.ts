@@ -7,6 +7,7 @@ import { Asciidoctor } from '@asciidoctor/core'
 import { AsciidoctorExtensionsProvider } from '../features/asciidoctorExtensions'
 import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
 import { createDirectories, createDirectory, createFile, removeFiles } from './workspaceHelper'
+import * as util from 'util'
 
 const expect = chai.expect
 
@@ -39,6 +40,8 @@ image::`, 'target-path-completion', 'src', 'asciidoc', 'index.adoc')
       await createFile('', 'target-path-completion', 'src', 'images', 'skyline.jpg')
       const file = await vscode.workspace.openTextDocument(asciidocFile)
       const completionsItems = await provider.provideCompletionItems(file, new Position(3, 7))
+      console.log('completionsItems', { completionsItems })
+      console.log('completionsItems', util.inspect({ completionsItems }, false, null, true))
       expect(completionsItems).to.deep.include({
         label: 'wilderness-map.jpg',
         kind: 16,

@@ -1,13 +1,13 @@
 import * as vscode from 'vscode'
-import * as path from 'path'
+import ospath from 'path'
 import { createContext } from './createContext'
 import {
   FileInfo,
-  getPathOfFolderToLookupFiles,
   getChildrenOfPath,
   sortFilesAndDirectories,
 } from '../util/file'
 import { AsciidocLoader } from '../asciidocLoader'
+import * as util from 'util'
 
 const macroWithTargetPathRx = /(include::|image::|image:)\S*/gi
 
@@ -32,22 +32,18 @@ export class TargetPathCompletionProvider {
       }
 
       const documentPath = context.document.uri.fsPath
-      let documentParentPath = documentPath.slice(0, documentPath.lastIndexOf('/'))
+      let documentParentPath = ospath.dirname(documentPath)
       if (context.textFullLine.includes('image:')) {
         const imagesDirValue = (await this.asciidocLoader.load(textDocument)).getAttribute('imagesdir', '')
         if (imagesDirValue) {
-          documentParentPath = path.join(documentParentPath, imagesDirValue)
+          documentParentPath = ospath.join(documentParentPath, ospath.normalize(imagesDirValue))
         }
       }
-
-      const searchPath = getPathOfFolderToLookupFiles(
-        context.document.uri.fsPath,
-        path.join(documentParentPath, entryDir)
-      )
-
+      const searchPath = ospath.join(documentParentPath, entryDir)
       const childrenOfPath = await getChildrenOfPath(searchPath)
+      console.log('childrenOfPath', util.inspect({ childrenOfPath }, false, null, true))
       const items = sortFilesAndDirectories(childrenOfPath)
-
+      console.log('items', util.inspect({ items }, false, null, true))
       const levelUpCompletionItem: vscode.CompletionItem = {
         label: '..',
         kind: vscode.CompletionItemKind.Folder,

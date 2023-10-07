@@ -3,6 +3,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
+import { getWorkspaceFolder } from '../util/workspace'
 
 export class AsciidocPreviewConfiguration {
   public static getForResource (resource: vscode.Uri) {
@@ -105,7 +106,6 @@ export class AsciidocPreviewConfigurationManager {
   private getKey (
     resource: vscode.Uri
   ): string {
-    const folder = vscode.workspace.getWorkspaceFolder(resource)
-    return folder ? folder.uri.toString() : ''
+    return getWorkspaceFolder(resource)?.uri?.path || ''
   }
 }

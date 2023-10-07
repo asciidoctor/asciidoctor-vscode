@@ -3,8 +3,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
-import * as ospath from 'path'
 import * as fs from 'fs'
+import ospath from 'path'
 
 export function isAsciidocFile (document: vscode.TextDocument) {
   return document.languageId === 'asciidoc'
@@ -20,29 +20,6 @@ export class FileInfo {
   }
 }
 
-/**
- * @param fileName  {string} current filename the look up is done. Absolute path
- * @param text      {string} text in import string. e.g. './src/'
- */
-export function getPathOfFolderToLookupFiles (
-  fileName: string,
-  text: string | undefined,
-  rootPath?: string
-): string {
-  const normalizedText = ospath.normalize(text || '')
-
-  const isPathAbsolute = normalizedText.startsWith(ospath.sep)
-
-  let rootFolder = ospath.dirname(fileName)
-  const pathEntered = normalizedText
-
-  if (isPathAbsolute) {
-    rootFolder = rootPath || ''
-  }
-
-  return ospath.join(rootFolder, pathEntered)
-}
-
 export async function getChildrenOfPath (path: string) {
   try {
     const files: string[] = await new Promise((resolve, reject) => {
@@ -54,9 +31,7 @@ export async function getChildrenOfPath (path: string) {
         }
       })
     })
-    const filesDbg = files
-      .map((f) => new FileInfo(path, f))
-    return filesDbg
+    return files.map((f) => new FileInfo(path, f))
   } catch (error) {
     return []
   }

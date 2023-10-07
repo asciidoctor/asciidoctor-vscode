@@ -10,6 +10,7 @@ import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
 import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
 import { InMemoryDocument } from './inMemoryDocument'
+import { getDefaultWorkspaceFolderUri } from '../util/workspace'
 
 class TestWebviewResourceProvider implements WebviewResourceProvider {
   asWebviewUri (resource: vscode.Uri): vscode.Uri {
@@ -47,7 +48,7 @@ class AsciidocContributionProviderTest implements AsciidocContributionProvider {
 
 suite('AsciiDoc parser with Antora support enabled', function () {
   this.timeout(60000)
-  const root = vscode.workspace.workspaceFolders[0].uri.fsPath
+  const workspaceUri = getDefaultWorkspaceFolderUri()
   test('convert Antora page', async () => {
     await extensionContext.workspaceState.update('antoraSupportSetting', true)
     await vscode.workspace.getConfiguration('asciidoc', null).update('antora.enableAntoraSupport', true)
@@ -59,7 +60,7 @@ suite('AsciiDoc parser with Antora support enabled', function () {
     )
     const result = await asciidocParser.convertFromTextDocument(
       new InMemoryDocument(
-        vscode.Uri.file(`${root}/antora/multiComponents/api/modules/auth/pages/page.adoc`),
+        vscode.Uri.file(`${workspaceUri.path}/antora/multiComponents/api/modules/auth/pages/page.adoc`),
         'Download from the {url-vscode-marketplace}[Visual Studio Code Marketplace].'
       ),
       extensionContext,
