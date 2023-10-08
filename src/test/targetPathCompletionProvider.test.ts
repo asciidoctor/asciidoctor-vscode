@@ -11,22 +11,24 @@ import { extensionContext } from './helper'
 
 const expect = chai.expect
 
-const asciidocLoader = new AsciidocLoader(
-  new class implements AsciidoctorConfigProvider {
-    activate (_: Asciidoctor.Extensions.Registry, __: vscode.Uri): Promise<void> {
-      return Promise.resolve()
-    }
-  }(),
-  new class implements AsciidoctorExtensionsProvider {
-    activate (_: Asciidoctor.Extensions.Registry): Promise<void> {
-      return Promise.resolve()
-    }
-  }(),
-  new AsciidoctorDiagnostic('test'),
-  extensionContext
-)
-
+let asciidocLoader
 suite('Target path completion provider', () => {
+  before(() => {
+    asciidocLoader = new AsciidocLoader(
+      new class implements AsciidoctorConfigProvider {
+        activate (_: Asciidoctor.Extensions.Registry, __: vscode.Uri): Promise<void> {
+          return Promise.resolve()
+        }
+      }(),
+      new class implements AsciidoctorExtensionsProvider {
+        activate (_: Asciidoctor.Extensions.Registry): Promise<void> {
+          return Promise.resolve()
+        }
+      }(),
+      new AsciidoctorDiagnostic('test'),
+      extensionContext
+    )
+  })
   test('Should return completion items relative to imagesdir', async () => {
     const testDirectory = await createDirectory('target-path-completion')
     try {
