@@ -1,5 +1,5 @@
 declare global {
-  const Opal: any
+  var Opal: any // eslint-disable-line no-var
 }
 
 export {}
