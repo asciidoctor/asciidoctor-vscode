@@ -13,7 +13,7 @@ const expect = chai.expect
 
 let asciidocLoader
 suite('Target path completion provider', () => {
-  before(() => {
+  setup(() => {
     asciidocLoader = new AsciidocLoader(
       new class implements AsciidoctorConfigProvider {
         activate (_: Asciidoctor.Extensions.Registry, __: vscode.Uri): Promise<void> {
