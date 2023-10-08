@@ -13,7 +13,8 @@ import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
 const symbolProvider = new AdocDocumentSymbolProvider(null, new AsciidocLoader(
   new AsciidoctorConfig(),
   new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
-  new AsciidoctorDiagnostic('text')
+  new AsciidoctorDiagnostic('text'),
+  extensionContext
 ))
 
 suite('asciidoc.WorkspaceSymbolProvider', () => {

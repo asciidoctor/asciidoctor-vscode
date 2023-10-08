@@ -1,6 +1,6 @@
 'use strict'
 
-import { posix as path } from 'path'
+import ospath, { posix as posixpath } from 'path'
 
 const EXAMPLES_DIR_TOKEN = 'example$'
 const PARTIALS_DIR_TOKEN = 'partial$'
@@ -18,7 +18,7 @@ const RESOURCE_ID_DETECTOR_RX = /[$:@]/
  * @param {ContentCatalog} catalog - The content catalog that contains the virtual files in the site.
  * @returns {Object} A map containing the file, path, and contents of the resolved file.
  */
-export function resolveIncludeFile (target, page, cursor, catalog) {
+export function resolveIncludeFile (target, page, cursor, catalog, antoraConfig) {
   const src = (cursor.file || {}).src || page.src
   let resolved
   let family
@@ -44,7 +44,7 @@ export function resolveIncludeFile (target, page, cursor, catalog) {
       component: src.component,
       version: src.version,
       // QUESTION does cursor.dir always contain the value we expect?
-      path: path.join(cursor.dir.toString(), target),
+      path: ospath.normalize(ospath.relative(antoraConfig.contentSourceRootFsPath, ospath.join(cursor.dir.toString(), target))),
     })
   }
   if (resolved) {

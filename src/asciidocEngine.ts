@@ -5,7 +5,7 @@ import { ExtensionContentSecurityPolicyArbiter } from './security'
 import { AsciidocPreviewConfigurationManager } from './features/previewConfig'
 import { SkinnyTextDocument } from './util/document'
 import { AsciidocContributionProvider } from './asciidocExtensions'
-import { AntoraSupportManager, getAntoraDocumentContext } from './features/antora/antoraSupport'
+import { AntoraSupportManager, getAntoraDocumentContext, getAntoraConfig } from './features/antora/antoraSupport'
 import { WebviewResourceProvider } from './util/resources'
 import { AsciidoctorConfigProvider } from './features/asciidoctorConfig'
 import { AsciidocTextDocument } from './asciidocTextDocument'
@@ -134,12 +134,14 @@ export class AsciidocEngine {
     const textDocumentUri = textDocument.uri
     await this.asciidoctorConfigProvider.activate(registry, textDocumentUri)
     if (antoraDocumentContext !== undefined) {
+      const antoraConfig = await getAntoraConfig(textDocumentUri)
       registry.includeProcessor(IncludeProcessor.$new((_, target, cursor) => resolveIncludeFile(
         target, {
           src: antoraDocumentContext.resourceContext,
         },
         cursor,
-        antoraDocumentContext.getContentCatalog()
+        antoraDocumentContext.getContentCatalog(),
+        antoraConfig
       )
       ))
     }

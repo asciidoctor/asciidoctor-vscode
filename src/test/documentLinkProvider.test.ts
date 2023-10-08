@@ -25,7 +25,8 @@ async function getLinksForFile (fileContents: string, testFileName?: vscode.Uri)
       new AsciidoctorIncludeItems(),
       new AsciidoctorConfig(),
       new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
-      new AsciidoctorDiagnostic('test')
+      new AsciidoctorDiagnostic('test'),
+      extensionContext
     )
   )
   return provider.provideDocumentLinks(doc, noopToken)

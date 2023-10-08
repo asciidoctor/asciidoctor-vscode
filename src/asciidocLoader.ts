@@ -1,3 +1,4 @@
+import vscode from 'vscode'
 import { AsciidoctorConfigProvider } from './features/asciidoctorConfig'
 import { AsciidoctorExtensionsProvider } from './features/asciidoctorExtensions'
 import { AsciidocTextDocument } from './asciidocTextDocument'
@@ -7,6 +8,9 @@ import { SkinnyTextDocument } from './util/document'
 import { AsciidoctorAttributesConfig } from './features/asciidoctorAttributesConfig'
 import { AsciidoctorDiagnosticProvider } from './features/asciidoctorDiagnostic'
 import { AsciidoctorIncludeItemsProvider, IncludeItems } from './features/asciidoctorIncludeItems'
+import { getAntoraDocumentContext, getAntoraConfig } from './features/antora/antoraSupport'
+import { IncludeProcessor } from './features/antora/includeProcessor'
+import { resolveIncludeFile } from './features/antora/resolveIncludeFile'
 
 export class AsciidocLoader {
   protected readonly processor: Asciidoctor
@@ -14,7 +18,8 @@ export class AsciidocLoader {
   constructor (
     readonly asciidoctorConfigProvider: AsciidoctorConfigProvider,
     readonly asciidoctorExtensionsProvider: AsciidoctorExtensionsProvider,
-    readonly asciidoctorDiagnosticProvider: AsciidoctorDiagnosticProvider
+    readonly asciidoctorDiagnosticProvider: AsciidoctorDiagnosticProvider,
+    readonly  context: vscode.ExtensionContext,
   ) {
     this.processor = AsciidoctorProcessor.getInstance().processor
   }
@@ -51,7 +56,19 @@ export class AsciidocLoader {
     await this.asciidoctorExtensionsProvider.activate(registry)
     const textDocumentUri = textDocument.uri
     await this.asciidoctorConfigProvider.activate(registry, textDocumentUri)
-
+    const antoraDocumentContext = await getAntoraDocumentContext(textDocument.uri, this.context.workspaceState)
+    if (antoraDocumentContext !== undefined) {
+      const antoraConfig = await getAntoraConfig(textDocumentUri)
+      registry.includeProcessor(IncludeProcessor.$new((_, target, cursor) => resolveIncludeFile(
+        target, {
+          src: antoraDocumentContext.resourceContext,
+        },
+        cursor,
+        antoraDocumentContext.getContentCatalog(),
+        antoraConfig
+      )
+      ))
+    }
     this.asciidoctorDiagnosticProvider.delete(textDocumentUri)
     return {
       memoryLogger,
@@ -65,9 +82,10 @@ export class AsciidocIncludeItemsLoader extends AsciidocLoader {
     readonly asciidoctorIncludeItemsProvider: AsciidoctorIncludeItemsProvider,
     readonly asciidoctorConfigProvider: AsciidoctorConfigProvider,
     readonly asciidoctorExtensionsProvider: AsciidoctorExtensionsProvider,
-    readonly asciidoctorDiagnosticProvider: AsciidoctorDiagnosticProvider
+    readonly asciidoctorDiagnosticProvider: AsciidoctorDiagnosticProvider,
+    readonly context: vscode.ExtensionContext
   ) {
-    super(asciidoctorConfigProvider, asciidoctorExtensionsProvider, asciidoctorDiagnosticProvider)
+    super(asciidoctorConfigProvider, asciidoctorExtensionsProvider, asciidoctorDiagnosticProvider, context)
   }
 
   public async getIncludeItems (textDocument: SkinnyTextDocument): Promise<IncludeItems> {

@@ -44,14 +44,16 @@ export async function activate (context: vscode.ExtensionContext) {
   const asciidocLoader = new AsciidocLoader(
     new AsciidoctorConfig(),
     new AsciidoctorExtensions(asciidoctorExtensionsSecurityPolicy),
-    asciidocLoaderDiagnostic
+    asciidocLoaderDiagnostic,
+    context
   )
   const asciidocIncludeDiagnostic = new AsciidoctorDiagnostic('asciidoc-include')
   const asciidocIncludeItemsLoader = new AsciidocIncludeItemsLoader(
     new AsciidoctorIncludeItems(),
     new AsciidoctorConfig(),
     new AsciidoctorExtensions(asciidoctorExtensionsSecurityPolicy),
-    asciidocIncludeDiagnostic
+    asciidocIncludeDiagnostic,
+    context
   )
   const logger = new Logger()
   logger.log('Extension was started')

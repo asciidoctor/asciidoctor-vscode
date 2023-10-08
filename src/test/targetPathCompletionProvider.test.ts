@@ -7,6 +7,7 @@ import { Asciidoctor } from '@asciidoctor/core'
 import { AsciidoctorExtensionsProvider } from '../features/asciidoctorExtensions'
 import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
 import { createDirectories, createDirectory, createFile, removeFiles } from './workspaceHelper'
+import { extensionContext } from './helper'
 
 const expect = chai.expect
 
@@ -21,7 +22,8 @@ const asciidocLoader = new AsciidocLoader(
       return Promise.resolve()
     }
   }(),
-  new AsciidoctorDiagnostic('test')
+  new AsciidoctorDiagnostic('test'),
+  extensionContext
 )
 
 suite('Target path completion provider', () => {

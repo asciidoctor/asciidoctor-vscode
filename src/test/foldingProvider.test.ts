@@ -421,7 +421,8 @@ async function getFoldsForDocument (contents: string) {
   const provider = new AsciidocFoldingProvider(new AsciidocLoader(
     new AsciidoctorConfig(),
     new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
-    new AsciidoctorDiagnostic('text')
+    new AsciidoctorDiagnostic('text'),
+    extensionContext
   ))
   return provider.provideFoldingRanges(doc, new vscode.CancellationTokenSource().token)
 }
