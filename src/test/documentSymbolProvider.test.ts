@@ -17,7 +17,8 @@ function getSymbolsForFile (fileContents: string) {
   const provider = new DocumentSymbolProvider(null, new AsciidocLoader(
     new AsciidoctorConfig(),
     new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
-    new AsciidoctorDiagnostic('text')
+    new AsciidoctorDiagnostic('text'),
+    extensionContext
   ))
   return provider.provideDocumentSymbols(doc)
 }

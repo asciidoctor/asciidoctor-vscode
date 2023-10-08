@@ -25,7 +25,8 @@ async function findCompletionItems (uri: vscode.Uri, position: vscode.Position, 
   const asciidocLoader = new AsciidocLoader(
     new AsciidoctorConfig(),
     new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
-    new AsciidoctorDiagnostic('test')
+    new AsciidoctorDiagnostic('test'),
+    extensionContext
   )
   const completionsItems = await new AttributeReferenceProvider(asciidocLoader).provideCompletionItems(textDocument, position)
   if (filter) {

@@ -30,7 +30,8 @@ suite('asciidoc.TableOfContentsProvider', () => {
     const provider = new TableOfContentsProvider(doc, new AsciidocLoader(
       new AsciidoctorConfig(),
       new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
-      new AsciidoctorDiagnostic('test')
+      new AsciidoctorDiagnostic('test'),
+      extensionContext
     ))
 
     assert.strictEqual(await provider.lookup(''), undefined)
@@ -42,7 +43,8 @@ suite('asciidoc.TableOfContentsProvider', () => {
     const provider = new TableOfContentsProvider(doc, new AsciidocLoader(
       new AsciidoctorConfig(),
       new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
-      new AsciidoctorDiagnostic('test')
+      new AsciidoctorDiagnostic('test'),
+      extensionContext
     ))
 
     assert.strictEqual(await provider.lookup(''), undefined)
@@ -60,7 +62,8 @@ content`
     const provider = new TableOfContentsProvider(new InMemoryDocument(mainFile, mainContent), new AsciidocLoader(
       new AsciidoctorConfig(),
       new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
-      new AsciidoctorDiagnostic('test')
+      new AsciidoctorDiagnostic('test'),
+      extensionContext
     ))
     const toc = await provider.getToc()
     const documentTitleEntry = toc.find((entry) => entry.text === 'test' && entry.line === 0)
@@ -79,7 +82,8 @@ content`
     const provider = new TableOfContentsProvider(new InMemoryDocument(mainFile, mainContent), new AsciidocLoader(
       new AsciidoctorConfig(),
       new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
-      new AsciidoctorDiagnostic('test')
+      new AsciidoctorDiagnostic('test'),
+      extensionContext
     ))
     const toc = await provider.getToc()
     const documentTitleEntry = toc.find((entry) => entry.text === 'test' && entry.line === 0)
@@ -95,7 +99,8 @@ content`
     const provider = new TableOfContentsProvider(doc, new AsciidocLoader(
       new AsciidoctorConfig(),
       new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
-      new AsciidoctorDiagnostic('test')
+      new AsciidoctorDiagnostic('test'),
+      extensionContext
     ))
 
     const toc = await provider.getToc()

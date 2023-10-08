@@ -7,25 +7,28 @@ import { Asciidoctor } from '@asciidoctor/core'
 import { AsciidoctorExtensionsProvider } from '../features/asciidoctorExtensions'
 import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
 import { createDirectories, createDirectory, createFile, removeFiles } from './workspaceHelper'
-import * as util from 'util'
+import { extensionContext } from './helper'
 
 const expect = chai.expect
 
-const asciidocLoader = new AsciidocLoader(
-  new class implements AsciidoctorConfigProvider {
-    activate (_: Asciidoctor.Extensions.Registry, __: vscode.Uri): Promise<void> {
-      return Promise.resolve()
-    }
-  }(),
-  new class implements AsciidoctorExtensionsProvider {
-    activate (_: Asciidoctor.Extensions.Registry): Promise<void> {
-      return Promise.resolve()
-    }
-  }(),
-  new AsciidoctorDiagnostic('test')
-)
-
+let asciidocLoader
 suite('Target path completion provider', () => {
+  setup(() => {
+    asciidocLoader = new AsciidocLoader(
+      new class implements AsciidoctorConfigProvider {
+        activate (_: Asciidoctor.Extensions.Registry, __: vscode.Uri): Promise<void> {
+          return Promise.resolve()
+        }
+      }(),
+      new class implements AsciidoctorExtensionsProvider {
+        activate (_: Asciidoctor.Extensions.Registry): Promise<void> {
+          return Promise.resolve()
+        }
+      }(),
+      new AsciidoctorDiagnostic('test'),
+      extensionContext
+    )
+  })
   test('Should return completion items relative to imagesdir', async () => {
     const testDirectory = await createDirectory('target-path-completion')
     try {
@@ -40,8 +43,6 @@ image::`, 'target-path-completion', 'src', 'asciidoc', 'index.adoc')
       await createFile('', 'target-path-completion', 'src', 'images', 'skyline.jpg')
       const file = await vscode.workspace.openTextDocument(asciidocFile)
       const completionsItems = await provider.provideCompletionItems(file, new Position(3, 7))
-      console.log('completionsItems', { completionsItems })
-      console.log('completionsItems', util.inspect({ completionsItems }, false, null, true))
       expect(completionsItems).to.deep.include({
         label: 'wilderness-map.jpg',
         kind: 16,
