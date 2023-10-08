@@ -10,7 +10,7 @@ const TAG_DIRECTIVE_RX = /\b(?:tag|(e)nd)::(\S+?)\[\](?=$|[ \r])/m
 export const IncludeProcessor = (() => {
   const $callback = Symbol('callback')
   const classDef = global.Opal.klass(
-    global.Opal.Antora || global.Opal.module(null, 'Antora', $Antora),
+    globalThis.Opal.Antora || global.Opal.module(null, 'Antora', $Antora),
     global.Opal.Asciidoctor.Extensions.IncludeProcessor,
     'IncludeProcessor'
   )

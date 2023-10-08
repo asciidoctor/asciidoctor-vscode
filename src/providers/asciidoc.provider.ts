@@ -7,7 +7,6 @@ import {
   sortFilesAndDirectories,
 } from '../util/file'
 import { AsciidocLoader } from '../asciidocLoader'
-import * as util from 'util'
 
 const macroWithTargetPathRx = /(include::|image::|image:)\S*/gi
 
@@ -41,9 +40,7 @@ export class TargetPathCompletionProvider {
       }
       const searchPath = ospath.join(documentParentPath, entryDir)
       const childrenOfPath = await getChildrenOfPath(searchPath)
-      console.log('childrenOfPath', util.inspect({ childrenOfPath }, false, null, true))
       const items = sortFilesAndDirectories(childrenOfPath)
-      console.log('items', util.inspect({ items }, false, null, true))
       const levelUpCompletionItem: vscode.CompletionItem = {
         label: '..',
         kind: vscode.CompletionItemKind.Folder,
