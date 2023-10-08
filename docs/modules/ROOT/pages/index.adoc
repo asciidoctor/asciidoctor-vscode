@@ -1,0 +1,8 @@
+= {project-name} Documentation
+:navtitle: Introduction
+:description: A brief introduction to the Visual Code Studio Extension.
+
+
+Write documentation without leaving your IDE. Preview your docs locally before publishing them. Collaborate using a version control system. Publish with confidence using automated builds.
+
+Besides VS Code's basic editing, there are a number of AsciiDoc specific features that will help you be more productive.
