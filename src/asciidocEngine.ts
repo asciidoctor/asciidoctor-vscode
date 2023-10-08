@@ -13,6 +13,8 @@ import { AsciidoctorExtensionsProvider } from './features/asciidoctorExtensions'
 import { AsciidoctorDiagnosticProvider } from './features/asciidoctorDiagnostic'
 import { AsciidoctorProcessor } from './asciidoctorProcessor'
 import { AsciidoctorAttributesConfig } from './features/asciidoctorAttributesConfig'
+import { IncludeProcessor } from './features/antora/includeProcessor'
+import { resolveIncludeFile } from './features/antora/resolveIncludeFile'
 
 const highlightjsAdapter = require('./highlightjs-adapter')
 
@@ -131,7 +133,16 @@ export class AsciidocEngine {
     await this.asciidoctorExtensionsProvider.activate(registry)
     const textDocumentUri = textDocument.uri
     await this.asciidoctorConfigProvider.activate(registry, textDocumentUri)
-
+    if (antoraDocumentContext !== undefined) {
+      registry.includeProcessor(IncludeProcessor.$new((_, target, cursor) => resolveIncludeFile(
+        target, {
+          src: antoraDocumentContext.resourceContext,
+        },
+        cursor,
+        antoraDocumentContext.getContentCatalog()
+      )
+      ))
+    }
     if (context && editor) {
       highlightjsAdapter.register(asciidoctorProcessor.highlightjsBuiltInSyntaxHighlighter, context, editor)
     } else {

@@ -608,7 +608,7 @@
 		"build-ext": "tsc -p ./",
 		"package": "npm run build && npm run build-web && npm run i18n:generate-package-nls && vsce package",
 		"deploy": "vsce publish -p",
-		"lint": "eslint 'src/**/*.ts' 'preview-src/**/*.ts' --format unix",
+		"lint": "eslint src/**/*.ts preview-src/**/*.ts --format unix",
 		"lint:fix": "npm run lint -- --fix",
 		"pretest": "npm run build",
 		"test": "node ./dist/src/test/runTest.js"

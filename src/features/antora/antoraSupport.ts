@@ -1,14 +1,12 @@
 import vscode, { CancellationTokenSource, FileType, Memento, Uri } from 'vscode'
 import fs from 'fs'
 import yaml from 'js-yaml'
-import File from 'vinyl'
 import ospath, { posix as posixpath } from 'path'
 import AntoraCompletionProvider from './antoraCompletionProvider'
 import { disposeAll } from '../../util/dispose'
 import * as nls from 'vscode-nls'
 import ContentCatalog from '@antora/content-classifier/lib/content-catalog'
 import { getWorkspaceFolder } from '../../util/workspace'
-import * as util from 'util'
 
 const localize = nls.loadMessageBundle()
 
@@ -31,7 +29,7 @@ export class AntoraConfig {
 export class AntoraDocumentContext {
   private PERMITTED_FAMILIES = ['attachment', 'example', 'image', 'page', 'partial']
 
-  constructor (private antoraContext: AntoraContext, private resourceContext: AntoraResourceContext) {
+  constructor (private antoraContext: AntoraContext, public resourceContext: AntoraResourceContext) {
   }
 
   public resolveAntoraResourceIds (id: string, defaultFamily: string): string | undefined {
@@ -49,6 +47,10 @@ export class AntoraDocumentContext {
   public getImages () {
     return this.antoraContext.contentCatalog.findBy({ family: 'image' })
   }
+
+  public getContentCatalog () {
+    return this.antoraContext.contentCatalog
+  }
 }
 
 export class AntoraContext {
@@ -57,29 +59,19 @@ export class AntoraContext {
 
   public async getResource (textDocumentUri: Uri): Promise<AntoraResourceContext | undefined> {
     const antoraConfig = await getAntoraConfig(textDocumentUri)
-    console.log('getResource', {
-      antoraConfig,
-      textDocumentUri,
-    })
     if (antoraConfig === undefined) {
       return undefined
     }
-    const contentSourceRootPath = antoraConfig.contentSourceRootPath
+    const contentSourceRootPath = antoraConfig.contentSourceRootFsPath
     const config = antoraConfig.config
     if (config.name === undefined) {
       return undefined
     }
-    console.log('getByPath', {
-      component: config.name,
-      version: config.version,
-      path: posixpath.relative(contentSourceRootPath, textDocumentUri.path),
-    })
-    const pages = this.contentCatalog.getPages()
-    console.log('this.contentCatalog.getPages()', util.inspect({ pages }, false, null, true))
     const page = this.contentCatalog.getByPath({
       component: config.name,
       version: config.version,
-      path: posixpath.relative(contentSourceRootPath, textDocumentUri.path),
+      // Vinyl will normalize path to system dependent path :(
+      path: ospath.relative(contentSourceRootPath, textDocumentUri.fsPath),
     })
     if (page === undefined) {
       return undefined
@@ -265,8 +257,8 @@ export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceS
         const workspaceRelative = posixpath.relative(workspaceFolder.uri.path, antoraConfig.contentSourceRootPath)
         const files = await Promise.all((await vscode.workspace.findFiles(workspaceRelative + '/modules/**/*')).map(async (file) => {
           const contentSourceRootPath = antoraConfig.contentSourceRootPath
-          const data = {
-            base: antoraConfig.contentSourceRootPath,
+          return {
+            base: contentSourceRootPath,
             path: posixpath.relative(contentSourceRootPath, file.path),
             contents: Buffer.from((await vscode.workspace.fs.readFile(file))),
             extname: posixpath.extname(file.path),
@@ -280,7 +272,6 @@ export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceS
               stem: posixpath.basename(file.path, posixpath.extname(file.path)),
             },
           }
-          return new File(data)
         }))
         const contentAggregate = {
           name: antoraConfig.config.name,
