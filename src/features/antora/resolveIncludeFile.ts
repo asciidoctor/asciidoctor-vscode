@@ -1,6 +1,6 @@
 'use strict'
 
-import ospath, { posix as posixpath } from 'path'
+import ospath from 'path'
 
 const EXAMPLES_DIR_TOKEN = 'example$'
 const PARTIALS_DIR_TOKEN = 'partial$'

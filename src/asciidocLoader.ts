@@ -19,7 +19,7 @@ export class AsciidocLoader {
     readonly asciidoctorConfigProvider: AsciidoctorConfigProvider,
     readonly asciidoctorExtensionsProvider: AsciidoctorExtensionsProvider,
     readonly asciidoctorDiagnosticProvider: AsciidoctorDiagnosticProvider,
-    readonly  context: vscode.ExtensionContext,
+    readonly context: vscode.ExtensionContext
   ) {
     this.processor = AsciidoctorProcessor.getInstance().processor
   }
