@@ -20,7 +20,7 @@ const vscode = acquireVsCodeApi()
 const originalState = vscode.getState()
 
 const state = {
-  line: settings.line, // shadow settings.line with vscode.getState().line if the latter exists
+  ...settings,
   ...(typeof originalState === 'object' ? originalState : {}),
   ...getData<any>('data-state'),
 }

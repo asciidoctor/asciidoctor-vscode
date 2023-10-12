@@ -125,6 +125,7 @@ export class AsciidocEngine {
       previewConfigurationManager.loadAndCacheConfiguration(textDocument.uri),
       antoraDocumentContext,
       line,
+      null,
       krokiServerUrl
     )
     processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])

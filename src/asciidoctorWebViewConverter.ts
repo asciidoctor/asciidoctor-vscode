@@ -96,8 +96,8 @@ export class AsciidoctorWebViewConverter {
   constructor (
     private readonly textDocument: SkinnyTextDocument,
     private readonly webviewResourceProvider: WebviewResourceProvider,
-    cspArbitergetSecurityLevelForResource: AsciidocPreviewSecurityLevel,
-    cspArbiterShouldDisableSecurityWarnings: boolean,
+    asciidocPreviewSecurityLevel: AsciidocPreviewSecurityLevel,
+    shouldDisableSecurityWarnings: boolean,
     private readonly contributions: AsciidocContributions,
     previewConfigurations: AsciidocPreviewConfiguration,
     private readonly antoraDocumentContext: AntoraDocumentContext | undefined,
@@ -110,7 +110,7 @@ export class AsciidoctorWebViewConverter {
     this.outfilesuffix = '.html'
     this.supports_templates = true
     this.baseConverter = processor.Html5Converter.create()
-    this.securityLevel = cspArbitergetSecurityLevelForResource
+    this.securityLevel = asciidocPreviewSecurityLevel
     this.config = previewConfigurations
     this.initialData = {
       source: textDocumentUri.toString(),
@@ -120,7 +120,7 @@ export class AsciidoctorWebViewConverter {
       scrollEditorWithPreview: this.config.scrollEditorWithPreview,
       doubleClickToSwitchToEditor: this.config.doubleClickToSwitchToEditor,
       preservePreviewWhenHidden: this.config.preservePreviewWhenHidden,
-      disableSecurityWarnings: cspArbiterShouldDisableSecurityWarnings,
+      disableSecurityWarnings: shouldDisableSecurityWarnings,
     }
     this.state = state || {}
   }
