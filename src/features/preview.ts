@@ -49,8 +49,8 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     topmostLineMonitor: AsciidocFileTopmostLineMonitor,
     contributionProvider: AsciidocContributionProvider
   ): Promise<AsciidocPreview> {
-    const resource = vscode.Uri.parse(state.resource)
-    const locked = state.locked
+    const resource = vscode.Uri.parse(state.source)
+    const locked = state.locked || false
     const line = state.line
 
     const preview = new AsciidocPreview(
