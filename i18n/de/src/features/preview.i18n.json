@@ -1,0 +1,5 @@
+{
+  "preview.locked.title": "[Vorschau] {0}",
+  "preview.unlocked.title": "Vorschau {0}",
+  "preview.styleLoadError.message": "Stilvorlage 'asciidoc.preview.style' : {0} kann nicht geladen werden."
+}
