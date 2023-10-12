@@ -1,0 +1,43 @@
+= Diagrams
+:kroki-server-url: http://localhost:8000
+// The `kroki-server-url` attribute must be defined as a document attribute
+// https://docs.asciidoctor.org/asciidoc/latest/attributes/custom-attributes/ must be placed at the top of the asciidoc file
+
+[plantuml,align=center]
+....
+Alice -> Bob: Authentication Request
+Bob --> Alice: Authentication Response
+
+Alice -> Bob: Another authentication Request
+Alice <-- Bob: Another authentication Response
+....
+
+
+[d2,width=450,align=center]
+....
+D2 Parser: {
+  shape: class
+
+  # Default visibility is + so no need to specify.
+  +reader: io.RuneReader
+  readerPos: d2ast.Position
+
+  # Private field.
+  -lookahead: "[]rune"
+
+  # Protected field.
+  # We have to escape the # to prevent the line from being parsed as a comment.
+  \#lookaheadPos: d2ast.Position
+
+  +peek(): (r rune, eof bool)
+  rewind()
+  commit()
+
+  \#peekn(n int): (s string, eof bool)
+}
+
+"github.com/terrastruct/d2parser.git" -> D2 Parser
+....
+
+
+NOTE: We are using a local instance of Kroki!

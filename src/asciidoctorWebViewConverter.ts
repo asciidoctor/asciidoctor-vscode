@@ -53,27 +53,42 @@ const previewStrings = {
 }
 
 /**
+ * @param webviewResourceProvider
  * @param securityLevel
+ * @param krokiServerUrl
  * @param nonce
  */
-function getCspForResource (webviewResourceProvider: WebviewResourceProvider, securityLevel: AsciidocPreviewSecurityLevel, nonce: string): string {
+function getCspForResource (webviewResourceProvider: WebviewResourceProvider, securityLevel: AsciidocPreviewSecurityLevel, krokiServerUrl: string, nonce: string): string {
+  if (securityLevel === AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent) {
+    return '<meta http-equiv="Content-Security-Policy" content="">'
+  }
   const rule = webviewResourceProvider.cspSource
   const highlightjsInlineScriptHash = 'sha256-ZrDBcrmObbqhVV/Mag2fT/y08UJGejdW7UWyEsi4DXw='
-  // add font-src about: as a workaround: https://github.com/mathjax/MathJax/issues/256#issuecomment-37990603
-  switch (securityLevel) {
-    case AsciidocPreviewSecurityLevel.AllowInsecureContent:
-      return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' ${rule} http: https: data:; media-src 'self' ${rule} http: https: data:; script-src 'nonce-${nonce}' '${highlightjsInlineScriptHash}' https://*.vscode-cdn.net/; style-src 'self' ${rule} 'unsafe-inline' http: https: data:; font-src 'self' ${rule} http: https: data: about:;">`
-
-    case AsciidocPreviewSecurityLevel.AllowInsecureLocalContent:
-      return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' ${rule} https: data: http://localhost:* http://127.0.0.1:*; media-src 'self' ${rule} https: data: http://localhost:* http://127.0.0.1:*; script-src 'nonce-${nonce}' '${highlightjsInlineScriptHash}' https://*.vscode-cdn.net/; style-src 'self' ${rule} 'unsafe-inline' https: data: http://localhost:* http://127.0.0.1:*; font-src 'self' ${rule} https: data: http://localhost:* http://127.0.0.1:* about:;">`
-
-    case AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent:
-      return '<meta http-equiv="Content-Security-Policy" content="">'
-
-    case AsciidocPreviewSecurityLevel.Strict:
-    default:
-      return `<meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src 'self' ${rule} https: data:; media-src 'self' ${rule} https: data:; script-src 'nonce-${nonce}' '${highlightjsInlineScriptHash}' https://*.vscode-cdn.net/; style-src 'self' ${rule} 'unsafe-inline' https: data:; font-src 'self' ${rule} https: data: about:;">`
+  const rules = {
+    'default-src': ['\'none\''],
+    'img-src': ['\'self\'', rule, 'https:', 'data:', krokiServerUrl],
+    'object-src': ['\'self\'', rule, 'https:', 'data:', krokiServerUrl],
+    'media-src': ['\'self\'', rule, 'https:', 'data:', krokiServerUrl],
+    'script-src': [`'nonce-${nonce}'`, `'${highlightjsInlineScriptHash}'`, 'https://*.vscode-cdn.net/'],
+    'style-src': ['\'self\'', rule, '\'unsafe-inline\'', 'data:'],
+    'font-src': ['\'self\'', rule, 'https:', 'data:', 'about:'],
   }
+  // add font-src about: as a workaround: https://github.com/mathjax/MathJax/issues/256#issuecomment-37990603
+  if (securityLevel === AsciidocPreviewSecurityLevel.AllowInsecureContent) {
+    // allow "insecure" content (http protocol)
+    rules['img-src'] = [...rules['img-src'], 'http:']
+    rules['object-src'] = [...rules['img-src'], 'http:']
+    rules['media-src'] = [...rules['img-src'], 'http:']
+    rules['style-src'] = [...rules['img-src'], 'http:']
+    rules['font-src'] = [...rules['img-src'], 'http:']
+  } else if (securityLevel === AsciidocPreviewSecurityLevel.AllowInsecureLocalContent) {
+    rules['img-src'] = [...rules['img-src'], 'http://localhost:*', 'http://127.0.0.1:*']
+    rules['object-src'] = [...rules['img-src'], 'http://localhost:*', 'http://127.0.0.1:*']
+    rules['media-src'] = [...rules['img-src'], 'http://localhost:*', 'http://127.0.0.1:*']
+    rules['style-src'] = [...rules['img-src'], 'http://localhost:*', 'http://127.0.0.1:*']
+    rules['font-src'] = [...rules['img-src'], 'http://localhost:*', 'http://127.0.0.1:*']
+  }
+  return `<meta http-equiv="Content-Security-Policy" content="${Object.entries(rules).map(([key, values]) => `${key} ${values.join(' ')}`).join('; ')}">`
 }
 
 function escapeAttribute (value: string | vscode.Uri): string {
@@ -142,7 +157,7 @@ export class AsciidoctorWebViewConverter {
       // Content Security Policy
       const nonce = new Date().getTime() + '' + new Date().getMilliseconds()
       const webviewResourceProvider = this.webviewResourceProvider
-      const csp = getCspForResource(webviewResourceProvider, this.securityLevel, nonce)
+      const csp = getCspForResource(webviewResourceProvider, this.securityLevel, this.krokiServerUrl, nonce)
       const syntaxHighlighter = node.$syntax_highlighter()
       let assetUriScheme = node.getAttribute('asset-uri-scheme', 'https')
       if (assetUriScheme.trim() !== '') {
