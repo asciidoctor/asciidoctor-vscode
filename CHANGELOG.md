@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+
+## 3.1.3 (2023-07-21)
+
 ### Bug fixes
 
 - Ignore Antora documentation component symlinks (#755)
