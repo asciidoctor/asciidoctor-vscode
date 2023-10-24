@@ -22,7 +22,7 @@ module.exports = {
             'https': false,
             'url': false,
             'zlib': false,
-            'os': false,
+            'os': require.resolve('os-browserify/browser'),
             'child_process': false,
             'crypto': false,
             'stream': false,
