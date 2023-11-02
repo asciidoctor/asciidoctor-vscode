@@ -2,6 +2,8 @@ import * as vscode from 'vscode'
 import { Asciidoctor } from '@asciidoctor/core'
 import { AsciidoctorProcessor } from '../asciidoctorProcessor'
 
+const MAX_DEPTH_SEARCH_ASCIIDOCCONFIG = 100
+
 export interface AsciidoctorConfigProvider {
   activate(registry: Asciidoctor.Extensions.Registry, documentUri: vscode.Uri): Promise<void>;
 }
@@ -42,14 +44,44 @@ export class AsciidoctorConfig implements AsciidoctorConfigProvider {
   }
 }
 
+function dir (uri: vscode.Uri, workspaceFolder: vscode.Uri | undefined): vscode.Uri | undefined {
+  if (uri.path === workspaceFolder?.path) {
+    return undefined
+  }
+  if (uri.path.lastIndexOf('/') <= 0) {
+    return undefined
+  }
+  return uri.with({ path: uri.path.slice(0, uri.path.lastIndexOf('/')) })
+}
+
+async function exists (uri: vscode.Uri): Promise<boolean> {
+  try {
+    await vscode.workspace.fs.stat(uri)
+    return true
+  } catch (err) {
+    // file does not exist, ignore
+    return false
+  }
+}
+
 export async function getAsciidoctorConfigContent (documentUri: vscode.Uri): Promise<String | undefined> {
-  const asciidoctorConfigs = (await vscode.workspace.findFiles('**/.{asciidoctorconfig.adoc,asciidoctorconfig}', null))
-    .filter((uri) => {
-      const documentParentDirectory = documentUri.path.slice(0, documentUri.path.lastIndexOf('/'))
-      const asciidoctorConfigParentDirectory = uri.path.slice(0, uri.path.lastIndexOf('/'))
-      return documentParentDirectory.startsWith(asciidoctorConfigParentDirectory)
-    })
-    .sort((a, b) => a.path.localeCompare(b.path))
+  const workspaceFolderUri = vscode.workspace.getWorkspaceFolder(documentUri)?.uri
+  let currentDirectoryUri = dir(documentUri, workspaceFolderUri)
+  let depth = 0
+  const asciidoctorConfigs: vscode.Uri[] = []
+  while (currentDirectoryUri !== undefined && depth < MAX_DEPTH_SEARCH_ASCIIDOCCONFIG) {
+    depth++
+    const asciidoctorConfigAdocUri = vscode.Uri.joinPath(currentDirectoryUri, '.asciidoctorconfig.adoc')
+    if (await exists(asciidoctorConfigAdocUri)) {
+      asciidoctorConfigs.push(asciidoctorConfigAdocUri)
+    }
+    const asciidoctorConfigUri = vscode.Uri.joinPath(currentDirectoryUri, '.asciidoctorconfig')
+    if ((await exists(asciidoctorConfigUri))) {
+      asciidoctorConfigs.push(asciidoctorConfigUri)
+    }
+    currentDirectoryUri = dir(currentDirectoryUri, workspaceFolderUri)
+  }
+  asciidoctorConfigs.sort((a, b) => a.path.localeCompare(b.path))
   if (asciidoctorConfigs.length === 0) {
     return undefined
   }

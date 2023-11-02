@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+### Performance
+
+- Replace `findFiles` by a recursive method that relies on `workspace.fs.stat` in the .asciidoctorconfig feature - should improve performance on large projects (#809)
 
 ## 3.1.3 (2023-07-21)
 
