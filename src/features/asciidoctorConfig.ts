@@ -1,6 +1,7 @@
 import * as vscode from 'vscode'
 import { Asciidoctor } from '@asciidoctor/core'
 import { AsciidoctorProcessor } from '../asciidoctorProcessor'
+import { dir, exists } from '../util/file'
 
 const MAX_DEPTH_SEARCH_ASCIIDOCCONFIG = 100
 
@@ -41,26 +42,6 @@ export class AsciidoctorConfig implements AsciidoctorConfigProvider {
     } else {
       (this.prependExtension as any).asciidoctorConfigContent = ''
     }
-  }
-}
-
-function dir (uri: vscode.Uri, workspaceFolder: vscode.Uri | undefined): vscode.Uri | undefined {
-  if (uri.path === workspaceFolder?.path) {
-    return undefined
-  }
-  if (uri.path.lastIndexOf('/') <= 0) {
-    return undefined
-  }
-  return uri.with({ path: uri.path.slice(0, uri.path.lastIndexOf('/')) })
-}
-
-async function exists (uri: vscode.Uri): Promise<boolean> {
-  try {
-    await vscode.workspace.fs.stat(uri)
-    return true
-  } catch (err) {
-    // file does not exist, ignore
-    return false
   }
 }
 
