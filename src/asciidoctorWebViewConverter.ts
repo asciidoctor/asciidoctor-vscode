@@ -69,24 +69,24 @@ function getCspForResource (webviewResourceProvider: WebviewResourceProvider, se
     'img-src': ['\'self\'', rule, 'https:', 'data:', krokiServerUrl],
     'object-src': ['\'self\'', rule, 'https:', 'data:', krokiServerUrl],
     'media-src': ['\'self\'', rule, 'https:', 'data:', krokiServerUrl],
-    'script-src': [`'nonce-${nonce}'`, `'${highlightjsInlineScriptHash}'`, 'https://*.vscode-cdn.net/'],
-    'style-src': ['\'self\'', rule, '\'unsafe-inline\'', 'data:'],
+    'script-src': ['https:', `'nonce-${nonce}'`, `'${highlightjsInlineScriptHash}'`, 'https://*.vscode-cdn.net/'],
+    'style-src': ['\'self\'', rule, 'https:', '\'unsafe-inline\'', 'data:'],
+    // add font-src about: as a workaround: https://github.com/mathjax/MathJax/issues/256#issuecomment-37990603
     'font-src': ['\'self\'', rule, 'https:', 'data:', 'about:'],
   }
-  // add font-src about: as a workaround: https://github.com/mathjax/MathJax/issues/256#issuecomment-37990603
   if (securityLevel === AsciidocPreviewSecurityLevel.AllowInsecureContent) {
     // allow "insecure" content (http protocol)
     rules['img-src'] = [...rules['img-src'], 'http:']
-    rules['object-src'] = [...rules['img-src'], 'http:']
-    rules['media-src'] = [...rules['img-src'], 'http:']
-    rules['style-src'] = [...rules['img-src'], 'http:']
-    rules['font-src'] = [...rules['img-src'], 'http:']
+    rules['object-src'] = [...rules['object-src'], 'http:']
+    rules['media-src'] = [...rules['media-src'], 'http:']
+    rules['style-src'] = [...rules['style-src'], 'http:']
+    rules['font-src'] = [...rules['font-src'], 'http:']
   } else if (securityLevel === AsciidocPreviewSecurityLevel.AllowInsecureLocalContent) {
     rules['img-src'] = [...rules['img-src'], 'http://localhost:*', 'http://127.0.0.1:*']
-    rules['object-src'] = [...rules['img-src'], 'http://localhost:*', 'http://127.0.0.1:*']
-    rules['media-src'] = [...rules['img-src'], 'http://localhost:*', 'http://127.0.0.1:*']
-    rules['style-src'] = [...rules['img-src'], 'http://localhost:*', 'http://127.0.0.1:*']
-    rules['font-src'] = [...rules['img-src'], 'http://localhost:*', 'http://127.0.0.1:*']
+    rules['object-src'] = [...rules['object-src'], 'http://localhost:*', 'http://127.0.0.1:*']
+    rules['media-src'] = [...rules['media-src'], 'http://localhost:*', 'http://127.0.0.1:*']
+    rules['style-src'] = [...rules['style-src'], 'http://localhost:*', 'http://127.0.0.1:*']
+    rules['font-src'] = [...rules['font-src'], 'http://localhost:*', 'http://127.0.0.1:*']
   }
   return `<meta http-equiv="Content-Security-Policy" content="${Object.entries(rules).map(([key, values]) => `${key} ${values.join(' ')}`).join('; ')}">`
 }
