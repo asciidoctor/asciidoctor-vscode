@@ -7,7 +7,9 @@ import { disposeAll } from '../../util/dispose'
 import * as nls from 'vscode-nls'
 import ContentCatalog from '@antora/content-classifier/lib/content-catalog'
 import { getWorkspaceFolder } from '../../util/workspace'
+import { dir, exists } from '../../util/file'
 
+const MAX_DEPTH_SEARCH_ANTORACONFIG = 100
 const localize = nls.loadMessageBundle()
 
 export interface AntoraResourceContext {
@@ -177,7 +179,7 @@ export async function findAntoraConfigFile (textDocumentUri: Uri): Promise<Uri |
   cancellationToken.token.onCancellationRequested((e) => {
     console.log('Cancellation requested, cause: ' + e)
   })
-  const antoraConfigUris = await vscode.workspace.findFiles('**/antora.yml', '/node_modules/', 100, cancellationToken.token)
+  const antoraConfigUris = await vscode.workspace.findFiles('**/antora.yml', undefined, 100, cancellationToken.token)
   // check for Antora configuration
   for (const antoraConfigUri of antoraConfigUris) {
     const antoraConfigParentDirPath = antoraConfigUri.path.slice(0, antoraConfigUri.path.lastIndexOf('/'))
@@ -193,7 +195,20 @@ export async function findAntoraConfigFile (textDocumentUri: Uri): Promise<Uri |
 }
 
 export async function antoraConfigFileExists (textDocumentUri: Uri): Promise<boolean> {
-  return await findAntoraConfigFile(textDocumentUri) !== undefined
+  const workspaceFolderUri = vscode.workspace.getWorkspaceFolder(textDocumentUri)?.uri
+  let currentDirectoryUri = dir(textDocumentUri, workspaceFolderUri)
+  let depth = 0
+  let antoraConfig: vscode.Uri
+  while (currentDirectoryUri !== undefined && depth < MAX_DEPTH_SEARCH_ANTORACONFIG) {
+    depth++
+    const antoraConfigUri = vscode.Uri.joinPath(currentDirectoryUri, 'antora.yml')
+    if (await exists(antoraConfigUri)) {
+      antoraConfig = antoraConfigUri
+      break
+    }
+    currentDirectoryUri = dir(currentDirectoryUri, workspaceFolderUri)
+  }
+  return antoraConfig !== undefined
 }
 
 export async function getAntoraConfigs (): Promise<AntoraConfig[]> {
@@ -201,7 +216,7 @@ export async function getAntoraConfigs (): Promise<AntoraConfig[]> {
   cancellationToken.token.onCancellationRequested((e) => {
     console.log('Cancellation requested, cause: ' + e)
   })
-  const antoraConfigUris = await vscode.workspace.findFiles('**/antora.yml', '/node_modules/', 100, cancellationToken.token)
+  const antoraConfigUris = await vscode.workspace.findFiles('**/antora.yml', undefined, 100, cancellationToken.token)
   // check for Antora configuration
   const antoraConfigs = await Promise.all(antoraConfigUris.map(async (antoraConfigUri) => {
     let config = {}
@@ -255,7 +270,7 @@ export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceS
       .map(async (antoraConfig) => {
         const workspaceFolder = getWorkspaceFolder(antoraConfig.uri)
         const workspaceRelative = posixpath.relative(workspaceFolder.uri.path, antoraConfig.contentSourceRootPath)
-        const files = await Promise.all((await vscode.workspace.findFiles(workspaceRelative + '/modules/**/*')).map(async (file) => {
+        const files = await Promise.all((await vscode.workspace.findFiles(workspaceRelative + '/modules/*/{attachments,examples,images,pages,partials,assets}/**')).map(async (file) => {
           const contentSourceRootPath = antoraConfig.contentSourceRootPath
           return {
             base: contentSourceRootPath,

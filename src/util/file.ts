@@ -42,3 +42,23 @@ export const sortFilesAndDirectories = (filesAndDirs: FileInfo[]): FileInfo[] =>
   const files = filesAndDirs.filter((f) => f.isFile === true)
   return [...dirs, ...files]
 }
+
+export function dir (uri: vscode.Uri, workspaceFolder: vscode.Uri | undefined): vscode.Uri | undefined {
+  if (uri.path === workspaceFolder?.path) {
+    return undefined
+  }
+  if (uri.path.lastIndexOf('/') <= 0) {
+    return undefined
+  }
+  return uri.with({ path: uri.path.slice(0, uri.path.lastIndexOf('/')) })
+}
+
+export async function exists (uri: vscode.Uri): Promise<boolean> {
+  try {
+    await vscode.workspace.fs.stat(uri)
+    return true
+  } catch (err) {
+    // file does not exist, ignore
+    return false
+  }
+}
