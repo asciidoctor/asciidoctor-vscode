@@ -2,9 +2,74 @@
 
 ## Unreleased
 
+### Bug fixes
+
+- Allow Kroki server in strict CSP defined as a preview attribute
+- Add `https` to `style-src` and `script-src` in strict CSP
+- Fix a typo on the message "Do you want to active Antora support?" -> "Do you want to activate Antora support?"
+
+### Improvements
+
+- Use a more restrictive glob search for `antora.yml` files
+- Use a faster implementation when suggesting to the user to activate Antora support
+
+### Infrastructure
+
+- Update GitHub Actions to v4 (major)
+
+### Documentation
+
+- Mention that `:kroki-fetch-diagram` is unsupported
+
+
+## 3.1.7 (2023-11-02)
+
 ### Performance
 
 - Replace `findFiles` by a recursive method that relies on `workspace.fs.stat` in the .asciidoctorconfig feature - should improve performance on large projects (#809)
+
+
+## 3.1.6 (2023-10-24)
+
+### Bug fixes
+
+- Fix preview in the Web version (on vscode.dev)
+- Decode section titles in outline (#795)
+
+### Improvements
+
+- Allow Kroki server in strict CSP
+- Added German translation strings - thanks @r0ckarong
+- Support Antora resource IDs on include
+
+### Infrastructure
+
+- Run CI on Windows (#796)
+- Bump dependencies
+
+
+## 3.1.5 (2023-09-17)
+
+### Improvements
+
+- Update asciidoctor Kroki to 0.17.0 - thanks @sixtysecrun
+
+
+## 3.1.4 (2023-08-29)
+
+### Bug fixes
+
+- Fix the web bundle - the extension was no longer working on vscode.dev (#774)
+- Fix the convert and export functions to DocBook - the extension was exporting HTML instead of XML/DocBook (#775)
+
+### Improvements
+
+- Allow MathJax to load in strict CSP (#780)
+
+### Documentation
+
+- Update the bug template on GitHub to refer to extension logs (#782) - thanks @jonathan-s
+
 
 ## 3.1.3 (2023-07-21)
 
@@ -16,12 +81,14 @@
 - Move `getContent` call after generating the document header (#762)
 - Remove the `imagesdir` attribute from image paths when drag and dropping images in the editor (#761)
 
+
 ## 3.1.2 (2023-07-15)
 
 ### Bug fixes
 
 - Use `textDocument.lineAt` to avoid issues with line separators discrepancy (#750)
 - Include .asciidoctorconfig, AsciiDoc attributes defined in the extension configuration and Antora AsciiDoc attributes in attributes completion (#754)
+
 
 ## 3.1.0 (2023-07-11)
 
@@ -36,6 +103,7 @@ First stable release of 3.x which includes all changes from 3.0.x.
 
 - folding of several single line comments is not working for more than 2 lines (#722)
 - attribute coming from include files are missing in completion with 3.0.x (#727)
+
 
 ## 3.0.5 "pre-release" (2023-06-03)
 
