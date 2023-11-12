@@ -111,7 +111,7 @@ export class AntoraSupportManager implements vscode.Disposable {
           const yesAnswer = localize('antora.activateSupport.yes', 'Yes')
           const noAnswer = localize('antora.activateSupport.no', 'No, thanks')
           const answer = await vscode.window.showInformationMessage(
-            localize('antora.activateSupport.message', 'We detect that you are working with Antora. Do you want to active Antora support?'),
+            localize('antora.activateSupport.message', 'We detect that you are working with Antora. Do you want to activate Antora support?'),
             yesAnswer,
             noAnswer
           )
