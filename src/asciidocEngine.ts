@@ -110,7 +110,8 @@ export class AsciidocEngine {
     const processor = asciidoctorProcessor.processor
     // load the Asciidoc header only to get kroki-server-url attribute
     const text = textDocument.getText()
-    const document = processor.load(text, { header_only: true })
+    const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
+    const document = processor.load(text, { attributes, header_only: true })
     const krokiServerUrl = document.getAttribute('kroki-server-url') || 'https://kroki.io'
 
     // Antora Resource Identifiers resolution
@@ -151,9 +152,7 @@ export class AsciidocEngine {
     } else {
       asciidoctorProcessor.restoreBuiltInSyntaxHighlighter()
     }
-    const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
-
-    const antoraSupport = await AntoraSupportManager.getInstance(context.workspaceState)
+    const antoraSupport = AntoraSupportManager.getInstance(context.workspaceState)
     const antoraAttributes = await antoraSupport.getAttributes(textDocumentUri)
     const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).getBaseDir()
     const templateDirs = this.getTemplateDirs()
