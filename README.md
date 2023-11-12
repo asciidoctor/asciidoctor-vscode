@@ -115,20 +115,7 @@ If this is an issue it is also possible to use your own Kroki instance (see [the
 
 To enable diagram support, set the `asciidoc.extensions.enableKroki` setting to `true`.
 
-To cache and save diagrams locally set the `:kroki-fetch-diagram:` AsciiDoc attribute in your document header:
-
-```asciidoc
-= My Amazing Document
-:kroki-fetch-diagram:
-```
-
-This will store images by default in your document folder, however you may also set `imagesdir` to store them elsewhere:
-
-```asciidoc
-= My Amazing Document
-:kroki-fetch-diagram:
-:imagesdir: media
-```
+**❗ Important:** Please note that `:kroki-fetch-diagram:` is currently not supported because it relies on `unxhr` which does not work in VS Code (https://github.com/ggrossetie/unxhr/issues/98).
 
 ### Use Asciidoctor.js extensions
 
