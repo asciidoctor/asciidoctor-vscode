@@ -7,7 +7,7 @@ export function getWorkspaceFolder (uri: Uri): WorkspaceFolder | undefined {
   const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri)
   if (workspaceFolder && os.platform() === 'win32') {
     return {
-      uri: workspaceFolder.uri.with({ path: workspaceFolder.uri.path.replace(driveLetterRx, (driverLetter) => driverLetter.toLowerCase()) }),
+      uri: normalizeUri(workspaceFolder.uri),
       name: workspaceFolder.name,
       index: workspaceFolder.index,
     }
@@ -19,7 +19,7 @@ export function getWorkspaceFolders (): WorkspaceFolder[] | undefined {
   return vscode.workspace.workspaceFolders?.map((workspaceFolder) => {
     if (os.platform() === 'win32') {
       return {
-        uri: workspaceFolder.uri.with({ path: workspaceFolder.uri.path.replace(driveLetterRx, (driverLetter) => driverLetter.toLowerCase()) }),
+        uri: normalizeUri(workspaceFolder.uri),
         name: workspaceFolder.name,
         index: workspaceFolder.index,
       }
@@ -38,9 +38,14 @@ export function findDefaultWorkspaceFolderUri (): Uri | undefined {
 
 export function getDefaultWorkspaceFolderUri (): Uri | undefined {
   const workspaceFolders = getWorkspaceFolders()
-  let workspaceUri = workspaceFolders[0].uri
+  return normalizeUri(workspaceFolders[0].uri)
+}
+
+export function normalizeUri(uri: Uri): Uri {
+  // normalize Windows drive letter
+  // https://github.com/microsoft/vscode/issues/194692
   if (os.platform() === 'win32') {
-    workspaceUri = workspaceUri.with({ path: workspaceUri.path.replace(driveLetterRx, (driverLetter) => driverLetter.toLowerCase()) })
+    return uri.with({ path: uri.path.replace(driveLetterRx, (driverLetter) => driverLetter.toLowerCase()) })
   }
-  return workspaceUri
+  return uri
 }
