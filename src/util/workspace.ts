@@ -7,7 +7,7 @@ export function getWorkspaceFolder (uri: Uri): WorkspaceFolder | undefined {
   const workspaceFolder = vscode.workspace.getWorkspaceFolder(uri)
   if (workspaceFolder && os.platform() === 'win32') {
     return {
-      uri: workspaceFolder.uri.with({ path: workspaceFolder.uri.path.replace(driveLetterRx/, (driverLetter) => driverLetter.toLowerCase()) }),
+      uri: workspaceFolder.uri.with({ path: workspaceFolder.uri.path.replace(driveLetterRx, (driverLetter) => driverLetter.toLowerCase()) }),
       name: workspaceFolder.name,
       index: workspaceFolder.index,
     }
