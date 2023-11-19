@@ -4,6 +4,13 @@
 
 ### Bug fixes
 
+- Fix drive letter normalization - previously, we were applying `toLowerCase` on the whole path causing the WebView to return 401 on resources such as images (#825)
+
+
+## 3.1.8 (2023-11-12)
+
+### Bug fixes
+
 - Allow Kroki server in strict CSP defined as a preview attribute
 - Add `https` to `style-src` and `script-src` in strict CSP
 - Fix a typo on the message "Do you want to active Antora support?" -> "Do you want to activate Antora support?"
