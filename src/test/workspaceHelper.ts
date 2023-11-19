@@ -23,7 +23,7 @@ async function exists (file: vscode.Uri): Promise<boolean> {
 }
 
 export async function createFile (content: string, ...pathSegments: string[]): Promise<vscode.Uri> {
-  let file = vscode.Uri.joinPath(getDefaultWorkspaceFolderUri(), ...pathSegments)
+  const file = vscode.Uri.joinPath(getDefaultWorkspaceFolderUri(), ...pathSegments)
   await vscode.workspace.fs.writeFile(file, Buffer.from(content))
   return normalizeUri(file)
 }
@@ -51,7 +51,7 @@ export async function createDirectories (...pathSegments: string[]): Promise<voi
 }
 
 export async function createDirectory (...pathSegments: string[]): Promise<vscode.Uri> {
-  let dir = vscode.Uri.joinPath(getDefaultWorkspaceFolderUri(), ...pathSegments)
+  const dir = vscode.Uri.joinPath(getDefaultWorkspaceFolderUri(), ...pathSegments)
   await vscode.workspace.fs.createDirectory(dir)
   return normalizeUri(dir)
 }
@@ -60,7 +60,7 @@ export async function createLink (existingPathSegments: string[], newPathSegment
   const fs = require('fs').promises
   const workspaceUri = getDefaultWorkspaceFolderUri()
   const existingPath = vscode.Uri.joinPath(workspaceUri, ...existingPathSegments)
-  let newPath = vscode.Uri.joinPath(workspaceUri, ...newPathSegments)
+  const newPath = vscode.Uri.joinPath(workspaceUri, ...newPathSegments)
   await fs.symlink(existingPath.fsPath, newPath.fsPath)
   return normalizeUri(newPath)
 }

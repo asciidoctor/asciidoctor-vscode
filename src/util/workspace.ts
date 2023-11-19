@@ -41,7 +41,7 @@ export function getDefaultWorkspaceFolderUri (): Uri | undefined {
   return normalizeUri(workspaceFolders[0].uri)
 }
 
-export function normalizeUri(uri: Uri): Uri {
+export function normalizeUri (uri: Uri): Uri {
   // normalize Windows drive letter
   // https://github.com/microsoft/vscode/issues/194692
   if (os.platform() === 'win32') {
