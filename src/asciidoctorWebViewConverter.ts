@@ -419,8 +419,13 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
     return this.webviewResourceProvider.asMediaWebViewSrc('dist', mediaFile)
   }
 
-  private getStyles (node: Asciidoctor.Document, webviewResourceProvider: WebviewResourceProvider, resource: vscode.Uri,
-    config: AsciidocPreviewConfiguration, state?: any): string {
+  private getStyles (
+    node: Asciidoctor.Document,
+    webviewResourceProvider: WebviewResourceProvider,
+    textDocumentUri: vscode.Uri,
+    config: AsciidocPreviewConfiguration,
+    state?: any
+  ): string {
     const baseStyles: string[] = []
     for (const previewStyle of this.contributions.previewStyles) {
       baseStyles.push(`<link rel="stylesheet" type="text/css" href="${escapeAttribute(webviewResourceProvider.asWebviewUri(previewStyle))}">`)
@@ -434,7 +439,7 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
       baseStyles.push(`<link rel="stylesheet" href="${webviewResourceProvider.asMediaWebViewSrc('media', 'font-awesome', 'css', 'font-awesome.css')}">`)
     }
     return `${baseStyles.join('\n')}
-  ${this.computeCustomStyleSheetIncludes(webviewResourceProvider, resource, config)}
+  ${this.computeCustomStyleSheetIncludes(webviewResourceProvider, textDocumentUri, config)}
   ${this.getImageStabilizerStyles(state)}`
   }
 
@@ -446,13 +451,13 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
     return out.join('\n')
   }
 
-  private computeCustomStyleSheetIncludes (webviewResourceProvider: WebviewResourceProvider, resource: vscode.Uri, config: AsciidocPreviewConfiguration): string {
-    const style = config.previewStyle
-    if (style === '') {
+  private computeCustomStyleSheetIncludes (webviewResourceProvider: WebviewResourceProvider, textDocumentUri: vscode.Uri, config: AsciidocPreviewConfiguration): string {
+    const stylePath = config.previewStyle
+    if (stylePath === '') {
       return ''
     }
     const out: string[] = []
-    out.push(`<link rel="stylesheet" class="code-user-style" data-source="${escapeAttribute(style)}" href="${escapeAttribute(this.fixHref(webviewResourceProvider, resource, style))}" type="text/css" media="screen">`)
+    out.push(`<link rel="stylesheet" class="code-user-style" data-source="${escapeAttribute(stylePath)}" href="${escapeAttribute(this.fixHref(webviewResourceProvider, textDocumentUri, stylePath))}" type="text/css" media="screen">`)
     return out.join('\n')
   }
 
@@ -471,7 +476,7 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
     return ret
   }
 
-  private fixHref (webviewResourceProvider: WebviewResourceProvider, resource: vscode.Uri, href: string): string {
+  private fixHref (webviewResourceProvider: WebviewResourceProvider, textDocumentUri: vscode.Uri, href: string): string {
     // QUESTION: should we use `stylesdir` attribute in here?
     if (!href) {
       return href
@@ -487,12 +492,12 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
     }
 
     // Use a workspace relative path if there is a workspace
-    const root = getWorkspaceFolder(resource)
+    const root = getWorkspaceFolder(textDocumentUri)
     if (root) {
       return webviewResourceProvider.asWebviewUri(vscode.Uri.joinPath(root.uri, href)).toString()
     }
 
     // Otherwise look relative to the AsciiDoc file
-    return webviewResourceProvider.asWebviewUri(vscode.Uri.joinPath(uri.Utils.dirname(resource), href)).toString()
+    return webviewResourceProvider.asWebviewUri(vscode.Uri.joinPath(uri.Utils.dirname(textDocumentUri), href)).toString()
   }
 }
