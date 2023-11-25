@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+
+## 3.1.9 (2023-11-19)
+
 ### Bug fixes
 
 - Fix drive letter normalization - previously, we were applying `toLowerCase` on the whole path causing the WebView to return 401 on resources such as images (#825)
