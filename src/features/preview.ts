@@ -11,7 +11,7 @@ import { AsciidocContentProvider } from './previewContentProvider'
 import { disposeAll, Disposable } from '../util/dispose'
 import { WebviewResourceProvider } from '../util/resources'
 import { AsciidocFileTopmostLineMonitor, getVisibleLine } from '../util/topmostLineMonitor'
-import { AsciidocPreviewConfigurationManager } from './previewConfig'
+import { AsciidocPreviewConfiguration, AsciidocPreviewConfigurationManager } from './previewConfig'
 import { AsciidocContributionProvider } from '../asciidocExtensions'
 import { isAsciidocFile } from '../util/file'
 import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink'
@@ -63,7 +63,7 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
       topmostLineMonitor,
       contributionProvider)
 
-    preview.editor.webview.options = AsciidocPreview.getWebviewOptions(resource, contributionProvider)
+    preview.editor.webview.options = AsciidocPreview.getWebviewOptions(resource, contributionProvider, previewConfigurations.loadAndCacheConfiguration(resource))
 
     if (!isNaN(line)) {
       preview.line = line
@@ -94,7 +94,7 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
       {
         enableFindWidget: true,
         retainContextWhenHidden,
-        ...AsciidocPreview.getWebviewOptions(resource, contributionProvider),
+        ...AsciidocPreview.getWebviewOptions(resource, contributionProvider, previewConfigurations.loadAndCacheConfiguration(resource)),
       }
     )
 
@@ -376,27 +376,37 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
       this.editor.title = AsciidocPreview.getPreviewTitle(this._resource, this._locked)
     }
     this.editor.iconPath = this.iconPath
-    this.editor.webview.options = AsciidocPreview.getWebviewOptions(resource, this._contributionProvider)
-    const content = await this._contentProvider.providePreviewHTML(document, this._previewConfigurations, this, this.line)
-    this.editor.webview.html = content
+    const asciidocPreviewConfiguration = this._previewConfigurations.loadAndCacheConfiguration(resource)
+    this.editor.webview.options = AsciidocPreview.getWebviewOptions(resource, this._contributionProvider, asciidocPreviewConfiguration)
+    this.editor.webview.html = await this._contentProvider.providePreviewHTML(document, this._previewConfigurations, this, this.line)
   }
 
   private static getWebviewOptions (
     resource: vscode.Uri,
-    contributionProvider: AsciidocContributionProvider
+    contributionProvider: AsciidocContributionProvider,
+    asciidocPreviewConfiguration: AsciidocPreviewConfiguration
   ): vscode.WebviewOptions {
     return {
       enableScripts: true,
       enableCommandUris: true,
-      localResourceRoots: AsciidocPreview.getLocalResourceRoots(resource, contributionProvider),
+      localResourceRoots: AsciidocPreview.getLocalResourceRoots(resource, contributionProvider, asciidocPreviewConfiguration),
     }
   }
 
-  private static getLocalResourceRoots (resource: vscode.Uri, contributionProviderr: AsciidocContributionProvider): vscode.Uri[] {
+  private static getLocalResourceRoots (
+    resource: vscode.Uri,
+    contributionProvider: AsciidocContributionProvider,
+    asciidocPreviewConfiguration: AsciidocPreviewConfiguration
+  ): vscode.Uri[] {
     const baseRoots: vscode.Uri[] = [
-      vscode.Uri.joinPath(contributionProviderr.extensionUri, 'media'),
-      vscode.Uri.joinPath(contributionProviderr.extensionUri, 'dist'),
+      vscode.Uri.joinPath(contributionProvider.extensionUri, 'media'),
+      vscode.Uri.joinPath(contributionProvider.extensionUri, 'dist'),
     ]
+    const previewStylePath = asciidocPreviewConfiguration.previewStyle
+    if (previewStylePath !== '') {
+      const previewStyleUri = vscode.Uri.parse(previewStylePath)
+      baseRoots.push(uri.Utils.dirname(previewStyleUri))
+    }
     const folder = getWorkspaceFolder(resource)
     if (folder) {
       const workspaceRoots = getWorkspaceFolders()?.map((folder) => folder.uri)
