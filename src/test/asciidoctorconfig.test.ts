@@ -10,7 +10,7 @@ import { AsciidocEngine } from '../asciidocEngine'
 import { AsciidoctorConfig } from '../features/asciidoctorConfig'
 import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
 import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
-import { createFile } from './workspaceHelper'
+import { createDirectory, createFile, removeFiles } from './workspaceHelper'
 import { getDefaultWorkspaceFolderUri } from '../util/workspace'
 
 class EmptyAsciidocContributions implements AsciidocContributions {
@@ -144,23 +144,15 @@ suite('asciidoc.Asciidoctorconfig', () => {
 :root-and-level1: Value of root-and-level1 specified in root. Should not appear.
 :root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in root. Should not appear.`))
       createdFiles.push(rootConfigFile)
-
-      const level1ConfigFile = vscode.Uri.joinPath(workspaceUri, 'level-empty', 'level1', configFileName)
-      await vscode.workspace.fs.writeFile(level1ConfigFile, Buffer.from(
+      createdFiles.push(await createDirectory('level-empty'))
+      await createFile(
         `:only-level1: Only level 1. Should appear.
 :root-and-level1: Value of root-and-level1 specified in level1. Should appear.
-:root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in level1. Should not appear.`))
-      createdFiles.push(level1ConfigFile)
-
-      const level2ConfigFile = vscode.Uri.joinPath(workspaceUri, 'level-empty', 'level1', 'level2', configFileName)
-      await vscode.workspace.fs.writeFile(level2ConfigFile, Buffer.from(
+:root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in level1. Should not appear.`, 'level-empty', 'level1', configFileName)
+      await createFile(
         `:only-level2: Only level 2. Should appear.
-:root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in level2. Should appear.`))
-      createdFiles.push(level2ConfigFile)
-
-      const adocFile = vscode.Uri.joinPath(workspaceUri, 'level-empty', 'level1', 'level2', 'fileToTestRecursiveAsciidoctorConfigs.adoc')
-      await vscode.workspace.fs.writeFile(adocFile, Buffer.from(
-        `{only-root}
+:root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in level2. Should appear.`, 'level-empty', 'level1', 'level2', configFileName)
+      const adocFile = await createFile(`{only-root}
 
 {only-level1}
 
@@ -169,8 +161,7 @@ suite('asciidoc.Asciidoctorconfig', () => {
 {root-and-level1}
 
 {root-and-level1-and-level2}
-              `))
-      createdFiles.push(adocFile)
+              `, 'level-empty', 'level1', 'level2', 'fileToTestRecursiveAsciidoctorConfigs.adoc')
 
       const textDocument = await vscode.workspace.openTextDocument(adocFile)
       const asciidocParser = new AsciidocEngine(
@@ -183,9 +174,7 @@ suite('asciidoc.Asciidoctorconfig', () => {
     })
 
     suiteTeardown(async () => {
-      for (const createdFile of createdFiles) {
-        await vscode.workspace.fs.delete(createdFile)
-      }
+      await removeFiles(createdFiles)
     })
 
     test('Var from root level is substituted', async () => {
