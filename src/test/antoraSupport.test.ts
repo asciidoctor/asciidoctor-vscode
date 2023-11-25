@@ -3,14 +3,11 @@ import * as vscode from 'vscode'
 import * as assert from 'assert'
 import 'mocha'
 import { findAntoraConfigFile, getAntoraDocumentContext } from '../features/antora/antoraSupport'
-import { createDirectories, createDirectory, createFile, createLink, removeFiles } from './workspaceHelper'
+import { createDirectories, createDirectory, createFile, createLink, disableAntoraSupport, enableAntoraSupport, removeFiles } from './workspaceHelper'
 import { extensionContext } from './helper'
 import { getDefaultWorkspaceFolderUri } from '../util/workspace'
 
-async function testGetAntoraConfig ({
-  asciidocPathUri,
-  antoraConfigExpectedUri,
-}) {
+async function testGetAntoraConfig ({ asciidocPathUri, antoraConfigExpectedUri }) {
   const antoraConfigUri = await findAntoraConfigFile(asciidocPathUri)
   if (antoraConfigExpectedUri === undefined) {
     assert.strictEqual(antoraConfigUri, undefined)
@@ -25,51 +22,107 @@ async function testGetAntoraConfig ({
   }
 }
 
-suite('Antora Support', () => {
-  const workspaceUri = getDefaultWorkspaceFolderUri()
-  const testCases = [
-    {
-      title: 'Should return Antora config for document inside "pages" directory which is inside another directory',
-      asciidocPathSegments: ['antora', 'multiComponents', 'cli', 'modules', 'commands', 'pages', 'page1.adoc'],
-      antoraConfigExpectedPathSegments: ['antora', 'multiComponents', 'cli', 'antora.yml'],
-    },
-    {
-      title: 'Should return Antora config for document inside "pages" directory',
-      asciidocPathSegments: ['antora', 'multiComponents', 'api', 'modules', 'auth', 'pages', 'page3.adoc'],
-      antoraConfigExpectedPathSegments: ['antora', 'multiComponents', 'api', 'antora.yml'],
-    },
-    {
-      title: 'Should return Antora config for document inside a subdirectory',
-      asciidocPathSegments: ['antora', 'multiComponents', 'api', 'modules', 'auth', 'pages', 'jwt', 'page2.adoc'],
-      antoraConfigExpectedPathSegments: ['antora', 'multiComponents', 'api', 'antora.yml'],
-    },
-    {
+suite('Antora support with multi-documentation components', () => {
+  const createdFiles = []
+  const testCases = []
+  suiteSetup(async () => {
+    createdFiles.push(await createDirectory('docs'))
+    // documentation component: docs/multiComponents/api
+    const apiDocumentationComponentPaths = ['docs', 'multiComponents', 'api']
+    const apiAntoraPaths = [...apiDocumentationComponentPaths, 'antora.yml']
+    await createFile(`name: "api"
+version: "1.0"
+`, ...apiAntoraPaths)
+    const endpointsPaths = [...apiDocumentationComponentPaths, 'modules', 'auth', 'pages', 'endpoints.adoc']
+    await createFile('= Endpoints', ...endpointsPaths)
+    const ssoPaths = [...apiDocumentationComponentPaths, 'modules', 'auth', 'pages', '3rd-party', 'sso.adoc']
+    await createFile('= Single Sign On', ...ssoPaths)
+    const tokenBasedPaths = [...apiDocumentationComponentPaths, 'modules', 'auth', 'pages', 'modules', 'token-based.adoc']
+    await createFile('= Token Based', ...tokenBasedPaths)
+    const patPaths = [...apiDocumentationComponentPaths, 'modules', 'auth', 'pages', 'modules', 'token', 'pat.adoc']
+    await createFile('= Personal Access Token', ...patPaths)
+    //await createFile('= Client Id & Client Secret', ...[...apiDocumentationComponentPaths, 'modules', 'auth', 'pages', 'modules', 'credentials', 'secret.adoc'])
+    testCases.push({
       title: 'Should return Antora config for document inside a "modules" subdirectory',
-      asciidocPathSegments: ['antora', 'multiComponents', 'api', 'modules', 'auth', 'pages', 'modules', 'page4.adoc'],
-      antoraConfigExpectedPathSegments: ['antora', 'multiComponents', 'api', 'antora.yml'],
-    },
-    {
-      title: 'Should return Antora config for document inside a "modules" directory which is inside an Antora modules in a component named "modules"',
-      asciidocPathSegments: ['antora', 'multiComponents', 'modules', 'api', 'docs', 'modules', 'asciidoc', 'pages', 'modules', 'page5.adoc'],
-      antoraConfigExpectedPathSegments: ['antora', 'multiComponents', 'modules', 'api', 'docs', 'antora.yml'],
-    },
-    {
+      asciidocPathSegments: tokenBasedPaths,
+      antoraConfigExpectedPathSegments: apiAntoraPaths,
+    })
+    testCases.push({
+      title: 'Should return Antora config for document inside "pages" directory',
+      asciidocPathSegments: endpointsPaths,
+      antoraConfigExpectedPathSegments: apiAntoraPaths,
+    })
+    testCases.push({
+      title: 'Should return Antora config for document inside a subdirectory',
+      asciidocPathSegments: ssoPaths,
+      antoraConfigExpectedPathSegments: apiAntoraPaths,
+    })
+    testCases.push({
       title: 'Should return Antora config for document inside a directory which has the same name as the workspace',
-      asciidocPathSegments: ['antora', 'multiComponents', 'api', 'modules', 'auth', 'pages', 'modules', 'multiComponents', 'page6.adoc'],
-      antoraConfigExpectedPathSegments: ['antora', 'multiComponents', 'api', 'antora.yml'],
-    },
-    {
-      title: 'Should not return Antora config for document outside "modules" Antora folder',
-      asciidocPathSegments: ['antora', 'multiComponents', 'api', 'modules', 'writer-guide.adoc'],
-      antoraConfigExpectedPathSegments: undefined,
-    },
-    {
-      title: 'Should not return Antora config for document outside of workspace',
-      asciidocPathSegments: ['antora', 'contributing.adoc'],
-      antoraConfigExpectedPathSegments: undefined,
-    },
-  ]
+      asciidocPathSegments: patPaths,
+      antoraConfigExpectedPathSegments: apiAntoraPaths,
+    })
 
+    // documentation component: docs/multiComponents/cli
+    const cliDocumentationComponentPaths = ['docs', 'multiComponents', 'cli']
+    const cliAntoraPaths = [...cliDocumentationComponentPaths, 'antora.yml']
+    await createFile(`name: "cli"
+version: "2.0"
+`, ...cliAntoraPaths)
+    await createFile('', ...[...cliDocumentationComponentPaths, 'modules', 'commands', 'images', 'output.png'])
+    const convertPaths = [...cliDocumentationComponentPaths, 'module', 'commands', 'pages', 'convert.adoc']
+    await createFile(`= Convert Command
+
+image::2.0@cli:commands:output.png[]
+
+image::commands:output.png[]
+
+image::output.png[]
+`, ...convertPaths)
+    testCases.push({
+      title: 'Should return Antora config for document inside "pages" directory which is inside another directory',
+      asciidocPathSegments: convertPaths,
+      antoraConfigExpectedPathSegments: cliAntoraPaths,
+    })
+
+    // documentation component: docs/multiComponents/modules/api/docs/modules
+    const modulesDocumentationComponentPaths = ['docs', 'multiComponents', 'modules', 'api', 'docs', 'modules']
+    const modulesAntoraPaths = [...modulesDocumentationComponentPaths, 'antora.yml']
+    await createFile(`name: asciidoc
+version: ~
+      `, ...modulesAntoraPaths)
+    const admonitionPagePaths = [...modulesDocumentationComponentPaths, 'blocks', 'pages', 'admonition.adoc']
+    await createFile(`= Admonition Block
+
+`, ...admonitionPagePaths)
+    testCases.push({
+      title: 'Should return Antora config for document inside a "modules" directory which is inside an Antora modules in a component named "modules"',
+      asciidocPathSegments: admonitionPagePaths,
+      antoraConfigExpectedPathSegments: modulesAntoraPaths,
+    })
+
+    // outside documentation modules
+    const writerGuidePaths = ['docs', 'multiComponents', 'api', 'modules', 'writer-guide.adoc']
+    await createFile('= Writer Guide', ...writerGuidePaths)
+    testCases.push({
+      title: 'Should not return Antora config for document outside "modules" Antora folder',
+      asciidocPathSegments: writerGuidePaths,
+      antoraConfigExpectedPathSegments: undefined,
+    })
+    const contributingPaths = ['docs', 'contributing.adoc']
+    await createFile('= Contributing', ...contributingPaths)
+    testCases.push({
+      title: 'Should not return Antora config for document outside of documentation modules',
+      asciidocPathSegments: contributingPaths,
+      antoraConfigExpectedPathSegments: undefined,
+    })
+  })
+
+  suiteTeardown(async () => {
+    await removeFiles(createdFiles)
+  })
+
+  const workspaceUri = getDefaultWorkspaceFolderUri()
   for (const testCase of testCases) {
     test(testCase.title, async () => testGetAntoraConfig({
       asciidocPathUri: vscode.Uri.joinPath(workspaceUri, ...testCase.asciidocPathSegments),
@@ -92,11 +145,8 @@ suite('Antora Support', () => {
 version: '7.1'
 `, 'antora-test', 'docs', 'antora.yml')
         // enable Antora support
-        const workspaceConfiguration = vscode.workspace.getConfiguration('asciidoc', null)
-        await workspaceConfiguration.update('antora.enableAntoraSupport', true)
+        await enableAntoraSupport()
         const workspaceState = extensionContext.workspaceState
-        await workspaceState.update('antoraSupportSetting', true)
-        // GO!
         const result = await getAntoraDocumentContext(asciidocFile, workspaceState)
         const components = result.getComponents()
         assert.strictEqual(components !== undefined, true, 'Components must not be undefined')
@@ -108,9 +158,40 @@ version: '7.1'
         throw err
       } finally {
         await removeFiles(createdFiles)
-        await extensionContext.workspaceState.update('antoraSupportSetting', undefined)
-        await vscode.workspace.getConfiguration('asciidoc', null).update('antora.enableAntoraSupport', undefined)
+        await disableAntoraSupport()
       }
+    }
+  })
+})
+
+suite('Antora support with single documentation component', () => {
+  test('Should build content catalog', async () => {
+    const createdFiles = []
+    try {
+      createdFiles.push(await createDirectory('modules'))
+      await createDirectories('modules', 'ROOT', 'pages')
+      const asciidocFile = await createFile('image:mountain.jpeg[]', 'modules', 'ROOT', 'pages', 'landscape.adoc')
+      createdFiles.push(asciidocFile)
+      createdFiles.push(await createFile('', 'modules', 'ROOT', 'images', 'mountain.jpeg'))
+      createdFiles.push(await createFile(`name: ROOT
+version: ~
+`, 'antora.yml'))
+      await enableAntoraSupport()
+      const workspaceState = extensionContext.workspaceState
+      const result = await getAntoraDocumentContext(asciidocFile, workspaceState)
+      const images = result.getImages()
+      assert.strictEqual(images !== undefined, true, 'Images must not be undefined')
+      assert.strictEqual(images.length > 0, true, 'Must contains one image')
+      assert.strictEqual(images[0].src.basename, 'mountain.jpeg')
+      assert.strictEqual(images[0].src.component, 'ROOT')
+      assert.strictEqual(images[0].src.family, 'image')
+      assert.strictEqual(images[0].src.version, null)
+    } catch (err) {
+      console.error('Something bad happened!', err)
+      throw err
+    } finally {
+      await removeFiles(createdFiles)
+      await disableAntoraSupport()
     }
   })
 })

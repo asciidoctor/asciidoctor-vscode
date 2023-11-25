@@ -7,6 +7,7 @@ import assert from 'assert'
 import sinon from 'sinon'
 import { AntoraDocumentContext } from '../features/antora/antoraSupport'
 import { getDefaultWorkspaceFolderUri } from '../util/workspace'
+import { createDirectory, createFile, removeFiles } from './workspaceHelper'
 
 const asciidoctor = require('@asciidoctor/core')
 const processor = asciidoctor()
@@ -58,6 +59,26 @@ async function testAsciidoctorWebViewConverter (
 }
 
 suite('AsciidoctorWebViewConverter', async () => {
+  const createdFiles: vscode.Uri[] = []
+  suiteSetup(async () => {
+    createdFiles.push(await createDirectory('images'))
+    await createFile('', 'images', 'ocean', 'waves', 'seaswell.png')
+    await createFile('', 'images', 'mountain.jpeg')
+    createdFiles.push(await createFile('', 'help.adoc'))
+    const asciidocFile = await createFile(`image::images/ocean/waves/seaswell.png[]
+
+image::images/mountain.jpeg[]
+
+link:help.adoc[]
+`, 'asciidoctorWebViewConverterTest.adoc')
+    createdFiles.push(await createDirectory('docs'))
+    await createFile('', 'docs', 'modules', 'ROOT', 'pages', 'dummy.adoc') // virtual file
+    createdFiles.push(asciidocFile)
+  })
+  suiteTeardown(async () => {
+    await removeFiles(createdFiles)
+  })
+
   const workspaceUri = getDefaultWorkspaceFolderUri()
   // WIP need to find more interesting test cases
   const testCases = [
@@ -75,7 +96,7 @@ suite('AsciidoctorWebViewConverter', async () => {
     },
     {
       title: 'Should resolve image src with Antora id\'s input and Antora support activated',
-      filePath: ['antora', 'multiComponents', 'cli', 'modules', 'commands', 'pages', 'page1.adoc'],
+      filePath: ['docs', 'modules', 'ROOT', 'pages', 'dummy.adoc'],
       input: 'image::2.0@cli:commands:seaswell.png[]',
       antoraDocumentContext: createAntoraDocumentContextStub(`${workspaceUri.path}/antora/multiComponents/cli/modules/commands/images/seaswell.png`),
       expected: `<div class="imageblock">

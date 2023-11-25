@@ -270,7 +270,8 @@ export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceS
       .map(async (antoraConfig) => {
         const workspaceFolder = getWorkspaceFolder(antoraConfig.uri)
         const workspaceRelative = posixpath.relative(workspaceFolder.uri.path, antoraConfig.contentSourceRootPath)
-        const files = await Promise.all((await vscode.workspace.findFiles(workspaceRelative + '/modules/*/{attachments,examples,images,pages,partials,assets}/**')).map(async (file) => {
+        const globPattern = 'modules/*/{attachments,examples,images,pages,partials,assets}/**'
+        const files = await Promise.all((await vscode.workspace.findFiles(`${workspaceRelative ? `${workspaceRelative}/` : ''}${globPattern}`)).map(async (file) => {
           const contentSourceRootPath = antoraConfig.contentSourceRootPath
           return {
             base: contentSourceRootPath,
@@ -288,13 +289,12 @@ export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceS
             },
           }
         }))
-        const contentAggregate = {
+        return {
           name: antoraConfig.config.name,
           version: antoraConfig.config.version,
           ...antoraConfig.config,
           files,
         }
-        return contentAggregate
       })))
     let classifyContent = await import('@antora/content-classifier')
     if ('default' in classifyContent) {

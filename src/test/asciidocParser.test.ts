@@ -10,7 +10,7 @@ import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
 import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
 import { InMemoryDocument } from './inMemoryDocument'
-import { getDefaultWorkspaceFolderUri } from '../util/workspace'
+import { createDirectory, createFile, disableAntoraSupport, enableAntoraSupport, removeFiles } from './workspaceHelper'
 
 class TestWebviewResourceProvider implements WebviewResourceProvider {
   asWebviewUri (resource: vscode.Uri): vscode.Uri {
@@ -48,24 +48,37 @@ class AsciidocContributionProviderTest implements AsciidocContributionProvider {
 
 suite('AsciiDoc parser with Antora support enabled', function () {
   this.timeout(60000)
-  const workspaceUri = getDefaultWorkspaceFolderUri()
   test('convert Antora page', async () => {
-    await extensionContext.workspaceState.update('antoraSupportSetting', true)
-    await vscode.workspace.getConfiguration('asciidoc', null).update('antora.enableAntoraSupport', true)
-    const asciidocParser = new AsciidocEngine(
-      new AsciidocContributionProviderTest(extensionContext.extensionUri),
-      new AsciidoctorConfig(),
-      new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
-      new AsciidoctorDiagnostic('test')
-    )
-    const result = await asciidocParser.convertFromTextDocument(
-      new InMemoryDocument(
-        vscode.Uri.file(`${workspaceUri.path}/antora/multiComponents/api/modules/auth/pages/page.adoc`),
-        'Download from the {url-vscode-marketplace}[Visual Studio Code Marketplace].'
-      ),
-      extensionContext,
-      new TestWebviewResourceProvider()
-    )
-    assert.strictEqual(result.html.includes('<p>Download from the <a href="https://marketplace.visualstudio.com/vscode" data-href="https://marketplace.visualstudio.com/vscode">Visual Studio Code Marketplace</a>.</p>'), true)
+    const createdFiles = []
+    try {
+      createdFiles.push(await createDirectory('docs'))
+      await createFile(`name: "antora"
+version: "1.1.1"
+title: Antora
+asciidoc:
+  attributes:
+    url-vscode-marketplace: https://marketplace.visualstudio.com/vscode
+`, 'docs', 'antora.yml')
+      const asciidocFile = await createFile('', 'docs', 'modules', 'ROOT', 'pages', 'index.adoc') // virtual
+      await enableAntoraSupport()
+      const asciidocParser = new AsciidocEngine(
+        new AsciidocContributionProviderTest(extensionContext.extensionUri),
+        new AsciidoctorConfig(),
+        new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+        new AsciidoctorDiagnostic('test')
+      )
+      const result = await asciidocParser.convertFromTextDocument(
+        new InMemoryDocument(
+          asciidocFile,
+          'Download from the {url-vscode-marketplace}[Visual Studio Code Marketplace].'
+        ),
+        extensionContext,
+        new TestWebviewResourceProvider()
+      )
+      assert.strictEqual(result.html.includes('<p>Download from the <a href="https://marketplace.visualstudio.com/vscode" data-href="https://marketplace.visualstudio.com/vscode">Visual Studio Code Marketplace</a>.</p>'), true)
+    } finally {
+      await removeFiles(createdFiles)
+      await disableAntoraSupport()
+    }
   })
 })
