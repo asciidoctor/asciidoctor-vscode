@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Bug fixes
+
+- Fix glob pattern while building the Antora content catalog - previously, if the documentation component was located at the root of the workspace the content catalog was empty
+- Add `asciidoc.preview.style` directory as a local resource roots in the WebView - hopefully loading stylesheets from outside the workspace will work again!
+
 
 ## 3.1.9 (2023-11-19)
 
