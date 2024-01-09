@@ -841,14 +841,14 @@
       "patterns": [
         {
           "name": "markup.other.footnote.asciidoc",
-          "begin": "(?<!\\\\)(footnote(?:ref)?):(.*?)\\[",
+          "begin": "(?<!\\\\)footnote(?:(ref):|:([\w-]+)?)\[(?:|(#.*?[^\\]))\]",
           "beginCaptures": {
             "1": {
               "name": "entity.name.function.asciidoc"
             },
-						"2": {
-							"name": "support.constant.attribute-name.asciidoc"
-						}
+            "2": {
+              "name": "support.constant.attribute-name.asciidoc"
+            }
           },
           "contentName": "string.unquoted.asciidoc",
           "patterns": [
