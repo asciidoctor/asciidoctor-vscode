@@ -16,7 +16,7 @@ export class TargetPathCompletionProvider {
 
   async provideCompletionItems (textDocument: vscode.TextDocument, position: vscode.Position): Promise<vscode.CompletionItem[]> {
     const context = createContext(textDocument, position)
-    if (macroWithTargetPathRx.test(context.textFullLine)) {
+    if (context.textFullLine.match(macroWithTargetPathRx)) {
       const documentText = context.document.getText()
       const pathExtractedFromMacroString = context.textFullLine.replace('include::', '').replace('image::', '').replace('image:', '')
       let entryDir = pathExtractedFromMacroString.slice(0, pathExtractedFromMacroString.lastIndexOf('/'))
