@@ -139,4 +139,40 @@ See xref:test.adoc#second-section[]
     }))
     assertRangeEqual(link.range, new vscode.Range(6, 9, 6, 33))
   })
+
+  test('Should detect inline URL', async () => {
+    const links = await getLinksForFile(`= Title
+
+You can refer to a URL such as https://github.com/asciidoctor/asciidoctor-vscode/, and continue the sentence or the paragraph.
+
+`)
+    assert.strictEqual(links.length, 1)
+    const [link] = links
+    assert.deepStrictEqual(link.target.toString(), 'https://github.com/asciidoctor/asciidoctor-vscode/')
+    assertRangeEqual(link.range, new vscode.Range(2, 31, 2, 81))
+  })
+
+  test('Should detect inline URL within square brackets', async () => {
+    const links = await getLinksForFile(`= Title
+
+Filters are created as RPN filters (Reverse Polish notation [https://wikipedia.org/wiki/Reverse_Polish_notation]) with the following syntax...
+
+`)
+    assert.strictEqual(links.length, 1)
+    const [link] = links
+    assert.deepStrictEqual(link.target.toString(), 'https://wikipedia.org/wiki/Reverse_Polish_notation')
+    assertRangeEqual(link.range, new vscode.Range(2, 61, 2, 111))
+  })
+
+  test('Should detect inline URL within angle brackets', async () => {
+    const links = await getLinksForFile(`= Title
+
+Asciidoctor.js is published as a npm package at <https://www.npmjs.com/package/@asciidoctor/core>.
+
+`)
+    assert.strictEqual(links.length, 1)
+    const [link] = links
+    assert.deepStrictEqual(link.target.toString(true), 'https://www.npmjs.com/package/@asciidoctor/core')
+    assertRangeEqual(link.range, new vscode.Range(2, 49, 2, 96))
+  })
 })
