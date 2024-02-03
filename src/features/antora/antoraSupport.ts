@@ -117,8 +117,8 @@ export class AntoraSupportManager implements vscode.Disposable {
             yesAnswer,
             noAnswer
           )
-          await workspaceState.update('antoraSupportSetting', true)
           const enableAntoraSupport = answer === yesAnswer ? true : (answer === noAnswer ? false : undefined)
+          await workspaceState.update('antoraSupportSetting', enableAntoraSupport)
           await workspaceConfiguration.update('antora.enableAntoraSupport', enableAntoraSupport)
           if (enableAntoraSupport) {
             AntoraSupportManager.instance.registerFeatures()
