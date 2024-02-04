@@ -124,6 +124,21 @@ link:help.adoc[]
 <p><a href="full.adoc" class="bare action button" data-href="full.adoc">full.adoc</a></p>
 </div>`,
     },
+    {
+      title: 'Should not add role doc to content when no Antora context is provided',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: 'link:full.adoc[role="action button"]',
+      antoraDocumentContext: undefined, // Antora not enabled
+      expected: '<div class="content">',
+    },
+    {
+      title: 'Add role doc to content when Antora context is provided',
+      filePath: ['docs', 'modules', 'ROOT', 'pages', 'dummy.adoc'],
+      input: 'link:full.adoc[role="action button"]',
+      antoraDocumentContext: createAntoraDocumentContextStub(undefined),
+      expected: '<div class="content" class="doc">',
+    },
+
   ]
 
   for (const testCase of testCases) {
