@@ -58,6 +58,28 @@ async function testAsciidoctorWebViewConverter (
   assert.strictEqual(html, expected)
 }
 
+async function testAsciidoctorWebViewConverterStandalone (
+  input: string,
+  antoraDocumentContext: AntoraDocumentContext | undefined,
+  expected: string,
+  root: vscode.Uri,
+  pathSegments: string[]
+) {
+  const file = await vscode.workspace.openTextDocument(vscode.Uri.joinPath(root, ...pathSegments))
+  const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter(
+    file,
+    new TestWebviewResourceProvider(),
+    2,
+    false,
+    new TestAsciidocContributions(),
+    new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(file.uri),
+    antoraDocumentContext,
+    undefined
+  )
+  const html = processor.convert(input, { converter: asciidoctorWebViewConverter, standalone: true })
+  html.includes(expected)
+}
+
 suite('AsciidoctorWebViewConverter', async () => {
   const createdFiles: vscode.Uri[] = []
   suiteSetup(async () => {
@@ -127,21 +149,29 @@ link:help.adoc[]
     {
       title: 'Should not add role doc to content when no Antora context is provided',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
-      input: 'link:full.adoc[role="action button"]',
+      input: '= Test Document',
       antoraDocumentContext: undefined, // Antora not enabled
-      expected: '<div class="content">',
+      expected: '<div id="content">',
+      standalone: true,
     },
     {
       title: 'Add role doc to content when Antora context is provided',
       filePath: ['docs', 'modules', 'ROOT', 'pages', 'dummy.adoc'],
-      input: 'link:full.adoc[role="action button"]',
+      input: '= Test Document',
       antoraDocumentContext: createAntoraDocumentContextStub(undefined),
-      expected: '<div class="content" class="doc">',
+      expected: '<div id="content" class="doc">',
+      standalone: true,
     },
 
   ]
 
   for (const testCase of testCases) {
-    test(testCase.title, async () => testAsciidoctorWebViewConverter(testCase.input, testCase.antoraDocumentContext, testCase.expected, workspaceUri, testCase.filePath))
+    if (testCase.standalone) {
+      test(testCase.title, async () => testAsciidoctorWebViewConverterStandalone(
+        testCase.input, testCase.antoraDocumentContext, testCase.expected, workspaceUri, testCase.filePath
+      ))
+    } else {
+      test(testCase.title, async () => testAsciidoctorWebViewConverter(testCase.input, testCase.antoraDocumentContext, testCase.expected, workspaceUri, testCase.filePath))
+    }
   }
 })
