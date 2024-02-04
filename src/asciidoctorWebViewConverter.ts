@@ -189,7 +189,7 @@ export class AsciidoctorWebViewConverter {
       <body${node.getId() ? ` id="${node.getId()}"` : ''} class="${this.getBodyCssClasses(node)}">
         ${headerDocinfo}
         ${this.getDocumentHeader(node)}
-        <div id="content">
+        <div id="content" ${this.antoraDocumentContext ? 'class="doc"' : ''}>
           ${node.getContent()}
         </div>
         ${this.generateFootnotes(node)}
