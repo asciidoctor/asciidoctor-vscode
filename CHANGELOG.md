@@ -2,6 +2,24 @@
 
 ## Unreleased
 
+## 3.1.11 (2024-02-11)
+
+### Bug fixes
+
+- Only prompt to enable Antora when antora.yml is not empty (#847)
+- Consistent code completion for includes (#839)
+- Fix highlighting a footnote with id (#835)
+
+### Improvements
+
+- Add doc role when the asciidoc page is used in an antora context (#845)
+- Bump dependencies (#840)
+- If Antora popup is closed (no answer) ask again later (#841)
+- Improve autolink feature (#836)
+
+
+## 3.1.10 (2023-11-25)
+
 ### Bug fixes
 
 - Fix glob pattern while building the Antora content catalog - previously, if the documentation component was located at the root of the workspace the content catalog was empty
