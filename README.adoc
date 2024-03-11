@@ -1,4 +1,10 @@
 = AsciiDoc support for Visual Studio Code
+ifndef::env-github[:icons: font]
+ifdef::env-github[]
+:important-caption: :exclamation:
+:note-caption: :paperclip:
+:tip-caption: :bulb:
+endif::[]
 
 image:https://img.shields.io/visual-studio-marketplace/v/asciidoctor.asciidoctor-vscode[Version,link=https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode]
 image:https://img.shields.io/visual-studio-marketplace/i/asciidoctor.asciidoctor-vscode[Installs,link=https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode]
@@ -115,7 +121,10 @@ The extension provides a quick command to export your AsciiDoc file as DocBook.
 * Select _AsciiDoc: Save to DocBook_
 * The file is generated in the same folder as the source document
 
-*ℹ️ Note:* Only DocBook 5 is supported.
+[NOTE]
+====
+*Note*: Only DocBook 5 is supported.
+====
 
 === Snippets
 
@@ -130,9 +139,9 @@ If you need to identify or handle the VS Code environment you can use an `ifdef`
 
 [,asciidoc]
 ----
-ifdef::env-vscode[]
+\ifdef::env-vscode[]
 This is for vscode only
-endif::[]
+\endif::[]
 ----
 
 === Diagram Integration
@@ -147,7 +156,10 @@ If this is an issue it is also possible to use your own Kroki instance (see http
 
 To enable diagram support, set the `asciidoc.extensions.enableKroki` setting to `true`.
 
-*❗ Important:* Please note that `:kroki-fetch-diagram:` is currently not supported because it relies on `unxhr` which does not work in VS Code (https://github.com/ggrossetie/unxhr/issues/98).
+[IMPORTANT]
+====
+*Important*: Please note that `:kroki-fetch-diagram:` is currently not supported because it relies on `unxhr` which does not work in VS Code (https://github.com/ggrossetie/unxhr/issues/98).
+====
 
 === Use Asciidoctor.js extensions
 
@@ -162,9 +174,15 @@ The first time, you will also need to confirm that you trust the authors of the 
 
 image::images/asciidoctor-vscode-trust-exts.png[Asciidoctor.js extensions trust confirmation message]
 
-*❗ Important:* This feature will execute JavaScript code and should not be enabled if you don't fully trust the authors of the Asciidoctor.js extensions.
+[IMPORTANT]
+====
+*Important*: This feature will execute JavaScript code and should not be enabled if you don't fully trust the authors of the Asciidoctor.js extensions.
+====
 
-*💡 Tip:* You can always update the trust mode using the command "Manage Asciidoctor.js Extensions Trust Mode".
+[TIP]
+====
+*Tip*: You can always update the trust mode using the command "Manage Asciidoctor.js Extensions Trust Mode".
+====
 
 You can create a new extension by creating a JavaScript file in the `.asciidoctor/lib` directory or use an existing one.
 Here's an example of how to use the https://github.com/mogztter/asciidoctor-emoji[asciidoctor-emoji] extension:
@@ -173,17 +191,17 @@ Here's an example of how to use the https://github.com/mogztter/asciidoctor-emoj
 +
 [,shell]
 ----
- npm i asciidoctor-emoji
+npm i asciidoctor-emoji
 ----
 
 . Create a file a JavaScript file in _.asciidoctor/lib_ with the following content:
 +
 [,javascript]
 ----
- module.exports = require('asciidoctor-emoji')
+module.exports = require('asciidoctor-emoji')
 ----
 
-. Enjoy :tada:
+. Enjoy 🎉
 
 image::images/asciidoctor-vscode-emoji-ext.png[Asciidoctor.js Emoji extension enabled!]
 
@@ -199,6 +217,7 @@ This extension contributes the following settings:
 
 === Preview
 
+[cols="a,a,a"]
 |===
 | Name | Description | Default Value
 
@@ -257,6 +276,7 @@ This extension contributes the following settings:
 
 === PDF
 
+[cols="a,a,a"]
 |===
 | Name | Description | Default Value
 
@@ -283,6 +303,7 @@ This extension contributes the following settings:
 
 === Extensions
 
+[cols="a,a,a"]
 |===
 | Name | Description | Default Value
 
@@ -297,6 +318,7 @@ This extension contributes the following settings:
 
 === General
 
+[cols="a,a,a"]
 |===
 | Name | Description | Default Value
 
@@ -307,6 +329,7 @@ This extension contributes the following settings:
 
 === Debug
 
+[cols="a,a,a"]
 |===
 | Name | Description | Default Value
 
