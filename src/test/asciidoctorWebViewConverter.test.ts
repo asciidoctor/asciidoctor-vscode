@@ -54,7 +54,13 @@ async function testAsciidoctorWebViewConverter (
     antoraDocumentContext,
     undefined
   )
-  const html = processor.convert(input, { converter: asciidoctorWebViewConverter })
+
+  const html = processor.convert(input, {
+    converter: asciidoctorWebViewConverter,
+    // required for navigation between source files in preview
+    // see: https://docs.asciidoctor.org/asciidoc/latest/macros/inter-document-xref/#navigating-between-source-files
+    attributes: { relfilesuffix: '.adoc' },
+  })
   assert.strictEqual(html, expected)
 }
 
