@@ -54,7 +54,13 @@ async function testAsciidoctorWebViewConverter (
     antoraDocumentContext,
     undefined
   )
-  const html = processor.convert(input, { converter: asciidoctorWebViewConverter })
+
+  const html = processor.convert(input, {
+    converter: asciidoctorWebViewConverter,
+    // required for navigation between source files in preview
+    // see: https://docs.asciidoctor.org/asciidoc/latest/macros/inter-document-xref/#navigating-between-source-files
+    attributes: { relfilesuffix: '.adoc' },
+  })
   assert.strictEqual(html, expected)
 }
 
@@ -144,6 +150,97 @@ link:help.adoc[]
       antoraDocumentContext: undefined, // Antora not enabled
       expected: `<div class="paragraph">
 <p><a href="full.adoc" class="bare action button" data-href="full.adoc">full.adoc</a></p>
+</div>`,
+    },
+    // xref
+    {
+      title: 'Should resolve "xref:" macro to document',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: 'xref:other.adoc[]',
+      antoraDocumentContext: undefined, // Antora not enabled
+      expected: `<div class="paragraph">
+<p><a href="other.adoc" data-href="other.adoc">other.adoc</a></p>
+</div>`,
+    },
+    {
+      title: 'Should resolve "xref:" macro to document - with explicit text',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: 'xref:other.adoc[Other document]',
+      antoraDocumentContext: undefined, // Antora not enabled
+      expected: `<div class="paragraph">
+<p><a href="other.adoc" data-href="other.adoc">Other document</a></p>
+</div>`,
+    },
+    {
+      title: 'Should resolve "xref:" macro to document - with roles',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: 'xref:other.adoc[role="foo"]',
+      antoraDocumentContext: undefined, // Antora not enabled
+      expected: `<div class="paragraph">
+<p><a href="other.adoc" class="foo" data-href="other.adoc">other.adoc</a></p>
+</div>`,
+    },
+    {
+      title: 'Should resolve "xref:" macro for internal cross reference',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: `xref:_text_test[]
+
+= Text test`,
+      antoraDocumentContext: undefined, // Antora not enabled
+      expected: `<div class="paragraph">
+<p><a href="#_text_test" data-href="#_text_test">Text test</a></p>
+</div>
+<h1 id="_text_test" class="sect0">Text test</h1>
+`,
+    },
+    {
+      title: 'Should resolve "xref:" macro for internal cross reference - with explicit text',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: `xref:_text_test[Explicit text]
+
+= Text test`,
+      antoraDocumentContext: undefined, // Antora not enabled
+      expected: `<div class="paragraph">
+<p><a href="#_text_test" data-href="#_text_test">Explicit text</a></p>
+</div>
+<h1 id="_text_test" class="sect0">Text test</h1>
+`,
+    },
+    {
+      title: 'Should resolve "xref:" macro for internal cross reference - with reftext',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: `xref:_reftext_test[]
+
+[reftext="Test reftext"]
+= Reftext Test`,
+      antoraDocumentContext: undefined, // Antora not enabled
+      expected: `<div class="paragraph">
+<p><a href="#_reftext_test" data-href="#_reftext_test">Test reftext</a></p>
+</div>
+<h1 id="_reftext_test" class="sect0">Reftext Test</h1>
+`,
+    },
+    {
+      title: 'Should resolve "xref:" macro for internal cross reference - with reftext and explicit text',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: `xref:_reftext_test[Explicit text]
+
+[reftext="Test reftext"]
+= Reftext Test`,
+      antoraDocumentContext: undefined, // Antora not enabled
+      expected: `<div class="paragraph">
+<p><a href="#_reftext_test" data-href="#_reftext_test">Explicit text</a></p>
+</div>
+<h1 id="_reftext_test" class="sect0">Reftext Test</h1>
+`,
+    },
+    {
+      title: 'Should resolve "xref:" macro for internal cross reference - without matching anchor',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: 'xref:_non_existing_ref_test[]',
+      antoraDocumentContext: undefined, // Antora not enabled
+      expected: `<div class="paragraph">
+<p><a href="#_non_existing_ref_test" data-href="#_non_existing_ref_test">_non_existing_ref_test</a></p>
 </div>`,
     },
     {

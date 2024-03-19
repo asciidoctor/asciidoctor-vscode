@@ -202,12 +202,56 @@ export class AsciidoctorWebViewConverter {
       </body>
       </html>`
     }
-    if (nodeName === 'inline_anchor' && node.type === 'link') {
-      const href = isSchemeBlacklisted(node.target) ? '#' : node.target
-      const id = node.hasAttribute('id') ? ` id="${node.id}"` : ''
-      const role = node.hasAttribute('role') ? ` class="${node.getRole()}"` : ''
-      const title = node.hasAttribute('title') ? ` title="${node.title}"` : ''
-      return `<a href="${href}"${id}${role}${title} data-href="${href}">${node.text}</a>`
+    if (nodeName === 'inline_anchor') {
+      if (node.type === 'link') {
+        const href = isSchemeBlacklisted(node.target) ? '#' : node.target
+        const id = node.hasAttribute('id') ? ` id="${node.id}"` : ''
+        const role = node.hasAttribute('role') ? ` class="${node.getRole()}"` : ''
+        const title = node.hasAttribute('title') ? ` title="${node.title}"` : ''
+        return `<a href="${href}"${id}${role}${title} data-href="${href}">${node.text}</a>`
+      }
+      if (node.type === 'xref') {
+        const attrs = []
+        attrs.push(` href="${node.target}"`)
+
+        if (node.hasAttribute('id')) { attrs.push(` id="${node.id}"`) }
+        if (node.hasAttribute('role')) { attrs.push(` class="${node.getRole()}"`) }
+        if (node.hasAttribute('title')) { attrs.push(` title="${node.title}"`) }
+
+        attrs.push(` data-href="${node.target}"`)
+
+        let text: string
+
+        // explicit text overrides all other options
+        if (typeof node.text === 'string') {
+          text = node.text
+        } else { // no explicit text
+          const path = node.getAttribute('path')
+          // cross reference points to a file, use the file name
+          if (typeof path === 'string') {
+            text = node.getAttribute('path')
+          } else { // cross reference is an internal reference
+            const refid = node.getAttribute('refid')
+            const refsCatalog = node.getDocument().getRefs()
+
+            // lookup reference by id
+            const refNode = refsCatalog[refid]
+
+            // no reference found for id
+            if (typeof refNode === 'undefined') {
+              text = refid
+            } else { // reference found
+              // maybe the refered node has a reftext which should be used
+              if (refNode.hasAttribute('reftext')) {
+                text = refNode.getReftext()
+              } else { // fall back to title
+                text = refNode.getTitle()
+              }
+            }
+          }
+        }
+        return `<a${attrs.join('')}>${text}</a>`
+      }
     }
     if (nodeName === 'image') {
       const nodeAttributes = node.getAttributes()
