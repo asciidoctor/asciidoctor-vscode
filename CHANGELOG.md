@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Improvements
+
+* Use color variable defined by theme for ToC by @ViToni in #850
+
+### Bug fixes
+
+* Fix non working xref in preview pane by @ViToni in #853
+
 ## 3.1.12 (2024-02-11)
 
 ### Bug fixes
