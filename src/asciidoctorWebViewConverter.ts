@@ -237,15 +237,23 @@ export class AsciidoctorWebViewConverter {
             // lookup reference by id
             const refNode = refsCatalog[refid]
 
-            // no reference found for id
-            if (typeof refNode === 'undefined') {
-              text = refid
-            } else { // reference found
+            // set default value, for cases where we cannot refine
+            // (e.g. no reference found by refid, found a bibref, etc )
+            text = refid
+
+            // reference found for refid, try to refine text
+            if (typeof refNode !== 'undefined') {
               // maybe the refered node has a reftext which should be used
               if (refNode.hasAttribute('reftext')) {
                 text = refNode.getReftext()
-              } else { // fall back to title
-                text = refNode.getTitle()
+              } else { // fall back and try title
+                if (typeof refNode.getTitle === 'function') {
+                  text = refNode.getTitle()
+                } else {
+                  if (typeof refNode.text === 'string') {
+                    text = refNode.text
+                  }
+                }
               }
             }
           }
