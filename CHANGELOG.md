@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+### Bug fixes
+
+* Fix a regression on xref introduced in 3.2.1 by @ViToni
+
+### Infrastructure
+
+* Bump dependencies by @ViToni
+
+## 3.2.1 (2024-03-20)
+
 ### Improvements
 
 * Use color variable defined by theme for ToC by @ViToni in #850
