@@ -244,6 +244,34 @@ link:help.adoc[]
 </div>`,
     },
     {
+      title: 'Should resolve "xref:" macro to inline anchor - without text',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: `<<inline_anchor_without_text>>
+
+[[inline_anchor_without_text]]Some text`,
+      antoraDocumentContext: undefined, // Antora not enabled
+      expected: `<div class="paragraph">
+<p><a href="#inline_anchor_without_text" data-href="#inline_anchor_without_text">inline_anchor_without_text</a></p>
+</div>
+<div class="paragraph">
+<p><a id="inline_anchor_without_text"></a>Some text</p>
+</div>`,
+    },
+    {
+      title: 'Should resolve "xref:" macro to inline anchor - with explicit text',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: `<<inline_anchor_with_explicit_text>>
+
+[[inline_anchor_with_explicit_text,Explicit text]]Some text`,
+      antoraDocumentContext: undefined, // Antora not enabled
+      expected: `<div class="paragraph">
+<p><a href="#inline_anchor_with_explicit_text" data-href="#inline_anchor_with_explicit_text">Explicit text</a></p>
+</div>
+<div class="paragraph">
+<p><a id="inline_anchor_with_explicit_text"></a>Some text</p>
+</div>`,
+    },
+    {
       title: 'Should not add role doc to content when no Antora context is provided',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: '= Test Document',
