@@ -112,6 +112,11 @@ export class AsciidocEngine {
     const text = textDocument.getText()
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
     const document = processor.load(text, { attributes, header_only: true })
+    const isRougeSourceHighlighterEnabled = document.isAttribute('source-highlighter', 'rouge')
+    if (isRougeSourceHighlighterEnabled) {
+      // Force the source highlighter to Highlight.js (since Rouge is not supported)
+      document.setAttribute('source-highlighter', 'highlight.js')
+    }
     const krokiServerUrl = document.getAttribute('kroki-server-url') || 'https://kroki.io'
 
     // Antora Resource Identifiers resolution
