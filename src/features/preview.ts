@@ -229,6 +229,9 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     this.editor.dispose()
 
     disposeAll(this.disposables)
+
+    clearTimeout(this.throttleTimer)
+    this.throttleTimer = undefined
   }
 
   // This method is invoked evrytime there is a document update
@@ -357,6 +360,10 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
 
     clearTimeout(this.throttleTimer)
     this.throttleTimer = undefined
+
+    if (this._disposed) {
+      return;
+    }
 
     const document = await vscode.workspace.openTextDocument(resource)
     if (!this.forceUpdate && this.currentVersion &&
