@@ -38,7 +38,7 @@ git config --local user.email "$RELEASE_GIT_EMAIL"
   RELEASE_GH_PRERELEASE_OPT=$([[ "$PRERELEASE_VERSION" == "true" ]] && echo "--prerelease" || echo "")
   gh release create v$RELEASE_VERSION_WITHOUT_PRERELEASE -t v$RELEASE_VERSION_WITHOUT_PRERELEASE -F release-notes.md $RELEASE_GH_PRERELEASE_OPT
   gh release upload v$RELEASE_VERSION_WITHOUT_PRERELEASE asciidoctor-vscode-$RELEASE_VERSION_WITHOUT_PRERELEASE.vsix
-  npm pkg set version="$(npx semver -i patch $RELEASE_VERSION_WITHOUT_PRERELEASE)-dev"
+  npm version --no-git-tag-version "$(npx semver -i patch $RELEASE_VERSION_WITHOUT_PRERELEASE)-dev"
   git commit -a -m 'prepare branch for development [no ci]'
   git push origin $RELEASE_BRANCH
 )
