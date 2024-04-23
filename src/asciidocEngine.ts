@@ -1,4 +1,5 @@
 import * as vscode from 'vscode'
+import path from 'path'
 import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
 import { Asciidoctor } from '@asciidoctor/core'
 import { ExtensionContentSecurityPolicyArbiter } from './security'
@@ -160,11 +161,26 @@ export class AsciidocEngine {
     const antoraSupport = AntoraSupportManager.getInstance(context.workspaceState)
     const antoraAttributes = await antoraSupport.getAttributes(textDocumentUri)
     const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).getBaseDir()
+    let textDocumentExt = path.extname(textDocumentUri.fsPath)
+    const textDocumentName = path.basename(textDocumentUri.fsPath, textDocumentExt)
+    textDocumentExt = textDocumentExt.startsWith('.') ? textDocumentExt.substring(1) : '';
     const templateDirs = this.getTemplateDirs()
     const options: { [key: string]: any } = {
       attributes: {
         ...attributes,
         ...antoraAttributes,
+        // The following attributes are "intrinsic attributes" but they are not set when the input is a string
+        // like we are doing, in that case it is expected that the attributes are set here for the API:
+        // https://docs.asciidoctor.org/asciidoc/latest/attributes/document-attributes-ref/#intrinsic-attributes
+        ...(baseDir && {
+          'docdir': baseDir,// this can be set since safe mode is 'UNSAFE'
+          'docfile': path.resolve(baseDir, `${textDocumentName}.${textDocumentExt}`) // this can be set since safe mode is 'UNSAFE'
+        }),
+        'docfilesuffix': `${textDocumentExt}`,
+        'docname': textDocumentName,
+        'filetype': asciidoctorWebViewConverter.outfilesuffix.substring(1), // remove the leading '.'
+        // end "intrinsic attributes"
+
         '!data-uri': '', // disable data-uri since Asciidoctor.js is unable to read files from a VS Code workspace.
       },
       backend: 'webview-html5',
