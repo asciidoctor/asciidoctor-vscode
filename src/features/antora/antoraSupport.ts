@@ -25,6 +25,9 @@ export class AntoraConfig {
     const path = uri.path
     this.contentSourceRootPath = path.slice(0, path.lastIndexOf('/'))
     this.contentSourceRootFsPath = ospath.dirname(uri.fsPath)
+    if (config.version === true) {
+      config.version = ''
+    }
   }
 }
 
