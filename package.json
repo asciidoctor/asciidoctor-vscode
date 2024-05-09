@@ -27,9 +27,10 @@
 	"categories": [
 		"Programming Languages"
 	],
-	"activationEvents": [
-		"onWebviewPanel:asciidoc.preview"
-	],
+ "activationEvents": [
+     "onWebviewPanel:asciidoc.preview",
+     "onLanguage:asciidoc"
+ ],
 	"contributes": {
 		"languages": [
 			{
