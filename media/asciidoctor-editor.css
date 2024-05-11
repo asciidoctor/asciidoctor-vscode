@@ -1065,7 +1065,10 @@ body.toc2 #header>h1:nth-last-child(2) {
   margin-bottom: 1.25em;
   padding: 1.25em;
   /* DISABLED background: #f8f8f7; */
-  background: white; /* TODO: fix transparent toc background */
+  /* Use color variable defined by theme to follow with theme changes
+   * Colors are defined here: https://code.visualstudio.com/api/references/theme-color#editor-colors
+   */
+  background: var(--vscode-editor-lineHighlightBackground);
   -webkit-border-radius: 4px;
   border-radius: 4px
 }

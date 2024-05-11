@@ -82,7 +82,7 @@ const onUpdateView = (() => {
 const updateImageSizes = throttle(() => {
   const imageInfo: { id: string, height: number, width: number }[] = []
   const images = document.getElementsByTagName('img')
-  if (images) {
+  if (images && images.length > 0) {
     let i
     for (i = 0; i < images.length; i++) {
       const img = images[i]

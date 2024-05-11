@@ -9,7 +9,7 @@ import ContentCatalog from '@antora/content-classifier/lib/content-catalog'
 import { getWorkspaceFolder } from '../../util/workspace'
 import { dir, exists } from '../../util/file'
 
-const MAX_DEPTH_SEARCH_ANTORACONFIG = 100
+const MAX_DEPTH_SEARCH_ANTORA_CONFIG = 100
 const localize = nls.loadMessageBundle()
 
 export interface AntoraResourceContext {
@@ -25,6 +25,9 @@ export class AntoraConfig {
     const path = uri.path
     this.contentSourceRootPath = path.slice(0, path.lastIndexOf('/'))
     this.contentSourceRootFsPath = ospath.dirname(uri.fsPath)
+    if (config.version === true) {
+      config.version = ''
+    }
   }
 }
 
@@ -131,10 +134,6 @@ export class AntoraSupportManager implements vscode.Disposable {
     }
   }
 
-  public static async isEnabled (workspaceState: Memento): Promise<Boolean> {
-    return AntoraSupportManager.getInstance(workspaceState).isEnabled()
-  }
-
   public async getAttributes (textDocumentUri: Uri): Promise<{ [key: string]: string }> {
     const antoraEnabled = this.isEnabled()
     if (antoraEnabled) {
@@ -199,11 +198,20 @@ export async function antoraConfigFileExists (textDocumentUri: Uri): Promise<boo
   let currentDirectoryUri = dir(textDocumentUri, workspaceFolderUri)
   let depth = 0
   let antoraConfig: vscode.Uri
-  while (currentDirectoryUri !== undefined && depth < MAX_DEPTH_SEARCH_ANTORACONFIG) {
+  while (currentDirectoryUri !== undefined && depth < MAX_DEPTH_SEARCH_ANTORA_CONFIG) {
     depth++
     const antoraConfigUri = vscode.Uri.joinPath(currentDirectoryUri, 'antora.yml')
     if (await exists(antoraConfigUri)) {
-      antoraConfig = antoraConfigUri
+      // Important: some file system providers, most notably the built-in git file system provider,
+      // return true when calling `exists` even if the file does not exist on the local file system.
+      // The Git file system provider will also return an empty buffer when calling `readFile`!
+
+      // antora.yml file must have a name and version key.
+      // In other words, the file must not be empty to be valid!
+      const content = await vscode.workspace.fs.readFile(antoraConfigUri)
+      if (content.length > 0) {
+        antoraConfig = antoraConfigUri
+      }
       break
     }
     currentDirectoryUri = dir(currentDirectoryUri, workspaceFolderUri)
