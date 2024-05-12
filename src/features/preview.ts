@@ -362,7 +362,7 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     this.throttleTimer = undefined
 
     if (this._disposed) {
-      return;
+      return
     }
 
     const document = await vscode.workspace.openTextDocument(resource)
