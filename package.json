@@ -21,7 +21,7 @@
 	"browser": "./dist/browser/extension",
 	"main": "./dist/src/extension",
 	"engines": {
-		"vscode": "^1.75.0",
+		"vscode": "^1.89.0",
 		"node": ">=18"
 	},
 	"categories": [
