@@ -18,6 +18,19 @@ export interface AntoraResourceContext {
   module: string;
 }
 
+function getShortHash (longString : string, length = 10) {
+  const hash = longString.split('').reduce((acc, char) => {
+    let code = char.charCodeAt(0)
+    while (code > 0) {
+      acc = ((acc << 5) - acc) + (code % 64)
+      code = Math.floor(code / 64)
+    }
+    return acc
+  }, 0).toString(36).replace(/[^a-z0-9]/g, '').slice(0, length)
+
+  return hash
+}
+
 export class AntoraConfig {
   public contentSourceRootPath: string
   public contentSourceRootFsPath: string
@@ -26,7 +39,7 @@ export class AntoraConfig {
     this.contentSourceRootPath = path.slice(0, path.lastIndexOf('/'))
     this.contentSourceRootFsPath = ospath.dirname(uri.fsPath)
     if (config.version === true || !(config.version)) {
-      config.version = ''
+      config.version = getShortHash(path)
     }
   }
 }
