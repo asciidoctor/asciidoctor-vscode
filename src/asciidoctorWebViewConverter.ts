@@ -198,6 +198,7 @@ export class AsciidoctorWebViewConverter {
         ${this.getScripts(webviewResourceProvider, nonce)}
         ${syntaxHighlighterFooterContent}
         ${this.generateMathJax(node, webviewResourceProvider, nonce)}
+        ${this.generateMermaid(webviewResourceProvider, nonce)}
         ${footerDocinfo}
       </body>
       </html>`
@@ -326,6 +327,13 @@ ${footnoteItems.join('\n')}
 </div>`
     }
     return ''
+  }
+
+  private generateMermaid (webviewResourceProvider, nonce) {
+    return `<script type="module" nonce="${nonce}">
+    import mermaid from '${webviewResourceProvider.asMediaWebViewSrc('media', 'mermaid', 'dist', 'mermaid.esm.min.mjs')}';
+    mermaid.initialize({startOnLoad:true, theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast') ? 'dark' : 'default'});
+  </script>`
   }
 
   private generateFooter (node) {

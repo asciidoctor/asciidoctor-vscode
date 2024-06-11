@@ -12,5 +12,6 @@ dist/
 media/highlightjs/*
 media/font-awesome/**
 media/mathjax/**
+media/mermaid/**
 media/fonts/**
 coverage/
