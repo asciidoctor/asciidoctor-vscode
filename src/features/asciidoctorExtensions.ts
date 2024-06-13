@@ -1,7 +1,7 @@
 import vscode from 'vscode'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
 import { Asciidoctor } from '@asciidoctor/core'
-import { mermaidJSProcessor } from './mermaid';
+import { mermaidJSProcessor } from './mermaid'
 
 export interface AsciidoctorExtensionsProvider {
   activate(registry: Asciidoctor.Extensions.Registry): Promise<void>;
