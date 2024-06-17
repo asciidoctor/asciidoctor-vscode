@@ -18,29 +18,28 @@ export interface AntoraResourceContext {
   module: string;
 }
 
-function getShortHash (longString : string, length = 10) {
-  const hash = longString.split('').reduce((acc, char) => {
-    let code = char.charCodeAt(0)
-    while (code > 0) {
-      acc = ((acc << 5) - acc) + (code % 64)
-      code = Math.floor(code / 64)
-    }
-    return acc
-  }, 0).toString(36).replace(/[^a-z0-9]/g, '').slice(0, length)
-
-  return hash
-}
-
 export class AntoraConfig {
   public contentSourceRootPath: string
   public contentSourceRootFsPath: string
+
+  private static versionMap = new Map<string, number>()
+
   constructor (public uri: vscode.Uri, public config: { [key: string]: any }) {
     const path = uri.path
     this.contentSourceRootPath = path.slice(0, path.lastIndexOf('/'))
     this.contentSourceRootFsPath = ospath.dirname(uri.fsPath)
-    if (config.version === true || !(config.version)) {
-      config.version = getShortHash(path)
+    if (config.version === true || config.version === undefined) {
+      config.version = this.getVersionForPath(path)
     }
+  }
+
+  public getVersionForPath (path: string): string {
+    const version = AntoraConfig.versionMap.get(path)
+    if (version) return `V-${version}`
+
+    const nextVersion = AntoraConfig.versionMap.size + 1
+    AntoraConfig.versionMap.set(path, nextVersion)
+    return `V-${nextVersion}`
   }
 }
 
