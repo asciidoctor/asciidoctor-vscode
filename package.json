@@ -2,7 +2,7 @@
 	"name": "asciidoctor-vscode",
 	"displayName": "%displayName%",
 	"description": "%description%",
-	"version": "3.2.4-dev",
+	"version": "3.3.0",
 	"publisher": "asciidoctor",
 	"author": "João Pinto <lamego.pinto@gmail.com>",
 	"license": "MIT",
@@ -27,10 +27,10 @@
 	"categories": [
 		"Programming Languages"
 	],
- "activationEvents": [
-     "onWebviewPanel:asciidoc.preview",
-     "onLanguage:asciidoc"
- ],
+	"activationEvents": [
+		"onWebviewPanel:asciidoc.preview",
+		"onLanguage:asciidoc"
+	],
 	"contributes": {
 		"languages": [
 			{
