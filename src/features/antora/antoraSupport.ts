@@ -5,7 +5,7 @@ import ospath, { posix as posixpath } from 'path'
 import AntoraCompletionProvider from './antoraCompletionProvider'
 import { disposeAll } from '../../util/dispose'
 import * as nls from 'vscode-nls'
-import ContentCatalog from '@antora/content-classifier/lib/content-catalog'
+import ContentCatalog from '@antora/content-classifier/content-catalog'
 import { getWorkspaceFolder } from '../../util/workspace'
 import { dir, exists } from '../../util/file'
 

@@ -21,8 +21,8 @@
 	"browser": "./dist/browser/extension",
 	"main": "./dist/src/extension",
 	"engines": {
-		"vscode": "^1.75.0",
-		"node": ">=18"
+		"vscode": "^1.88.0",
+		"node": ">=20"
 	},
 	"categories": [
 		"Programming Languages"
@@ -615,22 +615,22 @@
 		"@highlightjs/cdn-assets": "~11.9.0",
 		"@playwright/test": "~1.44.0",
 		"@types/lodash.throttle": "~4.1",
-		"@types/mocha": "~9.1",
-		"@types/node": "12.20.55",
-		"@types/vscode": "~1.75.0",
-		"@typescript-eslint/eslint-plugin": "5.62.0",
-		"@typescript-eslint/parser": "5.62.0",
-		"@vscode/test-electron": "2.3.9",
-		"@vscode/vsce": "2.26.1",
-		"c8": "^9.1.0",
-		"chai": "^4.3.7",
+		"@types/mocha": "~10.0",
+		"@types/node": "~20.14",
+		"@types/vscode": "~1.88.0",
+		"@typescript-eslint/eslint-plugin": "~7.13",
+		"@typescript-eslint/parser": "~7.13",
+		"@vscode/test-electron": "2.4.0",
+		"@vscode/vsce": "2.27.0",
+		"c8": "~10.1",
+		"chai": "~4.4",
 		"copy-webpack-plugin": "10.2.4",
-		"eslint": "8.57.0",
-		"eslint-config-standard": "^17.0.0",
-		"eslint-plugin-import": "2.29.1",
-		"eslint-plugin-n": "^15.2.4",
-		"eslint-plugin-node": "11.1.0",
-		"eslint-plugin-promise": "6.1.1",
+		"eslint": "~8.57",
+		"eslint-config-standard": "~17.1",
+		"eslint-plugin-import": "~2.29",
+		"eslint-plugin-n": "~16.6",
+		"eslint-plugin-node": "~11.1",
+		"eslint-plugin-promise": "~6.2",
 		"font-awesome": "^4.7.0",
 		"gulp": "^4.0.2",
 		"lodash.throttle": "4.1.1",
@@ -672,6 +672,6 @@
 		"isPreReleaseVersion": false
 	},
 	"volta": {
-		"node": "18.20.2"
+		"node": "20.14.0"
 	}
 }
