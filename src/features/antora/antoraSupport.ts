@@ -21,13 +21,25 @@ export interface AntoraResourceContext {
 export class AntoraConfig {
   public contentSourceRootPath: string
   public contentSourceRootFsPath: string
+
+  private static versionMap = new Map<string, number>()
+
   constructor (public uri: vscode.Uri, public config: { [key: string]: any }) {
     const path = uri.path
     this.contentSourceRootPath = path.slice(0, path.lastIndexOf('/'))
     this.contentSourceRootFsPath = ospath.dirname(uri.fsPath)
-    if (config.version === true) {
-      config.version = ''
+    if (config.version === true || config.version === undefined) {
+      config.version = this.getVersionForPath(path)
     }
+  }
+
+  public getVersionForPath (path: string): string {
+    const version = AntoraConfig.versionMap.get(path)
+    if (version) return `V-${version}`
+
+    const nextVersion = AntoraConfig.versionMap.size + 1
+    AntoraConfig.versionMap.set(path, nextVersion)
+    return `V-${nextVersion}`
   }
 }
 
