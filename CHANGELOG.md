@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+## 3.3.1 (2024-06-19)
+
+### Bug fixes
+
+* Support `antora.yml` files when version is undefined or `true` (#871) - thanks @leonardopavanrocha @alaindresse 
+* Check if WebView is disposed (before refreshing) 
+
+### Improvements
+
+* Add activation event for .adoc files - thanks @ohhmm
+* Render Mermaid diagrams locally (i.e., without relying on Kroki) - thanks @ztuowen
+
+## 3.2.3 (2024-03-26)
+
 ### Bug fixes
 
 * Fix a regression on xref introduced in 3.2.1 by @ViToni
