@@ -2,14 +2,13 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "resolveJsonModule": true,
+    "moduleResolution": "Node16",
     "module": "commonjs",
-    "target": "es6",
+    "target": "es2020",
     "outDir": "dist",
     "lib": [
-      "es6",
       "dom",
-      "es2019",
-      "es2020.string"
+      "es2020"
     ],
     "sourceMap": true,
     "rootDir": "."
