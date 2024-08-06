@@ -1998,7 +1998,7 @@
               "include": "#tables-includes"
             }
           ],
-          "end": "^(\\1\\s*)$",
+          "end": "^(\\1)\\s*$",
           "endCaptures": {
             "0": {
               "name": "markup.table.delimiter.asciidoc"
