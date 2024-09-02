@@ -23,6 +23,7 @@ import { AsciidoctorDiagnostic } from './features/asciidoctorDiagnostic'
 import { AsciidocEngine } from './asciidocEngine'
 import { AsciidocIncludeItemsLoader, AsciidocLoader } from './asciidocLoader'
 import { AsciidoctorIncludeItems } from './features/asciidoctorIncludeItems'
+import { antoraSupportEnabledContextKey } from './commands/antoraSupport'
 
 export async function activate (context: vscode.ExtensionContext) {
   // Set context as a global as some tests depend on it
@@ -74,7 +75,7 @@ export async function activate (context: vscode.ExtensionContext) {
   const previewManager = new AsciidocPreviewManager(contentProvider, logger, contributionProvider)
   context.subscriptions.push(previewManager)
   context.subscriptions.push(new AsciidocTargetPathAutoCompletionMonitor(asciidocLoader))
-  context.subscriptions.push(await AntoraSupportManager.getInstance(context.workspaceState))
+  context.subscriptions.push(AntoraSupportManager.getInstance(context.workspaceState))
   context.subscriptions.push(vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider))
   context.subscriptions.push(vscode.languages.registerDocumentLinkProvider(selector, new LinkProvider(asciidocIncludeItemsLoader)))
   context.subscriptions.push(vscode.languages.registerWorkspaceSymbolProvider(new AsciidocWorkspaceSymbolProvider(symbolProvider)))
@@ -100,6 +101,14 @@ export async function activate (context: vscode.ExtensionContext) {
   commandManager.register(new commands.ShowPreviewCommand(previewManager))
   commandManager.register(new commands.SaveHTML(asciidocEngine))
   commandManager.register(new commands.SaveDocbook(asciidocEngine))
+  commandManager.register(new commands.EnableAntoraSupport(context.workspaceState, previewManager))
+  commandManager.register(new commands.DisableAntoraSupport(context.workspaceState, previewManager))
+
+  const antoraSupportSetting = context.workspaceState.get('antoraSupportSetting')
+  if (antoraSupportSetting === true || antoraSupportSetting === false) {
+    await vscode.commands.executeCommand('setContext', antoraSupportEnabledContextKey, antoraSupportSetting)
+    previewManager.refresh(true)
+  }
 
   context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(async (e) => {
     if (e.affectsConfiguration('asciidoc.registerAsciidoctorExtensions')) {

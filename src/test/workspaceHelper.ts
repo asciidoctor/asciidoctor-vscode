@@ -67,12 +67,9 @@ export async function createLink (existingPathSegments: string[], newPathSegment
 }
 
 export async function enableAntoraSupport () {
-  const workspaceConfiguration = vscode.workspace.getConfiguration('asciidoc', null)
-  await workspaceConfiguration.update('antora.enableAntoraSupport', true)
   await extensionContext.workspaceState.update('antoraSupportSetting', true)
 }
 
-export async function disableAntoraSupport () {
+export async function resetAntoraSupport () {
   await extensionContext.workspaceState.update('antoraSupportSetting', undefined)
-  await vscode.workspace.getConfiguration('asciidoc', null).update('antora.enableAntoraSupport', undefined)
 }

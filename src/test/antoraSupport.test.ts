@@ -3,7 +3,7 @@ import * as vscode from 'vscode'
 import * as assert from 'assert'
 import 'mocha'
 import { findAntoraConfigFile, getAntoraDocumentContext } from '../features/antora/antoraSupport'
-import { createDirectories, createDirectory, createFile, createLink, disableAntoraSupport, enableAntoraSupport, removeFiles } from './workspaceHelper'
+import { resetAntoraSupport, createDirectories, createDirectory, createFile, createLink, enableAntoraSupport, removeFiles } from './workspaceHelper'
 import { extensionContext } from './helper'
 import { getDefaultWorkspaceFolderUri } from '../util/workspace'
 
@@ -158,7 +158,7 @@ version: '7.1'
         throw err
       } finally {
         await removeFiles(createdFiles)
-        await disableAntoraSupport()
+        await resetAntoraSupport()
       }
     }
   })
@@ -191,7 +191,7 @@ version: ~
       throw err
     } finally {
       await removeFiles(createdFiles)
-      await disableAntoraSupport()
+      await resetAntoraSupport()
     }
   })
 })

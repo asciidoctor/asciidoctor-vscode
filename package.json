@@ -126,6 +126,16 @@
 				"title": "%asciidoc.saveDocbook.title%",
 				"category": "AsciiDoc",
 				"icon": "$(file-code)"
+			},
+			{
+				"command": "asciidoc.enableAntoraSupport",
+				"title": "%asciidoc.enableAntoraSupport.title%",
+				"category": "AsciiDoc"
+			},
+			{
+				"command": "asciidoc.disableAntoraSupport",
+				"title": "%asciidoc.disableAntoraSupport.title%",
+				"category": "AsciiDoc"
 			}
 		],
 		"menus": {
@@ -224,6 +234,14 @@
 				{
 					"command": "asciidoc.preview.toggleLock",
 					"when": "asciidocPreviewFocus"
+				},
+				{
+					"command": "asciidoc.disableAntoraSupport",
+					"when": "antoraSupportEnabled"
+				},
+				{
+					"command": "asciidoc.enableAntoraSupport",
+					"when": "!antoraSupportEnabled"
 				}
 			]
 		},
@@ -555,7 +573,13 @@
 					"asciidoc.antora.enableAntoraSupport": {
 						"type": "boolean",
 						"default": false,
-						"markdownDescription": "%asciidoc.antora.enableAntoraSupport.desc%"
+						"markdownDescription": "%asciidoc.antora.enableAntoraSupport.desc%",
+						"markdownDeprecationMessage": "%asciidoc.antora.enableAntoraSupport.deprecationMessage%"
+					},
+					"asciidoc.antora.showEnableAntoraPrompt": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "%asciidoc.antora.showEnableAntoraPrompt.desc%"
 					}
 				}
 			}
