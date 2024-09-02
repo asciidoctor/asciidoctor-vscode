@@ -9,6 +9,11 @@ import ContentCatalog from '@antora/content-classifier/content-catalog'
 import { getWorkspaceFolder } from '../../util/workspace'
 import { dir, exists } from '../../util/file'
 
+// Importing the default export from a module that uses CommonJS module syntax
+// works as of NODE 20 - https://nodejs.org/api/esm.html#esm_enabling
+import * as contentClassifier from '@antora/content-classifier'
+const classifyContent = contentClassifier.default || contentClassifier
+
 const MAX_DEPTH_SEARCH_ANTORA_CONFIG = 100
 const localize = nls.loadMessageBundle()
 
@@ -316,10 +321,10 @@ export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceS
           files,
         }
       })))
-    let classifyContent = await import('@antora/content-classifier')
-    if ('default' in classifyContent) {
-      classifyContent = classifyContent.default // default export
-    }
+    // let classifyContent = await import('@antora/content-classifier')
+    // if ('default' in classifyContent) {
+    //   classifyContent = classifyContent.default // default export
+    // }
     const contentCatalog = await classifyContent({
       site: {},
     }, contentAggregate)
