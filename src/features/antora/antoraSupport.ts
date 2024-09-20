@@ -1,4 +1,4 @@
-import vscode, { CancellationTokenSource, FileType, Memento, Uri } from 'vscode'
+import vscode, { CancellationTokenSource, Memento, Uri } from 'vscode'
 import fs from 'fs'
 import yaml from 'js-yaml'
 import ospath, { posix as posixpath } from 'path'
@@ -9,9 +9,13 @@ import ContentCatalog from '@antora/content-classifier/content-catalog'
 import { getWorkspaceFolder } from '../../util/workspace'
 import { dir, exists } from '../../util/file'
 
+import { AntoraConfig, getAntoraConfigs, getAntoraConfigUris } from './antoraConfigs'
+import { fastFindFiles } from './fastFindFiles'
+
 // Importing the default export from a module that uses CommonJS module syntax
 // works as of NODE 20 - https://nodejs.org/api/esm.html#esm_enabling
 import * as contentClassifier from '@antora/content-classifier'
+
 const classifyContent = contentClassifier.default || contentClassifier
 
 const MAX_DEPTH_SEARCH_ANTORA_CONFIG = 100
@@ -22,73 +26,6 @@ export interface AntoraResourceContext {
   version: string;
   module: string;
 }
-
-let findFiles2Available : boolean | undefined
-
-const exclude : string[] = [
-  '**/.DS_Store',
-  '**/node_modules',
-  '**/vendor',
-  '**/coverage',
-  '**/build',
-]
-const excludeString = '{' + exclude.join(',') + '}'
-
-// Use proposed findFiles2 api if available
-async function fastFindFiles (glob: string, token?: vscode.CancellationToken) {
-  if (findFiles2Available === false) {
-    return vscode.workspace.findFiles(glob, excludeString, 100, token)
-  }
-
-  try {
-    const files = await usingFindFiles2()
-    findFiles2Available = true
-    return files
-  } catch (e) {
-    if (!e.message.includes('enabledApiProposals')) {
-      throw e
-    }
-    console.info('[Antora] api proposals not enabled, falling back to findFiles')
-    findFiles2Available = false
-    return vscode.workspace.findFiles(glob, excludeString, 100, token)
-  }
-
-  async function usingFindFiles2 () : Promise<vscode.Uri[]> {
-    return await vscode.workspace.findFiles2(glob, {
-      useIgnoreFiles: true,
-      // useDefaultExcludes: true,
-      useDefaultSearchExcludes: true,
-      useGlobalIgnoreFiles: true,
-      useParentIgnoreFiles: true,
-    }, token)
-  }
-}
-
-export class AntoraConfig {
-  public contentSourceRootPath: string
-  public contentSourceRootFsPath: string
-
-  private static versionMap = new Map<string, number>()
-
-  constructor (public uri: vscode.Uri, public config: { [key: string]: any }) {
-    const path = uri.path
-    this.contentSourceRootPath = path.slice(0, path.lastIndexOf('/'))
-    this.contentSourceRootFsPath = ospath.dirname(uri.fsPath)
-    if (config.version === true || config.version === undefined) {
-      config.version = this.getVersionForPath(path)
-    }
-  }
-
-  public getVersionForPath (path: string): string {
-    const version = AntoraConfig.versionMap.get(path)
-    if (version) return `V-${version}`
-
-    const nextVersion = AntoraConfig.versionMap.size + 1
-    AntoraConfig.versionMap.set(path, nextVersion)
-    return `V-${nextVersion}`
-  }
-}
-
 export class AntoraDocumentContext {
   private PERMITTED_FAMILIES = ['attachment', 'example', 'image', 'page', 'partial']
 
@@ -236,9 +173,8 @@ export async function findAntoraConfigFile (textDocumentUri: Uri): Promise<Uri |
   cancellationToken.token.onCancellationRequested((e) => {
     console.log('Cancellation requested, cause: ' + e)
   })
-  // const antoraConfigUris = await vscode.workspace.findFiles('**/antora.yml', undefined, 100, cancellationToken.token)
-  const antoraConfigUris = await fastFindFiles('**/antora.yml', cancellationToken.token)
-  // check for Antora configuration
+  const antoraConfigUris = await getAntoraConfigUris(cancellationToken.token)
+
   for (const antoraConfigUri of antoraConfigUris) {
     const antoraConfigParentDirPath = antoraConfigUri.path.slice(0, antoraConfigUri.path.lastIndexOf('/'))
     const modulesDirPath = posixpath.normalize(`${antoraConfigParentDirPath}/modules`)
@@ -276,32 +212,6 @@ export async function antoraConfigFileExists (textDocumentUri: Uri): Promise<boo
     currentDirectoryUri = dir(currentDirectoryUri, workspaceFolderUri)
   }
   return antoraConfig !== undefined
-}
-
-export async function getAntoraConfigs (): Promise<AntoraConfig[]> {
-  const cancellationToken = new CancellationTokenSource()
-  cancellationToken.token.onCancellationRequested((e) => {
-    console.log('Cancellation requested, cause: ' + e)
-  })
-  // const antoraConfigUris = await vscode.workspace.findFiles('**/antora.yml', undefined, 100, cancellationToken.token)
-  const antoraConfigUris = await fastFindFiles('**/antora.yml', cancellationToken.token)
-  // check for Antora configuration
-  const antoraConfigs = await Promise.all(antoraConfigUris.map(async (antoraConfigUri) => {
-    let config = {}
-    const parentPath = antoraConfigUri.path.slice(0, antoraConfigUri.path.lastIndexOf('/'))
-    const parentDirectoryStat = await vscode.workspace.fs.stat(antoraConfigUri.with({ path: parentPath }))
-    if (parentDirectoryStat.type === (FileType.Directory | FileType.SymbolicLink) || parentDirectoryStat.type === FileType.SymbolicLink) {
-      // ignore!
-      return undefined
-    }
-    try {
-      config = yaml.load(await vscode.workspace.fs.readFile(antoraConfigUri)) || {}
-    } catch (err) {
-      console.log(`Unable to parse ${antoraConfigUri}, cause:` + err.toString())
-    }
-    return new AntoraConfig(antoraConfigUri, config)
-  }))
-  return antoraConfigs.filter((c) => c) // filter undefined
 }
 
 export async function getAntoraConfig (textDocumentUri: Uri): Promise<AntoraConfig | undefined> {
