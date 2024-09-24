@@ -33,56 +33,65 @@ const cache = {
   antoraConfigUris: [] as vscode.Uri[],
 }
 
-let refreshPromise : Promise<void> | undefined
+let ongoingRefreshPromise : Promise<void> | undefined
 
-export async function awaitConfigRefresh (token?: vscode.CancellationToken) {
-  if (refreshPromise) {
-    await refreshPromise
+async function refreshAntoraConfigs (token?: vscode.CancellationToken) {
+  if (!ongoingRefreshPromise) {
+    ongoingRefreshPromise = asyncTriggerRefresh(token).then(() => {
+      ongoingRefreshPromise = undefined
+    })
   }
-  refreshPromise = buildRefreshPromise(token)
-  await refreshPromise
+  await ongoingRefreshPromise
 
-  refreshPromise = undefined
+  async function asyncTriggerRefresh (token: vscode.CancellationToken): Promise<void> {
+    const antoraConfigUris = await fastFindFiles('**/antora.yml', token)
+
+    const cancellationToken = new CancellationTokenSource()
+    cancellationToken.token.onCancellationRequested((e) => {
+      console.log('Cancellation requested, cause: ' + e)
+    })
+    // check for Antora configuration
+    const antoraConfigs = (await Promise.all(antoraConfigUris.map(async (antoraConfigUri) => {
+      let config = {}
+      const parentPath = antoraConfigUri.path.slice(0, antoraConfigUri.path.lastIndexOf('/'))
+      const parentDirectoryStat = await vscode.workspace.fs.stat(antoraConfigUri.with({ path: parentPath }))
+      if (parentDirectoryStat.type === (FileType.Directory | FileType.SymbolicLink) || parentDirectoryStat.type === FileType.SymbolicLink) {
+        // ignore!
+        return undefined
+      }
+      try {
+        config = yaml.load(await vscode.workspace.fs.readFile(antoraConfigUri)) || {}
+      } catch (err) {
+        console.log(`Unable to parse ${antoraConfigUri}, cause:` + err.toString())
+      }
+      return new AntoraConfig(antoraConfigUri, config)
+    }))).filter((c) => c) // filter undefined
+
+    cache.antoraConfigs = antoraConfigs
+    cache.antoraConfigUris = antoraConfigUris
+  }
 }
 
 export async function getAntoraConfigs (token?: vscode.CancellationToken) {
   if (!cache.antoraConfigs.length) {
-    await awaitConfigRefresh(token)
+    await refreshAntoraConfigs(token)
   }
   return cache.antoraConfigs
 }
 
 export async function getAntoraConfigUris (token?: vscode.CancellationToken) {
   if (!cache.antoraConfigUris.length) {
-    await awaitConfigRefresh(token)
+    await refreshAntoraConfigs(token)
   }
   return cache.antoraConfigUris
 }
 
-async function buildRefreshPromise (token: vscode.CancellationToken) {
-  const antoraConfigUris = await fastFindFiles('**/antora.yml', token)
+// initial refresh of antora configs
+refreshAntoraConfigs()
 
-  const cancellationToken = new CancellationTokenSource()
-  cancellationToken.token.onCancellationRequested((e) => {
-    console.log('Cancellation requested, cause: ' + e)
-  })
-  // check for Antora configuration
-  const antoraConfigs = (await Promise.all(antoraConfigUris.map(async (antoraConfigUri) => {
-    let config = {}
-    const parentPath = antoraConfigUri.path.slice(0, antoraConfigUri.path.lastIndexOf('/'))
-    const parentDirectoryStat = await vscode.workspace.fs.stat(antoraConfigUri.with({ path: parentPath }))
-    if (parentDirectoryStat.type === (FileType.Directory | FileType.SymbolicLink) || parentDirectoryStat.type === FileType.SymbolicLink) {
-      // ignore!
-      return undefined
-    }
-    try {
-      config = yaml.load(await vscode.workspace.fs.readFile(antoraConfigUri)) || {}
-    } catch (err) {
-      console.log(`Unable to parse ${antoraConfigUri}, cause:` + err.toString())
-    }
-    return new AntoraConfig(antoraConfigUri, config)
-  }))).filter((c) => c) // filter undefined
-
-  cache.antoraConfigs = antoraConfigs
-  cache.antoraConfigUris = antoraConfigUris
-}
+// Update the configs when an antora.yml file changes
+vscode.workspace.onDidChangeTextDocument(async (event) => {
+  if (event.document.uri.path.endsWith('antora.yml')) {
+    await refreshAntoraConfigs()
+  }
+})
