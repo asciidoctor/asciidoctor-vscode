@@ -44,6 +44,7 @@ export async function fastFindFiles (inputGlob: string, token?: vscode.Cancellat
       useDefaultSearchExcludes: true,
       useGlobalIgnoreFiles: true,
       useParentIgnoreFiles: true,
+      followSymlinks: false,
     }, token)
   }
 }
