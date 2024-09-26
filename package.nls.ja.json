@@ -69,5 +69,7 @@
 	"asciidoc.use_kroki.desc": "**非推奨:** ダイアグラム生成Krokiを使用します。",
 	"asciidoc.use_kroki.deprecationMessage": "本設定は、`#asciidoc.extensions.enableKroki#`に置き換えられ、動作しません。",
 	"asciidoc.antora.title": "Antora",
-	"asciidoc.antora.enableAntoraSupport.desc": "[Antora](https://antora.org/)サポートを有効にします。"
+	"asciidoc.antora.enableAntoraSupport.desc": "[Antora](https://antora.org/)サポートを有効にします。",
+	"asciidoc.antora.search.antoraConfig.desc": "Antora config globs",
+	"asciidoc.antora.search.exclude.desc": "Globs to exclude from antora file search"
 }

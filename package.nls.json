@@ -78,5 +78,7 @@
 	"asciidoc.use_kroki.deprecationMessage": "This setting has been replaced by `#asciidoc.extensions.enableKroki#` and no longer has any effect.",
 
 	"asciidoc.antora.title": "Antora",
-	"asciidoc.antora.enableAntoraSupport.desc": "Enable [Antora](https://antora.org/) support."
+	"asciidoc.antora.enableAntoraSupport.desc": "Enable [Antora](https://antora.org/) support.",
+	"asciidoc.antora.search.antoraConfig.desc": "Antora config globs",
+	"asciidoc.antora.search.exclude.desc": "Globs to exclude from antora file search"
 }

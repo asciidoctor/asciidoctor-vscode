@@ -556,6 +556,16 @@
 						"type": "boolean",
 						"default": false,
 						"markdownDescription": "%asciidoc.antora.enableAntoraSupport.desc%"
+					},
+					"asciidoc.antora.search.antoraConfig": {
+						"type": "array",
+						"default": ["**/antora.yml"],
+						"markdownDescription": "%asciidoc.antora.search.antoraConfig.desc%"
+					},
+					"asciidoc.antora.search.exclude": {
+						"type": "array",
+						"default": [],
+						"markdownDescription": "%asciidoc.antora.search.exclude.desc%"
 					}
 				}
 			}

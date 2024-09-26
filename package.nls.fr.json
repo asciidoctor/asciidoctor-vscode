@@ -69,5 +69,7 @@
 	"asciidoc.use_kroki.desc": "**Obsolète:** Active l'extension Kroki afin de générer des diagrammes.",
 	"asciidoc.use_kroki.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.extensions.enableKroki#` et n'a plus aucun effet.",
 	"asciidoc.antora.title": "Antora",
-	"asciidoc.antora.enableAntoraSupport.desc": "Active le support [Antora](https://antora.org/)."
+	"asciidoc.antora.enableAntoraSupport.desc": "Active le support [Antora](https://antora.org/).",
+	"asciidoc.antora.search.antoraConfig.desc": "Antora config globs",
+	"asciidoc.antora.search.exclude.desc": "Globs to exclude from antora file search"
 }
