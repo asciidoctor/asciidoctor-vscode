@@ -38,6 +38,7 @@
 
 	"asciidoc.antora.title": "Antora",
 	"asciidoc.antora.enableAntoraSupport.desc": "[Antora](https://antora.org/)サポートを有効にします。",
+	"asciidoc.antora.enableLocalIncludes.desc": "Antoraサポートが無効になっている場合、ファミリーフォルダーからのローカルインクルードを有効にします。",
 
 	"asciidoc.pdf.title": "PDF",
 	"asciidoc.pdf.engine.desc": "PDFエキスポートで使用するPDFエンジンを選択します。",

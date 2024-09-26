@@ -15,6 +15,7 @@ import { AsciidoctorProcessor } from './asciidoctorProcessor'
 import { AsciidoctorAttributesConfig } from './features/asciidoctorAttributesConfig'
 import { IncludeProcessor } from './features/antora/includeProcessor'
 import { resolveIncludeFile } from './features/antora/resolveIncludeFile'
+import { registerLocalAntoraProcessors } from './features/antora/resolveLocalIncludeFile'
 
 const highlightjsAdapter = require('./highlightjs-adapter')
 
@@ -140,6 +141,9 @@ export class AsciidocEngine {
     await this.asciidoctorExtensionsProvider.activate(registry)
     const textDocumentUri = textDocument.uri
     await this.asciidoctorConfigProvider.activate(registry, textDocumentUri)
+
+    registerLocalAntoraProcessors(registry)
+
     if (antoraDocumentContext !== undefined) {
       const antoraConfig = await getAntoraConfig(textDocumentUri)
       registry.includeProcessor(IncludeProcessor.$new((_, target, cursor) => resolveIncludeFile(

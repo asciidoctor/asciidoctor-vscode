@@ -38,6 +38,7 @@
 
 	"asciidoc.antora.title": "Antora",
 	"asciidoc.antora.enableAntoraSupport.desc": "Active le support [Antora](https://antora.org/).",
+	"asciidoc.antora.enableLocalIncludes.desc": "Active les inclusions locales à partir des dossiers de famille si le support d'Antora est désactivé.",
 
 	"asciidoc.pdf.title": "PDF",
 	"asciidoc.pdf.engine.desc": "Contrôle le moteur PDF à utiliser pour l'export PDF.",

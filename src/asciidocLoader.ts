@@ -11,6 +11,7 @@ import { AsciidoctorIncludeItemsProvider, IncludeItems } from './features/asciid
 import { getAntoraDocumentContext, getAntoraConfig } from './features/antora/antoraSupport'
 import { IncludeProcessor } from './features/antora/includeProcessor'
 import { resolveIncludeFile } from './features/antora/resolveIncludeFile'
+import { registerLocalAntoraProcessors } from './features/antora/resolveLocalIncludeFile'
 
 export class AsciidocLoader {
   protected readonly processor: Asciidoctor
@@ -56,6 +57,9 @@ export class AsciidocLoader {
     await this.asciidoctorExtensionsProvider.activate(registry)
     const textDocumentUri = textDocument.uri
     await this.asciidoctorConfigProvider.activate(registry, textDocumentUri)
+
+    registerLocalAntoraProcessors(registry)
+
     const antoraDocumentContext = await getAntoraDocumentContext(textDocument.uri, this.context.workspaceState)
     if (antoraDocumentContext !== undefined) {
       const antoraConfig = await getAntoraConfig(textDocumentUri)

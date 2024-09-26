@@ -556,6 +556,11 @@
 						"type": "boolean",
 						"default": false,
 						"markdownDescription": "%asciidoc.antora.enableAntoraSupport.desc%"
+					},
+					"asciidoc.antora.enableLocalIncludes": {
+						"type": "boolean",
+						"default": true,
+						"markdownDescription": "%asciidoc.antora.enableLocalIncludes.desc%"
 					}
 				}
 			}
