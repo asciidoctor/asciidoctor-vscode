@@ -23,6 +23,8 @@ async function ripgrep (glob: string, rootFolder: string): Promise<string[]> {
           .map((path) => path.trim())
           .filter((path) => !!path) // ensure empty strings are deleted from answer
         resolve(result)
+      } else if (code === 1) {
+        resolve([])
       } else {
         reject(new Error(`code ${code}: ${stderr}`))
       }
