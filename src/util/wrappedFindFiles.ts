@@ -5,7 +5,7 @@ import { getWorkspaceFolders } from './workspace'
 
 async function ripgrep (glob: string, rootFolder: string): Promise<string[]> {
   return new Promise((resolve, reject) => {
-    const rg = spawn(rgPath, ['--files', '-g', glob], { cwd: rootFolder })
+    const rg = spawn(rgPath, ['--hidden', '--files', '-g', glob], { cwd: rootFolder })
     let stdout : string = ''
     let stderr = ''
 
