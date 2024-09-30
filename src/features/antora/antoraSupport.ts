@@ -9,6 +9,7 @@ import ContentCatalog from '@antora/content-classifier/content-catalog'
 import { getWorkspaceFolder } from '../../util/workspace'
 import { dir, exists } from '../../util/file'
 import * as contentClassifier from '@antora/content-classifier'
+import { wrappedFindFiles } from '../../util/wrappedFindFiles'
 const classifyContent = contentClassifier.default || contentClassifier
 
 const MAX_DEPTH_SEARCH_ANTORA_CONFIG = 100
@@ -192,7 +193,7 @@ export async function findAntoraConfigFile (textDocumentUri: Uri): Promise<Uri |
   cancellationToken.token.onCancellationRequested((e) => {
     console.log('Cancellation requested, cause: ' + e)
   })
-  const antoraConfigUris = await vscode.workspace.findFiles('**/antora.yml', undefined, 100, cancellationToken.token)
+  const antoraConfigUris = await wrappedFindFiles('**/antora.yml')
   // check for Antora configuration
   for (const antoraConfigUri of antoraConfigUris) {
     const antoraConfigParentDirPath = antoraConfigUri.path.slice(0, antoraConfigUri.path.lastIndexOf('/'))
@@ -238,7 +239,7 @@ export async function getAntoraConfigs (): Promise<AntoraConfig[]> {
   cancellationToken.token.onCancellationRequested((e) => {
     console.log('Cancellation requested, cause: ' + e)
   })
-  const antoraConfigUris = await vscode.workspace.findFiles('**/antora.yml', undefined, 100, cancellationToken.token)
+  const antoraConfigUris = await wrappedFindFiles('**/antora.yml')
   // check for Antora configuration
   const antoraConfigs = await Promise.all(antoraConfigUris.map(async (antoraConfigUri) => {
     let config = {}
@@ -293,7 +294,7 @@ export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceS
         const workspaceFolder = getWorkspaceFolder(antoraConfig.uri)
         const workspaceRelative = posixpath.relative(workspaceFolder.uri.path, antoraConfig.contentSourceRootPath)
         const globPattern = 'modules/*/{attachments,examples,images,pages,partials,assets}/**'
-        const files = await Promise.all((await vscode.workspace.findFiles(`${workspaceRelative ? `${workspaceRelative}/` : ''}${globPattern}`)).map(async (file) => {
+        const files = await Promise.all((await wrappedFindFiles(`${workspaceRelative ? `${workspaceRelative}/` : ''}${globPattern}`)).map(async (file) => {
           const contentSourceRootPath = antoraConfig.contentSourceRootPath
           return {
             base: contentSourceRootPath,

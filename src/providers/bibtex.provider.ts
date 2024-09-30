@@ -1,6 +1,7 @@
 import * as vscode from 'vscode'
 import { createContext, Context } from './createContext'
 import { readFileSync } from 'fs'
+import { wrappedFindFiles } from '../util/wrappedFindFiles'
 const bibtexParse = require('@orcid/bibtex-parse-js')
 
 export const BibtexProvider = {
@@ -31,7 +32,7 @@ function shouldProvide (context: Context): boolean {
 }
 
 async function getCitationKeys (): Promise<string[]> {
-  const files = await vscode.workspace.findFiles('*.bib')
+  const files = await wrappedFindFiles('*.bib')
   const filesContent = files.map((file) =>
     readFileSync(file.path).toString('utf-8')
   )

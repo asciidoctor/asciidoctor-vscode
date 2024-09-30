@@ -1,6 +1,7 @@
 import * as path from 'path'
 import * as vscode from 'vscode'
 import { createContext, Context } from './createContext'
+import { wrappedFindFiles } from '../util/wrappedFindFiles'
 
 export const xrefProvider = {
   provideCompletionItems,
@@ -83,7 +84,7 @@ async function provideCrossRef (context: Context): Promise<vscode.CompletionItem
   )
 
   const completionItems: vscode.CompletionItem[] = []
-  const workspacesAdocFiles = await vscode.workspace.findFiles('**/*.adoc')
+  const workspacesAdocFiles = await wrappedFindFiles('**/*.adoc')
   for (const adocFile of workspacesAdocFiles) {
     const labels = await getIdsFromFile(adocFile)
     for (const label of labels) {

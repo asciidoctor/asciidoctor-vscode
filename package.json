@@ -662,6 +662,7 @@
 		"util": "^0.12.5",
 		"uuid": "8.3.2",
 		"vscode-nls": "5.2.0",
+		"vscode-ripgrep": "^1.13.2",
 		"vscode-uri": "^3.0.3",
 		"worker-thread": "^1.1.0"
 	},
