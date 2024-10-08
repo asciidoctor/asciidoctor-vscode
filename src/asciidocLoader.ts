@@ -8,7 +8,7 @@ import { SkinnyTextDocument } from './util/document'
 import { AsciidoctorAttributesConfig } from './features/asciidoctorAttributesConfig'
 import { AsciidoctorDiagnosticProvider } from './features/asciidoctorDiagnostic'
 import { AsciidoctorIncludeItemsProvider, IncludeItems } from './features/asciidoctorIncludeItems'
-import { getAntoraDocumentContext, getAntoraConfig } from './features/antora/antoraSupport'
+import { getAntoraDocumentContext, getAntoraConfig } from './features/antora/antoraDocument'
 import { IncludeProcessor } from './features/antora/includeProcessor'
 import { resolveIncludeFile } from './features/antora/resolveIncludeFile'
 

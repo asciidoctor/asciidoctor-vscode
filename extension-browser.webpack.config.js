@@ -2,7 +2,7 @@
 
 const path = require('path')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
-const { ProvidePlugin } = require('webpack')
+const { ProvidePlugin, NormalModuleReplacementPlugin } = require('webpack')
 
 module.exports = {
     entry: {
@@ -53,7 +53,7 @@ module.exports = {
     externals: {
         'vscode': 'commonjs vscode', // ignored because it doesn't exist,
         'applicationinsights-native-metrics': 'commonjs applicationinsights-native-metrics', // ignored because we don't ship native module
-        '@opentelemetry/tracing': 'commonjs @opentelemetry/tracing' // ignored because we don't ship this module
+        '@opentelemetry/tracing': 'commonjs @opentelemetry/tracing', // ignored because we don't ship this module
     },
     performance: {
         hints: false
@@ -69,6 +69,19 @@ module.exports = {
     // yes, really source maps
     devtool: 'nosources-source-map',
     plugins: [
+        new NormalModuleReplacementPlugin(/antoraDocument$/, function (
+          resource
+        ) {
+            // replaced because Antora cannot run in a web environment
+            resource.request = resource.request.replace(
+              /antoraDocument/,
+              `antoraDocumentBrowserShim`
+            );
+
+            if (resource.createData) {
+                resource.createData.request = resource.request;
+            }
+        }),
         new CopyWebpackPlugin({
             patterns: [
                 {

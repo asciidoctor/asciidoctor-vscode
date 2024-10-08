@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import { getAttributes } from './antoraSupport'
+import { getAttributes } from './antoraDocument'
 
 export default class AntoraCompletionProvider {
   async provideCompletionItems (textDocument: vscode.TextDocument, position: vscode.Position): Promise<vscode.CompletionItem[]> {

@@ -5,7 +5,7 @@ import { AsciidocPreviewConfigurationManager } from '../features/previewConfig'
 import { AsciidocContributions } from '../asciidocExtensions'
 import assert from 'assert'
 import sinon from 'sinon'
-import { AntoraDocumentContext } from '../features/antora/antoraSupport'
+import { AntoraDocumentContext } from '../features/antora/antoraContext'
 import { getDefaultWorkspaceFolderUri } from '../util/workspace'
 import { createDirectory, createFile, removeFiles } from './workspaceHelper'
 
