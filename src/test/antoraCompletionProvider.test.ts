@@ -3,7 +3,7 @@ import * as vscode from 'vscode'
 import assert from 'assert'
 import AntoraCompletionProvider from '../features/antora/antoraCompletionProvider'
 import { Position } from 'vscode'
-import { createDirectory, createFile, disableAntoraSupport, enableAntoraSupport, removeFiles } from './workspaceHelper'
+import { resetAntoraSupport, createDirectory, createFile, enableAntoraSupport, removeFiles } from './workspaceHelper'
 
 suite('Antora CompletionsProvider', () => {
   const createdFiles: vscode.Uri[] = []
@@ -57,7 +57,7 @@ link:help.adoc[]
       })
       assert.strictEqual(completionsItems[2].insertText, '{false}')
     } finally {
-      await disableAntoraSupport()
+      await resetAntoraSupport()
     }
   })
 })

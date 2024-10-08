@@ -10,7 +10,7 @@ import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
 import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
 import { InMemoryDocument } from './inMemoryDocument'
-import { createDirectory, createFile, disableAntoraSupport, enableAntoraSupport, removeFiles } from './workspaceHelper'
+import { resetAntoraSupport, createDirectory, createFile, enableAntoraSupport, removeFiles } from './workspaceHelper'
 
 class TestWebviewResourceProvider implements WebviewResourceProvider {
   asWebviewUri (resource: vscode.Uri): vscode.Uri {
@@ -78,7 +78,7 @@ asciidoc:
       assert.strictEqual(result.html.includes('<p>Download from the <a href="https://marketplace.visualstudio.com/vscode" data-href="https://marketplace.visualstudio.com/vscode">Visual Studio Code Marketplace</a>.</p>'), true)
     } finally {
       await removeFiles(createdFiles)
-      await disableAntoraSupport()
+      await resetAntoraSupport()
     }
   })
 })

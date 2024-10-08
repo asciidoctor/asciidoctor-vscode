@@ -15,6 +15,8 @@
 	"asciidoc.showPreviewSecuritySelector.title": "Manage Preview Security Settings",
 	"asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Manage Asciidoctor.js Extensions Trust Mode",
 	"asciidoc.showSource.title": "Show Source",
+	"asciidoc.enableAntoraSupport.title": "Enable Antora support in this workspace",
+	"asciidoc.disableAntoraSupport.title": "Disable Antora support in this workspace",
 
 	"asciidoc.preview.asciidoctorAttributes.desc": "Sets Asciidoctor attributes used in the preview. Attributes need to be written as an object of type {string: string}.",
 	"asciidoc.preview.refreshInterval.desc": "Interval in milliseconds between two consecutive updates of the preview. The value 0 means it will only update the preview on save.",
@@ -76,7 +78,9 @@
 	"asciidoc.useWorkspaceRoot.deprecationMessage": "This setting has been replaced by `#asciidoc.useWorkspaceRootAsBaseDirectory#` and no longer has any effect.",
 	"asciidoc.use_kroki.desc": "**Deprecated:** Enables Kroki integration to generate diagrams.",
 	"asciidoc.use_kroki.deprecationMessage": "This setting has been replaced by `#asciidoc.extensions.enableKroki#` and no longer has any effect.",
+	"asciidoc.antora.enableAntoraSupport.deprecationMessage": "This setting has been replaced by `#asciidoc.antora.showEnableAntoraPrompt#` and no longer has any effect.",
 
 	"asciidoc.antora.title": "Antora",
-	"asciidoc.antora.enableAntoraSupport.desc": "Enable [Antora](https://antora.org/) support."
+	"asciidoc.antora.enableAntoraSupport.desc": "Enable [Antora](https://antora.org/) support.",
+	"asciidoc.antora.showEnableAntoraPrompt.desc": "Show a prompt to enable [Antora](https://antora.org/) support when an antora.yml file is detected."
 }
