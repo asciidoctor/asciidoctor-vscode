@@ -1,181 +1,15 @@
 import vscode, { CancellationTokenSource, FileType, Memento, Uri } from 'vscode'
 import fs from 'fs'
 import yaml from 'js-yaml'
-import ospath, { posix as posixpath } from 'path'
-import AntoraCompletionProvider from './antoraCompletionProvider'
-import { disposeAll } from '../../util/dispose'
-import * as nls from 'vscode-nls'
-import ContentCatalog from '@antora/content-classifier/content-catalog'
+import { posix as posixpath } from 'path'
 import { getWorkspaceFolder } from '../../util/workspace'
 import { dir, exists } from '../../util/file'
 import * as contentClassifier from '@antora/content-classifier'
+import { findFiles } from '../../util/findFiles'
+import { AntoraConfig, AntoraContext, AntoraDocumentContext, AntoraSupportManager } from './antoraContext'
 const classifyContent = contentClassifier.default || contentClassifier
 
 const MAX_DEPTH_SEARCH_ANTORA_CONFIG = 100
-const localize = nls.loadMessageBundle()
-
-export interface AntoraResourceContext {
-  component: string;
-  version: string;
-  module: string;
-}
-
-export class AntoraConfig {
-  public contentSourceRootPath: string
-  public contentSourceRootFsPath: string
-
-  private static versionMap = new Map<string, number>()
-
-  constructor (public uri: vscode.Uri, public config: { [key: string]: any }) {
-    const path = uri.path
-    this.contentSourceRootPath = path.slice(0, path.lastIndexOf('/'))
-    this.contentSourceRootFsPath = ospath.dirname(uri.fsPath)
-    if (config.version === true || config.version === undefined) {
-      config.version = this.getVersionForPath(path)
-    }
-  }
-
-  public getVersionForPath (path: string): string {
-    const version = AntoraConfig.versionMap.get(path)
-    if (version) return `V-${version}`
-
-    const nextVersion = AntoraConfig.versionMap.size + 1
-    AntoraConfig.versionMap.set(path, nextVersion)
-    return `V-${nextVersion}`
-  }
-}
-
-export class AntoraDocumentContext {
-  private PERMITTED_FAMILIES = ['attachment', 'example', 'image', 'page', 'partial']
-
-  constructor (private antoraContext: AntoraContext, public resourceContext: AntoraResourceContext) {
-  }
-
-  public resolveAntoraResourceIds (id: string, defaultFamily: string): string | undefined {
-    const resource = this.antoraContext.contentCatalog.resolveResource(id, this.resourceContext, defaultFamily, this.PERMITTED_FAMILIES)
-    if (resource) {
-      return resource.src?.abspath
-    }
-    return undefined
-  }
-
-  public getComponents () {
-    return this.antoraContext.contentCatalog.getComponents()
-  }
-
-  public getImages () {
-    return this.antoraContext.contentCatalog.findBy({ family: 'image' })
-  }
-
-  public getContentCatalog () {
-    return this.antoraContext.contentCatalog
-  }
-}
-
-export class AntoraContext {
-  constructor (public contentCatalog: ContentCatalog) {
-  }
-
-  public async getResource (textDocumentUri: Uri): Promise<AntoraResourceContext | undefined> {
-    const antoraConfig = await getAntoraConfig(textDocumentUri)
-    if (antoraConfig === undefined) {
-      return undefined
-    }
-    const contentSourceRootPath = antoraConfig.contentSourceRootFsPath
-    const config = antoraConfig.config
-    if (config.name === undefined) {
-      return undefined
-    }
-    const page = this.contentCatalog.getByPath({
-      component: config.name,
-      version: config.version,
-      // Vinyl will normalize path to system dependent path :(
-      path: ospath.relative(contentSourceRootPath, textDocumentUri.fsPath),
-    })
-    if (page === undefined) {
-      return undefined
-    }
-    return page.src
-  }
-}
-
-export class AntoraSupportManager implements vscode.Disposable {
-  // eslint-disable-next-line no-use-before-define
-  private static instance: AntoraSupportManager
-  private static workspaceState: Memento
-  private readonly _disposables: vscode.Disposable[] = []
-
-  private constructor () {
-  }
-
-  public static getInstance (workspaceState: Memento) {
-    if (AntoraSupportManager.instance) {
-      AntoraSupportManager.workspaceState = workspaceState
-      return AntoraSupportManager.instance
-    }
-    AntoraSupportManager.instance = new AntoraSupportManager()
-    AntoraSupportManager.workspaceState = workspaceState
-    // look for Antora support setting in workspace state
-    const isEnableAntoraSupportSettingDefined = workspaceState.get('antoraSupportSetting')
-    if (isEnableAntoraSupportSettingDefined === true) {
-      AntoraSupportManager.instance.registerFeatures()
-    } else if (isEnableAntoraSupportSettingDefined === undefined) {
-      // choice has not been made
-      const onDidOpenAsciiDocFileAskAntoraSupport = vscode.workspace.onDidOpenTextDocument(async (textDocument) => {
-        if (await antoraConfigFileExists(textDocument.uri)) {
-          const yesAnswer = localize('antora.activateSupport.yes', 'Yes')
-          const noAnswer = localize('antora.activateSupport.no', 'No, thanks')
-          const answer = await vscode.window.showInformationMessage(
-            localize('antora.activateSupport.message', 'We detect that you are working with Antora. Do you want to activate Antora support?'),
-            yesAnswer,
-            noAnswer
-          )
-          const enableAntoraSupport = answer === yesAnswer
-          await workspaceState.update('antoraSupportSetting', enableAntoraSupport)
-          if (enableAntoraSupport) {
-            AntoraSupportManager.instance.registerFeatures()
-          }
-          // do not ask again to avoid bothering users
-          onDidOpenAsciiDocFileAskAntoraSupport.dispose()
-        }
-      })
-      AntoraSupportManager.instance._disposables.push(onDidOpenAsciiDocFileAskAntoraSupport)
-    }
-  }
-
-  public async getAttributes (textDocumentUri: Uri): Promise<{ [key: string]: string }> {
-    const antoraEnabled = this.isEnabled()
-    if (antoraEnabled) {
-      return getAttributes(textDocumentUri)
-    }
-    return {}
-  }
-
-  public isEnabled (): Boolean {
-    // look for Antora support setting in workspace state
-    const isEnableAntoraSupportSettingDefined = AntoraSupportManager.workspaceState.get('antoraSupportSetting')
-    if (isEnableAntoraSupportSettingDefined === true) {
-      return true
-    }
-    // choice has not been made or Antora is explicitly disabled
-    return false
-  }
-
-  private registerFeatures (): void {
-    const attributesCompletionProvider = vscode.languages.registerCompletionItemProvider({
-      language: 'asciidoc',
-      scheme: 'file',
-    },
-    new AntoraCompletionProvider(),
-    '{'
-    )
-    this._disposables.push(attributesCompletionProvider)
-  }
-
-  public dispose (): void {
-    disposeAll(this._disposables)
-  }
-}
 
 export async function findAntoraConfigFile (textDocumentUri: Uri): Promise<Uri | undefined> {
   const asciidocFilePath = posixpath.normalize(textDocumentUri.path)
@@ -183,7 +17,7 @@ export async function findAntoraConfigFile (textDocumentUri: Uri): Promise<Uri |
   cancellationToken.token.onCancellationRequested((e) => {
     console.log('Cancellation requested, cause: ' + e)
   })
-  const antoraConfigUris = await vscode.workspace.findFiles('**/antora.yml', undefined, 100, cancellationToken.token)
+  const antoraConfigUris = await findFiles('**/antora.yml')
   // check for Antora configuration
   for (const antoraConfigUri of antoraConfigUris) {
     const antoraConfigParentDirPath = antoraConfigUri.path.slice(0, antoraConfigUri.path.lastIndexOf('/'))
@@ -224,12 +58,12 @@ export async function antoraConfigFileExists (textDocumentUri: Uri): Promise<boo
   return antoraConfig !== undefined
 }
 
-export async function getAntoraConfigs (): Promise<AntoraConfig[]> {
+async function getAntoraConfigs (): Promise<AntoraConfig[]> {
   const cancellationToken = new CancellationTokenSource()
   cancellationToken.token.onCancellationRequested((e) => {
     console.log('Cancellation requested, cause: ' + e)
   })
-  const antoraConfigUris = await vscode.workspace.findFiles('**/antora.yml', undefined, 100, cancellationToken.token)
+  const antoraConfigUris = await findFiles('**/antora.yml')
   // check for Antora configuration
   const antoraConfigs = await Promise.all(antoraConfigUris.map(async (antoraConfigUri) => {
     let config = {}
@@ -284,7 +118,7 @@ export async function getAntoraDocumentContext (textDocumentUri: Uri, workspaceS
         const workspaceFolder = getWorkspaceFolder(antoraConfig.uri)
         const workspaceRelative = posixpath.relative(workspaceFolder.uri.path, antoraConfig.contentSourceRootPath)
         const globPattern = 'modules/*/{attachments,examples,images,pages,partials,assets}/**'
-        const files = await Promise.all((await vscode.workspace.findFiles(`${workspaceRelative ? `${workspaceRelative}/` : ''}${globPattern}`)).map(async (file) => {
+        const files = await Promise.all((await findFiles(`${workspaceRelative ? `${workspaceRelative}/` : ''}${globPattern}`)).map(async (file) => {
           const contentSourceRootPath = antoraConfig.contentSourceRootPath
           return {
             base: contentSourceRootPath,

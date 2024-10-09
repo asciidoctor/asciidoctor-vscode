@@ -2,6 +2,7 @@ import vscode from 'vscode'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
 import { Asciidoctor } from '@asciidoctor/core'
 import { mermaidJSProcessor } from './mermaid'
+import { findFiles } from '../util/findFiles'
 
 export interface AsciidoctorExtensionsProvider {
   activate(registry: Asciidoctor.Extensions.Registry): Promise<void>;
@@ -38,7 +39,7 @@ export class AsciidoctorExtensions {
   }
 
   private async getExtensionFilesInWorkspace (): Promise<vscode.Uri[]> {
-    return vscode.workspace.findFiles('.asciidoctor/lib/**/*.js')
+    return findFiles('.asciidoctor/lib/**/*.js')
   }
 
   private isAsciidoctorExtensionsRegistrationEnabled (): boolean {

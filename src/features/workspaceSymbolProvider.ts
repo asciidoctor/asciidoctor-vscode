@@ -8,6 +8,7 @@ import { isAsciidocFile } from '../util/file'
 import { Lazy, lazy } from '../util/lazy'
 import AdocDocumentSymbolProvider from './documentSymbolProvider'
 import { SkinnyTextDocument } from '../util/document'
+import { findFiles } from '../util/findFiles'
 
 export interface WorkspaceAsciidocDocumentProvider {
   getAllAsciidocDocuments(): Promise<Iterable<SkinnyTextDocument>>;
@@ -37,7 +38,7 @@ class VSCodeWorkspaceAsciidocDocumentProvider implements WorkspaceAsciidocDocume
   }
 
   async getAllAsciidocDocuments () {
-    const resources = await vscode.workspace.findFiles('**/*.adoc', '**/node_modules/**')
+    const resources = await findFiles('**/*.adoc')
     const docs = await Promise.all(resources.map((doc) => this.getAsciidocDocument(doc)))
     return docs.filter((doc) => !!doc) as SkinnyTextDocument[]
   }

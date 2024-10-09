@@ -15,7 +15,7 @@ import { AsciidocTargetPathAutoCompletionMonitor } from './util/includeAutoCompl
 import { AttributeReferenceProvider } from './features/attributeReferenceProvider'
 import { BuiltinDocumentAttributeProvider } from './features/builtinDocumentAttributeProvider'
 import AsciidocFoldingRangeProvider from './features/foldingProvider'
-import { AntoraSupportManager } from './features/antora/antoraSupport'
+import { AntoraSupportManager } from './features/antora/antoraContext'
 import { DropImageIntoEditorProvider } from './features/dropIntoEditor'
 import { AsciidoctorConfig } from './features/asciidoctorConfig'
 import { AsciidoctorExtensions } from './features/asciidoctorExtensions'

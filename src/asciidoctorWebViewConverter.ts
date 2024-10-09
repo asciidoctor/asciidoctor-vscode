@@ -7,7 +7,7 @@ import { Asciidoctor } from '@asciidoctor/core'
 import { SkinnyTextDocument } from './util/document'
 import * as nls from 'vscode-nls'
 import { AsciidocContributions } from './asciidocExtensions'
-import { AntoraDocumentContext } from './features/antora/antoraSupport'
+import { AntoraDocumentContext } from './features/antora/antoraContext'
 import { getWorkspaceFolder } from './util/workspace'
 
 const localize = nls.loadMessageBundle()
