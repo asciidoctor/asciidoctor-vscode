@@ -38,15 +38,14 @@ function createAntoraDocumentContextStub (resourcePath: string | undefined) {
 }
 
 function createConverterOptions (converter: AsciidoctorWebViewConverter, fileName: string) {
-
   // treat the file as the source file for conversion to handle xref correctly between documents
   // review src/asciidocEngin.ts for more information
   const intrinsicAttr = {
-    'docdir': path.dirname(fileName),
-    'docfile': fileName,
-    'docfilesuffix': path.extname(fileName).substring(1),
-    'docname': path.basename(fileName, path.extname(fileName)),
-    'filetype': converter.outfilesuffix.substring(1)
+    docdir: path.dirname(fileName),
+    docfile: fileName,
+    docfilesuffix: path.extname(fileName).substring(1),
+    docname: path.basename(fileName, path.extname(fileName)),
+    filetype: converter.outfilesuffix.substring(1),
   }
 
   return {
@@ -56,9 +55,9 @@ function createConverterOptions (converter: AsciidoctorWebViewConverter, fileNam
 
       // required for navigation between source files in preview
       // see: https://docs.asciidoctor.org/asciidoc/latest/macros/inter-document-xref/#navigating-between-source-files
-      relfilesuffix: '.adoc'
+      relfilesuffix: '.adoc',
     },
-    safe: 'unsafe' // needed so that we can actually perform includes, enabling xref tests
+    safe: 'unsafe', // needed so that we can actually perform includes, enabling xref tests
   }
 }
 
@@ -105,7 +104,7 @@ async function testAsciidoctorWebViewConverterStandalone (
   )
   const html = processor.convert(input, {
     ...createConverterOptions(asciidoctorWebViewConverter, file.fileName),
-    standalone: true
+    standalone: true,
   })
   html.includes(expected)
 }
@@ -216,8 +215,8 @@ Please scroll me into position
 
 include::docB.adoc[]`,
       antoraDocumentContext: undefined, // Antora not enabled
-      expected: `<a href="#anchor" data-href="#anchor">Link to here</a>`,
-      standalone: true
+      expected: '<a href="#anchor" data-href="#anchor">Link to here</a>',
+      standalone: true,
     },
     {
       title: 'Should resolve "xref:" macro from included document referencing a separate included document',
@@ -235,8 +234,8 @@ include::docB.adoc[]
 
 include::docC.adoc[]`,
       antoraDocumentContext: undefined, // Antora not enabled
-      expected: `<a href="#other_anchor" data-href="#other_anchor">Other link to here</a>`,
-      standalone: true
+      expected: '<a href="#other_anchor" data-href="#other_anchor">Other link to here</a>',
+      standalone: true,
     },
     {
       title: 'Should resolve "xref:" macro to document',

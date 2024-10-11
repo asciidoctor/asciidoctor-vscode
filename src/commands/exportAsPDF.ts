@@ -6,7 +6,6 @@ import { exec, spawn, SpawnOptions } from 'child_process'
 import { uuidv4 } from 'uuid'
 import { AsciidocEngine } from '../asciidocEngine'
 import { Command } from '../commandManager'
-import { Logger } from '../logger'
 import { Asciidoctor } from '@asciidoctor/core'
 import { AsciidocTextDocument } from '../asciidocTextDocument'
 import { getAsciidoctorConfigContent } from '../features/asciidoctorConfig'
@@ -16,7 +15,7 @@ export class ExportAsPDF implements Command {
   public readonly id = 'asciidoc.exportAsPDF'
   private readonly exportAsPdfStatusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100)
 
-  constructor (private readonly engine: AsciidocEngine, private readonly context: vscode.ExtensionContext, private readonly logger: Logger) {
+  constructor (private readonly engine: AsciidocEngine, private readonly context: vscode.ExtensionContext) {
   }
 
   public async execute () {
@@ -31,11 +30,9 @@ export class ExportAsPDF implements Command {
       await vscode.window.showWarningMessage('Unable to get the workspace folder, aborting.')
       return
     }
-    const workspacePath = workspaceFolder.uri.fsPath
-    const docNameWithoutExtension = path.parse(doc.uri.fsPath).name
-
-    const baseDirectory = AsciidocTextDocument.fromTextDocument(doc).getBaseDir()
-    const pdfFilename = vscode.Uri.file(path.join(baseDirectory, docNameWithoutExtension + '.pdf'))
+    const asciidocTextDocument = AsciidocTextDocument.fromTextDocument(doc)
+    const baseDirectory = asciidocTextDocument.baseDir
+    const pdfFilename = vscode.Uri.file(path.join(baseDirectory, asciidocTextDocument.fileName + '.pdf'))
 
     const asciidocPdfConfig = vscode.workspace.getConfiguration('asciidoc.pdf')
     const pdfOutputUri = await vscode.window.showSaveDialog({ defaultUri: pdfFilename })
@@ -51,9 +48,9 @@ export class ExportAsPDF implements Command {
       text = `${asciidoctorConfigContent}
 ${text}`
     }
-
-    const pdfEnfine = asciidocPdfConfig.get('engine')
-    if (pdfEnfine === 'asciidoctor-pdf') {
+    const workspacePath = workspaceFolder.uri.fsPath
+    const pdfEngine = asciidocPdfConfig.get('engine')
+    if (pdfEngine === 'asciidoctor-pdf') {
       const asciidoctorPdfCommand = await this.resolveAsciidoctorPdfCommand(asciidocPdfConfig, workspacePath)
       if (asciidoctorPdfCommand === undefined) {
         return
@@ -84,7 +81,7 @@ ${text}`
       } finally {
         this.exportAsPdfStatusBarItem.hide()
       }
-    } else if (pdfEnfine === 'wkhtmltopdf') {
+    } else if (pdfEngine === 'wkhtmltopdf') {
       let wkhtmltopdfCommandPath = asciidocPdfConfig.get('wkhtmltopdfCommandPath', '')
       if (wkhtmltopdfCommandPath === '') {
         wkhtmltopdfCommandPath = `wkhtmltopdf${process.platform === 'win32' ? '.exe' : ''}`

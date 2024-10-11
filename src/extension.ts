@@ -95,7 +95,7 @@ export async function activate (context: vscode.ExtensionContext) {
   commandManager.register(new commands.ShowPreviewSecuritySelectorCommand(previewSecuritySelector, previewManager))
   commandManager.register(new commands.ShowAsciidoctorExtensionsTrustModeSelectorCommand(asciidoctorExtensionsTrustModeSelector))
   commandManager.register(new commands.OpenDocumentLinkCommand(asciidocLoader))
-  commandManager.register(new commands.ExportAsPDF(asciidocEngine, context, logger))
+  commandManager.register(new commands.ExportAsPDF(asciidocEngine, context))
   commandManager.register(new commands.PasteImage(asciidocLoader))
   commandManager.register(new commands.ToggleLockCommand(previewManager))
   commandManager.register(new commands.ShowPreviewCommand(previewManager))

@@ -29,7 +29,7 @@ export class AsciidocLoader {
       memoryLogger,
       registry,
     } = await this.prepare(textDocument)
-    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).getBaseDir()
+    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).baseDir
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
     const doc = this.processor.load(textDocument.getText(), this.getOptions(attributes, registry, baseDir))
     this.asciidoctorDiagnosticProvider.reportErrors(memoryLogger, textDocument)
@@ -94,7 +94,7 @@ export class AsciidocIncludeItemsLoader extends AsciidocLoader {
       registry,
     } = await this.prepare(textDocument)
     this.asciidoctorIncludeItemsProvider.activate(registry)
-    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).getBaseDir()
+    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).baseDir
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
     this.asciidoctorIncludeItemsProvider.reset()
     this.processor.load(textDocument.getText(), this.getOptions(attributes, registry, baseDir))

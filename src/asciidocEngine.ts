@@ -1,5 +1,4 @@
 import * as vscode from 'vscode'
-import path from 'path'
 import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
 import { Asciidoctor } from '@asciidoctor/core'
 import { ExtensionContentSecurityPolicyArbiter } from './security'
@@ -24,21 +23,12 @@ export type AsciidoctorBuiltInBackends = 'html5' | 'docbook5'
 const previewConfigurationManager = new AsciidocPreviewConfigurationManager()
 
 export class AsciidocEngine {
-  private stylesdir: string
-
   constructor (
     readonly contributionProvider: AsciidocContributionProvider,
     readonly asciidoctorConfigProvider: AsciidoctorConfigProvider,
     readonly asciidoctorExtensionsProvider: AsciidoctorExtensionsProvider,
     readonly asciidoctorDiagnosticProvider: AsciidoctorDiagnosticProvider
   ) {
-    // Asciidoctor.js in the browser environment works with URIs however for desktop clients
-    // the "stylesdir" attribute is expected to look like a file system path (especially on Windows)
-    if ('browser' in process && (process as any).browser === true) {
-      this.stylesdir = vscode.Uri.joinPath(contributionProvider.extensionUri, 'media').toString()
-    } else {
-      this.stylesdir = vscode.Uri.joinPath(contributionProvider.extensionUri, 'media').fsPath
-    }
   }
 
   // Export
@@ -59,7 +49,7 @@ export class AsciidocEngine {
     await this.asciidoctorConfigProvider.activate(registry, textDocumentUri)
     asciidoctorProcessor.restoreBuiltInSyntaxHighlighter()
 
-    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).getBaseDir()
+    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).baseDir
     const options: { [key: string]: any } = {
       attributes: {
         'env-vscode': '',
@@ -92,10 +82,16 @@ export class AsciidocEngine {
     context: vscode.ExtensionContext,
     editor: WebviewResourceProvider,
     line?: number
-  ): Promise<{html: string, document?: Asciidoctor.Document}> {
+  ): Promise<{ html: string, document?: Asciidoctor.Document }> {
     const textDocument = await vscode.workspace.openTextDocument(documentUri)
-    const { html, document } = await this.convertFromTextDocument(textDocument, context, editor, line)
-    return { html, document }
+    const {
+      html,
+      document,
+    } = await this.convertFromTextDocument(textDocument, context, editor, line)
+    return {
+      html,
+      document,
+    }
   }
 
   public async convertFromTextDocument (
@@ -112,7 +108,10 @@ export class AsciidocEngine {
     // load the Asciidoc header only to get kroki-server-url attribute
     const text = textDocument.getText()
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
-    const document = processor.load(text, { attributes, header_only: true })
+    const document = processor.load(text, {
+      attributes,
+      header_only: true,
+    })
     const isRougeSourceHighlighterEnabled = document.isAttribute('source-highlighter', 'rouge')
     if (isRougeSourceHighlighterEnabled) {
       // Force the source highlighter to Highlight.js (since Rouge is not supported)
@@ -150,8 +149,7 @@ export class AsciidocEngine {
         cursor,
         antoraDocumentContext.getContentCatalog(),
         antoraConfig
-      )
-      ))
+      )))
     }
     if (context && editor) {
       highlightjsAdapter.register(asciidoctorProcessor.highlightjsBuiltInSyntaxHighlighter, context, editor)
@@ -160,10 +158,12 @@ export class AsciidocEngine {
     }
     const antoraSupport = AntoraSupportManager.getInstance(context.workspaceState)
     const antoraAttributes = await antoraSupport.getAttributes(textDocumentUri)
-    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).getBaseDir()
-    let textDocumentExt = path.extname(textDocumentUri.fsPath)
-    const textDocumentName = path.basename(textDocumentUri.fsPath, textDocumentExt)
-    textDocumentExt = textDocumentExt.startsWith('.') ? textDocumentExt.substring(1) : '';
+    const asciidocTextDocument = AsciidocTextDocument.fromTextDocument(textDocument)
+    const baseDir = asciidocTextDocument.baseDir
+    const documentDirectory = asciidocTextDocument.dirName
+    const documentBasename = asciidocTextDocument.fileName
+    const documentExtensionName = asciidocTextDocument.extensionName
+    const documentFilePath = asciidocTextDocument.filePath
     const templateDirs = this.getTemplateDirs()
     const options: { [key: string]: any } = {
       attributes: {
@@ -172,15 +172,12 @@ export class AsciidocEngine {
         // The following attributes are "intrinsic attributes" but they are not set when the input is a string
         // like we are doing, in that case it is expected that the attributes are set here for the API:
         // https://docs.asciidoctor.org/asciidoc/latest/attributes/document-attributes-ref/#intrinsic-attributes
-        ...(baseDir && {
-          'docdir': baseDir,// this can be set since safe mode is 'UNSAFE'
-          'docfile': path.resolve(baseDir, `${textDocumentName}.${textDocumentExt}`) // this can be set since safe mode is 'UNSAFE'
-        }),
-        'docfilesuffix': `${textDocumentExt}`,
-        'docname': textDocumentName,
-        'filetype': asciidoctorWebViewConverter.outfilesuffix.substring(1), // remove the leading '.'
-        // end "intrinsic attributes"
-
+        // this can be set since safe mode is 'UNSAFE'
+        ...(documentDirectory && { docdir: documentDirectory }),
+        ...(documentFilePath && { docfile: documentFilePath }),
+        ...(documentBasename && { docname: documentBasename }),
+        docfilesuffix: documentExtensionName,
+        filetype: asciidoctorWebViewConverter.outfilesuffix.substring(1), // remove the leading '.'
         '!data-uri': '', // disable data-uri since Asciidoctor.js is unable to read files from a VS Code workspace.
       },
       backend: 'webview-html5',
