@@ -371,7 +371,40 @@ include::docC.adoc[]`,
       expected: '<div id="content" class="doc">',
       standalone: true,
     },
+    {
+      title: 'Should honor xrefstyle',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: `= Document Title
+:xrefstyle: short
 
+See <<my-table>> for more reference.
+
+See xref:my-table[xrefstyle=short] for more reference.
+
+.Title of my table
+[#my-table]
+|===
+|data
+|===`,
+      antoraDocumentContext: undefined, // Antora not enabled
+      expected: `<div class="paragraph">
+<p>See <a href="#my-table" data-href="#my-table">Table 1</a> for more reference.</p>
+</div>
+<div class="paragraph">
+<p>See <a href="#my-table" data-href="#my-table">Table 1</a> for more reference.</p>
+</div>
+<table id="my-table" class="tableblock frame-all grid-all stretch">
+<caption class="title">Table 1. Title of my table</caption>
+<colgroup>
+<col style="width: 100%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">data</p></td>
+</tr>
+</tbody>
+</table>`,
+    },
   ]
 
   for (const testCase of testCases) {

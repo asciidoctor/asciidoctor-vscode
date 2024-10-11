@@ -239,20 +239,29 @@ export class AsciidoctorWebViewConverter {
             const refNode = refsCatalog[refid]
 
             // set default value, for cases where we cannot refine
-            // (e.g. no reference found by refid, found a bibref, etc )
+            // (e.g. no reference found by refid, found a bibref, etc)
             text = refid
 
-            // reference found for refid, try to refine text
+            // reference was found for refid, try to refine text
             if (typeof refNode !== 'undefined') {
-              // maybe the refered node has a reftext which should be used
-              if (refNode.hasAttribute('reftext')) {
-                text = refNode.getReftext()
-              } else { // fall back and try title
-                if (typeof refNode.getTitle === 'function') {
-                  text = refNode.getTitle()
-                } else {
-                  if (typeof refNode.text === 'string') {
-                    text = refNode.text
+              // maybe the referred node has a reftext which should be used
+              const xrefStyle = node.getAttribute('xrefstyle', undefined, true)
+              const xrefText = refNode.$xreftext(xrefStyle ?? Opal.nil)
+              if (xrefText && xrefText !== Opal.nil) {
+                text = xrefText
+              } else {
+                // maybe the referred node has a reftext which should be used
+                if (refNode.hasAttribute('reftext')) {
+                  text = refNode.getReftext()
+                  const xrefStyle = node.getAttribute('xrefstyle')
+                  text = refNode.$xreftext(xrefStyle ?? Opal.nil)
+                } else { // fall back and try title
+                  if (typeof refNode.getTitle === 'function') {
+                    text = refNode.getTitle()
+                  } else {
+                    if (typeof refNode.text === 'string') {
+                      text = refNode.text
+                    }
                   }
                 }
               }
