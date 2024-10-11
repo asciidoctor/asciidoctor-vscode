@@ -14,6 +14,8 @@
 	"asciidoc.showPreviewSecuritySelector.title": "Configurer les paramètres de sécurité de la prévisualisation",
 	"asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Configurer le mode de confiance des extensions Asciidoctor.js",
 	"asciidoc.showSource.title": "Afficher la source",
+	"asciidoc.enableAntoraSupport.title": "Enable Antora support in this workspace",
+	"asciidoc.disableAntoraSupport.title": "Disable Antora support in this workspace",
 	"asciidoc.preview.asciidoctorAttributes.desc": "Positionne les attributs Asciidoctor utilisés pour la prévisualisation. Les attributs doivent être déclarés en tant qu'objet JSON {string: string}.",
 	"asciidoc.preview.refreshInterval.desc": "Intervalle en millisecondes entre deux mises à jour consécutives de la prévisualisation. La valeur 0 signifie que la prévisualisation sera mise à jour uniquement lors de l'enregistrement du document.",
 	"asciidoc.preview.preservePreviewWhenHidden.desc": "Conserve la prévisualisation AsciiDoc en mémoire même quand elle est non visible (par exemple, quand on change d'onglets). Si activé, la prévisualisation se recharge plus rapidement mais la consommation mémoire est plus importante. Ce paramètre affecte uniquement les prévisulisations en tâche de fond; fermer la prévisualisation libérera les ressources quelle que soit la valeur de ce paramètre.",
@@ -68,6 +70,8 @@
 	"asciidoc.useWorkspaceRoot.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.useWorkspaceRootAsBaseDirectory#` et n'a plus aucun effet.",
 	"asciidoc.use_kroki.desc": "**Obsolète:** Active l'extension Kroki afin de générer des diagrammes.",
 	"asciidoc.use_kroki.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.extensions.enableKroki#` et n'a plus aucun effet.",
+	"asciidoc.antora.enableAntoraSupport.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.antora.showEnableAntoraPrompt#` et n'a plus aucun effet.",
 	"asciidoc.antora.title": "Antora",
-	"asciidoc.antora.enableAntoraSupport.desc": "Active le support [Antora](https://antora.org/)."
+	"asciidoc.antora.enableAntoraSupport.desc": "Active le support [Antora](https://antora.org/).",
+	"asciidoc.antora.showEnableAntoraPrompt.desc": "Affiche une fenêtre contextuelle permettant d'activer le support [Antora](https://antora.org/) quand un fichier antora.yml est trouvé."
 }

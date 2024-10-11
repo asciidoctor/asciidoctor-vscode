@@ -14,6 +14,8 @@
 	"asciidoc.showPreviewSecuritySelector.title": "プレビューセキュリティ設定",
 	"asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Asciidoctor.js拡張の信頼モード設定",
 	"asciidoc.showSource.title": "ソース表示",
+	"asciidoc.enableAntoraSupport.title": "Enable Antora support in this workspace",
+	"asciidoc.disableAntoraSupport.title": "Disable Antora support in this workspace",
 	"asciidoc.preview.asciidoctorAttributes.desc": "プレビューで使用するAsciidoctorのAttributeを指定します。 Attributeは、{string: string} の形式で入力してください。",
 	"asciidoc.preview.refreshInterval.desc": "ドキュメント変更時にプレビューのリフレッシュ間隔(ミリ秒)を指定します。0を指定した場合は、保存時のみ更新します。",
 	"asciidoc.preview.preservePreviewWhenHidden.desc": "Whether to keep the AsciiDoc preview in memory even when it's hidden (such as when switching tabs). If enabled, the preview will reload more quickly when restored from the background at the expense of increased memory usage. This setting only affects a hidden/background AsciiDoc preview; closing the preview will always discard it entirely, regardless of this setting.",
@@ -68,6 +70,8 @@
 	"asciidoc.useWorkspaceRoot.deprecationMessage": "本設定は、`#asciidoc.useWorkspaceRootAsBaseDirectory#`に置き換えられ、動作しません。",
 	"asciidoc.use_kroki.desc": "**非推奨:** ダイアグラム生成Krokiを使用します。",
 	"asciidoc.use_kroki.deprecationMessage": "本設定は、`#asciidoc.extensions.enableKroki#`に置き換えられ、動作しません。",
+	"asciidoc.antora.enableAntoraSupport.deprecationMessage": "This setting has been replaced by `#asciidoc.antora.showEnableAntoraPrompt#` and no longer has any effect.",
 	"asciidoc.antora.title": "Antora",
-	"asciidoc.antora.enableAntoraSupport.desc": "[Antora](https://antora.org/)サポートを有効にします。"
+	"asciidoc.antora.enableAntoraSupport.desc": "[Antora](https://antora.org/)サポートを有効にします。",
+	"asciidoc.antora.showEnableAntoraPrompt.desc": "Show a prompt to enable [Antora](https://antora.org/) support when an antora.yml file is detected."
 }
