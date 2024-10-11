@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+### Bug fixes
+
+* Honor xrefstyle in the preview - thanks @r0ckarong
+* Fix document to document xrefs in preview when the documents are included - thanks @birdman7260
+* Replace dynamic import (unsupported by VS code)
+* Allow spaces after table delimiter - thanks @ebousse 
+
+### Improvements
+
+* Set intrinsic attributes `docdir`, `docfile` and `docname`
+* Set attributes `docfilesuffix` and `filetype`
+* Enable/disable Antora support using commands
+* Use `ripgrep` instead of `findFiles` to improve performance - thanks @alaindresse
+
 ## 3.3.1 (2024-06-19)
 
 ### Bug fixes
