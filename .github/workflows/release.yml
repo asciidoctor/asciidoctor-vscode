@@ -5,6 +5,8 @@ on:
       release-version:
         description: Enter version to release (e.g., 2.0.1).
         required: true
+
+run-name: Release ${{ inputs.release-version }} by @${{ github.actor }} 
 jobs:
   activate:
     runs-on: ubuntu-latest
