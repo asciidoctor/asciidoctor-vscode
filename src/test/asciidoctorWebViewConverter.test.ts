@@ -1,4 +1,5 @@
 import vscode from 'vscode'
+import path from 'path'
 import { AsciidoctorWebViewConverter } from '../asciidoctorWebViewConverter'
 import { WebviewResourceProvider } from '../util/resources'
 import { AsciidocPreviewConfigurationManager } from '../features/previewConfig'
@@ -36,6 +37,30 @@ function createAntoraDocumentContextStub (resourcePath: string | undefined) {
   return antoraDocumentContextStub
 }
 
+function createConverterOptions (converter: AsciidoctorWebViewConverter, fileName: string) {
+  // treat the file as the source file for conversion to handle xref correctly between documents
+  // review src/asciidocEngin.ts for more information
+  const intrinsicAttr = {
+    docdir: path.dirname(fileName),
+    docfile: fileName,
+    docfilesuffix: path.extname(fileName).substring(1),
+    docname: path.basename(fileName, path.extname(fileName)),
+    filetype: converter.outfilesuffix.substring(1),
+  }
+
+  return {
+    converter,
+    attributes: {
+      ...intrinsicAttr,
+
+      // required for navigation between source files in preview
+      // see: https://docs.asciidoctor.org/asciidoc/latest/macros/inter-document-xref/#navigating-between-source-files
+      relfilesuffix: '.adoc',
+    },
+    safe: 'unsafe', // needed so that we can actually perform includes, enabling xref tests
+  }
+}
+
 async function testAsciidoctorWebViewConverter (
   input: string,
   antoraDocumentContext: AntoraDocumentContext | undefined,
@@ -55,12 +80,7 @@ async function testAsciidoctorWebViewConverter (
     undefined
   )
 
-  const html = processor.convert(input, {
-    converter: asciidoctorWebViewConverter,
-    // required for navigation between source files in preview
-    // see: https://docs.asciidoctor.org/asciidoc/latest/macros/inter-document-xref/#navigating-between-source-files
-    attributes: { relfilesuffix: '.adoc' },
-  })
+  const html = processor.convert(input, createConverterOptions(asciidoctorWebViewConverter, file.fileName))
   assert.strictEqual(html, expected)
 }
 
@@ -82,7 +102,10 @@ async function testAsciidoctorWebViewConverterStandalone (
     antoraDocumentContext,
     undefined
   )
-  const html = processor.convert(input, { converter: asciidoctorWebViewConverter, standalone: true })
+  const html = processor.convert(input, {
+    ...createConverterOptions(asciidoctorWebViewConverter, file.fileName),
+    standalone: true,
+  })
   html.includes(expected)
 }
 
@@ -102,6 +125,31 @@ link:help.adoc[]
     createdFiles.push(await createDirectory('docs'))
     await createFile('', 'docs', 'modules', 'ROOT', 'pages', 'dummy.adoc') // virtual file
     createdFiles.push(asciidocFile)
+
+    // these help with testing xref cross documents
+    createdFiles.push(await createFile(`= Parent document
+
+Some text
+
+[#anchor]
+== Link to here
+
+Please scroll me into position
+
+include::docB.adoc[]`, 'docA.adoc'))
+    createdFiles.push(await createFile(`= Child document
+
+[#other_anchor]
+== Other link to here
+
+Other text
+
+I want to link to xref:docA.adoc#anchor[]`, 'docB.adoc'))
+    createdFiles.push(await createFile(`= Child document
+
+third text
+
+I want to link to xref:docB.adoc#other_anchor[]`, 'docC.adoc'))
   })
   suiteTeardown(async () => {
     await removeFiles(createdFiles)
@@ -153,6 +201,42 @@ link:help.adoc[]
 </div>`,
     },
     // xref
+    {
+      title: 'Should resolve "xref:" macro from included document referencing the source document',
+      filePath: ['docA.adoc'],
+      input: `= Parent document
+
+Some text
+
+[#anchor]
+== Link to here
+
+Please scroll me into position
+
+include::docB.adoc[]`,
+      antoraDocumentContext: undefined, // Antora not enabled
+      expected: '<a href="#anchor" data-href="#anchor">Link to here</a>',
+      standalone: true,
+    },
+    {
+      title: 'Should resolve "xref:" macro from included document referencing a separate included document',
+      filePath: ['docA.adoc'],
+      input: `= Parent document
+
+Some text
+
+[#anchor]
+== Link to here
+
+Please scroll me into position
+
+include::docB.adoc[]
+
+include::docC.adoc[]`,
+      antoraDocumentContext: undefined, // Antora not enabled
+      expected: '<a href="#other_anchor" data-href="#other_anchor">Other link to here</a>',
+      standalone: true,
+    },
     {
       title: 'Should resolve "xref:" macro to document',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
