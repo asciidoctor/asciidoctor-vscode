@@ -1,5 +1,5 @@
 import { spawn } from 'child_process'
-import { rgPath } from '@vscode/ripgrep'
+import ospath from 'path'
 import vscode, { Uri } from 'vscode'
 import { getWorkspaceFolders } from './workspace'
 
@@ -22,6 +22,7 @@ export async function findFiles (glob: string): Promise<Uri[]> {
 }
 
 async function ripgrep (glob: string, rootFolder: string): Promise<string[]> {
+  const rgPath = ospath.join(vscode.env.appRoot, `node_modules/@vscode/ripgrep/bin/rg${process.platform === 'win32' ? '.exe' : ''}`)
   return new Promise((resolve, reject) => {
     const rg = spawn(rgPath, ['--hidden', '--follow', '--files', '-g', glob], { cwd: rootFolder })
     let stdout : string = ''
