@@ -4,6 +4,12 @@
 
 ### Bug fixes
 
+* Use the `rg` binary from the local VS code installation
+
+## 3.4.0 (2024-10-12)
+
+### Bug fixes
+
 * Honor xrefstyle in the preview - thanks @r0ckarong
 * Fix document to document xrefs in preview when the documents are included - thanks @birdman7260
 * Replace dynamic import (unsupported by VS code)
