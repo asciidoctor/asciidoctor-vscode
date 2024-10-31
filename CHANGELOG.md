@@ -4,6 +4,12 @@
 
 ### Bug fixes
 
+* Replace `ripgrep` by `workspace.findFiles`. `ripgrep` was introduced in 3.4.0 but caused too many compatibility and instability issues.
+
+## 3.4.1 (2024-10-12)
+
+### Bug fixes
+
 * Use the `rg` binary from the local VS code installation
 
 ## 3.4.0 (2024-10-12)
