@@ -73,5 +73,8 @@
 	"asciidoc.antora.enableAntoraSupport.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.antora.showEnableAntoraPrompt#` et n'a plus aucun effet.",
 	"asciidoc.antora.title": "Antora",
 	"asciidoc.antora.enableAntoraSupport.desc": "Active le support [Antora](https://antora.org/).",
-	"asciidoc.antora.showEnableAntoraPrompt.desc": "Affiche une fenêtre contextuelle permettant d'activer le support [Antora](https://antora.org/) quand un fichier antora.yml est trouvé."
+	"asciidoc.antora.showEnableAntoraPrompt.desc": "Affiche une fenêtre contextuelle permettant d'activer le support [Antora](https://antora.org/) quand un fichier antora.yml est trouvé.",
+	"asciidoc.findfiles.title": "Find files",
+	"asciidoc.findfiles.useRipgrep.desc": "Use ripgrep to search for files in the workspace.",
+	"asciidoc.findfiles.ripgrepPath.desc": "External `rg` command to execute. It accepts a full path to the binary, for instance: `/path/to/rg`. If the value is empty, use ripgrep from VSCode's built-in version."
 }

@@ -582,6 +582,23 @@
 						"markdownDescription": "%asciidoc.antora.showEnableAntoraPrompt.desc%"
 					}
 				}
+			},
+			{
+				"order": 27,
+				"id": "security",
+				"title": "%asciidoc.findfiles.title%",
+				"properties": {
+					"asciidoc.findfiles.useRipgrep": {
+						"type": "boolean",
+						"default": false,
+						"markdownDescription": "%asciidoc.findfiles.useRipgrep.desc%"
+					},
+					"asciidoc.findfiles.ripgrepPath": {
+						"type": "string",
+						"default": "",
+						"markdownDescription": "%asciidoc.findfiles.ripgrepPath.desc%"
+					}
+				}
 			}
 		],
 		"configurationDefaults": {
