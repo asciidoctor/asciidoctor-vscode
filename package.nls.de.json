@@ -74,7 +74,7 @@
 	"asciidoc.antora.title": "Antora",
 	"asciidoc.antora.enableAntoraSupport.desc": "Aktiviere [Antora](https://antora.org/) Unterstützung.",
 	"asciidoc.antora.showEnableAntoraPrompt.desc": "Show a prompt to enable [Antora](https://antora.org/) support when an antora.yml file is detected.",
-	"asciidoc.findfiles.title": "Find files",
-	"asciidoc.findfiles.useRipgrep.desc": "Use ripgrep to search for files in the workspace.",
-	"asciidoc.findfiles.ripgrepPath.desc": "External `rg` command to execute. It accepts a full path to the binary, for instance: `/path/to/rg`. If the value is empty, use ripgrep from VSCode's built-in version."
+	"asciidoc.findFiles.title": "Find files",
+	"asciidoc.findFiles.useRipgrep.desc": "Use ripgrep to search for files in the workspace.",
+	"asciidoc.findFiles.ripgrepPath.desc": "External `rg` command to execute. It accepts a full path to the binary, for instance: `/path/to/rg`. If the value is empty, use ripgrep from VSCode's built-in version."
 }

@@ -10,7 +10,7 @@ import { getWorkspaceFolders } from './workspace'
  */
 export async function findFiles (glob: string): Promise<Uri[]> {
   const isBrowser = ((process as any)?.browser === true)
-  const useRipgrep = (vscode.workspace.getConfiguration('asciidoc', null).get('registerAsciidoctorExtensions') === true)
+  const useRipgrep = (vscode.workspace.getConfiguration('asciidoc', null).get('findFiles.useRipgrep') === true)
 
   if (isBrowser || !useRipgrep) {
     return vscode.workspace.findFiles(glob)
@@ -25,7 +25,7 @@ export async function findFiles (glob: string): Promise<Uri[]> {
 }
 
 async function ripgrep (glob: string, rootFolder: string): Promise<string[]> {
-  const config = vscode.workspace.getConfiguration('asciidoc.findfiles')
+  const config = vscode.workspace.getConfiguration('asciidoc.findFiles')
   const customPath = config.get<string>('ripgrepPath')
   const rgPath = customPath || ospath.join(
     vscode.env.appRoot,

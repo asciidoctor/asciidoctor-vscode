@@ -585,18 +585,18 @@
 			},
 			{
 				"order": 27,
-				"id": "security",
-				"title": "%asciidoc.findfiles.title%",
+				"id": "findFiles",
+				"title": "%asciidoc.findFiles.title%",
 				"properties": {
-					"asciidoc.findfiles.useRipgrep": {
+					"asciidoc.findFiles.useRipgrep": {
 						"type": "boolean",
 						"default": false,
-						"markdownDescription": "%asciidoc.findfiles.useRipgrep.desc%"
+						"markdownDescription": "%asciidoc.findFiles.useRipgrep.desc%"
 					},
-					"asciidoc.findfiles.ripgrepPath": {
+					"asciidoc.findFiles.ripgrepPath": {
 						"type": "string",
 						"default": "",
-						"markdownDescription": "%asciidoc.findfiles.ripgrepPath.desc%"
+						"markdownDescription": "%asciidoc.findFiles.ripgrepPath.desc%"
 					}
 				}
 			}
