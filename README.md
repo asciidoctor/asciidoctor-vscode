@@ -86,6 +86,16 @@ The extension provides a quick command to export your AsciiDoc file as DocBook.
 
 **ℹ️ Note:** Only DocBook 5 is supported.
 
+### Paste Image
+
+The extension provides a quick command to paste an image from clipboard.
+
+* Create a screenshot thats in the clipboard
+* Open the command palette - `ctrl+shift+p` or `F1` (Mac: `cmd+shift+p`)
+* Select _AsciiDoc: Paste Image_ (or use the shortcut `ctrl+alt+v`, Mac: `option+cmd+v`)
+* The png file with current timestamp is generated in the same folder
+* in the working document an image macro is inserted
+
 ### Snippets
 
 Several code snippets are provided including but not limited to: include statements, images, links, header, headings, lists, blocks, etc...
