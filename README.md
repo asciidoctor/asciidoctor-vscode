@@ -90,7 +90,7 @@ The extension provides a quick command to export your AsciiDoc file as DocBook.
 
 The extension provides a quick command to paste an image from clipboard.
 
-* Create a screenshot thats in the clipboard
+* Copy an image in your clipboard
 * Open the command palette - `ctrl+shift+p` or `F1` (Mac: `cmd+shift+p`)
 * Select _AsciiDoc: Paste Image_ (or use the shortcut `ctrl+alt+v`, Mac: `option+cmd+v`)
 * The image file with current timestamp is generated in the same folder
