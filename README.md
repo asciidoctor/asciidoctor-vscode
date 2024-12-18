@@ -93,7 +93,7 @@ The extension provides a quick command to paste an image from clipboard.
 * Create a screenshot thats in the clipboard
 * Open the command palette - `ctrl+shift+p` or `F1` (Mac: `cmd+shift+p`)
 * Select _AsciiDoc: Paste Image_ (or use the shortcut `ctrl+alt+v`, Mac: `option+cmd+v`)
-* The png file with current timestamp is generated in the same folder
+* The image file with current timestamp is generated in the same folder
 * in the working document an image macro is inserted
 
 ### Snippets
