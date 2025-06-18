@@ -204,10 +204,25 @@
     "insertText": "table-caption: ${1:any}",
     "description": "Text of label prefixed to table titles. Default: Table"
   },
+  "table-frame": {
+    "label": ":table-frame:",
+    "insertText": "table-stripes: ${1|all,ends,none,sides|}",
+    "description": "Draws a border around the table. Default: all"
+  },
+  "table-grid": {
+    "label": ":table-grid:",
+    "insertText": "table-grid: ${1|all,cols,rows,none|}",
+    "description": "Draws boundary lines between rows and columns. Default: all"
+  },
   "table-number": {
     "label": ":table-number:",
     "insertText": "table-number: ${1:number}",
     "description": "Sets the seed value for the table number sequence. Implied: 0"
+  },
+  "table-stripes": {
+    "label": ":table-stripes:",
+    "insertText": "table-stripes: ${1|none,even,odd,all,hover|}",
+    "description": "Controls row shading (via background color). Default: none"
   },
   "tip-caption": {
     "label": ":tip-caption:",
