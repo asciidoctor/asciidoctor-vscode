@@ -47,9 +47,13 @@ export async function antoraConfigFileExists (textDocumentUri: Uri): Promise<boo
 
       // antora.yml file must have a name and version key.
       // In other words, the file must not be empty to be valid!
-      const content = await vscode.workspace.fs.readFile(antoraConfigUri)
-      if (content.length > 0) {
-        antoraConfig = antoraConfigUri
+      try {
+        const content = await vscode.workspace.fs.readFile(antoraConfigUri)
+        if (content.length > 0) {
+          antoraConfig = antoraConfigUri
+        }
+      } catch (e) {
+        // ignore, assume that the file does not exist
       }
       break
     }

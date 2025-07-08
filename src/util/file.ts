@@ -50,7 +50,18 @@ export function dir (uri: vscode.Uri, workspaceFolder: vscode.Uri | undefined): 
   if (uri.path.lastIndexOf('/') <= 0) {
     return undefined
   }
-  return uri.with({ path: uri.path.slice(0, uri.path.lastIndexOf('/')) })
+  let query = uri.query
+  // The Git file system provider is using a JSON-encoded string in `query` to store the path of the file.
+  if (uri.scheme === 'git') {
+    try {
+      const queryObject = JSON.parse(query)
+      queryObject.path = queryObject.path.slice(0, queryObject.path.lastIndexOf('/'))
+      query = JSON.stringify(queryObject)
+    } catch (e) {
+      // something went wrong, use the initial value
+    }
+  }
+  return uri.with({ path: uri.path.slice(0, uri.path.lastIndexOf('/')), query })
 }
 
 export async function exists (uri: vscode.Uri): Promise<boolean> {
