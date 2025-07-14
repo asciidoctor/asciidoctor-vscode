@@ -1,22 +1,22 @@
 /*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
 
 import { Command } from '../commandManager'
-import { AsciidocPreviewManager } from '../features/previewManager'
 import { PreviewSettings } from '../features/preview'
+import { AsciidocPreviewManager } from '../features/previewManager'
 
 interface ShowPreviewSettings {
-  readonly sideBySide?: boolean;
-  readonly locked?: boolean;
+  readonly sideBySide?: boolean
+  readonly locked?: boolean
 }
 
-async function showPreview (
+async function showPreview(
   webviewManager: AsciidocPreviewManager,
   uri: vscode.Uri | undefined,
-  previewSettings: ShowPreviewSettings
+  previewSettings: ShowPreviewSettings,
 ): Promise<any> {
   let resource = uri
   if (!(resource instanceof vscode.Uri)) {
@@ -35,10 +35,15 @@ async function showPreview (
     return
   }
 
-  const resourceColumn = (vscode.window.activeTextEditor && vscode.window.activeTextEditor.viewColumn) || vscode.ViewColumn.One
+  const resourceColumn =
+    (vscode.window.activeTextEditor &&
+      vscode.window.activeTextEditor.viewColumn) ||
+    vscode.ViewColumn.One
   await webviewManager.preview(resource, {
     resourceColumn,
-    previewColumn: previewSettings.sideBySide ? resourceColumn + 1 : resourceColumn,
+    previewColumn: previewSettings.sideBySide
+      ? resourceColumn + 1
+      : resourceColumn,
     locked: !!previewSettings.locked,
   })
 }
@@ -46,11 +51,15 @@ async function showPreview (
 export class ShowPreviewCommand implements Command {
   public readonly id = 'asciidoc.showPreview'
 
-  constructor (private readonly webviewManager: AsciidocPreviewManager) {
+  constructor(private readonly webviewManager: AsciidocPreviewManager) {
     this.webviewManager = webviewManager
   }
 
-  public execute (mainUri?: vscode.Uri, allUris?: vscode.Uri[], previewSettings?: PreviewSettings) {
+  public execute(
+    mainUri?: vscode.Uri,
+    allUris?: vscode.Uri[],
+    previewSettings?: PreviewSettings,
+  ) {
     for (const uri of Array.isArray(allUris) ? allUris : [mainUri]) {
       showPreview(this.webviewManager, uri, {
         sideBySide: false,
@@ -63,11 +72,11 @@ export class ShowPreviewCommand implements Command {
 export class ShowPreviewToSideCommand implements Command {
   public readonly id = 'asciidoc.showPreviewToSide'
 
-  constructor (private readonly webviewManager: AsciidocPreviewManager) {
+  constructor(private readonly webviewManager: AsciidocPreviewManager) {
     this.webviewManager = webviewManager
   }
 
-  public execute (uri?: vscode.Uri, previewSettings?: PreviewSettings) {
+  public execute(uri?: vscode.Uri, previewSettings?: PreviewSettings) {
     showPreview(this.webviewManager, uri, {
       sideBySide: true,
       locked: previewSettings && previewSettings.locked,
@@ -78,11 +87,11 @@ export class ShowPreviewToSideCommand implements Command {
 export class ShowLockedPreviewToSideCommand implements Command {
   public readonly id = 'asciidoc.showLockedPreviewToSide'
 
-  constructor (private readonly webviewManager: AsciidocPreviewManager) {
+  constructor(private readonly webviewManager: AsciidocPreviewManager) {
     this.webviewManager = webviewManager
   }
 
-  public execute (uri?: vscode.Uri) {
+  public execute(uri?: vscode.Uri) {
     showPreview(this.webviewManager, uri, {
       sideBySide: true,
       locked: true,

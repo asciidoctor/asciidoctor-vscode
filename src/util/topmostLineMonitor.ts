@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
@@ -13,28 +13,33 @@ export class AsciidocFileTopmostLineMonitor {
 
   private readonly throttle = 50
 
-  constructor () {
-    vscode.window.onDidChangeTextEditorVisibleRanges((event) => {
-      if (isAsciidocFile(event.textEditor.document)) {
-        const line = getVisibleLine(event.textEditor)
-        if (typeof line === 'number') {
-          this.updateLine(event.textEditor.document.uri, line)
+  constructor() {
+    vscode.window.onDidChangeTextEditorVisibleRanges(
+      (event) => {
+        if (isAsciidocFile(event.textEditor.document)) {
+          const line = getVisibleLine(event.textEditor)
+          if (typeof line === 'number') {
+            this.updateLine(event.textEditor.document.uri, line)
+          }
         }
-      }
-    }, null, this.disposables)
+      },
+      null,
+      this.disposables,
+    )
   }
 
-  dispose () {
+  dispose() {
     disposeAll(this.disposables)
   }
 
-  private readonly _onDidChangeTopmostLineEmitter = new vscode.EventEmitter<{ resource: vscode.Uri, line: number }>()
-  public readonly onDidChangeTopmostLine = this._onDidChangeTopmostLineEmitter.event
-
-  private updateLine (
-    resource: vscode.Uri,
+  private readonly _onDidChangeTopmostLineEmitter = new vscode.EventEmitter<{
+    resource: vscode.Uri
     line: number
-  ) {
+  }>()
+  public readonly onDidChangeTopmostLine =
+    this._onDidChangeTopmostLineEmitter.event
+
+  private updateLine(resource: vscode.Uri, line: number) {
     const key = resource.toString()
     if (!this.pendingUpdates.has(key)) {
       // schedule update
@@ -59,9 +64,7 @@ export class AsciidocFileTopmostLineMonitor {
  * Returns a fractional line number based the visible character within the line.
  * Floor to get real line number
  */
-export function getVisibleLine (
-  editor: vscode.TextEditor
-): number | undefined {
+export function getVisibleLine(editor: vscode.TextEditor): number | undefined {
   if (!editor.visibleRanges.length) {
     return undefined
   }

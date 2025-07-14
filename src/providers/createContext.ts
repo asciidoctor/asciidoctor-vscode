@@ -1,15 +1,15 @@
 import * as vscode from 'vscode'
 
 export interface Context {
-  textFullLine: string;
-  document: vscode.TextDocument;
-  documentExtension: string | undefined;
-  position: vscode.Position;
+  textFullLine: string
+  document: vscode.TextDocument
+  documentExtension: string | undefined
+  position: vscode.Position
 }
 
-export function createContext (
+export function createContext(
   document: vscode.TextDocument,
-  position: vscode.Position
+  position: vscode.Position,
 ): Context {
   const textFullLine = document.getText(document.lineAt(position).range)
   const documentExtension = extractExtension(document)
@@ -21,7 +21,7 @@ export function createContext (
   }
 }
 
-export function extractExtension (document: vscode.TextDocument) {
+export function extractExtension(document: vscode.TextDocument) {
   if (document.isUntitled) {
     return undefined
   }

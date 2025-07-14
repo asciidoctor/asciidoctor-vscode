@@ -1,22 +1,27 @@
+import { Asciidoctor } from '@asciidoctor/core'
 import vscode from 'vscode'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
-import { Asciidoctor } from '@asciidoctor/core'
-import { mermaidJSProcessor } from './mermaid'
 import { findFiles } from '../util/findFiles'
+import { mermaidJSProcessor } from './mermaid'
 
 export interface AsciidoctorExtensionsProvider {
-  activate(registry: Asciidoctor.Extensions.Registry): Promise<void>;
+  activate(registry: Asciidoctor.Extensions.Registry): Promise<void>
 }
 
 export class AsciidoctorExtensions {
   private asciidoctorExtensionsSecurityPolicy: AsciidoctorExtensionsSecurityPolicyArbiter
 
-  constructor (asciidoctorExtensionsSecurityPolicy: AsciidoctorExtensionsSecurityPolicyArbiter) {
-    this.asciidoctorExtensionsSecurityPolicy = asciidoctorExtensionsSecurityPolicy
+  constructor(
+    asciidoctorExtensionsSecurityPolicy: AsciidoctorExtensionsSecurityPolicyArbiter,
+  ) {
+    this.asciidoctorExtensionsSecurityPolicy =
+      asciidoctorExtensionsSecurityPolicy
   }
 
-  public async activate (registry: Asciidoctor.Extensions.Registry) {
-    const enableKroki = vscode.workspace.getConfiguration('asciidoc.extensions', null).get('enableKroki')
+  public async activate(registry: Asciidoctor.Extensions.Registry) {
+    const enableKroki = vscode.workspace
+      .getConfiguration('asciidoc.extensions', null)
+      .get('enableKroki')
     if (enableKroki) {
       const kroki = require('asciidoctor-kroki')
       kroki.register(registry)
@@ -26,7 +31,7 @@ export class AsciidoctorExtensions {
     await this.registerExtensionsInWorkspace(registry)
   }
 
-  private async confirmAsciidoctorExtensionsTrusted (): Promise<boolean> {
+  private async confirmAsciidoctorExtensionsTrusted(): Promise<boolean> {
     if (!this.isAsciidoctorExtensionsRegistrationEnabled()) {
       return false
     }
@@ -35,18 +40,22 @@ export class AsciidoctorExtensions {
     if (extensionsCount === 0) {
       return false
     }
-    return this.asciidoctorExtensionsSecurityPolicy.confirmAsciidoctorExtensionsTrustMode(extensionsCount)
+    return this.asciidoctorExtensionsSecurityPolicy.confirmAsciidoctorExtensionsTrustMode(
+      extensionsCount,
+    )
   }
 
-  private async getExtensionFilesInWorkspace (): Promise<vscode.Uri[]> {
+  private async getExtensionFilesInWorkspace(): Promise<vscode.Uri[]> {
     return findFiles('.asciidoctor/lib/**/*.js')
   }
 
-  private isAsciidoctorExtensionsRegistrationEnabled (): boolean {
-    return vscode.workspace.getConfiguration('asciidoc.extensions', null).get('registerWorkspaceExtensions')
+  private isAsciidoctorExtensionsRegistrationEnabled(): boolean {
+    return vscode.workspace
+      .getConfiguration('asciidoc.extensions', null)
+      .get('registerWorkspaceExtensions')
   }
 
-  private async registerExtensionsInWorkspace (registry) {
+  private async registerExtensionsInWorkspace(registry) {
     const extensionsTrusted = await this.confirmAsciidoctorExtensionsTrusted()
     if (!extensionsTrusted) {
       return

@@ -8,7 +8,7 @@ import { range } from './util/range'
  * @returns {Array}               an array of arrays with costs for each item
  *                                against each other item in the array.
  */
-function calculateAdjacency (haystack, similarNeedles) {
+function calculateAdjacency(haystack, similarNeedles) {
   // Calculate adjacency using a cost function
   const rows = []
   haystack.forEach((v1) => {
@@ -28,7 +28,7 @@ function calculateAdjacency (haystack, similarNeedles) {
  * @param {Array} col
  * @returns {Array}             Returns the index and the error term
  */
-function columnMin (adjacency, col, removals) {
+function columnMin(adjacency, col, removals) {
   const colValues = []
   adjacency.forEach((row, rowIndex) => {
     if (rowIndex <= Math.max(...removals)) {
@@ -51,7 +51,7 @@ function columnMin (adjacency, col, removals) {
  * @returns {Array}         returns a match and as an error term
  *                          the differences in lines
  */
-function findNearest (haystack, adjacency) {
+function findNearest(haystack, adjacency) {
   const selectedEntries = []
   const removals = []
   let errorSum = 0
@@ -68,7 +68,7 @@ function findNearest (haystack, adjacency) {
   return [selectedEntries, errorSum]
 }
 
-function arrIsIncreasing (num) {
+function arrIsIncreasing(num) {
   if (num.length === 1) {
     return true
   }
@@ -92,7 +92,7 @@ function arrIsIncreasing (num) {
  * @returns {Array}                items in candidateItems which are closest
  *                                 matches to matchableItems
  */
-export function similarArrayMatch (candidateItems, matchableItems) {
+export function similarArrayMatch(candidateItems, matchableItems) {
   // if the arrays are equal because they are in strict ascending order
   // we can simply return the candidateItems
   if (candidateItems.length === matchableItems.length) {

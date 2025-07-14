@@ -1,20 +1,20 @@
 import * as vscode from 'vscode'
+import { AsciidocLoader } from '../asciidocLoader'
 import { TargetPathCompletionProvider } from '../providers/asciidoc.provider'
 import { BibtexProvider } from '../providers/bibtex.provider'
 import { xrefProvider } from '../providers/xref.provider'
 import { disposeAll } from './dispose'
-import { AsciidocLoader } from '../asciidocLoader'
 
 export class AsciidocTargetPathAutoCompletionMonitor {
   private readonly disposables: vscode.Disposable[] = []
-  constructor (asciidocLoader: AsciidocLoader) {
+  constructor(asciidocLoader: AsciidocLoader) {
     const disposable = vscode.languages.registerCompletionItemProvider(
       {
         language: 'asciidoc',
         scheme: 'file',
       },
       new TargetPathCompletionProvider(asciidocLoader),
-      ...[':', '/']
+      ...[':', '/'],
     )
 
     const bibtexDisposable = vscode.languages.registerCompletionItemProvider(
@@ -23,7 +23,7 @@ export class AsciidocTargetPathAutoCompletionMonitor {
         scheme: 'file',
       },
       BibtexProvider,
-      ...[':', '/']
+      ...[':', '/'],
     )
 
     const xrefDisposable = vscode.languages.registerCompletionItemProvider(
@@ -32,7 +32,7 @@ export class AsciidocTargetPathAutoCompletionMonitor {
         scheme: 'file',
       },
       xrefProvider,
-      ...[':', '/']
+      ...[':', '/'],
     )
 
     this.disposables.push(disposable)
@@ -40,15 +40,16 @@ export class AsciidocTargetPathAutoCompletionMonitor {
     this.disposables.push(xrefDisposable)
   }
 
-  dispose () {
+  dispose() {
     disposeAll(this.disposables)
   }
 
-  private readonly _onDidIncludeAutoCompletionEmitter = new vscode.EventEmitter<{
-    resource: vscode.Uri;
-    line: number;
-  }>()
+  private readonly _onDidIncludeAutoCompletionEmitter =
+    new vscode.EventEmitter<{
+      resource: vscode.Uri
+      line: number
+    }>()
 
-  public readonly onDidIncludeAutoCompletionEmitter = this
-    ._onDidIncludeAutoCompletionEmitter.event
+  public readonly onDidIncludeAutoCompletionEmitter =
+    this._onDidIncludeAutoCompletionEmitter.event
 }

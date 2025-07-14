@@ -1,7 +1,6 @@
 'use strict'
 
-class $Antora {
-}
+class $Antora {}
 const DBL_COLON = '::'
 const DBL_SQUARE = '[]'
 const NEWLINE_RX = /\r\n?|\n/
@@ -12,19 +11,31 @@ export const IncludeProcessor = (() => {
   const classDef = global.Opal.klass(
     globalThis.Opal.Antora || global.Opal.module(null, 'Antora', $Antora),
     global.Opal.Asciidoctor.Extensions.IncludeProcessor,
-    'IncludeProcessor'
+    'IncludeProcessor',
   )
 
-  global.Opal.defn(classDef, '$initialize', function initialize (callback) {
-    global.Opal.send(this, global.Opal.find_super_dispatcher(this, 'initialize', initialize))
+  global.Opal.defn(classDef, '$initialize', function initialize(callback) {
+    global.Opal.send(
+      this,
+      global.Opal.find_super_dispatcher(this, 'initialize', initialize),
+    )
     this[$callback] = callback
   })
 
   global.Opal.defn(classDef, '$process', function (doc, reader, target, attrs) {
-    if (reader.maxdepth === global.Opal.nil) return
+    if (reader.maxdepth === global.Opal.nil) {
+      return
+    }
     const sourceCursor = reader.$cursor_at_prev_line()
-    if (reader.$include_depth() >= global.Opal.hash_get(reader.maxdepth, 'curr')) {
-      log('error', `maximum include depth of ${global.Opal.hash_get(reader.maxdepth, 'rel')} exceeded`, reader, sourceCursor)
+    if (
+      reader.$include_depth() >= global.Opal.hash_get(reader.maxdepth, 'curr')
+    ) {
+      log(
+        'error',
+        `maximum include depth of ${global.Opal.hash_get(reader.maxdepth, 'rel')} exceeded`,
+        reader,
+        sourceCursor,
+      )
       return
     }
     const resolvedFile = this[$callback](doc, target, sourceCursor)
@@ -34,26 +45,55 @@ export const IncludeProcessor = (() => {
       let tags
       let startLineNum
       if ((linenums = getLines(attrs))) {
-        ;[includeContents, startLineNum] = filterLinesByLineNumbers(reader, target, resolvedFile, linenums)
+        ;[includeContents, startLineNum] = filterLinesByLineNumbers(
+          reader,
+          target,
+          resolvedFile,
+          linenums,
+        )
       } else if ((tags = getTags(attrs))) {
-        ;[includeContents, startLineNum] = filterLinesByTags(reader, target, resolvedFile, tags, sourceCursor)
+        ;[includeContents, startLineNum] = filterLinesByTags(
+          reader,
+          target,
+          resolvedFile,
+          tags,
+          sourceCursor,
+        )
       } else {
         includeContents = resolvedFile.contents
         startLineNum = 1
       }
       global.Opal.hash_put(attrs, 'partial-option', '')
       // eslint-disable-next-line no-new-wrappers
-      const file = Object.assign(new String(resolvedFile.file), {
+      const file = Object.assign(String(resolvedFile.file), {
         src: resolvedFile.src,
         parent: { file: reader.file, lineno: reader.lineno - 1 },
       })
-      reader.pushInclude(includeContents, file, resolvedFile.path, startLineNum, attrs)
+      reader.pushInclude(
+        includeContents,
+        file,
+        resolvedFile.path,
+        startLineNum,
+        attrs,
+      )
     } else {
       if (attrs['$key?']('optional-option')) {
-        log('info', `optional include dropped because include file not found: ${target}`, reader, sourceCursor)
+        log(
+          'info',
+          `optional include dropped because include file not found: ${target}`,
+          reader,
+          sourceCursor,
+        )
       } else {
-        log('error', `target of include not found: ${target}`, reader, sourceCursor)
-        reader.$unshift(`Unresolved include directive in ${sourceCursor.file} - include::${target}[]`)
+        log(
+          'error',
+          `target of include not found: ${target}`,
+          reader,
+          sourceCursor,
+        )
+        reader.$unshift(
+          `Unresolved include directive in ${sourceCursor.file} - include::${target}[]`,
+        )
       }
     }
   })
@@ -61,7 +101,7 @@ export const IncludeProcessor = (() => {
   return classDef
 })()
 
-function getLines (attrs) {
+function getLines(attrs) {
   if (attrs['$key?']('lines')) {
     const lines = attrs['$[]']('lines')
     if (lines) {
@@ -78,7 +118,9 @@ function getLines (attrs) {
             let to = linedef.substr(delim + 2)
             if ((to = parseInt(to, 10) || -1) > 0) {
               if ((from = parseInt(from, 10) || -1) > 0) {
-                for (let i = from; i <= to; i++) linenums.push(i)
+                for (let i = from; i <= to; i++) {
+                  linenums.push(i)
+                }
               }
             } else if (to === -1 && (from = parseInt(from, 10) || -1) > 0) {
               linenums.push(from, Infinity)
@@ -87,17 +129,23 @@ function getLines (attrs) {
             linenums.push(from)
           }
         })
-      if (linenums.length) return [...new Set(linenums.sort((a, b) => a - b))]
-      if (filtered) return []
+      if (linenums.length) {
+        return [...new Set(linenums.sort((a, b) => a - b))]
+      }
+      if (filtered) {
+        return []
+      }
     }
   }
 }
 
-function getTags (attrs) {
+function getTags(attrs) {
   if (attrs['$key?']('tag')) {
     const tag = attrs['$[]']('tag')
     if (tag && tag !== '!') {
-      return tag.charAt() === '!' ? new Map().set(tag.substr(1), false) : new Map().set(tag, true)
+      return tag.charAt() === '!'
+        ? new Map().set(tag.substr(1), false)
+        : new Map().set(tag, true)
     }
   } else if (attrs['$key?']('tags')) {
     const tags = attrs['$[]']('tags')
@@ -107,15 +155,19 @@ function getTags (attrs) {
       tags.split(~tags.indexOf(',') ? ',' : ';').forEach((tag) => {
         if (tag && tag !== '!') {
           any = true
-          tag.charAt() === '!' ? result.set(tag.substr(1), false) : result.set(tag, true)
+          tag.charAt() === '!'
+            ? result.set(tag.substr(1), false)
+            : result.set(tag, true)
         }
       })
-      if (any) return result
+      if (any) {
+        return result
+      }
     }
   }
 }
 
-function filterLinesByLineNumbers (reader, target, file, linenums) {
+function filterLinesByLineNumbers(reader, target, file, linenums) {
   let lineNum = 0
   let startLineNum
   let selectRest
@@ -123,23 +175,31 @@ function filterLinesByLineNumbers (reader, target, file, linenums) {
   file.contents.split(NEWLINE_RX).some((line) => {
     lineNum++
     if (selectRest || (selectRest = linenums[0] === Infinity)) {
-      if (!startLineNum) startLineNum = lineNum
+      if (!startLineNum) {
+        startLineNum = lineNum
+      }
       lines.push(line)
     } else {
       if (linenums[0] === lineNum) {
-        if (!startLineNum) startLineNum = lineNum
+        if (!startLineNum) {
+          startLineNum = lineNum
+        }
         linenums.shift()
         lines.push(line)
       }
-      if (!linenums.length) return true
+      if (!linenums.length) {
+        return true
+      }
     }
     return false
   })
   return [lines, startLineNum || 1]
 }
 
-function filterLinesByTags (reader, target, file, tags, sourceCursor) {
-  let selectingDefault, selecting, wildcard
+function filterLinesByTags(reader, target, file, tags, sourceCursor) {
+  let selectingDefault
+  let selecting
+  let wildcard
   const globstar = tags.get('**')
   const star = tags.get('*')
   if (globstar === undefined) {
@@ -157,7 +217,9 @@ function filterLinesByTags (reader, target, file, tags, sourceCursor) {
     tags.delete('**')
     selectingDefault = selecting = globstar
     if (star === undefined) {
-      if (!globstar && tags.values().next().value === false) wildcard = true
+      if (!globstar && tags.values().next().value === false) {
+        wildcard = true
+      }
     } else {
       tags.delete('*')
       wildcard = star
@@ -173,12 +235,18 @@ function filterLinesByTags (reader, target, file, tags, sourceCursor) {
   file.contents.split(NEWLINE_RX).forEach((line) => {
     lineNum++
     let m
-    if (~line.indexOf(DBL_COLON) && ~line.indexOf(DBL_SQUARE) && (m = line.match(TAG_DIRECTIVE_RX))) {
+    if (
+      ~line.indexOf(DBL_COLON) &&
+      ~line.indexOf(DBL_SQUARE) &&
+      (m = line.match(TAG_DIRECTIVE_RX))
+    ) {
       const thisTag = m[2]
       if (m[1]) {
         if (thisTag === activeTag) {
           tagStack.shift()
-          ;[activeTag, selecting] = tagStack.length ? tagStack[0] : [undefined, selectingDefault]
+          ;[activeTag, selecting] = tagStack.length
+            ? tagStack[0]
+            : [undefined, selectingDefault]
         } else if (tags.has(thisTag)) {
           const idx = tagStack.findIndex(([name]) => name === thisTag)
           if (~idx) {
@@ -189,7 +257,7 @@ function filterLinesByTags (reader, target, file, tags, sourceCursor) {
                 `at line ${lineNum} of include file: ${file.file})`,
               reader,
               sourceCursor,
-              createIncludeCursor(reader, file, target, lineNum)
+              createIncludeCursor(reader, file, target, lineNum),
             )
           } else {
             log(
@@ -197,19 +265,25 @@ function filterLinesByTags (reader, target, file, tags, sourceCursor) {
               `unexpected end tag '${thisTag}' at line ${lineNum} of include file: ${file.file}`,
               reader,
               sourceCursor,
-              createIncludeCursor(reader, file, target, lineNum)
+              createIncludeCursor(reader, file, target, lineNum),
             )
           }
         }
       } else if (tags.has(thisTag)) {
         foundTags.push(thisTag)
-        tagStack.unshift([(activeTag = thisTag), (selecting = tags.get(thisTag)), lineNum])
+        tagStack.unshift([
+          (activeTag = thisTag),
+          (selecting = tags.get(thisTag)),
+          lineNum,
+        ])
       } else if (wildcard !== undefined) {
         selecting = activeTag && !selecting ? false : wildcard
         tagStack.unshift([(activeTag = thisTag), selecting, lineNum])
       }
     } else if (selecting) {
-      if (!startLineNum) startLineNum = lineNum
+      if (!startLineNum) {
+        startLineNum = lineNum
+      }
       lines.push(line)
     }
   })
@@ -220,41 +294,58 @@ function filterLinesByTags (reader, target, file, tags, sourceCursor) {
         `detected unclosed tag '${tagName}' starting at line ${tagLineNum} of include file: ${file.file}`,
         reader,
         sourceCursor,
-        createIncludeCursor(reader, file, target, tagLineNum)
-      )
+        createIncludeCursor(reader, file, target, tagLineNum),
+      ),
     )
   }
-  if (foundTags.length) foundTags.forEach((name) => tags.delete(name))
+  if (foundTags.length) {
+    foundTags.forEach((name) => tags.delete(name))
+  }
   if (tags.size) {
     log(
       'warn',
       `tag${tags.size > 1 ? 's' : ''} '${[...tags.keys()].join(', ')}' not found in include file: ${file.file}`,
       reader,
       sourceCursor,
-      createIncludeCursor(reader, file, target, 0)
+      createIncludeCursor(reader, file, target, 0),
     )
   }
   return [lines, startLineNum || 1]
 }
 
-function createIncludeCursor (reader, { file, src }, path, lineno) {
+function createIncludeCursor(reader, { file, src }, path, lineno) {
   return reader.$create_include_cursor(
     // eslint-disable-next-line no-new-wrappers
-    Object.assign(new String(file), { src, parent: { file: reader.file, lineno: reader.lineno - 1 } }),
+    Object.assign(String(file), {
+      src,
+      parent: { file: reader.file, lineno: reader.lineno - 1 },
+    }),
     path,
-    lineno
+    lineno,
   )
 }
 
-function log (severity, message, reader, sourceCursor, includeCursor = undefined) {
+function log(
+  severity,
+  message,
+  reader,
+  sourceCursor,
+  includeCursor = undefined,
+) {
   const opts = includeCursor
     ? { source_location: sourceCursor, include_location: includeCursor }
     : { source_location: sourceCursor }
-  reader.$logger()['$' + severity](reader.$message_with_context(message, global.Opal.hash(opts)))
+  reader
+    .$logger()
+    ['$' + severity](
+      reader.$message_with_context(message, global.Opal.hash(opts)),
+    )
 }
 
-function mapContainsValue (map, value) {
+function mapContainsValue(map, value) {
   for (const v of map.values()) {
-    if (v === value) return true
+    if (v === value) {
+      return true
+    }
   }
 }

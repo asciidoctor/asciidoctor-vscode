@@ -1,35 +1,42 @@
 /*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import { getSettings } from './settings'
 
-function clamp (min: number, max: number, value: number) {
+function clamp(min: number, max: number, value: number) {
   return Math.min(max, Math.max(min, value))
 }
 
-function clampLine (line: number) {
+function clampLine(line: number) {
   return clamp(0, getSettings().lineCount - 1, line)
 }
 
 export interface CodeLineElement {
-  element: HTMLElement;
-  line: number;
+  element: HTMLElement
+  line: number
 }
 
 const getCodeLineElements = (() => {
   let elements: CodeLineElement[]
   return () => {
     if (!elements) {
-      elements = Array.prototype.map.call(
-        document.querySelectorAll('div[class^="data-line-"], div[class*=" data-line-"]'),
-        //document.getElementsByClassName('code-line'),
-        (element: any) => {
-          const num = element.className.split(' ').pop().match(/data-line-(\d+)/)[1]
-          const line = parseInt(num)
-          //const line = +element.getAttribute('data-line');
-          return { element, line }
-        })
+      elements = Array.prototype.map
+        .call(
+          document.querySelectorAll(
+            'div[class^="data-line-"], div[class*=" data-line-"]',
+          ),
+          //document.getElementsByClassName('code-line'),
+          (element: any) => {
+            const num = element.className
+              .split(' ')
+              .pop()
+              .match(/data-line-(\d+)/)[1]
+            const line = parseInt(num)
+            //const line = +element.getAttribute('data-line');
+            return { element, line }
+          },
+        )
         .filter((x: any) => !isNaN(x.line)) as CodeLineElement[]
     }
     return elements
@@ -42,7 +49,10 @@ const getCodeLineElements = (() => {
  * If an exact match, returns a single element. If the line is between elements,
  * returns the element prior to and the element after the given line.
  */
-export function getElementsForSourceLine (targetLine: number): { previous: CodeLineElement; next?: CodeLineElement; } {
+export function getElementsForSourceLine(targetLine: number): {
+  previous: CodeLineElement
+  next?: CodeLineElement
+} {
   const lineNumber = Math.floor(targetLine + 1) // off by one line
   const lines = getCodeLineElements()
   let previous = lines[0] || null
@@ -60,7 +70,10 @@ export function getElementsForSourceLine (targetLine: number): { previous: CodeL
 /**
  * Find the html elements that are at a specific pixel offset on the page.
  */
-export function getLineElementsAtPageOffset (offset: number): { previous: CodeLineElement; next?: CodeLineElement; } {
+export function getLineElementsAtPageOffset(offset: number): {
+  previous: CodeLineElement
+  next?: CodeLineElement
+} {
   const lines = getCodeLineElements()
   const position = offset - window.scrollY
   let lo = -1
@@ -86,7 +99,7 @@ export function getLineElementsAtPageOffset (offset: number): { previous: CodeLi
 /**
  * Attempt to reveal the element for a source line in the editor.
  */
-export function scrollToRevealSourceLine (line: number) {
+export function scrollToRevealSourceLine(line: number) {
   const { previous, next } = getElementsForSourceLine(line)
   if (previous && getSettings().scrollPreviewWithEditor) {
     let scrollTo = 0
@@ -94,8 +107,10 @@ export function scrollToRevealSourceLine (line: number) {
     const previousTop = rect.top
     if (next && next.line !== previous.line) {
       // Between two elements. Go to percentage offset between them.
-      const betweenProgress = (line - previous.line) / (next.line - previous.line)
-      const elementOffset = next.element.getBoundingClientRect().top - previousTop
+      const betweenProgress =
+        (line - previous.line) / (next.line - previous.line)
+      const elementOffset =
+        next.element.getBoundingClientRect().top - previousTop
       scrollTo = window.scrollY + previousTop + betweenProgress * elementOffset
     } else if (line === 0) {
       scrollTo = 0
@@ -106,17 +121,20 @@ export function scrollToRevealSourceLine (line: number) {
   }
 }
 
-export function getEditorLineNumberForPageOffset (offset: number) {
+export function getEditorLineNumberForPageOffset(offset: number) {
   const { previous, next } = getLineElementsAtPageOffset(offset)
   if (previous) {
     const previousBounds = previous.element.getBoundingClientRect()
-    const offsetFromPrevious = (offset - window.scrollY - previousBounds.top)
+    const offsetFromPrevious = offset - window.scrollY - previousBounds.top
     if (next) {
-      const progressBetweenElements = offsetFromPrevious / (next.element.getBoundingClientRect().top - previousBounds.top)
-      const line = previous.line + progressBetweenElements * (next.line - previous.line)
+      const progressBetweenElements =
+        offsetFromPrevious /
+        (next.element.getBoundingClientRect().top - previousBounds.top)
+      const line =
+        previous.line + progressBetweenElements * (next.line - previous.line)
       return clampLine(line)
     } else {
-      const progressWithinElement = offsetFromPrevious / (previousBounds.height)
+      const progressWithinElement = offsetFromPrevious / previousBounds.height
       const line = previous.line + progressWithinElement
       return clampLine(line)
     }

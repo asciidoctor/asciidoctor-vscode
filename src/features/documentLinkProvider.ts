@@ -1,25 +1,26 @@
 import * as path from 'path'
 import * as vscode from 'vscode'
-import { OpenDocumentLinkCommand } from '../commands'
-import { getUriForLinkWithKnownExternalScheme } from '../util/links'
-import { similarArrayMatch } from '../similarArrayMatch'
-import { isSchemeBlacklisted } from '../linkSanitizer'
 import * as nls from 'vscode-nls'
 import { AsciidocIncludeItemsLoader } from '../asciidocLoader'
+import { OpenDocumentLinkCommand } from '../commands'
+import { isSchemeBlacklisted } from '../linkSanitizer'
+import { similarArrayMatch } from '../similarArrayMatch'
+import { getUriForLinkWithKnownExternalScheme } from '../util/links'
 
 /**
  * Reference: https://gist.github.com/dperini/729294
  */
 // eslint-disable-next-line max-len
-const urlRx = /(?<=|link|<|[>()[\];"'])\\?(?:https?|file|ftp|irc):\/\/[^\s[\]]+/gm
+const urlRx =
+  /(?<=|link|<|[>()[\];"'])\\?(?:https?|file|ftp|irc):\/\/[^\s[\]]+/gm
 const inlineAnchorRx = /^\[\[(?<id>[^,]+)(?:,[^\]]+)*]]$/m
-const xrefRx = /xref:(?<target>[^#|^[]+)(?<fragment>#[^[]+)?\[[^\]]*]/ig
+const xrefRx = /xref:(?<target>[^#|^[]+)(?<fragment>#[^[]+)?\[[^\]]*]/gi
 const localize = nls.loadMessageBundle()
 
-function normalizeLink (
+function normalizeLink(
   document: vscode.TextDocument,
   link: string,
-  base: string
+  base: string,
 ): vscode.Uri {
   const externalSchemeUri = getUriForLinkWithKnownExternalScheme(link)
   if (externalSchemeUri) {
@@ -39,24 +40,39 @@ function normalizeLink (
     resourcePath = path.join(base, tempUri.path)
   }
   const sanitizedResourcePath = isSchemeBlacklisted(link) ? '#' : resourcePath
-  return OpenDocumentLinkCommand.createCommandUri(sanitizedResourcePath, tempUri.fragment)
+  return OpenDocumentLinkCommand.createCommandUri(
+    sanitizedResourcePath,
+    tempUri.fragment,
+  )
 }
 
 export default class LinkProvider implements vscode.DocumentLinkProvider {
-  constructor (private readonly asciidocIncludeItemsLoader: AsciidocIncludeItemsLoader) {
-  }
+  constructor(
+    private readonly asciidocIncludeItemsLoader: AsciidocIncludeItemsLoader,
+  ) {}
 
-  public async provideDocumentLinks (textDocument: vscode.TextDocument, _token: vscode.CancellationToken): Promise<vscode.DocumentLink[]> {
+  public async provideDocumentLinks(
+    textDocument: vscode.TextDocument,
+    _token: vscode.CancellationToken,
+  ): Promise<vscode.DocumentLink[]> {
     // includes from the reader are resolved correctly but the line numbers may be offset and not exactly match the document
-    let baseDocumentProcessorIncludes = await this.asciidocIncludeItemsLoader.getIncludeItems(textDocument)
+    let baseDocumentProcessorIncludes =
+      await this.asciidocIncludeItemsLoader.getIncludeItems(textDocument)
     const includeDirective = /^(\\)?include::([^[]+)\[([^\n]+)?]$/
     // get includes from document text. These may be inside ifeval or ifdef but the line numbers are correct.
     const baseDocumentRegexIncludes = new Map()
     const results: vscode.DocumentLink[] = []
     const anchors = {}
     const xrefProxies = []
-    const base = textDocument.uri.path.substring(0, textDocument.uri.path.lastIndexOf('/'))
-    for (let lineNumber = 0; lineNumber < textDocument.lineCount; lineNumber++) {
+    const base = textDocument.uri.path.substring(
+      0,
+      textDocument.uri.path.lastIndexOf('/'),
+    )
+    for (
+      let lineNumber = 0;
+      lineNumber < textDocument.lineCount;
+      lineNumber++
+    ) {
       const line = textDocument.lineAt(lineNumber).text
       const match = includeDirective.exec(line)
       if (match) {
@@ -72,11 +88,14 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
             const documentLink = new vscode.DocumentLink(
               new vscode.Range(
                 new vscode.Position(lineNumber, index),
-                new vscode.Position(lineNumber, url.length + index)
+                new vscode.Position(lineNumber, url.length + index),
               ),
-              vscode.Uri.parse(url)
+              vscode.Uri.parse(url),
             )
-            documentLink.tooltip = localize('links.navigate.follow', 'follow link') // translation provided by VS code
+            documentLink.tooltip = localize(
+              'links.navigate.follow',
+              'follow link',
+            ) // translation provided by VS code
             results.push(documentLink)
           }
         }
@@ -114,22 +133,36 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
                   new vscode.Range(
                     // exclude xref: prefix
                     new vscode.Position(lineNumber, index + 5),
-                    new vscode.Position(lineNumber, originalTarget.length + index + 5)
+                    new vscode.Position(
+                      lineNumber,
+                      originalTarget.length + index + 5,
+                    ),
                   ),
-                  normalizeLink(textDocument, `${target}${fragment}`, base)
+                  normalizeLink(textDocument, `${target}${fragment}`, base),
                 )
-                documentLink.tooltip = localize('documentLink.openFile.tooltip', 'Open file {0}', target)
+                documentLink.tooltip = localize(
+                  'documentLink.openFile.tooltip',
+                  'Open file {0}',
+                  target,
+                )
                 return documentLink
               })
             } else {
               const documentLink = new vscode.DocumentLink(
                 new vscode.Range(
                   new vscode.Position(lineNumber, index + 5),
-                  new vscode.Position(lineNumber, originalTarget.length + index + 5)
+                  new vscode.Position(
+                    lineNumber,
+                    originalTarget.length + index + 5,
+                  ),
                 ),
-                normalizeLink(textDocument, `${target}${fragment}`, base)
+                normalizeLink(textDocument, `${target}${fragment}`, base),
               )
-              documentLink.tooltip = localize('documentLink.openFile.tooltip', 'Open file {0}', target)
+              documentLink.tooltip = localize(
+                'documentLink.openFile.tooltip',
+                'Open file {0}',
+                target,
+              )
               results.push(documentLink)
             }
           }
@@ -148,16 +181,18 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
       Array.from(baseDocumentRegexIncludes.keys()),
       baseDocumentProcessorIncludes.map((entry) => {
         return entry.position
-      })
+      }),
     )
 
     // update line items in reader results
-    baseDocumentProcessorIncludes = baseDocumentProcessorIncludes.map((entry) => {
-      return {
-        ...entry,
-        index: betterIncludeMatching[entry.index],
-      }
-    })
+    baseDocumentProcessorIncludes = baseDocumentProcessorIncludes.map(
+      (entry) => {
+        return {
+          ...entry,
+          index: betterIncludeMatching[entry.index],
+        }
+      },
+    )
 
     // create include links
     if (baseDocumentProcessorIncludes) {
@@ -167,9 +202,15 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
           new vscode.Range(
             // don't link to the "include::" part or the square bracket contents
             new vscode.Position(lineNo, 9),
-            new vscode.Position(lineNo, entry.length + 9)),
-          normalizeLink(textDocument, entry.name, base))
-        documentLink.tooltip = localize('documentLink.openFile.tooltip', 'Open file {0}', entry.name)
+            new vscode.Position(lineNo, entry.length + 9),
+          ),
+          normalizeLink(textDocument, entry.name, base),
+        )
+        documentLink.tooltip = localize(
+          'documentLink.openFile.tooltip',
+          'Open file {0}',
+          entry.name,
+        )
         results.push(documentLink)
       })
     }

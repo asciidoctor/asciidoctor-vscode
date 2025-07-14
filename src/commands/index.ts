@@ -1,17 +1,21 @@
 /*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-export { OpenDocumentLinkCommand } from './openDocumentLink'
-export { ShowPreviewCommand, ShowPreviewToSideCommand, ShowLockedPreviewToSideCommand } from './showPreview'
-export { ShowSourceCommand } from './showSource'
-export { RefreshPreviewCommand } from './refreshPreview'
-export { ShowPreviewSecuritySelectorCommand } from './showPreviewSecuritySelector'
-export { ShowAsciidoctorExtensionsTrustModeSelectorCommand } from './showAsciidoctorExtensionsTrustModeSelector'
-export { MoveCursorToPositionCommand } from './moveCursorToPosition'
-export { ToggleLockCommand } from './toggleLock'
+export { DisableAntoraSupport, EnableAntoraSupport } from './antoraSupport'
 export { ExportAsPDF } from './exportAsPDF'
+export { MoveCursorToPositionCommand } from './moveCursorToPosition'
+export { OpenDocumentLinkCommand } from './openDocumentLink'
 export { PasteImage } from './pasteImage'
-export { SaveHTML } from './saveHTML'
+export { RefreshPreviewCommand } from './refreshPreview'
 export { SaveDocbook } from './saveDocbook'
-export { EnableAntoraSupport, DisableAntoraSupport } from './antoraSupport'
+export { SaveHTML } from './saveHTML'
+export { ShowAsciidoctorExtensionsTrustModeSelectorCommand } from './showAsciidoctorExtensionsTrustModeSelector'
+export {
+  ShowLockedPreviewToSideCommand,
+  ShowPreviewCommand,
+  ShowPreviewToSideCommand,
+} from './showPreview'
+export { ShowPreviewSecuritySelectorCommand } from './showPreviewSecuritySelector'
+export { ShowSourceCommand } from './showSource'
+export { ToggleLockCommand } from './toggleLock'

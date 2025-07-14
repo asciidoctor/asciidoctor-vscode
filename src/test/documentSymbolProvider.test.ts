@@ -1,25 +1,30 @@
 import * as assert from 'assert'
 import 'mocha'
 import * as vscode from 'vscode'
-import DocumentSymbolProvider from '../features/documentSymbolProvider'
-import { InMemoryDocument } from './inMemoryDocument'
 import { AsciidocLoader } from '../asciidocLoader'
 import { AsciidoctorConfig } from '../features/asciidoctorConfig'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
 import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
+import DocumentSymbolProvider from '../features/documentSymbolProvider'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
 import { extensionContext } from './helper'
-import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
+import { InMemoryDocument } from './inMemoryDocument'
 
 const testFileName = vscode.Uri.file('test.adoc')
 
-function getSymbolsForFile (fileContents: string) {
+function getSymbolsForFile(fileContents: string) {
   const doc = new InMemoryDocument(testFileName, fileContents)
-  const provider = new DocumentSymbolProvider(null, new AsciidocLoader(
-    new AsciidoctorConfig(),
-    new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
-    new AsciidoctorDiagnostic('text'),
-    extensionContext
-  ))
+  const provider = new DocumentSymbolProvider(
+    null,
+    new AsciidocLoader(
+      new AsciidoctorConfig(),
+      new AsciidoctorExtensions(
+        AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+      ),
+      new AsciidoctorDiagnostic('text'),
+      extensionContext,
+    ),
+  )
   return provider.provideDocumentSymbols(doc)
 }
 

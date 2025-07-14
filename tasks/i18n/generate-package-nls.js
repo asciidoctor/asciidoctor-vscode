@@ -2,9 +2,11 @@ const { src, dest } = require('gulp')
 const ospath = require('path')
 const nls = require('vscode-nls-dev')
 
-const languages = [{ folderName: 'fra', id: 'fr' },
-                   { folderName: 'jpn', id: 'ja' },
-                   { folderName: 'de', id: 'de' }]
+const languages = [
+  { folderName: 'fra', id: 'fr' },
+  { folderName: 'jpn', id: 'ja' },
+  { folderName: 'de', id: 'de' },
+]
 
 const baseDirectory = ospath.join(__dirname, '..', '..')
 const i18nBaseDirectory = ospath.join(baseDirectory, 'i18n')

@@ -1,38 +1,48 @@
 import * as assert from 'assert'
 import 'mocha'
 import * as vscode from 'vscode'
-import LinkProvider from '../features/documentLinkProvider'
-import { InMemoryDocument } from './inMemoryDocument'
 import { AsciidocIncludeItemsLoader } from '../asciidocLoader'
-import { AsciidoctorIncludeItems } from '../features/asciidoctorIncludeItems'
 import { AsciidoctorConfig } from '../features/asciidoctorConfig'
-import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
 import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
-import { extensionContext } from './helper'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
+import { AsciidoctorIncludeItems } from '../features/asciidoctorIncludeItems'
+import LinkProvider from '../features/documentLinkProvider'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
+import { extensionContext } from './helper'
+import { InMemoryDocument } from './inMemoryDocument'
 
-const noopToken = new class implements vscode.CancellationToken {
+const noopToken = new (class implements vscode.CancellationToken {
   private _onCancellationRequestedEmitter = new vscode.EventEmitter<void>()
   public onCancellationRequested = this._onCancellationRequestedEmitter.event
 
-  get isCancellationRequested () { return false }
-}()
+  get isCancellationRequested() {
+    return false
+  }
+})()
 
-async function getLinksForFile (fileContents: string, testFileName?: vscode.Uri) {
-  const doc = new InMemoryDocument(testFileName || vscode.Uri.file('test.adoc'), fileContents)
+async function getLinksForFile(
+  fileContents: string,
+  testFileName?: vscode.Uri,
+) {
+  const doc = new InMemoryDocument(
+    testFileName || vscode.Uri.file('test.adoc'),
+    fileContents,
+  )
   const provider = new LinkProvider(
     new AsciidocIncludeItemsLoader(
       new AsciidoctorIncludeItems(),
       new AsciidoctorConfig(),
-      new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+      new AsciidoctorExtensions(
+        AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+      ),
       new AsciidoctorDiagnostic('test'),
-      extensionContext
-    )
+      extensionContext,
+    ),
   )
   return provider.provideDocumentLinks(doc, noopToken)
 }
 
-function assertRangeEqual (expected: vscode.Range, actual: vscode.Range) {
+function assertRangeEqual(expected: vscode.Range, actual: vscode.Range) {
   assert.strictEqual(expected.start.line, actual.start.line)
   assert.strictEqual(expected.start.character, actual.start.character)
   assert.strictEqual(expected.end.line, actual.end.line)
@@ -109,10 +119,13 @@ See xref:test.adoc#first-section[]
 
     assert.strictEqual(link.target.scheme, 'command')
     assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
-    assert.strictEqual(link.target.query, JSON.stringify({
-      path: 'test.adoc',
-      fragment: 'L3',
-    }))
+    assert.strictEqual(
+      link.target.query,
+      JSON.stringify({
+        path: 'test.adoc',
+        fragment: 'L3',
+      }),
+    )
     assertRangeEqual(link.range, new vscode.Range(9, 9, 9, 32))
   })
 
@@ -133,10 +146,13 @@ See xref:test.adoc#second-section[]
     const [link] = links
     assert.strictEqual(link.target.scheme, 'command')
     assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
-    assert.strictEqual(link.target.query, JSON.stringify({
-      path: 'test.adoc',
-      fragment: 'L9',
-    }))
+    assert.strictEqual(
+      link.target.query,
+      JSON.stringify({
+        path: 'test.adoc',
+        fragment: 'L9',
+      }),
+    )
     assertRangeEqual(link.range, new vscode.Range(6, 9, 6, 33))
   })
 
@@ -148,7 +164,10 @@ You can refer to a URL such as https://github.com/asciidoctor/asciidoctor-vscode
 `)
     assert.strictEqual(links.length, 1)
     const [link] = links
-    assert.deepStrictEqual(link.target.toString(), 'https://github.com/asciidoctor/asciidoctor-vscode/')
+    assert.deepStrictEqual(
+      link.target.toString(),
+      'https://github.com/asciidoctor/asciidoctor-vscode/',
+    )
     assertRangeEqual(link.range, new vscode.Range(2, 31, 2, 81))
   })
 
@@ -160,7 +179,10 @@ Filters are created as RPN filters (Reverse Polish notation [https://wikipedia.o
 `)
     assert.strictEqual(links.length, 1)
     const [link] = links
-    assert.deepStrictEqual(link.target.toString(), 'https://wikipedia.org/wiki/Reverse_Polish_notation')
+    assert.deepStrictEqual(
+      link.target.toString(),
+      'https://wikipedia.org/wiki/Reverse_Polish_notation',
+    )
     assertRangeEqual(link.range, new vscode.Range(2, 61, 2, 111))
   })
 
@@ -172,7 +194,10 @@ Asciidoctor.js is published as a npm package at <https://www.npmjs.com/package/@
 `)
     assert.strictEqual(links.length, 1)
     const [link] = links
-    assert.deepStrictEqual(link.target.toString(true), 'https://www.npmjs.com/package/@asciidoctor/core')
+    assert.deepStrictEqual(
+      link.target.toString(true),
+      'https://www.npmjs.com/package/@asciidoctor/core',
+    )
     assertRangeEqual(link.range, new vscode.Range(2, 49, 2, 96))
   })
 })

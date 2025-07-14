@@ -1,12 +1,11 @@
-import * as path from 'path'
-import * as vscode from 'vscode'
 import { spawn } from 'child_process'
 import * as fs from 'fs'
+import * as path from 'path'
+import * as vscode from 'vscode'
 
 const remoteRegex = /^(?:[a-z]+:)?\/\//i
 
 export namespace Import {
-
   /**
    * What part of the image macro should the selection be used for.
    *
@@ -15,7 +14,7 @@ export namespace Import {
   enum SelectionRole {
     Filename,
     AltText,
-    None
+    None,
   }
 
   /**
@@ -23,7 +22,7 @@ export namespace Import {
    */
   enum FilenameEncoding {
     None,
-    URIEncoding
+    URIEncoding,
   }
 
   /**
@@ -35,7 +34,7 @@ export namespace Import {
    */
   enum SelectionMode {
     Insert,
-    Replace
+    Replace,
   }
 
   export class Configuration {
@@ -55,7 +54,7 @@ export namespace Import {
      * Saves an image from the clipboard.
      * @param filename the filename of the image file
      */
-    static saveImageFromClipboard (filename: string) {
+    static saveImageFromClipboard(filename: string) {
       const platform = process.platform
       if (platform === 'win32') {
         const script = path.join(__dirname, '../../res/pc.ps1')
@@ -111,7 +110,9 @@ export namespace Import {
       // Linux
       const scriptPath = path.join(__dirname, '../../res/linux.sh')
       return new Promise((resolve, reject) => {
-        const child = spawn(`"${scriptPath}"`, [`"${filename}"`], { shell: true })
+        const child = spawn(`"${scriptPath}"`, [`"${filename}"`], {
+          shell: true,
+        })
         child.stdout.once('data', (e) => resolve(e.toString()))
         child.stderr.once('data', (e) => {
           const exception = e.toString().trim()
@@ -126,7 +127,7 @@ export namespace Import {
       })
     }
 
-    static async importFromClipboard (config: Configuration) {
+    static async importFromClipboard(config: Configuration) {
       const activeTextEditor = vscode.window.activeTextEditor
       if (activeTextEditor === undefined) {
         return
@@ -135,9 +136,7 @@ export namespace Import {
       const textDocument = activeTextEditor.document
       const selection = activeTextEditor.selection
 
-      const currentDateString = new Date()
-        .toISOString()
-        .replace(/[:.]/g, '-')
+      const currentDateString = new Date().toISOString().replace(/[:.]/g, '-')
       // default filename
       let filename = `${currentDateString}.png`
       let altText = '' //todo:...
@@ -149,7 +148,7 @@ export namespace Import {
       const remote = remoteRegex.test(imagesDirectory)
       if (remote) {
         vscode.window.showWarningMessage(
-          'Cannot determine save location for image because `imagesdir` attribute references a remote location.'
+          'Cannot determine save location for image because `imagesdir` attribute references a remote location.',
         )
         return
       }
@@ -180,11 +179,15 @@ export namespace Import {
 
         // docDir === '.' if a document has not yet been saved
         if (docDir === '.') {
-          vscode.window.showErrorMessage('To allow images to be saved, first save your document.')
+          vscode.window.showErrorMessage(
+            'To allow images to be saved, first save your document.',
+          )
           return
         }
 
-        await this.saveImageFromClipboard(path.join(docDir, imagesDirectory, filename))
+        await this.saveImageFromClipboard(
+          path.join(docDir, imagesDirectory, filename),
+        )
       } catch (error) {
         if (error instanceof ScriptArgumentError) {
           if (error.message === 'bad path exception') {
@@ -192,7 +195,7 @@ export namespace Import {
             vscode.window
               .showErrorMessage(
                 `The imagesdir folder was not found (${folder}).`,
-                'Create Folder & Retry'
+                'Create Folder & Retry',
               )
               .then(async (value) => {
                 if (value === 'Create Folder & Retry') {
@@ -202,14 +205,18 @@ export namespace Import {
               })
           } else if (error.message === 'no image exception') {
             vscode.window.showInformationMessage(
-              'An image was not found on the clipboard.'
+              'An image was not found on the clipboard.',
             )
           } else if (error.message === 'no filename exception') {
             vscode.window.showErrorMessage('Missing image filename argument.')
           } else if (error.message === 'no xclip') {
-            vscode.window.showErrorMessage('To use this feature, you must install xclip.')
+            vscode.window.showErrorMessage(
+              'To use this feature, you must install xclip.',
+            )
           }
-        } else { vscode.window.showErrorMessage(error.toString()) }
+        } else {
+          vscode.window.showErrorMessage(error.toString())
+        }
         return
       }
 
@@ -217,7 +224,7 @@ export namespace Import {
         importConfig.mode,
         Image.modifiedLines(activeTextEditor),
         selection.anchor.character,
-        selectedText
+        selectedText,
       )
       let macro = `image${isInline ? ':' : '::'}${filename}[${altText}]`
 
@@ -236,28 +243,28 @@ export namespace Import {
     }
 
     // todo: tag functionl
-    private static padMacro (
+    private static padMacro(
       config: Configuration,
       editor: vscode.TextEditor,
-      macro: string
+      macro: string,
     ) {
       const { first, second } =
         config.mode === SelectionMode.Replace
           ? editor.selection.active.isAfter(editor.selection.anchor)
             ? {
-              first: editor.selection.anchor,
-              second: editor.selection.active,
-            }
+                first: editor.selection.anchor,
+                second: editor.selection.active,
+              }
             : {
-              first: editor.selection.active,
-              second: editor.selection.anchor,
-            }
+                first: editor.selection.active,
+                second: editor.selection.anchor,
+              }
           : { first: editor.selection.active, second: editor.selection.active }
       const selection = editor.document.getText(
         new vscode.Range(
           first.translate(0, first.character > 0 ? -1 : 0),
-          second.translate(0, 1)
-        )
+          second.translate(0, 1),
+        ),
       )
       const padHead = first.character !== 0 && !/^\s/.test(selection)
       const padTail = !/\s$/.test(selection)
@@ -269,12 +276,12 @@ export namespace Import {
     /**
      * Returns the lines that will be effected by the current editor selection
      */
-    private static modifiedLines (editor: vscode.TextEditor) {
+    private static modifiedLines(editor: vscode.TextEditor) {
       const affectedLines = new vscode.Range(
         editor.selection.start.line,
         0,
         editor.selection.end.line + 1,
-        0
+        0,
       )
       return editor.document.getText(affectedLines)
     }
@@ -283,29 +290,32 @@ export namespace Import {
      * Determines if the resulting image-macro is an inline-image or
      * block-image.
      */
-    private static predict (
+    private static predict(
       selectionMode: SelectionMode,
       affectedText: string,
       index: number,
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      selectedText: string
+      selectedText: string,
     ) {
       // does the macro start at the beginning of the line and end in only
       // whitespace.
-      return !((index === 0 && /^\s+$/.test(affectedText)) || /^\s+$|^\S+$/.test(affectedText))
+      return !(
+        (index === 0 && /^\s+$/.test(affectedText)) ||
+        /^\s+$|^\S+$/.test(affectedText)
+      )
     }
 
     /**
      * Checks if the given editor is a valid candidate _file_ for pasting images into.
      * @param document
      */
-    public static isCandidateFile (document: vscode.TextDocument): boolean {
+    public static isCandidateFile(document: vscode.TextDocument): boolean {
       return document.uri.scheme === 'file'
     }
 
-    static validate (required: {
-      editor: vscode.TextEditor;
-      selection: string;
+    static validate(required: {
+      editor: vscode.TextEditor
+      selection: string
     }): boolean {
       return this.isCandidateFile(required.editor.document)
     }

@@ -1,34 +1,42 @@
 import 'mocha'
+import assert from 'assert'
 import * as vscode from 'vscode'
 import { Position } from 'vscode'
-import assert from 'assert'
-import { AttributeReferenceProvider } from '../features/attributeReferenceProvider'
-import { createFile } from './workspaceHelper'
 import { AsciidocLoader } from '../asciidocLoader'
 import { AsciidoctorConfig } from '../features/asciidoctorConfig'
-import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
 import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
-import { extensionContext } from './helper'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
+import { AttributeReferenceProvider } from '../features/attributeReferenceProvider'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
+import { extensionContext } from './helper'
+import { createFile } from './workspaceHelper'
 
-function filterByLabel (label: string): (CompletionItem) => boolean {
+function filterByLabel(label: string): (CompletionItem) => boolean {
   return (item) => {
-    if ((item.label as vscode.CompletionItemLabel)) {
+    if (item.label as vscode.CompletionItemLabel) {
       return (item.label as vscode.CompletionItemLabel).label === label
     }
     return false
   }
 }
 
-async function findCompletionItems (uri: vscode.Uri, position: vscode.Position, filter?: (completionItem) => boolean) {
+async function findCompletionItems(
+  uri: vscode.Uri,
+  position: vscode.Position,
+  filter?: (completionItem) => boolean,
+) {
   const textDocument = await vscode.workspace.openTextDocument(uri)
   const asciidocLoader = new AsciidocLoader(
     new AsciidoctorConfig(),
-    new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+    new AsciidoctorExtensions(
+      AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+    ),
     new AsciidoctorDiagnostic('test'),
-    extensionContext
+    extensionContext,
   )
-  const completionsItems = await new AttributeReferenceProvider(asciidocLoader).provideCompletionItems(textDocument, position)
+  const completionsItems = await new AttributeReferenceProvider(
+    asciidocLoader,
+  ).provideCompletionItems(textDocument, position)
   if (filter) {
     return completionsItems.filter(filter)
   }
@@ -44,61 +52,128 @@ suite('Attribute ref CompletionsProvider', () => {
     createdFiles = []
   })
   test('Should return attribute key defined in same file', async () => {
-    const fileToAutoComplete = await createFile(`:my-attribute-to-find-in-completion: dummy value
-`, 'fileToAutoComplete-attributeRef-samefile.adoc')
+    const fileToAutoComplete = await createFile(
+      `:my-attribute-to-find-in-completion: dummy value
+`,
+      'fileToAutoComplete-attributeRef-samefile.adoc',
+    )
     createdFiles.push(fileToAutoComplete)
-    const items = await findCompletionItems(fileToAutoComplete, new Position(1, 0), filterByLabel('my-attribute-to-find-in-completion'))
+    const items = await findCompletionItems(
+      fileToAutoComplete,
+      new Position(1, 0),
+      filterByLabel('my-attribute-to-find-in-completion'),
+    )
     const completionItem = items[0]
-    assert.deepStrictEqual((completionItem.label as vscode.CompletionItemLabel).description, 'dummy value')
-    assert.deepStrictEqual(completionItem.insertText, '{my-attribute-to-find-in-completion}')
+    assert.deepStrictEqual(
+      (completionItem.label as vscode.CompletionItemLabel).description,
+      'dummy value',
+    )
+    assert.deepStrictEqual(
+      completionItem.insertText,
+      '{my-attribute-to-find-in-completion}',
+    )
   })
   test('Should return attribute key defined in same file corresponding to its value', async () => {
-    const fileToAutoComplete = await createFile(`:my-attribute-to-find-in-completion: dummy value
-dumm`, 'fileToAutoComplete-attributeRef.adoc')
+    const fileToAutoComplete = await createFile(
+      `:my-attribute-to-find-in-completion: dummy value
+dumm`,
+      'fileToAutoComplete-attributeRef.adoc',
+    )
     createdFiles.push(fileToAutoComplete)
-    const items = await findCompletionItems(fileToAutoComplete, new Position(1, 3), filterByLabel('my-attribute-to-find-in-completion'))
+    const items = await findCompletionItems(
+      fileToAutoComplete,
+      new Position(1, 3),
+      filterByLabel('my-attribute-to-find-in-completion'),
+    )
     const completionItem = items[0]
-    assert.deepStrictEqual((completionItem.label as vscode.CompletionItemLabel).description, 'dummy value')
-    assert.deepStrictEqual(completionItem.insertText, '{my-attribute-to-find-in-completion}')
+    assert.deepStrictEqual(
+      (completionItem.label as vscode.CompletionItemLabel).description,
+      'dummy value',
+    )
+    assert.deepStrictEqual(
+      completionItem.insertText,
+      '{my-attribute-to-find-in-completion}',
+    )
   })
   test('Should return no completion when nothing corresponds', async () => {
-    const fileToAutoComplete = await createFile(`:my-attribute-to-find-in-completion: dummy value
-somethingVeryDifferent`, 'fileToAutoComplete-attributeRef-samefile-basedOnValue.adoc')
+    const fileToAutoComplete = await createFile(
+      `:my-attribute-to-find-in-completion: dummy value
+somethingVeryDifferent`,
+      'fileToAutoComplete-attributeRef-samefile-basedOnValue.adoc',
+    )
     createdFiles.push(fileToAutoComplete)
-    const items = await findCompletionItems(fileToAutoComplete, new Position(1, 22))
-    assert.notStrictEqual(items.length, 0, 'There are completion provided although none are expected.')
+    const items = await findCompletionItems(
+      fileToAutoComplete,
+      new Position(1, 22),
+    )
+    assert.notStrictEqual(
+      items.length,
+      0,
+      'There are completion provided although none are expected.',
+    )
   })
   test('Should return an attribute defined in another file', async () => {
-    const fileToAutoComplete = await createFile(`= test
+    const fileToAutoComplete = await createFile(
+      `= test
 include::file-referenced-with-an-attribute.adoc[]
 
 
-    `, 'fileToAutoComplete-attributeRef-differentFile.adoc')
+    `,
+      'fileToAutoComplete-attributeRef-differentFile.adoc',
+    )
     createdFiles.push(fileToAutoComplete)
-    const fileReferencedWithAnAttribute = await createFile(':my-attribute-to-find-in-completion: dummy value', 'file-referenced-with-an-attribute.adoc')
+    const fileReferencedWithAnAttribute = await createFile(
+      ':my-attribute-to-find-in-completion: dummy value',
+      'file-referenced-with-an-attribute.adoc',
+    )
     createdFiles.push(fileReferencedWithAnAttribute)
-    const items = await findCompletionItems(fileToAutoComplete, new Position(3, 0), filterByLabel('my-attribute-to-find-in-completion'))
+    const items = await findCompletionItems(
+      fileToAutoComplete,
+      new Position(3, 0),
+      filterByLabel('my-attribute-to-find-in-completion'),
+    )
     const completionItem = items[0]
-    assert.deepStrictEqual((completionItem.label as vscode.CompletionItemLabel).description, 'dummy value')
-    assert.deepStrictEqual(completionItem.insertText, '{my-attribute-to-find-in-completion}')
+    assert.deepStrictEqual(
+      (completionItem.label as vscode.CompletionItemLabel).description,
+      'dummy value',
+    )
+    assert.deepStrictEqual(
+      completionItem.insertText,
+      '{my-attribute-to-find-in-completion}',
+    )
   })
   test('Should disable auto-completion on literal paragraph', async () => {
-    const fileToAutoComplete = await createFile(`= test
+    const fileToAutoComplete = await createFile(
+      `= test
 :fn-type: pure
 
  function foo() {
 
 The above function is {
-    `, 'disable-autocompletion-literal-paragraph.adoc')
+    `,
+      'disable-autocompletion-literal-paragraph.adoc',
+    )
     createdFiles.push(fileToAutoComplete)
-    let items = await findCompletionItems(fileToAutoComplete, new Position(3, 17))
-    assert.deepStrictEqual(items.length, 0, 'should not provide attributes completion on literal paragraphs.')
+    let items = await findCompletionItems(
+      fileToAutoComplete,
+      new Position(3, 17),
+    )
+    assert.deepStrictEqual(
+      items.length,
+      0,
+      'should not provide attributes completion on literal paragraphs.',
+    )
 
     items = await findCompletionItems(fileToAutoComplete, new Position(5, 1))
-    assert.deepStrictEqual(items.length > 0, true, 'should provide attribute completion on paragraphs.')
+    assert.deepStrictEqual(
+      items.length > 0,
+      true,
+      'should provide attribute completion on paragraphs.',
+    )
   })
   test('Should disable auto-completion on verbatim blocks', async () => {
-    const fileToAutoComplete = await createFile(`= test
+    const fileToAutoComplete = await createFile(
+      `= test
 :app-version: 1.2.3
 
 ----
@@ -127,78 +202,174 @@ function foo() {
 ----
 
 Install version {
-    `, 'disable-autocompletion-verbatim-blocks.adoc')
+    `,
+      'disable-autocompletion-verbatim-blocks.adoc',
+    )
     createdFiles.push(fileToAutoComplete)
-    let completionsItems = await findCompletionItems(fileToAutoComplete, new Position(4, 16))
-    assert.deepStrictEqual(completionsItems.length, 0, 'should not provide attributes completion on source blocks.')
+    let completionsItems = await findCompletionItems(
+      fileToAutoComplete,
+      new Position(4, 16),
+    )
+    assert.deepStrictEqual(
+      completionsItems.length,
+      0,
+      'should not provide attributes completion on source blocks.',
+    )
 
-    completionsItems = await findCompletionItems(fileToAutoComplete, new Position(8, 16))
-    assert.deepStrictEqual(completionsItems.length, 0, 'should not provide attributes completion on listing blocks.')
+    completionsItems = await findCompletionItems(
+      fileToAutoComplete,
+      new Position(8, 16),
+    )
+    assert.deepStrictEqual(
+      completionsItems.length,
+      0,
+      'should not provide attributes completion on listing blocks.',
+    )
 
-    completionsItems = await findCompletionItems(fileToAutoComplete, new Position(12, 18))
-    assert.deepStrictEqual(completionsItems.length, 0, 'should not provide attributes completion on listing blocks (indented).')
+    completionsItems = await findCompletionItems(
+      fileToAutoComplete,
+      new Position(12, 18),
+    )
+    assert.deepStrictEqual(
+      completionsItems.length,
+      0,
+      'should not provide attributes completion on listing blocks (indented).',
+    )
 
-    completionsItems = await findCompletionItems(fileToAutoComplete, new Position(17, 16))
-    assert.deepStrictEqual(completionsItems.length, 0, 'should not provide attributes completion on literal blocks.')
+    completionsItems = await findCompletionItems(
+      fileToAutoComplete,
+      new Position(17, 16),
+    )
+    assert.deepStrictEqual(
+      completionsItems.length,
+      0,
+      'should not provide attributes completion on literal blocks.',
+    )
 
-    completionsItems = await findCompletionItems(fileToAutoComplete, new Position(24, 12))
-    assert.deepStrictEqual(completionsItems.length > 0, true, 'should provide attribute completion verbatim blocks with attributes subs.')
+    completionsItems = await findCompletionItems(
+      fileToAutoComplete,
+      new Position(24, 12),
+    )
+    assert.deepStrictEqual(
+      completionsItems.length > 0,
+      true,
+      'should provide attribute completion verbatim blocks with attributes subs.',
+    )
 
-    completionsItems = await findCompletionItems(fileToAutoComplete, new Position(28, 17))
-    assert.deepStrictEqual(completionsItems.length > 0, true, 'should provide attribute completion on paragraphs.')
+    completionsItems = await findCompletionItems(
+      fileToAutoComplete,
+      new Position(28, 17),
+    )
+    assert.deepStrictEqual(
+      completionsItems.length > 0,
+      true,
+      'should provide attribute completion on paragraphs.',
+    )
   })
   test('Should return an attribute defined in .asciidoctorconfig', async () => {
-    const fileToAutoComplete = await createFile(`= test
+    const fileToAutoComplete = await createFile(
+      `= test
 
 {
-    `, 'autocompletion-from-asciidoctorconfig.adoc')
+    `,
+      'autocompletion-from-asciidoctorconfig.adoc',
+    )
     createdFiles.push(fileToAutoComplete)
-    const asciidoctorConfigFile = await createFile(':attribute-defined-in-asciidoctorconfig: dummy value', '.asciidoctorconfig')
+    const asciidoctorConfigFile = await createFile(
+      ':attribute-defined-in-asciidoctorconfig: dummy value',
+      '.asciidoctorconfig',
+    )
     createdFiles.push(asciidoctorConfigFile)
-    const completionsItems = await findCompletionItems(fileToAutoComplete, new Position(3, 2), filterByLabel('attribute-defined-in-asciidoctorconfig'))
+    const completionsItems = await findCompletionItems(
+      fileToAutoComplete,
+      new Position(3, 2),
+      filterByLabel('attribute-defined-in-asciidoctorconfig'),
+    )
     const completionItem = completionsItems[0]
-    assert.deepStrictEqual((completionItem.label as vscode.CompletionItemLabel).description, 'dummy value')
-    assert.deepStrictEqual(completionItem.insertText, '{attribute-defined-in-asciidoctorconfig}')
+    assert.deepStrictEqual(
+      (completionItem.label as vscode.CompletionItemLabel).description,
+      'dummy value',
+    )
+    assert.deepStrictEqual(
+      completionItem.insertText,
+      '{attribute-defined-in-asciidoctorconfig}',
+    )
   })
   test('Should return an attribute defined in the plugin configuration', async () => {
     try {
-      const asciidocPreviewConfig = vscode.workspace.getConfiguration('asciidoc.preview', null)
+      const asciidocPreviewConfig = vscode.workspace.getConfiguration(
+        'asciidoc.preview',
+        null,
+      )
       await asciidocPreviewConfig.update('asciidoctorAttributes', {
         'attribute-defined-in-config': 'dummy value',
       })
-      const fileToAutoComplete = await createFile(`= test
+      const fileToAutoComplete = await createFile(
+        `= test
 
 {
-    `, 'autocompletion-from-plugin-configuration.adoc')
+    `,
+        'autocompletion-from-plugin-configuration.adoc',
+      )
       createdFiles.push(fileToAutoComplete)
-      const completionsItems = await findCompletionItems(fileToAutoComplete, new Position(3, 2), filterByLabel('attribute-defined-in-config'))
+      const completionsItems = await findCompletionItems(
+        fileToAutoComplete,
+        new Position(3, 2),
+        filterByLabel('attribute-defined-in-config'),
+      )
       const completionItem = completionsItems[0]
-      assert.deepStrictEqual((completionItem.label as vscode.CompletionItemLabel).description, 'dummy value')
-      assert.deepStrictEqual(completionItem.insertText, '{attribute-defined-in-config}')
+      assert.deepStrictEqual(
+        (completionItem.label as vscode.CompletionItemLabel).description,
+        'dummy value',
+      )
+      assert.deepStrictEqual(
+        completionItem.insertText,
+        '{attribute-defined-in-config}',
+      )
     } finally {
-      await vscode.workspace.getConfiguration('asciidoc.preview', null).update('asciidoctorAttributes', undefined)
+      await vscode.workspace
+        .getConfiguration('asciidoc.preview', null)
+        .update('asciidoctorAttributes', undefined)
     }
   })
   test('Should return an attribute defined in another file (target contains an attribute reference)', async () => {
     try {
-      const asciidocPreviewConfig = vscode.workspace.getConfiguration('asciidoc.preview', null)
+      const asciidocPreviewConfig = vscode.workspace.getConfiguration(
+        'asciidoc.preview',
+        null,
+      )
       await asciidocPreviewConfig.update('asciidoctorAttributes', {
         'include-target': 'attributes',
       })
-      const fileToAutoComplete = await createFile(`= test
+      const fileToAutoComplete = await createFile(
+        `= test
 include::autocompletion-{include-target}.adoc[]
 
 {
-    `, 'autocompletion-from-include-file-target-attrs.adoc')
+    `,
+        'autocompletion-from-include-file-target-attrs.adoc',
+      )
       createdFiles.push(fileToAutoComplete)
-      const fileReferencedWithAnAttribute = await createFile(':foo: bar', 'autocompletion-attributes.adoc')
+      const fileReferencedWithAnAttribute = await createFile(
+        ':foo: bar',
+        'autocompletion-attributes.adoc',
+      )
       createdFiles.push(fileReferencedWithAnAttribute)
-      const completionsItems = await findCompletionItems(fileToAutoComplete, new Position(4, 2), filterByLabel('foo'))
+      const completionsItems = await findCompletionItems(
+        fileToAutoComplete,
+        new Position(4, 2),
+        filterByLabel('foo'),
+      )
       const completionItem = completionsItems[0]
-      assert.deepStrictEqual((completionItem.label as vscode.CompletionItemLabel).description, 'bar')
+      assert.deepStrictEqual(
+        (completionItem.label as vscode.CompletionItemLabel).description,
+        'bar',
+      )
       assert.deepStrictEqual(completionItem.insertText, '{foo}')
     } finally {
-      await vscode.workspace.getConfiguration('asciidoc.preview', null).update('asciidoctorAttributes', undefined)
+      await vscode.workspace
+        .getConfiguration('asciidoc.preview', null)
+        .update('asciidoctorAttributes', undefined)
     }
   })
 })

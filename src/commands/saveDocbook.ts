@@ -1,20 +1,22 @@
-import * as vscode from 'vscode'
+import { exec } from 'child_process'
 import * as fs from 'fs'
 import * as path from 'path'
-import { exec } from 'child_process'
-import { Command } from '../commandManager'
+import * as vscode from 'vscode'
 import { AsciidocEngine } from '../asciidocEngine'
+import { Command } from '../commandManager'
 
 export class SaveDocbook implements Command {
   public readonly id = 'asciidoc.saveDocbook'
 
-  constructor (private readonly engine: AsciidocEngine) {
+  constructor(private readonly engine: AsciidocEngine) {
     this.engine = engine
   }
 
-  public async execute () {
+  public async execute() {
     const editor = vscode.window.activeTextEditor
-    if (editor === null || editor === undefined) { return }
+    if (editor === null || editor === undefined) {
+      return
+    }
 
     const textDocument = editor.document
 
@@ -27,10 +29,13 @@ export class SaveDocbook implements Command {
 
     fs.writeFile(fsPath, output, function (err) {
       if (err) {
-        vscode.window.showErrorMessage('Error writing file ' + fsPath + '\n' + err.toString())
+        vscode.window.showErrorMessage(
+          'Error writing file ' + fsPath + '\n' + err.toString(),
+        )
         return
       }
-      vscode.window.showInformationMessage('Successfully converted to DocBook 5', fsPath)
+      vscode.window
+        .showInformationMessage('Successfully converted to DocBook 5', fsPath)
         .then((selection) => {
           if (selection === fsPath) {
             switch (process.platform) {

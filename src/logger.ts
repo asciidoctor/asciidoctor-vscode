@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
@@ -7,11 +7,11 @@ import { lazy } from './util/lazy'
 
 enum TraceType {
   Off,
-  Verbose
+  Verbose,
 }
 
 namespace Trace {
-  export function fromString (value: string): TraceType {
+  export function fromString(value: string): TraceType {
     value = value.toLowerCase()
     switch (value) {
       case 'off':
@@ -24,7 +24,7 @@ namespace Trace {
   }
 }
 
-function isString (value: any): value is string {
+function isString(value: any): value is string {
   return Object.prototype.toString.call(value) === '[object String]'
 }
 
@@ -32,14 +32,14 @@ export class Logger {
   private trace?: TraceType
 
   private readonly outputChannel = lazy(() =>
-    vscode.window.createOutputChannel('Asciidoc')
+    vscode.window.createOutputChannel('Asciidoc'),
   )
 
-  constructor () {
+  constructor() {
     this.updateConfiguration()
   }
 
-  public log (message: string, data?: any): void {
+  public log(message: string, data?: any): void {
     if (this.trace === TraceType.Verbose) {
       this.appendLine(`[Log - ${new Date().toLocaleTimeString()}] ${message}`)
       if (data) {
@@ -48,23 +48,23 @@ export class Logger {
     }
   }
 
-  public updateConfiguration () {
+  public updateConfiguration() {
     this.trace = this.readTrace()
   }
 
-  private appendLine (value: string) {
+  private appendLine(value: string) {
     return this.outputChannel.value.appendLine(value)
   }
 
-  private readTrace (): TraceType {
+  private readTrace(): TraceType {
     return Trace.fromString(
       vscode.workspace
         .getConfiguration('asciidoc.debug', null)
-        .get<string>('trace', 'off')
+        .get<string>('trace', 'off'),
     )
   }
 
-  private static data2String (data: any): string {
+  private static data2String(data: any): string {
     if (data instanceof Error) {
       if (isString(data.stack)) {
         return data.stack

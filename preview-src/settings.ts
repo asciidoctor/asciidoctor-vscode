@@ -3,19 +3,19 @@
  *--------------------------------------------------------------------------------------------*/
 
 export interface PreviewSettings {
-  source: string;
-  line: number;
-  lineCount: number;
-  scrollPreviewWithEditor?: boolean;
-  scrollEditorWithPreview: boolean;
-  disableSecurityWarnings: boolean;
-  doubleClickToSwitchToEditor: boolean;
-  preservePreviewWhenHidden: boolean;
+  source: string
+  line: number
+  lineCount: number
+  scrollPreviewWithEditor?: boolean
+  scrollEditorWithPreview: boolean
+  disableSecurityWarnings: boolean
+  doubleClickToSwitchToEditor: boolean
+  preservePreviewWhenHidden: boolean
 }
 
 let cachedSettings: PreviewSettings | undefined
 
-export function getData<T = {}> (key: string): T {
+export function getData<T = {}>(key: string): T {
   const element = document.getElementById('vscode-asciidoc-preview-data')
   if (element) {
     const data = element.getAttribute(key)
@@ -27,7 +27,7 @@ export function getData<T = {}> (key: string): T {
   throw new Error(`Could not load data for ${key}`)
 }
 
-export function getSettings (): PreviewSettings {
+export function getSettings(): PreviewSettings {
   if (cachedSettings) {
     return cachedSettings
   }

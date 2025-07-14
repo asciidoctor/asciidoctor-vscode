@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
-import { AsciidocPreviewManager } from './features/previewManager'
 import * as nls from 'vscode-nls'
+import { AsciidocPreviewManager } from './features/previewManager'
 import { getWorkspaceFolder, getWorkspaceFolders } from './util/workspace'
 
 const localize = nls.loadMessageBundle()
@@ -9,66 +9,100 @@ export const enum AsciidocPreviewSecurityLevel {
   Strict = 0,
   AllowInsecureContent = 1,
   AllowScriptsAndAllContent = 2,
-  AllowInsecureLocalContent = 3
+  AllowInsecureLocalContent = 3,
 }
 
 export interface ContentSecurityPolicyArbiter {
-  getSecurityLevelForResource(resource: vscode.Uri): AsciidocPreviewSecurityLevel;
+  getSecurityLevelForResource(
+    resource: vscode.Uri,
+  ): AsciidocPreviewSecurityLevel
 
-  setSecurityLevelForResource(resource: vscode.Uri, level: AsciidocPreviewSecurityLevel): Promise<void>;
+  setSecurityLevelForResource(
+    resource: vscode.Uri,
+    level: AsciidocPreviewSecurityLevel,
+  ): Promise<void>
 
-  shouldAllowSvgsForResource(resource: vscode.Uri): void;
+  shouldAllowSvgsForResource(resource: vscode.Uri): void
 
-  shouldDisableSecurityWarnings(): boolean;
+  shouldDisableSecurityWarnings(): boolean
 
-  setShouldDisableSecurityWarning(shouldShow: boolean): Promise<void>;
+  setShouldDisableSecurityWarning(shouldShow: boolean): Promise<void>
 }
 
-export class ExtensionContentSecurityPolicyArbiter implements ContentSecurityPolicyArbiter {
+export class ExtensionContentSecurityPolicyArbiter
+  implements ContentSecurityPolicyArbiter
+{
   private readonly oldTrustedWorkspaceKey = 'trusted_preview_workspace:'
   private readonly securityLevelKey = 'preview_security_level:'
-  private readonly shouldDisableSecurityWarningKey = 'preview_should_show_security_warning:'
+  private readonly shouldDisableSecurityWarningKey =
+    'preview_should_show_security_warning:'
 
-  constructor (
+  constructor(
     private readonly globalState: vscode.Memento,
-    private readonly workspaceState: vscode.Memento
+    private readonly workspaceState: vscode.Memento,
   ) {
     this.globalState = globalState
     this.workspaceState = workspaceState
   }
 
-  public getSecurityLevelForResource (resource: vscode.Uri): AsciidocPreviewSecurityLevel {
+  public getSecurityLevelForResource(
+    resource: vscode.Uri,
+  ): AsciidocPreviewSecurityLevel {
     // Use new security level setting first
-    const level = this.globalState.get<AsciidocPreviewSecurityLevel | undefined>(this.securityLevelKey + this.getRoot(resource), undefined)
+    const level = this.globalState.get<
+      AsciidocPreviewSecurityLevel | undefined
+    >(this.securityLevelKey + this.getRoot(resource), undefined)
     if (typeof level !== 'undefined') {
       return level
     }
 
     // Fallback to old trusted workspace setting
-    if (this.globalState.get<boolean>(this.oldTrustedWorkspaceKey + this.getRoot(resource), false)) {
+    if (
+      this.globalState.get<boolean>(
+        this.oldTrustedWorkspaceKey + this.getRoot(resource),
+        false,
+      )
+    ) {
       return AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent
     }
     return AsciidocPreviewSecurityLevel.Strict
   }
 
-  public async setSecurityLevelForResource (resource: vscode.Uri, level: AsciidocPreviewSecurityLevel): Promise<void> {
-    return this.globalState.update(this.securityLevelKey + this.getRoot(resource), level)
+  public async setSecurityLevelForResource(
+    resource: vscode.Uri,
+    level: AsciidocPreviewSecurityLevel,
+  ): Promise<void> {
+    return this.globalState.update(
+      this.securityLevelKey + this.getRoot(resource),
+      level,
+    )
   }
 
-  public shouldAllowSvgsForResource (resource: vscode.Uri) {
+  public shouldAllowSvgsForResource(resource: vscode.Uri) {
     const securityLevel = this.getSecurityLevelForResource(resource)
-    return securityLevel === AsciidocPreviewSecurityLevel.AllowInsecureContent || securityLevel === AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent
+    return (
+      securityLevel === AsciidocPreviewSecurityLevel.AllowInsecureContent ||
+      securityLevel === AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent
+    )
   }
 
-  public shouldDisableSecurityWarnings (): boolean {
-    return this.workspaceState.get<boolean>(this.shouldDisableSecurityWarningKey, false)
+  public shouldDisableSecurityWarnings(): boolean {
+    return this.workspaceState.get<boolean>(
+      this.shouldDisableSecurityWarningKey,
+      false,
+    )
   }
 
-  public async setShouldDisableSecurityWarning (disabled: boolean): Promise<void> {
-    return this.workspaceState.update(this.shouldDisableSecurityWarningKey, disabled)
+  public async setShouldDisableSecurityWarning(
+    disabled: boolean,
+  ): Promise<void> {
+    return this.workspaceState.update(
+      this.shouldDisableSecurityWarningKey,
+      disabled,
+    )
   }
 
-  private getRoot (resource: vscode.Uri): vscode.Uri {
+  private getRoot(resource: vscode.Uri): vscode.Uri {
     const workspaceFolder = getWorkspaceFolders()
     if (workspaceFolder) {
       const folderForResource = getWorkspaceFolder(resource)
@@ -86,64 +120,125 @@ export class ExtensionContentSecurityPolicyArbiter implements ContentSecurityPol
 }
 
 export class PreviewSecuritySelector {
-  public constructor (private readonly cspArbiter: ContentSecurityPolicyArbiter,
-    private readonly webviewManager: AsciidocPreviewManager
+  public constructor(
+    private readonly cspArbiter: ContentSecurityPolicyArbiter,
+    private readonly webviewManager: AsciidocPreviewManager,
   ) {
     this.cspArbiter = cspArbiter
     this.webviewManager = webviewManager
   }
 
-  public async showSecuritySelectorForResource (resource: vscode.Uri): Promise<void> {
+  public async showSecuritySelectorForResource(
+    resource: vscode.Uri,
+  ): Promise<void> {
     interface PreviewSecurityPickItem extends vscode.QuickPickItem {
-      readonly type: 'moreinfo' | 'toggle' | AsciidocPreviewSecurityLevel;
+      readonly type: 'moreinfo' | 'toggle' | AsciidocPreviewSecurityLevel
     }
 
-    function markActiveWhen (when: boolean): string {
+    function markActiveWhen(when: boolean): string {
       return when ? '• ' : ''
     }
 
-    const currentSecurityLevel = this.cspArbiter.getSecurityLevelForResource(resource)
-    const selection = await vscode.window.showQuickPick<PreviewSecurityPickItem>(
-      [
+    const currentSecurityLevel =
+      this.cspArbiter.getSecurityLevelForResource(resource)
+    const selection =
+      await vscode.window.showQuickPick<PreviewSecurityPickItem>(
+        [
+          {
+            type: AsciidocPreviewSecurityLevel.Strict,
+            label:
+              markActiveWhen(
+                currentSecurityLevel === AsciidocPreviewSecurityLevel.Strict,
+              ) + localize('security.strict.title', 'Strict'),
+            description: localize(
+              'security.strict.description',
+              'Only load secure content.',
+            ),
+          },
+          {
+            type: AsciidocPreviewSecurityLevel.AllowInsecureLocalContent,
+            label:
+              markActiveWhen(
+                currentSecurityLevel ===
+                  AsciidocPreviewSecurityLevel.AllowInsecureLocalContent,
+              ) +
+              localize(
+                'security.insecureLocalContent.title',
+                'Allow insecure local content',
+              ),
+            description: localize(
+              'security.insecureLocalContent.description',
+              'Enable loading content over HTTP served from localhost.',
+            ),
+          },
+          {
+            type: AsciidocPreviewSecurityLevel.AllowInsecureContent,
+            label:
+              markActiveWhen(
+                currentSecurityLevel ===
+                  AsciidocPreviewSecurityLevel.AllowInsecureContent,
+              ) +
+              localize(
+                'security.insecureContent.title',
+                'Allow insecure content',
+              ),
+            description: localize(
+              'security.insecureContent.description',
+              'Enable loading content over HTTP.',
+            ),
+          },
+          {
+            type: AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent,
+            label:
+              markActiveWhen(
+                currentSecurityLevel ===
+                  AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent,
+              ) + localize('security.disable.title', 'Disable'),
+            description: localize(
+              'security.disable.description',
+              'Allow all content and script execution. Not recommended.',
+            ),
+          },
+          {
+            type: 'toggle',
+            label: this.cspArbiter.shouldDisableSecurityWarnings()
+              ? localize(
+                  'security.enableSecurityWarning.title',
+                  'Enable preview security warnings in this workspace',
+                )
+              : localize(
+                  'security.disableSecurityWarning.title',
+                  'Disable preview security warning in this workspace',
+                ),
+            description: localize(
+              'security.toggleSecurityWarning.description',
+              'Please note that it does not affect the content security level.',
+            ),
+          },
+        ],
         {
-          type: AsciidocPreviewSecurityLevel.Strict,
-          label: markActiveWhen(currentSecurityLevel === AsciidocPreviewSecurityLevel.Strict) + localize('security.strict.title', 'Strict'),
-          description: localize('security.strict.description', 'Only load secure content.'),
-        }, {
-          type: AsciidocPreviewSecurityLevel.AllowInsecureLocalContent,
-          label: markActiveWhen(currentSecurityLevel === AsciidocPreviewSecurityLevel.AllowInsecureLocalContent) + localize('security.insecureLocalContent.title', 'Allow insecure local content'),
-          description: localize('security.insecureLocalContent.description', 'Enable loading content over HTTP served from localhost.'),
-        }, {
-          type: AsciidocPreviewSecurityLevel.AllowInsecureContent,
-          label: markActiveWhen(currentSecurityLevel === AsciidocPreviewSecurityLevel.AllowInsecureContent) + localize('security.insecureContent.title', 'Allow insecure content'),
-          description: localize('security.insecureContent.description', 'Enable loading content over HTTP.'),
-        }, {
-          type: AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent,
-          label: markActiveWhen(currentSecurityLevel === AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent) + localize('security.disable.title', 'Disable'),
-          description: localize('security.disable.description', 'Allow all content and script execution. Not recommended.'),
-        }, {
-          type: 'toggle',
-          label: this.cspArbiter.shouldDisableSecurityWarnings()
-            ? localize('security.enableSecurityWarning.title', 'Enable preview security warnings in this workspace')
-            : localize('security.disableSecurityWarning.title', 'Disable preview security warning in this workspace'),
-          description: localize('security.toggleSecurityWarning.description', 'Please note that it does not affect the content security level.'),
+          placeHolder: localize(
+            'security.showPreviewSecuritySelector.title',
+            'Select security settings for Asciidoc previews in this workspace.',
+          ),
         },
-      ], {
-        placeHolder: localize(
-          'security.showPreviewSecuritySelector.title',
-          'Select security settings for Asciidoc previews in this workspace.'),
-      })
+      )
     if (!selection) {
       return
     }
 
     if (selection.type === 'moreinfo') {
-      vscode.commands.executeCommand('vscode.open', vscode.Uri.parse('https://go.microsoft.com/fwlink/?linkid=854414'))
+      vscode.commands.executeCommand(
+        'vscode.open',
+        vscode.Uri.parse('https://go.microsoft.com/fwlink/?linkid=854414'),
+      )
       return
     }
 
     if (selection.type === 'toggle') {
-      await this.cspArbiter.setShouldDisableSecurityWarning(!this.cspArbiter.shouldDisableSecurityWarnings())
+      await this.cspArbiter.setShouldDisableSecurityWarning(
+        !this.cspArbiter.shouldDisableSecurityWarnings(),
+      )
       return
     }
     await this.cspArbiter.setSecurityLevelForResource(resource, selection.type)
@@ -152,45 +247,57 @@ export class PreviewSecuritySelector {
 }
 
 export class AsciidoctorExtensionsSecurityPolicyArbiter {
-  private readonly allowAsciidoctorExtensionsKey = 'asciidoc.allow_asciidoctor_extensions'
-  public readonly trustAsciidoctorExtensionsAuthorsKey = 'asciidoc.trust_asciidoctor_extensions_authors'
+  private readonly allowAsciidoctorExtensionsKey =
+    'asciidoc.allow_asciidoctor_extensions'
+  public readonly trustAsciidoctorExtensionsAuthorsKey =
+    'asciidoc.trust_asciidoctor_extensions_authors'
 
   // eslint-disable-next-line no-use-before-define
   private static instance: AsciidoctorExtensionsSecurityPolicyArbiter
 
-  protected constructor (private readonly context: vscode.ExtensionContext) {
+  protected constructor(private readonly context: vscode.ExtensionContext) {
     this.context = context
   }
 
-  public static activate (context: vscode.ExtensionContext): AsciidoctorExtensionsSecurityPolicyArbiter {
-    AsciidoctorExtensionsSecurityPolicyArbiter.instance = new AsciidoctorExtensionsSecurityPolicyArbiter(context)
+  public static activate(
+    context: vscode.ExtensionContext,
+  ): AsciidoctorExtensionsSecurityPolicyArbiter {
+    AsciidoctorExtensionsSecurityPolicyArbiter.instance =
+      new AsciidoctorExtensionsSecurityPolicyArbiter(context)
     return AsciidoctorExtensionsSecurityPolicyArbiter.instance
   }
 
-  public static getInstance (): AsciidoctorExtensionsSecurityPolicyArbiter {
+  public static getInstance(): AsciidoctorExtensionsSecurityPolicyArbiter {
     if (!AsciidoctorExtensionsSecurityPolicyArbiter.instance) {
-      throw new Error('AsciidoctorExtensionsSecurityPolicyArbiter must be activated by calling #activate()')
+      throw new Error(
+        'AsciidoctorExtensionsSecurityPolicyArbiter must be activated by calling #activate()',
+      )
     }
     return AsciidoctorExtensionsSecurityPolicyArbiter.instance
   }
 
-  public async enableAsciidoctorExtensions (): Promise<void> {
+  public async enableAsciidoctorExtensions(): Promise<void> {
     return this.setAllowAsciidoctorExtensions(true)
   }
 
-  public asciidoctorExtensionsAuthorsTrusted (): boolean {
-    return this.context.workspaceState.get<boolean>(this.trustAsciidoctorExtensionsAuthorsKey, undefined)
+  public asciidoctorExtensionsAuthorsTrusted(): boolean {
+    return this.context.workspaceState.get<boolean>(
+      this.trustAsciidoctorExtensionsAuthorsKey,
+      undefined,
+    )
   }
 
-  public async denyAsciidoctorExtensionsAuthors (): Promise<void> {
+  public async denyAsciidoctorExtensionsAuthors(): Promise<void> {
     return this.setTrustAsciidoctorExtensionsAuthors(false)
   }
 
-  public async trustAsciidoctorExtensionsAuthors (): Promise<void> {
+  public async trustAsciidoctorExtensionsAuthors(): Promise<void> {
     return this.setTrustAsciidoctorExtensionsAuthors(true)
   }
 
-  public async confirmAsciidoctorExtensionsTrustMode (extensionsCount: number): Promise<boolean> {
+  public async confirmAsciidoctorExtensionsTrustMode(
+    extensionsCount: number,
+  ): Promise<boolean> {
     const extensionsTrusted = this.asciidoctorExtensionsAuthorsTrusted()
     if (extensionsTrusted !== undefined) {
       // Asciidoctor.js extensions authors are already trusted or not, do not ask again.
@@ -199,38 +306,52 @@ export class AsciidoctorExtensionsSecurityPolicyArbiter {
     return this.showTrustAsciidoctorExtensionsDialog(extensionsCount)
   }
 
-  private async showTrustAsciidoctorExtensionsDialog (extensionsCount: number): Promise<boolean> {
+  private async showTrustAsciidoctorExtensionsDialog(
+    extensionsCount: number,
+  ): Promise<boolean> {
     const userChoice = await vscode.window.showWarningMessage(
       `This feature will execute ${extensionsCount} JavaScript ${extensionsCount > 1 ? 'files' : 'file'} from .asciidoctor/lib/**/*.js.
       Do you trust the authors of ${extensionsCount > 1 ? 'these files' : 'this file'}?`,
       // "modal" is disabled. Because, I couldn't control the button's order in Linux when "modal" is enabled.
       { title: 'Yes, I trust the authors', value: true },
-      { title: 'No, I don\'t trust the authors', value: false })
+      { title: "No, I don't trust the authors", value: false },
+    )
     // if userChoice is undefined, no choice was selected, consider that we don't trust authors.
     const trustGranted = userChoice?.value || false
     await this.setTrustAsciidoctorExtensionsAuthors(trustGranted)
     return trustGranted
   }
 
-  private async setAllowAsciidoctorExtensions (value: boolean): Promise<void> {
-    return this.context.workspaceState.update(this.allowAsciidoctorExtensionsKey, value)
+  private async setAllowAsciidoctorExtensions(value: boolean): Promise<void> {
+    return this.context.workspaceState.update(
+      this.allowAsciidoctorExtensionsKey,
+      value,
+    )
   }
 
-  private async setTrustAsciidoctorExtensionsAuthors (value: boolean): Promise<void> {
-    return this.context.workspaceState.update(this.trustAsciidoctorExtensionsAuthorsKey, value)
+  private async setTrustAsciidoctorExtensionsAuthors(
+    value: boolean,
+  ): Promise<void> {
+    return this.context.workspaceState.update(
+      this.trustAsciidoctorExtensionsAuthorsKey,
+      value,
+    )
   }
 }
 
 export class AsciidoctorExtensionsTrustModeSelector {
-  public async showSelector (): Promise<void> {
+  public async showSelector(): Promise<void> {
     const aespArbiter = AsciidoctorExtensionsSecurityPolicyArbiter.getInstance()
-    const asciidoctorExtensionsAuthorsTrusted = aespArbiter.asciidoctorExtensionsAuthorsTrusted()
+    const asciidoctorExtensionsAuthorsTrusted =
+      aespArbiter.asciidoctorExtensionsAuthorsTrusted()
 
     interface ExtensionPickItem extends vscode.QuickPickItem {
-      readonly type: 'trust_asciidoctor_extensions_authors' | 'deny_asciidoctor_extensions_authors';
+      readonly type:
+        | 'trust_asciidoctor_extensions_authors'
+        | 'deny_asciidoctor_extensions_authors'
     }
 
-    function markActiveWhen (when: boolean): string {
+    function markActiveWhen(when: boolean): string {
       return when ? '• ' : ''
     }
 
@@ -238,18 +359,38 @@ export class AsciidoctorExtensionsTrustModeSelector {
       [
         {
           type: 'deny_asciidoctor_extensions_authors',
-          label: markActiveWhen(asciidoctorExtensionsAuthorsTrusted === false) + localize('security.restrictAsciidoctorExtensionsAuthors.title', 'Untrusted'),
-          description: localize('security.restrictAsciidoctorExtensionsAuthors.description', 'Prevent code execution by disabling Asciidoctor.js extensions.'),
-        }, {
-          type: 'trust_asciidoctor_extensions_authors',
-          label: markActiveWhen(asciidoctorExtensionsAuthorsTrusted === true) + localize('security.trustAsciidoctorExtensionsAuthors.title', 'Trusted'),
-          description: localize('security.trustAsciidoctorExtensionsAuthors.description', 'Allow code execution by activating Asciidoctor.js extensions.'),
+          label:
+            markActiveWhen(asciidoctorExtensionsAuthorsTrusted === false) +
+            localize(
+              'security.restrictAsciidoctorExtensionsAuthors.title',
+              'Untrusted',
+            ),
+          description: localize(
+            'security.restrictAsciidoctorExtensionsAuthors.description',
+            'Prevent code execution by disabling Asciidoctor.js extensions.',
+          ),
         },
-      ], {
+        {
+          type: 'trust_asciidoctor_extensions_authors',
+          label:
+            markActiveWhen(asciidoctorExtensionsAuthorsTrusted === true) +
+            localize(
+              'security.trustAsciidoctorExtensionsAuthors.title',
+              'Trusted',
+            ),
+          description: localize(
+            'security.trustAsciidoctorExtensionsAuthors.description',
+            'Allow code execution by activating Asciidoctor.js extensions.',
+          ),
+        },
+      ],
+      {
         placeHolder: localize(
           'security.asciidoctorExtensionsTrustModeSelector.title',
-          'Select the trust mode for the Asciidoctor.js extensions in this workspace.'),
-      })
+          'Select the trust mode for the Asciidoctor.js extensions in this workspace.',
+        ),
+      },
+    )
 
     if (!userChoice) {
       return

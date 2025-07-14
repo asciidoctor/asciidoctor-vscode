@@ -2,7 +2,7 @@ import vscode, { FileSystemError, FileType } from 'vscode'
 import { getDefaultWorkspaceFolderUri, normalizeUri } from '../util/workspace'
 import { extensionContext } from './helper'
 
-export async function removeFiles (files: vscode.Uri[]) {
+export async function removeFiles(files: vscode.Uri[]) {
   for (const file of files) {
     if (await exists(file)) {
       await vscode.workspace.fs.delete(file, { recursive: true })
@@ -10,7 +10,7 @@ export async function removeFiles (files: vscode.Uri[]) {
   }
 }
 
-async function exists (file: vscode.Uri): Promise<boolean> {
+async function exists(file: vscode.Uri): Promise<boolean> {
   try {
     await vscode.workspace.fs.stat(file)
     return true
@@ -23,17 +23,28 @@ async function exists (file: vscode.Uri): Promise<boolean> {
   }
 }
 
-export async function createFile (content: string, ...pathSegments: string[]): Promise<vscode.Uri> {
-  const file = vscode.Uri.joinPath(getDefaultWorkspaceFolderUri(), ...pathSegments)
+export async function createFile(
+  content: string,
+  ...pathSegments: string[]
+): Promise<vscode.Uri> {
+  const file = vscode.Uri.joinPath(
+    getDefaultWorkspaceFolderUri(),
+    ...pathSegments,
+  )
   await vscode.workspace.fs.writeFile(file, Buffer.from(content))
   return normalizeUri(file)
 }
 
-export async function createDirectories (...pathSegments: string[]): Promise<void> {
+export async function createDirectories(
+  ...pathSegments: string[]
+): Promise<void> {
   const currentPath: string[] = []
   for (const pathSegment of pathSegments) {
     currentPath.push(pathSegment)
-    const dir = vscode.Uri.joinPath(getDefaultWorkspaceFolderUri(), ...currentPath)
+    const dir = vscode.Uri.joinPath(
+      getDefaultWorkspaceFolderUri(),
+      ...currentPath,
+    )
     try {
       const stat = await vscode.workspace.fs.stat(dir)
       if (stat.type === (FileType.Directory | FileType.SymbolicLink)) {
@@ -51,25 +62,39 @@ export async function createDirectories (...pathSegments: string[]): Promise<voi
   }
 }
 
-export async function createDirectory (...pathSegments: string[]): Promise<vscode.Uri> {
-  const dir = vscode.Uri.joinPath(getDefaultWorkspaceFolderUri(), ...pathSegments)
+export async function createDirectory(
+  ...pathSegments: string[]
+): Promise<vscode.Uri> {
+  const dir = vscode.Uri.joinPath(
+    getDefaultWorkspaceFolderUri(),
+    ...pathSegments,
+  )
   await vscode.workspace.fs.createDirectory(dir)
   return normalizeUri(dir)
 }
 
-export async function createLink (existingPathSegments: string[], newPathSegments: string[]): Promise<vscode.Uri> {
+export async function createLink(
+  existingPathSegments: string[],
+  newPathSegments: string[],
+): Promise<vscode.Uri> {
   const fs = require('fs').promises
   const workspaceUri = getDefaultWorkspaceFolderUri()
-  const existingPath = vscode.Uri.joinPath(workspaceUri, ...existingPathSegments)
+  const existingPath = vscode.Uri.joinPath(
+    workspaceUri,
+    ...existingPathSegments,
+  )
   const newPath = vscode.Uri.joinPath(workspaceUri, ...newPathSegments)
   await fs.symlink(existingPath.fsPath, newPath.fsPath)
   return normalizeUri(newPath)
 }
 
-export async function enableAntoraSupport () {
+export async function enableAntoraSupport() {
   await extensionContext.workspaceState.update('antoraSupportSetting', true)
 }
 
-export async function resetAntoraSupport () {
-  await extensionContext.workspaceState.update('antoraSupportSetting', undefined)
+export async function resetAntoraSupport() {
+  await extensionContext.workspaceState.update(
+    'antoraSupportSetting',
+    undefined,
+  )
 }

@@ -1,9 +1,9 @@
-import vscode, { Uri } from 'vscode'
 import path from 'path'
+import vscode, { Uri } from 'vscode'
 import { getWorkspaceFolder } from './util/workspace'
 
 interface DocumentWithUri {
-  readonly uri: Uri;
+  readonly uri: Uri
 }
 
 export class AsciidocTextDocument {
@@ -14,7 +14,7 @@ export class AsciidocTextDocument {
   public fileName: string | undefined
   public filePath: string | undefined
 
-  private constructor (private uri: Uri) {
+  private constructor(private uri: Uri) {
     this.baseDir = AsciidocTextDocument.getBaseDir(uri)
     this.dirName = AsciidocTextDocument.getDirName(uri)
     this.extensionName = AsciidocTextDocument.getExtensionName(uri)
@@ -22,7 +22,9 @@ export class AsciidocTextDocument {
     this.filePath = AsciidocTextDocument.getFilePath(uri)
   }
 
-  public static fromTextDocument (textDocument: DocumentWithUri): AsciidocTextDocument {
+  public static fromTextDocument(
+    textDocument: DocumentWithUri,
+  ): AsciidocTextDocument {
     return new AsciidocTextDocument(textDocument.uri)
   }
 
@@ -30,8 +32,10 @@ export class AsciidocTextDocument {
    * Get the base directory.
    * @private
    */
-  private static getBaseDir (uri: Uri): string | undefined {
-    const useWorkspaceAsBaseDir = vscode.workspace.getConfiguration('asciidoc', null).get('useWorkspaceRootAsBaseDirectory')
+  private static getBaseDir(uri: Uri): string | undefined {
+    const useWorkspaceAsBaseDir = vscode.workspace
+      .getConfiguration('asciidoc', null)
+      .get('useWorkspaceRootAsBaseDirectory')
     if (useWorkspaceAsBaseDir) {
       const workspaceFolder = getWorkspaceFolder(uri)
       if (workspaceFolder) {
@@ -41,7 +45,7 @@ export class AsciidocTextDocument {
     return AsciidocTextDocument.getDirName(uri)
   }
 
-  private static getDirName (uri: Uri): string | undefined {
+  private static getDirName(uri: Uri): string | undefined {
     return 'browser' in process && (process as any).browser === true
       ? undefined
       : path.dirname(path.resolve(uri.fsPath))
@@ -52,7 +56,7 @@ export class AsciidocTextDocument {
    * @param uri
    * @private
    */
-  private static getExtensionName (uri: Uri): string {
+  private static getExtensionName(uri: Uri): string {
     const textDocumentExt = path.extname(uri.path)
     return textDocumentExt.startsWith('.') ? textDocumentExt.substring(1) : ''
   }
@@ -62,7 +66,7 @@ export class AsciidocTextDocument {
    * @param uri
    * @private
    */
-  public static getFileName (uri: Uri): string | undefined {
+  public static getFileName(uri: Uri): string | undefined {
     if ('browser' in process && (process as any).browser === true) {
       return undefined
     }
@@ -74,7 +78,7 @@ export class AsciidocTextDocument {
    * @param uri
    * @private
    */
-  public static getFilePath (uri: Uri): string | undefined {
+  public static getFilePath(uri: Uri): string | undefined {
     if ('browser' in process && (process as any).browser === true) {
       return undefined
     }
