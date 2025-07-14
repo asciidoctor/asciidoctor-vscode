@@ -659,7 +659,7 @@
 		"gulp": "^4.0.2",
 		"lodash.throttle": "4.1.1",
 		"mathjax": "^2.7.9",
-		"mermaid": "^10.9.0",
+		"mermaid": "^11.6.0",
 		"mocha": "10.4.0",
 		"mocha-junit-reporter": "2.2.1",
 		"mocha-multi-reporters": "1.5.1",
