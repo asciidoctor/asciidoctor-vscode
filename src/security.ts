@@ -1,9 +1,6 @@
 import * as vscode from 'vscode'
-import * as nls from 'vscode-nls'
 import { AsciidocPreviewManager } from './features/previewManager'
 import { getWorkspaceFolder, getWorkspaceFolders } from './util/workspace'
-
-const localize = nls.loadMessageBundle()
 
 export const enum AsciidocPreviewSecurityLevel {
   Strict = 0,
@@ -149,11 +146,8 @@ export class PreviewSecuritySelector {
             label:
               markActiveWhen(
                 currentSecurityLevel === AsciidocPreviewSecurityLevel.Strict,
-              ) + localize('security.strict.title', 'Strict'),
-            description: localize(
-              'security.strict.description',
-              'Only load secure content.',
-            ),
+              ) + vscode.l10n.t('security.strict.title'),
+            description: vscode.l10n.t('security.strict.description'),
           },
           {
             type: AsciidocPreviewSecurityLevel.AllowInsecureLocalContent,
@@ -161,14 +155,9 @@ export class PreviewSecuritySelector {
               markActiveWhen(
                 currentSecurityLevel ===
                   AsciidocPreviewSecurityLevel.AllowInsecureLocalContent,
-              ) +
-              localize(
-                'security.insecureLocalContent.title',
-                'Allow insecure local content',
-              ),
-            description: localize(
+              ) + vscode.l10n.t('security.insecureLocalContent.title'),
+            description: vscode.l10n.t(
               'security.insecureLocalContent.description',
-              'Enable loading content over HTTP served from localhost.',
             ),
           },
           {
@@ -177,15 +166,8 @@ export class PreviewSecuritySelector {
               markActiveWhen(
                 currentSecurityLevel ===
                   AsciidocPreviewSecurityLevel.AllowInsecureContent,
-              ) +
-              localize(
-                'security.insecureContent.title',
-                'Allow insecure content',
-              ),
-            description: localize(
-              'security.insecureContent.description',
-              'Enable loading content over HTTP.',
-            ),
+              ) + vscode.l10n.t('security.insecureContent.title'),
+            description: vscode.l10n.t('security.insecureContent.description'),
           },
           {
             type: AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent,
@@ -193,33 +175,22 @@ export class PreviewSecuritySelector {
               markActiveWhen(
                 currentSecurityLevel ===
                   AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent,
-              ) + localize('security.disable.title', 'Disable'),
-            description: localize(
-              'security.disable.description',
-              'Allow all content and script execution. Not recommended.',
-            ),
+              ) + vscode.l10n.t('security.disable.title'),
+            description: vscode.l10n.t('security.disable.description'),
           },
           {
             type: 'toggle',
             label: this.cspArbiter.shouldDisableSecurityWarnings()
-              ? localize(
-                  'security.enableSecurityWarning.title',
-                  'Enable preview security warnings in this workspace',
-                )
-              : localize(
-                  'security.disableSecurityWarning.title',
-                  'Disable preview security warning in this workspace',
-                ),
-            description: localize(
+              ? vscode.l10n.t('security.enableSecurityWarning.title')
+              : vscode.l10n.t('security.disableSecurityWarning.title'),
+            description: vscode.l10n.t(
               'security.toggleSecurityWarning.description',
-              'Please note that it does not affect the content security level.',
             ),
           },
         ],
         {
-          placeHolder: localize(
+          placeHolder: vscode.l10n.t(
             'security.showPreviewSecuritySelector.title',
-            'Select security settings for Asciidoc previews in this workspace.',
           ),
         },
       )
@@ -361,33 +332,26 @@ export class AsciidoctorExtensionsTrustModeSelector {
           type: 'deny_asciidoctor_extensions_authors',
           label:
             markActiveWhen(asciidoctorExtensionsAuthorsTrusted === false) +
-            localize(
+            vscode.l10n.t(
               'security.restrictAsciidoctorExtensionsAuthors.title',
-              'Untrusted',
             ),
-          description: localize(
+          description: vscode.l10n.t(
             'security.restrictAsciidoctorExtensionsAuthors.description',
-            'Prevent code execution by disabling Asciidoctor.js extensions.',
           ),
         },
         {
           type: 'trust_asciidoctor_extensions_authors',
           label:
             markActiveWhen(asciidoctorExtensionsAuthorsTrusted === true) +
-            localize(
-              'security.trustAsciidoctorExtensionsAuthors.title',
-              'Trusted',
-            ),
-          description: localize(
+            vscode.l10n.t('security.trustAsciidoctorExtensionsAuthors.title'),
+          description: vscode.l10n.t(
             'security.trustAsciidoctorExtensionsAuthors.description',
-            'Allow code execution by activating Asciidoctor.js extensions.',
           ),
         },
       ],
       {
-        placeHolder: localize(
+        placeHolder: vscode.l10n.t(
           'security.asciidoctorExtensionsTrustModeSelector.title',
-          'Select the trust mode for the Asciidoctor.js extensions in this workspace.',
         ),
       },
     )

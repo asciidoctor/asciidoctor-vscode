@@ -4,7 +4,6 @@
 
 import * as path from 'path'
 import * as vscode from 'vscode'
-import * as nls from 'vscode-nls'
 import * as uri from 'vscode-uri'
 import { AsciidocContributionProvider } from '../asciidocExtensions'
 import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink'
@@ -22,8 +21,6 @@ import {
   AsciidocPreviewConfigurationManager,
 } from './previewConfig'
 import { AsciidocContentProvider } from './previewContentProvider'
-
-const localize = nls.loadMessageBundle()
 
 export class AsciidocPreview
   extends Disposable
@@ -188,13 +185,14 @@ export class AsciidocPreview
             break
 
           case 'previewStyleLoadError':
-            vscode.window.showWarningMessage(
-              localize(
-                'preview.styleLoadError.message',
-                "Could not load 'asciidoc.styles': {0}",
-                e.body.unloadedStyles.join(', '),
-              ),
-            )
+            vscode.window
+              .showWarningMessage(
+                vscode.l10n.t(
+                  'preview.styleLoadError.message',
+                  e.body.unloadedStyles.join(', '),
+                ),
+              )
+              .then()
             break
         }
       },
@@ -396,16 +394,8 @@ export class AsciidocPreview
     locked: boolean,
   ): string {
     return locked
-      ? localize(
-          'preview.locked.title',
-          '[Preview] {0}',
-          path.basename(resource.fsPath),
-        )
-      : localize(
-          'preview.unlocked.title',
-          'Preview {0}',
-          path.basename(resource.fsPath),
-        )
+      ? vscode.l10n.t('preview.locked.title', path.basename(resource.fsPath))
+      : vscode.l10n.t('preview.unlocked.title', path.basename(resource.fsPath))
   }
 
   private updateForView(resource: vscode.Uri, topLine: number | undefined) {
@@ -461,7 +451,10 @@ export class AsciidocPreview
     }
     this.forceUpdate = false
 
-    this.currentVersion = { resource, version: document.version }
+    this.currentVersion = {
+      resource,
+      version: document.version,
+    }
 
     // add webView
     if (this._resource === resource) {
@@ -560,7 +553,10 @@ export class AsciidocPreview
       // Relative path. Resolve relative to the file
       hrefPath = path.join(path.dirname(this.resource.fsPath), hrefPath)
     }
-    return { path: hrefPath, fragment }
+    return {
+      path: hrefPath,
+      fragment,
+    }
   }
 
   private async onDidClickPreviewLink(href: string) {

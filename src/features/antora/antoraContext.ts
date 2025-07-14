@@ -1,6 +1,5 @@
 import ospath from 'path'
-import vscode, { Memento, Uri } from 'vscode'
-import * as nls from 'vscode-nls'
+import vscode, { l10n, Memento, Uri } from 'vscode'
 import { disposeAll } from '../../util/dispose'
 import AntoraCompletionProvider from './antoraCompletionProvider'
 import {
@@ -8,8 +7,6 @@ import {
   getAntoraConfig,
   getAttributes,
 } from './antoraDocument'
-
-const localize = nls.loadMessageBundle()
 
 export interface AntoraResourceContext {
   component: string
@@ -149,13 +146,10 @@ export class AntoraSupportManager implements vscode.Disposable {
               ? Uri.file(textDocument.uri.path)
               : textDocument.uri
           if (await antoraConfigFileExists(textDocumentUri)) {
-            const yesAnswer = localize('antora.activateSupport.yes', 'Yes')
-            const noAnswer = localize('antora.activateSupport.no', 'No, thanks')
+            const yesAnswer = l10n.t('antora.activateSupport.yes')
+            const noAnswer = l10n.t('antora.activateSupport.no')
             const answer = await vscode.window.showInformationMessage(
-              localize(
-                'antora.activateSupport.message',
-                'We detect that you are working with Antora. Do you want to activate Antora support?',
-              ),
+              l10n.t('antora.activateSupport.message'),
               yesAnswer,
               noAnswer,
             )

@@ -1,6 +1,5 @@
 import * as path from 'path'
 import * as vscode from 'vscode'
-import * as nls from 'vscode-nls'
 import { AsciidocIncludeItemsLoader } from '../asciidocLoader'
 import { OpenDocumentLinkCommand } from '../commands'
 import { isSchemeBlacklisted } from '../linkSanitizer'
@@ -15,7 +14,6 @@ const urlRx =
   /(?<=|link|<|[>()[\];"'])\\?(?:https?|file|ftp|irc):\/\/[^\s[\]]+/gm
 const inlineAnchorRx = /^\[\[(?<id>[^,]+)(?:,[^\]]+)*]]$/m
 const xrefRx = /xref:(?<target>[^#|^[]+)(?<fragment>#[^[]+)?\[[^\]]*]/gi
-const localize = nls.loadMessageBundle()
 
 function normalizeLink(
   document: vscode.TextDocument,
@@ -92,10 +90,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
               ),
               vscode.Uri.parse(url),
             )
-            documentLink.tooltip = localize(
-              'links.navigate.follow',
-              'follow link',
-            ) // translation provided by VS code
+            documentLink.tooltip = vscode.l10n.t('links.navigate.follow')
             results.push(documentLink)
           }
         }
@@ -140,9 +135,8 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
                   ),
                   normalizeLink(textDocument, `${target}${fragment}`, base),
                 )
-                documentLink.tooltip = localize(
+                documentLink.tooltip = vscode.l10n.t(
                   'documentLink.openFile.tooltip',
-                  'Open file {0}',
                   target,
                 )
                 return documentLink
@@ -158,9 +152,8 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
                 ),
                 normalizeLink(textDocument, `${target}${fragment}`, base),
               )
-              documentLink.tooltip = localize(
+              documentLink.tooltip = vscode.l10n.t(
                 'documentLink.openFile.tooltip',
-                'Open file {0}',
                 target,
               )
               results.push(documentLink)
@@ -206,9 +199,8 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
           ),
           normalizeLink(textDocument, entry.name, base),
         )
-        documentLink.tooltip = localize(
+        documentLink.tooltip = vscode.l10n.t(
           'documentLink.openFile.tooltip',
-          'Open file {0}',
           entry.name,
         )
         results.push(documentLink)
