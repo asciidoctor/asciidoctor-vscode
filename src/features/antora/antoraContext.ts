@@ -82,7 +82,7 @@ export class AntoraContext {
     const page = this.contentCatalog.getByPath({
       component: config.name,
       version: config.version,
-      // Vinyl will normalize path to system dependent path :(
+      // Vinyl will normalize the path to a system-dependent path :(
       path: ospath.relative(contentSourceRootPath, textDocumentUri.fsPath),
     })
     if (page === undefined) {
@@ -115,7 +115,11 @@ export class AntoraSupportManager implements vscode.Disposable {
     } else if (isEnableAntoraSupportSettingDefined === undefined) {
       // choice has not been made
       const onDidOpenAsciiDocFileAskAntoraSupport = vscode.workspace.onDidOpenTextDocument(async (textDocument) => {
-        if (await antoraConfigFileExists(textDocument.uri)) {
+        // Convert Git URI to `file://` URI since the Git file system provider produces unexpected results.
+        const textDocumentUri = textDocument.uri.scheme === 'git'
+          ? Uri.file(textDocument.uri.path)
+          : textDocument.uri
+        if (await antoraConfigFileExists(textDocumentUri)) {
           const yesAnswer = localize('antora.activateSupport.yes', 'Yes')
           const noAnswer = localize('antora.activateSupport.no', 'No, thanks')
           const answer = await vscode.window.showInformationMessage(
