@@ -1,12 +1,12 @@
 /*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode'
 import * as fs from 'fs'
 import ospath from 'path'
+import * as vscode from 'vscode'
 
-export function isAsciidocFile (document: vscode.TextDocument) {
+export function isAsciidocFile(document: vscode.TextDocument) {
   return document.languageId === 'asciidoc'
 }
 
@@ -14,13 +14,13 @@ export class FileInfo {
   file: string
   isFile: boolean
 
-  constructor (path: string, file: string) {
+  constructor(path: string, file: string) {
     this.file = file
     this.isFile = fs.statSync(ospath.join(path, file)).isFile()
   }
 }
 
-export async function getChildrenOfPath (path: string) {
+export async function getChildrenOfPath(path: string) {
   try {
     const files: string[] = await new Promise((resolve, reject) => {
       fs.readdir(path, (err, files) => {
@@ -32,18 +32,23 @@ export async function getChildrenOfPath (path: string) {
       })
     })
     return files.map((f) => new FileInfo(path, f))
-  } catch (error) {
+  } catch (_error) {
     return []
   }
 }
 
-export const sortFilesAndDirectories = (filesAndDirs: FileInfo[]): FileInfo[] => {
+export const sortFilesAndDirectories = (
+  filesAndDirs: FileInfo[],
+): FileInfo[] => {
   const dirs = filesAndDirs.filter((f) => f.isFile !== true)
   const files = filesAndDirs.filter((f) => f.isFile === true)
   return [...dirs, ...files]
 }
 
-export function dir (uri: vscode.Uri, workspaceFolder: vscode.Uri | undefined): vscode.Uri | undefined {
+export function dir(
+  uri: vscode.Uri,
+  workspaceFolder: vscode.Uri | undefined,
+): vscode.Uri | undefined {
   if (uri.path === workspaceFolder?.path) {
     return undefined
   }
@@ -55,20 +60,26 @@ export function dir (uri: vscode.Uri, workspaceFolder: vscode.Uri | undefined): 
   if (uri.scheme === 'git') {
     try {
       const queryObject = JSON.parse(query)
-      queryObject.path = queryObject.path.slice(0, queryObject.path.lastIndexOf('/'))
+      queryObject.path = queryObject.path.slice(
+        0,
+        queryObject.path.lastIndexOf('/'),
+      )
       query = JSON.stringify(queryObject)
-    } catch (e) {
+    } catch (_e) {
       // something went wrong, use the initial value
     }
   }
-  return uri.with({ path: uri.path.slice(0, uri.path.lastIndexOf('/')), query })
+  return uri.with({
+    path: uri.path.slice(0, uri.path.lastIndexOf('/')),
+    query,
+  })
 }
 
-export async function exists (uri: vscode.Uri): Promise<boolean> {
+export async function exists(uri: vscode.Uri): Promise<boolean> {
   try {
     await vscode.workspace.fs.stat(uri)
     return true
-  } catch (err) {
+  } catch (_err) {
     // file does not exist, ignore
     return false
   }

@@ -1,26 +1,34 @@
 /*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import * as vscode from 'vscode'
-import * as uri from 'vscode-uri'
 import * as path from 'path'
-
-import { Logger } from '../logger'
-import { AsciidocContentProvider } from './previewContentProvider'
-import { disposeAll, Disposable } from '../util/dispose'
-import { WebviewResourceProvider } from '../util/resources'
-import { AsciidocFileTopmostLineMonitor, getVisibleLine } from '../util/topmostLineMonitor'
-import { AsciidocPreviewConfiguration, AsciidocPreviewConfigurationManager } from './previewConfig'
-import { AsciidocContributionProvider } from '../asciidocExtensions'
-import { isAsciidocFile } from '../util/file'
-import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink'
+import * as vscode from 'vscode'
 import * as nls from 'vscode-nls'
+import * as uri from 'vscode-uri'
+import { AsciidocContributionProvider } from '../asciidocExtensions'
+import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink'
+import { Logger } from '../logger'
+import { Disposable, disposeAll } from '../util/dispose'
+import { isAsciidocFile } from '../util/file'
+import { WebviewResourceProvider } from '../util/resources'
+import {
+  AsciidocFileTopmostLineMonitor,
+  getVisibleLine,
+} from '../util/topmostLineMonitor'
 import { getWorkspaceFolder, getWorkspaceFolders } from '../util/workspace'
+import {
+  AsciidocPreviewConfiguration,
+  AsciidocPreviewConfigurationManager,
+} from './previewConfig'
+import { AsciidocContentProvider } from './previewContentProvider'
 
 const localize = nls.loadMessageBundle()
 
-export class AsciidocPreview extends Disposable implements WebviewResourceProvider {
+export class AsciidocPreview
+  extends Disposable
+  implements WebviewResourceProvider
+{
   public static viewType = 'asciidoc.preview'
 
   private _resource: vscode.Uri
@@ -32,22 +40,22 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
   private line: number | undefined = undefined
   private readonly disposables: vscode.Disposable[] = []
   private firstUpdate = true
-  private currentVersion?: { resource: vscode.Uri, version: number }
+  private currentVersion?: { resource: vscode.Uri; version: number }
   private forceUpdate = false
   private isScrolling = false
   private _disposed: boolean = false
-  private imageInfo: { id: string, width: number, height: number }[] = []
+  private imageInfo: { id: string; width: number; height: number }[] = []
   private config: vscode.WorkspaceConfiguration
   private refreshInterval: number
 
-  public static async revive (
+  public static async revive(
     webview: vscode.WebviewPanel,
     state: any,
     contentProvider: AsciidocContentProvider,
     previewConfigurations: AsciidocPreviewConfigurationManager,
     logger: Logger,
     topmostLineMonitor: AsciidocFileTopmostLineMonitor,
-    contributionProvider: AsciidocContributionProvider
+    contributionProvider: AsciidocContributionProvider,
   ): Promise<AsciidocPreview> {
     const resource = vscode.Uri.parse(state.source)
     const locked = state.locked || false
@@ -61,9 +69,14 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
       previewConfigurations,
       logger,
       topmostLineMonitor,
-      contributionProvider)
+      contributionProvider,
+    )
 
-    preview.editor.webview.options = AsciidocPreview.getWebviewOptions(resource, contributionProvider, previewConfigurations.loadAndCacheConfiguration(resource))
+    preview.editor.webview.options = AsciidocPreview.getWebviewOptions(
+      resource,
+      contributionProvider,
+      previewConfigurations.loadAndCacheConfiguration(resource),
+    )
 
     if (!isNaN(line)) {
       preview.line = line
@@ -72,7 +85,7 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     return preview
   }
 
-  public static create (
+  public static create(
     resource: vscode.Uri,
     resourceColumn: vscode.ViewColumn,
     previewColumn: vscode.ViewColumn,
@@ -81,7 +94,7 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     previewConfigurations: AsciidocPreviewConfigurationManager,
     logger: Logger,
     topmostLineMonitor: AsciidocFileTopmostLineMonitor,
-    contributionProvider: AsciidocContributionProvider
+    contributionProvider: AsciidocContributionProvider,
   ): AsciidocPreview {
     const retainContextWhenHidden = vscode.workspace
       .getConfiguration('asciidoc', null)
@@ -94,8 +107,12 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
       {
         enableFindWidget: true,
         retainContextWhenHidden,
-        ...AsciidocPreview.getWebviewOptions(resource, contributionProvider, previewConfigurations.loadAndCacheConfiguration(resource)),
-      }
+        ...AsciidocPreview.getWebviewOptions(
+          resource,
+          contributionProvider,
+          previewConfigurations.loadAndCacheConfiguration(resource),
+        ),
+      },
     )
 
     return new AsciidocPreview(
@@ -106,10 +123,11 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
       previewConfigurations,
       logger,
       topmostLineMonitor,
-      contributionProvider)
+      contributionProvider,
+    )
   }
 
-  private constructor (
+  private constructor(
     webview: vscode.WebviewPanel,
     resource: vscode.Uri,
     locked: boolean,
@@ -117,7 +135,7 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     private readonly _previewConfigurations: AsciidocPreviewConfigurationManager,
     private readonly _logger: Logger,
     topmostLineMonitor: AsciidocFileTopmostLineMonitor,
-    private readonly _contributionProvider: AsciidocContributionProvider
+    private readonly _contributionProvider: AsciidocContributionProvider,
   ) {
     super()
     this._resource = resource
@@ -127,89 +145,127 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     this.config = vscode.workspace.getConfiguration('asciidoc', this.resource)
     this.refreshInterval = this.config.get<number>('preview.refreshInterval')
 
-    this.editor.onDidDispose(() => {
-      this.dispose()
-    }, null, this.disposables)
+    this.editor.onDidDispose(
+      () => {
+        this.dispose()
+      },
+      null,
+      this.disposables,
+    )
 
-    this.editor.onDidChangeViewState((e) => {
-      this._onDidChangeViewStateEmitter.fire(e)
-    }, null, this.disposables)
+    this.editor.onDidChangeViewState(
+      (e) => {
+        this._onDidChangeViewStateEmitter.fire(e)
+      },
+      null,
+      this.disposables,
+    )
 
-    this.editor.webview.onDidReceiveMessage((e) => {
-      if (e.source !== this._resource.toString()) {
-        return
-      }
+    this.editor.webview.onDidReceiveMessage(
+      (e) => {
+        if (e.source !== this._resource.toString()) {
+          return
+        }
 
-      switch (e.type) {
-        case 'cacheImageSizes':
-          this.onCacheImageSizes(e.body)
-          break
+        switch (e.type) {
+          case 'cacheImageSizes':
+            this.onCacheImageSizes(e.body)
+            break
 
-        case 'revealLine':
-          this.onDidScrollPreview(e.body.line)
-          break
+          case 'revealLine':
+            this.onDidScrollPreview(e.body.line)
+            break
 
-        case 'clickLink':
-          this.onDidClickPreviewLink(e.body.href)
-          break
+          case 'clickLink':
+            this.onDidClickPreviewLink(e.body.href)
+            break
 
-        case 'showPreviewSecuritySelector':
-          vscode.commands.executeCommand('asciidoc.showPreviewSecuritySelector', e.body.source)
-          break
+          case 'showPreviewSecuritySelector':
+            vscode.commands.executeCommand(
+              'asciidoc.showPreviewSecuritySelector',
+              e.body.source,
+            )
+            break
 
-        case 'previewStyleLoadError':
-          vscode.window.showWarningMessage(localize('preview.styleLoadError.message', "Could not load 'asciidoc.styles': {0}", e.body.unloadedStyles.join(', ')))
-          break
-      }
-    }, null, this.disposables)
+          case 'previewStyleLoadError':
+            vscode.window.showWarningMessage(
+              localize(
+                'preview.styleLoadError.message',
+                "Could not load 'asciidoc.styles': {0}",
+                e.body.unloadedStyles.join(', '),
+              ),
+            )
+            break
+        }
+      },
+      null,
+      this.disposables,
+    )
 
-    vscode.workspace.onDidChangeTextDocument((event) => {
-      if (this.isPreviewOf(event.document.uri)) {
-        this.refresh()
-      }
-    }, null, this.disposables)
+    vscode.workspace.onDidChangeTextDocument(
+      (event) => {
+        if (this.isPreviewOf(event.document.uri)) {
+          this.refresh()
+        }
+      },
+      null,
+      this.disposables,
+    )
 
-    topmostLineMonitor.onDidChangeTopmostLine((event) => {
-      if (this.isPreviewOf(event.resource)) {
-        this.updateForView(event.resource, event.line)
-      }
-    }, null, this.disposables)
+    topmostLineMonitor.onDidChangeTopmostLine(
+      (event) => {
+        if (this.isPreviewOf(event.resource)) {
+          this.updateForView(event.resource, event.line)
+        }
+      },
+      null,
+      this.disposables,
+    )
 
-    vscode.window.onDidChangeTextEditorSelection((event) => {
-      if (this.isPreviewOf(event.textEditor.document.uri)) {
-        const line = event.selections[0].active.line
-        this.line = line
+    vscode.window.onDidChangeTextEditorSelection(
+      (event) => {
+        if (this.isPreviewOf(event.textEditor.document.uri)) {
+          const line = event.selections[0].active.line
+          this.line = line
 
-        this.postMessage({
-          type: 'onDidChangeTextEditorSelection',
-          line,
-          source: this.resource.toString(),
-        })
-      }
-    }, null, this.disposables)
+          this.postMessage({
+            type: 'onDidChangeTextEditorSelection',
+            line,
+            source: this.resource.toString(),
+          })
+        }
+      },
+      null,
+      this.disposables,
+    )
 
-    vscode.window.onDidChangeActiveTextEditor((editor) => {
-      if (editor && isAsciidocFile(editor.document) && !this._locked) {
-        this.update(editor.document.uri)
-      }
-    }, null, this.disposables)
+    vscode.window.onDidChangeActiveTextEditor(
+      (editor) => {
+        if (editor && isAsciidocFile(editor.document) && !this._locked) {
+          this.update(editor.document.uri)
+        }
+      },
+      null,
+      this.disposables,
+    )
   }
 
   private readonly _onDisposeEmitter = new vscode.EventEmitter<void>()
   public readonly onDispose = this._onDisposeEmitter.event
 
-  private readonly _onDidChangeViewStateEmitter = new vscode.EventEmitter<vscode.WebviewPanelOnDidChangeViewStateEvent>()
+  private readonly _onDidChangeViewStateEmitter =
+    new vscode.EventEmitter<vscode.WebviewPanelOnDidChangeViewStateEvent>()
   public readonly onDidChangeViewState = this._onDidChangeViewStateEmitter.event
 
-  public get resource (): vscode.Uri {
+  public get resource(): vscode.Uri {
     return this._resource
   }
 
-  public get resourceColumn (): vscode.ViewColumn {
+  public get resourceColumn(): vscode.ViewColumn {
     return this._resourceColumn || vscode.ViewColumn.One
   }
 
-  public get state () {
+  public get state() {
     return {
       resource: this._resource.toString(),
       locked: this._locked,
@@ -218,7 +274,7 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     }
   }
 
-  override dispose () {
+  override dispose() {
     super.dispose()
 
     this._disposed = true
@@ -235,7 +291,7 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
   }
 
   // This method is invoked evrytime there is a document update
-  public update (resource: vscode.Uri) {
+  public update(resource: vscode.Uri) {
     const editor = vscode.window.activeTextEditor
     if (editor && editor.document.uri.fsPath === resource.fsPath) {
       this.line = getVisibleLine(editor)
@@ -255,19 +311,24 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
       if (isResourceChange || this.firstUpdate || this.forceUpdate) {
         this.doUpdate()
       } else {
-        if (this.refreshInterval > 0) { this.throttleTimer = setTimeout(() => this.doUpdate(), this.refreshInterval) }
+        if (this.refreshInterval > 0) {
+          this.throttleTimer = setTimeout(
+            () => this.doUpdate(),
+            this.refreshInterval,
+          )
+        }
       }
     }
 
     this.firstUpdate = false
   }
 
-  public refresh (forceUpdate: boolean = false) {
+  public refresh(forceUpdate: boolean = false) {
     this.forceUpdate = forceUpdate
     this.update(this._resource)
   }
 
-  public updateConfiguration () {
+  public updateConfiguration() {
     if (this._previewConfigurations.hasConfigurationChanged(this._resource)) {
       this.config = vscode.workspace.getConfiguration('asciidoc', this.resource)
       this.refreshInterval = this.config.get<number>('preview.refreshInterval')
@@ -275,14 +336,14 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     }
   }
 
-  public get position (): vscode.ViewColumn | undefined {
+  public get position(): vscode.ViewColumn | undefined {
     return this.editor.viewColumn
   }
 
-  public matchesResource (
+  public matchesResource(
     otherResource: vscode.Uri,
     otherPosition: vscode.ViewColumn | undefined,
-    otherLocked: boolean
+    otherLocked: boolean,
   ): boolean {
     if (this.position !== otherPosition) {
       return false
@@ -295,38 +356,59 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     }
   }
 
-  public matches (otherPreview: AsciidocPreview): boolean {
-    return this.matchesResource(otherPreview._resource, otherPreview.position, otherPreview._locked)
+  public matches(otherPreview: AsciidocPreview): boolean {
+    return this.matchesResource(
+      otherPreview._resource,
+      otherPreview.position,
+      otherPreview._locked,
+    )
   }
 
-  public reveal (viewColumn: vscode.ViewColumn) {
+  public reveal(viewColumn: vscode.ViewColumn) {
     this.editor.reveal(viewColumn)
   }
 
-  public toggleLock () {
+  public toggleLock() {
     this._locked = !this._locked
-    this.editor.title = AsciidocPreview.getPreviewTitle(this._resource, this._locked)
+    this.editor.title = AsciidocPreview.getPreviewTitle(
+      this._resource,
+      this._locked,
+    )
   }
 
-  private get iconPath () {
-    const root = vscode.Uri.joinPath(this._contributionProvider.extensionUri, 'media')
+  private get iconPath() {
+    const root = vscode.Uri.joinPath(
+      this._contributionProvider.extensionUri,
+      'media',
+    )
     return {
       light: vscode.Uri.joinPath(root, 'preview-light.svg'),
       dark: vscode.Uri.joinPath(root, 'preview-dark.svg'),
     }
   }
 
-  private isPreviewOf (resource: vscode.Uri): boolean {
+  private isPreviewOf(resource: vscode.Uri): boolean {
     return this._resource.fsPath === resource.fsPath
   }
 
-  private static getPreviewTitle (resource: vscode.Uri, locked: boolean): string {
+  private static getPreviewTitle(
+    resource: vscode.Uri,
+    locked: boolean,
+  ): string {
     return locked
-      ? localize('preview.locked.title', '[Preview] {0}', path.basename(resource.fsPath))
-      : localize('preview.unlocked.title', 'Preview {0}', path.basename(resource.fsPath))
+      ? localize(
+          'preview.locked.title',
+          '[Preview] {0}',
+          path.basename(resource.fsPath),
+        )
+      : localize(
+          'preview.unlocked.title',
+          'Preview {0}',
+          path.basename(resource.fsPath),
+        )
   }
 
-  private updateForView (resource: vscode.Uri, topLine: number | undefined) {
+  private updateForView(resource: vscode.Uri, topLine: number | undefined) {
     if (!this.isPreviewOf(resource)) {
       return
     }
@@ -346,14 +428,14 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     }
   }
 
-  private postMessage (msg: any) {
+  private postMessage(msg: any) {
     if (!this._disposed) {
       this.editor.webview.postMessage(msg)
     }
   }
 
   // Do the preview content update
-  private async doUpdate (): Promise<void> {
+  private async doUpdate(): Promise<void> {
     this._logger.log('Updating the preview content')
 
     const resource = this._resource
@@ -366,9 +448,12 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     }
 
     const document = await vscode.workspace.openTextDocument(resource)
-    if (!this.forceUpdate && this.currentVersion &&
+    if (
+      !this.forceUpdate &&
+      this.currentVersion &&
       this.currentVersion.resource.fsPath === resource.fsPath &&
-      this.currentVersion.version === document.version) {
+      this.currentVersion.version === document.version
+    ) {
       if (this.line) {
         this.updateForView(resource, this.line)
       }
@@ -380,30 +465,47 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
 
     // add webView
     if (this._resource === resource) {
-      this.editor.title = AsciidocPreview.getPreviewTitle(this._resource, this._locked)
+      this.editor.title = AsciidocPreview.getPreviewTitle(
+        this._resource,
+        this._locked,
+      )
     }
     this.editor.iconPath = this.iconPath
-    const asciidocPreviewConfiguration = this._previewConfigurations.loadAndCacheConfiguration(resource)
-    this.editor.webview.options = AsciidocPreview.getWebviewOptions(resource, this._contributionProvider, asciidocPreviewConfiguration)
-    this.editor.webview.html = await this._contentProvider.providePreviewHTML(document, this._previewConfigurations, this, this.line)
+    const asciidocPreviewConfiguration =
+      this._previewConfigurations.loadAndCacheConfiguration(resource)
+    this.editor.webview.options = AsciidocPreview.getWebviewOptions(
+      resource,
+      this._contributionProvider,
+      asciidocPreviewConfiguration,
+    )
+    this.editor.webview.html = await this._contentProvider.providePreviewHTML(
+      document,
+      this._previewConfigurations,
+      this,
+      this.line,
+    )
   }
 
-  private static getWebviewOptions (
+  private static getWebviewOptions(
     resource: vscode.Uri,
     contributionProvider: AsciidocContributionProvider,
-    asciidocPreviewConfiguration: AsciidocPreviewConfiguration
+    asciidocPreviewConfiguration: AsciidocPreviewConfiguration,
   ): vscode.WebviewOptions {
     return {
       enableScripts: true,
       enableCommandUris: true,
-      localResourceRoots: AsciidocPreview.getLocalResourceRoots(resource, contributionProvider, asciidocPreviewConfiguration),
+      localResourceRoots: AsciidocPreview.getLocalResourceRoots(
+        resource,
+        contributionProvider,
+        asciidocPreviewConfiguration,
+      ),
     }
   }
 
-  private static getLocalResourceRoots (
+  private static getLocalResourceRoots(
     resource: vscode.Uri,
     contributionProvider: AsciidocContributionProvider,
-    asciidocPreviewConfiguration: AsciidocPreviewConfiguration
+    asciidocPreviewConfiguration: AsciidocPreviewConfiguration,
   ): vscode.Uri[] {
     const baseRoots: vscode.Uri[] = [
       vscode.Uri.joinPath(contributionProvider.extensionUri, 'media'),
@@ -427,7 +529,7 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     return baseRoots
   }
 
-  private onDidScrollPreview (line: number) {
+  private onDidScrollPreview(line: number) {
     this.line = line
     for (const editor of vscode.window.visibleTextEditors) {
       if (!this.isPreviewOf(editor.document.uri)) {
@@ -441,11 +543,15 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
       const start = Math.floor(fraction * text.length)
       editor.revealRange(
         new vscode.Range(sourceLine, start, sourceLine + 1, 0),
-        vscode.TextEditorRevealType.AtTop)
+        vscode.TextEditorRevealType.AtTop,
+      )
     }
   }
 
-  private resolveDocumentLink (href: string): { path: string, fragment: string } {
+  private resolveDocumentLink(href: string): {
+    path: string
+    fragment: string
+  } {
     let [hrefPath, fragment] = href.split('#').map((c) => decodeURIComponent(c))
     if (hrefPath.startsWith('file:///')) {
       hrefPath = hrefPath.replace('file://', '')
@@ -457,9 +563,12 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     return { path: hrefPath, fragment }
   }
 
-  private async onDidClickPreviewLink (href: string) {
+  private async onDidClickPreviewLink(href: string) {
     const targetResource = this.resolveDocumentLink(href)
-    const openLinks = this.config.get<string>('preview.openLinksToAsciidocFiles', 'inPreview')
+    const openLinks = this.config.get<string>(
+      'preview.openLinksToAsciidocFiles',
+      'inPreview',
+    )
     if (openLinks === 'inPreview') {
       const asciidocLink = await resolveLinkToAsciidocFile(targetResource.path)
       if (asciidocLink) {
@@ -470,30 +579,38 @@ export class AsciidocPreview extends Disposable implements WebviewResourceProvid
     vscode.commands.executeCommand('_asciidoc.openDocumentLink', targetResource)
   }
 
-  private async onCacheImageSizes (imageInfo: { id: string, width: number, height: number }[]) {
+  private async onCacheImageSizes(
+    imageInfo: { id: string; width: number; height: number }[],
+  ) {
     this.imageInfo = imageInfo
   }
 
-  asWebviewUri (resource: vscode.Uri) {
+  asWebviewUri(resource: vscode.Uri) {
     return this.editor.webview.asWebviewUri(resource)
   }
 
-  asMediaWebViewSrc (...pathSegments: string[]): string {
-    return this.escapeAttribute(this.asWebviewUri(vscode.Uri.joinPath(this._contributionProvider.extensionUri, ...pathSegments)))
+  asMediaWebViewSrc(...pathSegments: string[]): string {
+    return this.escapeAttribute(
+      this.asWebviewUri(
+        vscode.Uri.joinPath(
+          this._contributionProvider.extensionUri,
+          ...pathSegments,
+        ),
+      ),
+    )
   }
 
-  get cspSource () {
+  get cspSource() {
     return this.editor.webview.cspSource
   }
 
-  private escapeAttribute (value: string | vscode.Uri): string {
+  private escapeAttribute(value: string | vscode.Uri): string {
     return value.toString().replace(/"/g, '&quot;')
   }
 }
 
-export interface PreviewSettings
-{
-  readonly resourceColumn: vscode.ViewColumn;
-  readonly previewColumn: vscode.ViewColumn;
-  readonly locked: boolean;
+export interface PreviewSettings {
+  readonly resourceColumn: vscode.ViewColumn
+  readonly previewColumn: vscode.ViewColumn
+  readonly locked: boolean
 }

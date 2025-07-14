@@ -10,8 +10,15 @@ suite('asciidoc.exportAsPDF', async () => {
   test('Should create an HTML cover page without title page logo', async () => {
     const document = processor.load(`= The Intrepid Chronicles
 Kismet R. Lee <kismet@asciidoctor.org>`)
-    const coverHtmlContent = _generateCoverHtmlContent(undefined, __dirname, document, vscode.Uri.parse(''))
-    assert.strictEqual(coverHtmlContent, `<!DOCTYPE html>
+    const coverHtmlContent = _generateCoverHtmlContent(
+      undefined,
+      __dirname,
+      document,
+      vscode.Uri.parse(''),
+    )
+    assert.strictEqual(
+      coverHtmlContent,
+      `<!DOCTYPE html>
   <html>
   <head>
     <meta charset="UTF-8">
@@ -28,6 +35,7 @@ Kismet R. Lee <kismet@asciidoctor.org>`)
     </div>
   </div>
   </body>
-  </html>`)
+  </html>`,
+    )
   })
 })

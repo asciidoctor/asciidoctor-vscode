@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { MessagePoster } from './messaging'
 
@@ -9,7 +9,7 @@ export class StyleLoadingMonitor {
 
   private poster?: MessagePoster
 
-  constructor () {
+  constructor() {
     const onStyleLoadError = (event: any) => {
       const source = event.target.dataset.source
       this.unloadedStyles.push(source)
@@ -17,7 +17,9 @@ export class StyleLoadingMonitor {
 
     window.addEventListener('DOMContentLoaded', () => {
       // @ts-ignore TS2488
-      for (const link of document.getElementsByClassName('code-user-style') as HTMLCollectionOf<HTMLElement>) {
+      for (const link of document.getElementsByClassName(
+        'code-user-style',
+      ) as HTMLCollectionOf<HTMLElement>) {
         if (link.dataset.source) {
           link.onerror = onStyleLoadError
         }
@@ -30,15 +32,19 @@ export class StyleLoadingMonitor {
       }
       this.finishedLoading = true
       if (this.poster) {
-        this.poster.postMessage('previewStyleLoadError', { unloadedStyles: this.unloadedStyles })
+        this.poster.postMessage('previewStyleLoadError', {
+          unloadedStyles: this.unloadedStyles,
+        })
       }
     })
   }
 
-  public setPoster (poster: MessagePoster): void {
+  public setPoster(poster: MessagePoster): void {
     this.poster = poster
     if (this.finishedLoading) {
-      poster.postMessage('previewStyleLoadError', { unloadedStyles: this.unloadedStyles })
+      poster.postMessage('previewStyleLoadError', {
+        unloadedStyles: this.unloadedStyles,
+      })
     }
   }
 }

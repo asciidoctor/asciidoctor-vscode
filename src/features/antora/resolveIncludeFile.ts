@@ -18,16 +18,27 @@ const RESOURCE_ID_DETECTOR_RX = /[$:@]/
  * @param {ContentCatalog} catalog - The content catalog that contains the virtual files in the site.
  * @returns {Object} A map containing the file, path, and contents of the resolved file.
  */
-export function resolveIncludeFile (target, page, cursor, catalog, antoraConfig) {
+export function resolveIncludeFile(
+  target,
+  page,
+  cursor,
+  catalog,
+  antoraConfig,
+) {
   const src = (cursor.file || {}).src || page.src
   let resolved
   let family
   let relative
   if (RESOURCE_ID_DETECTOR_RX.test(target)) {
     // support for legacy {partialsdir} and {examplesdir} prefixes is @deprecated; scheduled to be removed in Antora 4
-    if (target.startsWith(PARTIALS_DIR_TOKEN) || target.startsWith(EXAMPLES_DIR_TOKEN)) {
+    if (
+      target.startsWith(PARTIALS_DIR_TOKEN) ||
+      target.startsWith(EXAMPLES_DIR_TOKEN)
+    ) {
       ;[family, relative] = splitOnce(target, '$')
-      if (relative.charAt() === '/') relative = relative.substr(1)
+      if (relative.charAt() === '/') {
+        relative = relative.substr(1)
+      }
       resolved = catalog.getById({
         component: src.component,
         version: src.version,
@@ -44,7 +55,12 @@ export function resolveIncludeFile (target, page, cursor, catalog, antoraConfig)
       component: src.component,
       version: src.version,
       // QUESTION does cursor.dir always contain the value we expect?
-      path: ospath.normalize(ospath.relative(antoraConfig.contentSourceRootFsPath, ospath.join(cursor.dir.toString(), target))),
+      path: ospath.normalize(
+        ospath.relative(
+          antoraConfig.contentSourceRootFsPath,
+          ospath.join(cursor.dir.toString(), target),
+        ),
+      ),
     })
   }
   if (resolved) {
@@ -60,7 +76,13 @@ export function resolveIncludeFile (target, page, cursor, catalog, antoraConfig)
   }
 }
 
-function extractResourceId ({ component, version, module: module_, family, relative }) {
+function extractResourceId({
+  component,
+  version,
+  module: module_,
+  family,
+  relative,
+}) {
   return { component, version, module: module_, family, relative }
 }
 
@@ -74,7 +96,9 @@ function extractResourceId ({ component, version, module: module_, family, relat
  * @returns {String[]} A 2-element Array that contains the string before and after the separator, if
  * the separator is found, otherwise a single-element Array that contains the original string.
  */
-function splitOnce (string, separator) {
+function splitOnce(string, separator) {
   const separatorIdx = string.indexOf(separator)
-  return ~separatorIdx ? [string.substr(0, separatorIdx), string.substr(separatorIdx + 1)] : [string]
+  return ~separatorIdx
+    ? [string.substr(0, separatorIdx), string.substr(separatorIdx + 1)]
+    : [string]
 }

@@ -1,21 +1,24 @@
-import * as vscode from 'vscode'
-import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
 import { Asciidoctor } from '@asciidoctor/core'
-import { ExtensionContentSecurityPolicyArbiter } from './security'
-import { AsciidocPreviewConfigurationManager } from './features/previewConfig'
-import { SkinnyTextDocument } from './util/document'
+import * as vscode from 'vscode'
 import { AsciidocContributionProvider } from './asciidocExtensions'
-import { getAntoraDocumentContext, getAntoraConfig } from './features/antora/antoraDocument'
-import { AntoraSupportManager } from './features/antora/antoraContext'
-import { WebviewResourceProvider } from './util/resources'
-import { AsciidoctorConfigProvider } from './features/asciidoctorConfig'
 import { AsciidocTextDocument } from './asciidocTextDocument'
-import { AsciidoctorExtensionsProvider } from './features/asciidoctorExtensions'
-import { AsciidoctorDiagnosticProvider } from './features/asciidoctorDiagnostic'
 import { AsciidoctorProcessor } from './asciidoctorProcessor'
-import { AsciidoctorAttributesConfig } from './features/asciidoctorAttributesConfig'
+import { AsciidoctorWebViewConverter } from './asciidoctorWebViewConverter'
+import { AntoraSupportManager } from './features/antora/antoraContext'
+import {
+  getAntoraConfig,
+  getAntoraDocumentContext,
+} from './features/antora/antoraDocument'
 import { IncludeProcessor } from './features/antora/includeProcessor'
 import { resolveIncludeFile } from './features/antora/resolveIncludeFile'
+import { AsciidoctorAttributesConfig } from './features/asciidoctorAttributesConfig'
+import { AsciidoctorConfigProvider } from './features/asciidoctorConfig'
+import { AsciidoctorDiagnosticProvider } from './features/asciidoctorDiagnostic'
+import { AsciidoctorExtensionsProvider } from './features/asciidoctorExtensions'
+import { AsciidocPreviewConfigurationManager } from './features/previewConfig'
+import { ExtensionContentSecurityPolicyArbiter } from './security'
+import { SkinnyTextDocument } from './util/document'
+import { WebviewResourceProvider } from './util/resources'
 
 const highlightjsAdapter = require('./highlightjs-adapter')
 
@@ -24,21 +27,20 @@ export type AsciidoctorBuiltInBackends = 'html5' | 'docbook5'
 const previewConfigurationManager = new AsciidocPreviewConfigurationManager()
 
 export class AsciidocEngine {
-  constructor (
+  constructor(
     readonly contributionProvider: AsciidocContributionProvider,
     readonly asciidoctorConfigProvider: AsciidoctorConfigProvider,
     readonly asciidoctorExtensionsProvider: AsciidoctorExtensionsProvider,
-    readonly asciidoctorDiagnosticProvider: AsciidoctorDiagnosticProvider
-  ) {
-  }
+    readonly asciidoctorDiagnosticProvider: AsciidoctorDiagnosticProvider,
+  ) {}
 
   // Export
 
-  public async export (
+  public async export(
     textDocument: vscode.TextDocument,
     backend: AsciidoctorBuiltInBackends,
-    asciidoctorAttributes = {}
-  ): Promise<{ output: string, document: Asciidoctor.Document }> {
+    asciidoctorAttributes = {},
+  ): Promise<{ output: string; document: Asciidoctor.Document }> {
     this.asciidoctorDiagnosticProvider.delete(textDocument.uri)
     const asciidoctorProcessor = AsciidoctorProcessor.getInstance()
     const memoryLogger = asciidoctorProcessor.activateMemoryLogger()
@@ -78,29 +80,31 @@ export class AsciidocEngine {
 
   // Convert (preview)
 
-  public async convertFromUri (
+  public async convertFromUri(
     documentUri: vscode.Uri,
     context: vscode.ExtensionContext,
     editor: WebviewResourceProvider,
-    line?: number
-  ): Promise<{ html: string, document?: Asciidoctor.Document }> {
+    line?: number,
+  ): Promise<{ html: string; document?: Asciidoctor.Document }> {
     const textDocument = await vscode.workspace.openTextDocument(documentUri)
-    const {
-      html,
-      document,
-    } = await this.convertFromTextDocument(textDocument, context, editor, line)
+    const { html, document } = await this.convertFromTextDocument(
+      textDocument,
+      context,
+      editor,
+      line,
+    )
     return {
       html,
       document,
     }
   }
 
-  public async convertFromTextDocument (
+  public async convertFromTextDocument(
     textDocument: SkinnyTextDocument,
     context: vscode.ExtensionContext,
     editor: WebviewResourceProvider,
-    line?: number
-  ): Promise<{ html: string, document: Asciidoctor.Document }> {
+    line?: number,
+  ): Promise<{ html: string; document: Asciidoctor.Document }> {
     this.asciidoctorDiagnosticProvider.delete(textDocument.uri)
     const asciidoctorProcessor = AsciidoctorProcessor.getInstance()
     const memoryLogger = asciidoctorProcessor.activateMemoryLogger()
@@ -113,16 +117,26 @@ export class AsciidocEngine {
       attributes,
       header_only: true,
     })
-    const isRougeSourceHighlighterEnabled = document.isAttribute('source-highlighter', 'rouge')
+    const isRougeSourceHighlighterEnabled = document.isAttribute(
+      'source-highlighter',
+      'rouge',
+    )
     if (isRougeSourceHighlighterEnabled) {
       // Force the source highlighter to Highlight.js (since Rouge is not supported)
       document.setAttribute('source-highlighter', 'highlight.js')
     }
-    const krokiServerUrl = document.getAttribute('kroki-server-url') || 'https://kroki.io'
+    const krokiServerUrl =
+      document.getAttribute('kroki-server-url') || 'https://kroki.io'
 
     // Antora Resource Identifiers resolution
-    const antoraDocumentContext = await getAntoraDocumentContext(textDocument.uri, context.workspaceState)
-    const cspArbiter = new ExtensionContentSecurityPolicyArbiter(context.globalState, context.workspaceState)
+    const antoraDocumentContext = await getAntoraDocumentContext(
+      textDocument.uri,
+      context.workspaceState,
+    )
+    const cspArbiter = new ExtensionContentSecurityPolicyArbiter(
+      context.globalState,
+      context.workspaceState,
+    )
     const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter(
       textDocument,
       editor,
@@ -133,9 +147,11 @@ export class AsciidocEngine {
       antoraDocumentContext,
       line,
       null,
-      krokiServerUrl
+      krokiServerUrl,
     )
-    processor.ConverterFactory.register(asciidoctorWebViewConverter, ['webview-html5'])
+    processor.ConverterFactory.register(asciidoctorWebViewConverter, [
+      'webview-html5',
+    ])
 
     const registry = processor.Extensions.create()
     await this.asciidoctorExtensionsProvider.activate(registry)
@@ -143,23 +159,35 @@ export class AsciidocEngine {
     await this.asciidoctorConfigProvider.activate(registry, textDocumentUri)
     if (antoraDocumentContext !== undefined) {
       const antoraConfig = await getAntoraConfig(textDocumentUri)
-      registry.includeProcessor(IncludeProcessor.$new((_, target, cursor) => resolveIncludeFile(
-        target, {
-          src: antoraDocumentContext.resourceContext,
-        },
-        cursor,
-        antoraDocumentContext.getContentCatalog(),
-        antoraConfig
-      )))
+      registry.includeProcessor(
+        IncludeProcessor.$new((_, target, cursor) =>
+          resolveIncludeFile(
+            target,
+            {
+              src: antoraDocumentContext.resourceContext,
+            },
+            cursor,
+            antoraDocumentContext.getContentCatalog(),
+            antoraConfig,
+          ),
+        ),
+      )
     }
     if (context && editor) {
-      highlightjsAdapter.register(asciidoctorProcessor.highlightjsBuiltInSyntaxHighlighter, context, editor)
+      highlightjsAdapter.register(
+        asciidoctorProcessor.highlightjsBuiltInSyntaxHighlighter,
+        context,
+        editor,
+      )
     } else {
       asciidoctorProcessor.restoreBuiltInSyntaxHighlighter()
     }
-    const antoraSupport = AntoraSupportManager.getInstance(context.workspaceState)
+    const antoraSupport = AntoraSupportManager.getInstance(
+      context.workspaceState,
+    )
     const antoraAttributes = await antoraSupport.getAttributes(textDocumentUri)
-    const asciidocTextDocument = AsciidocTextDocument.fromTextDocument(textDocument)
+    const asciidocTextDocument =
+      AsciidocTextDocument.fromTextDocument(textDocument)
     const baseDir = asciidocTextDocument.baseDir
     const documentDirectory = asciidocTextDocument.dirName
     const documentBasename = asciidocTextDocument.fileName
@@ -201,7 +229,10 @@ export class AsciidocEngine {
         block.addRole('data-line-' + block.getLineNumber())
       })
       const html = document.convert(options)
-      this.asciidoctorDiagnosticProvider.reportErrors(memoryLogger, textDocument)
+      this.asciidoctorDiagnosticProvider.reportErrors(
+        memoryLogger,
+        textDocument,
+      )
       return {
         html,
         document,
@@ -216,7 +247,9 @@ export class AsciidocEngine {
    * Get user defined template directories from configuration.
    * @private
    */
-  private getTemplateDirs () {
-    return vscode.workspace.getConfiguration('asciidoc.preview', null).get<string[]>('templates', [])
+  private getTemplateDirs() {
+    return vscode.workspace
+      .getConfiguration('asciidoc.preview', null)
+      .get<string[]>('templates', [])
   }
 }

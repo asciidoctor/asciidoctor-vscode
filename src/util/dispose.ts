@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 
-export function disposeAll (disposables: vscode.Disposable[]) {
+export function disposeAll(disposables: vscode.Disposable[]) {
   while (disposables.length) {
     const item = disposables.pop()
     item?.dispose()
@@ -12,7 +12,7 @@ export abstract class Disposable {
 
   protected _disposables: vscode.Disposable[] = []
 
-  public dispose (): any {
+  public dispose(): any {
     if (this._isDisposed) {
       return
     }
@@ -20,7 +20,7 @@ export abstract class Disposable {
     disposeAll(this._disposables)
   }
 
-  protected _register<T extends vscode.Disposable> (value: T): T {
+  protected _register<T extends vscode.Disposable>(value: T): T {
     if (this._isDisposed) {
       value.dispose()
     } else {
@@ -29,7 +29,7 @@ export abstract class Disposable {
     return value
   }
 
-  protected get isDisposed () {
+  protected get isDisposed() {
     return this._isDisposed
   }
 }

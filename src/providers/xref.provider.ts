@@ -1,15 +1,15 @@
 import * as path from 'path'
 import * as vscode from 'vscode'
-import { createContext, Context } from './createContext'
 import { findFiles } from '../util/findFiles'
+import { Context, createContext } from './createContext'
 
 export const xrefProvider = {
   provideCompletionItems,
 }
 
-export async function provideCompletionItems (
+export async function provideCompletionItems(
   document: vscode.TextDocument,
-  position: vscode.Position
+  position: vscode.Position,
 ): Promise<vscode.CompletionItem[]> {
   const context = createContext(document, position)
   if (shouldProvide(context, 'xref:')) {
@@ -25,24 +25,31 @@ export async function provideCompletionItems (
  * Checks if we should provide any CompletionItems
  * @param context
  */
-function shouldProvide (context: Context, keyword :string): boolean {
+function shouldProvide(context: Context, keyword: string): boolean {
   const occurence = context.textFullLine.indexOf(
     keyword,
-    context.position.character - keyword.length
+    context.position.character - keyword.length,
   )
   return occurence === context.position.character - keyword.length
 }
 
-async function getIdsFromFile (file: vscode.Uri) {
+async function getIdsFromFile(file: vscode.Uri) {
   const data = await vscode.workspace.fs.readFile(file)
   const content = Buffer.from(data).toString('utf8')
   const labelsFromLegacyBlock = await getLabelsFromLegacyBlock(content)
-  const labelsFromShorthandNotation = await getLabelsFromShorthandNotation(content)
-  const labelsFromLonghandNotation = await getLabelsFromLonghandNotation(content)
-  return labelsFromLegacyBlock.concat(labelsFromShorthandNotation, labelsFromLonghandNotation)
+  const labelsFromShorthandNotation =
+    await getLabelsFromShorthandNotation(content)
+  const labelsFromLonghandNotation =
+    await getLabelsFromLonghandNotation(content)
+  return labelsFromLegacyBlock.concat(
+    labelsFromShorthandNotation,
+    labelsFromLonghandNotation,
+  )
 }
 
-async function getLabelsFromLonghandNotation (content: string): Promise<string[]> {
+async function getLabelsFromLonghandNotation(
+  content: string,
+): Promise<string[]> {
   const regex = /\[id=(\w+)\]/g
   const matched = content.match(regex)
   if (matched) {
@@ -51,7 +58,9 @@ async function getLabelsFromLonghandNotation (content: string): Promise<string[]
   return []
 }
 
-async function getLabelsFromShorthandNotation (content: string): Promise<string[]> {
+async function getLabelsFromShorthandNotation(
+  content: string,
+): Promise<string[]> {
   const regex = /\[#(\w+)\]/g
   const matched = content.match(regex)
   if (matched) {
@@ -60,7 +69,7 @@ async function getLabelsFromShorthandNotation (content: string): Promise<string[
   return []
 }
 
-async function getLabelsFromLegacyBlock (content: string): Promise<string[]> {
+async function getLabelsFromLegacyBlock(content: string): Promise<string[]> {
   const regex = /\[\[(\w+)\]\]/g
   const matched = content.match(regex)
   if (matched) {
@@ -72,7 +81,9 @@ async function getLabelsFromLegacyBlock (content: string): Promise<string[]> {
 /**
  * Provide Completion Items
  */
-async function provideCrossRef (context: Context): Promise<vscode.CompletionItem[]> {
+async function provideCrossRef(
+  context: Context,
+): Promise<vscode.CompletionItem[]> {
   const { textFullLine, position } = context
   const indexOfNextWhiteSpace = textFullLine.includes(' ', position.character)
     ? textFullLine.indexOf(' ', position.character)
@@ -80,7 +91,7 @@ async function provideCrossRef (context: Context): Promise<vscode.CompletionItem
   //Find the text between citenp: and the next whitespace character
   const search = textFullLine.substring(
     textFullLine.lastIndexOf(':', position.character + 1) + 1,
-    indexOfNextWhiteSpace
+    indexOfNextWhiteSpace,
   )
 
   const completionItems: vscode.CompletionItem[] = []
@@ -90,13 +101,25 @@ async function provideCrossRef (context: Context): Promise<vscode.CompletionItem
     for (const label of labels) {
       if (label.match(search)) {
         if (adocFile.fsPath === context.document.uri.fsPath) {
-          completionItems.push(new vscode.CompletionItem(
-            label + '[]',
-            vscode.CompletionItemKind.Reference))
+          completionItems.push(
+            new vscode.CompletionItem(
+              label + '[]',
+              vscode.CompletionItemKind.Reference,
+            ),
+          )
         } else {
-          completionItems.push(new vscode.CompletionItem(
-            path.relative(path.dirname(context.document.uri.fsPath), adocFile.fsPath) + '#' + label + '[]',
-            vscode.CompletionItemKind.Reference))
+          completionItems.push(
+            new vscode.CompletionItem(
+              path.relative(
+                path.dirname(context.document.uri.fsPath),
+                adocFile.fsPath,
+              ) +
+                '#' +
+                label +
+                '[]',
+              vscode.CompletionItemKind.Reference,
+            ),
+          )
         }
       }
     }
@@ -105,14 +128,16 @@ async function provideCrossRef (context: Context): Promise<vscode.CompletionItem
   return completionItems
 }
 
-async function provideInternalRef (context: Context): Promise<vscode.CompletionItem[]> {
+async function provideInternalRef(
+  context: Context,
+): Promise<vscode.CompletionItem[]> {
   const { textFullLine, position, document } = context
   const indexOfNextWhiteSpace = textFullLine.includes(' ', position.character)
     ? textFullLine.indexOf(' ', position.character)
     : textFullLine.length
   const search = textFullLine.substring(
     textFullLine.lastIndexOf('<', position.character + 1) + 1,
-    indexOfNextWhiteSpace
+    indexOfNextWhiteSpace,
   )
 
   const internalRefLabels = await getIdsFromFile(document.uri)

@@ -1,14 +1,14 @@
 import * as assert from 'assert'
 import 'mocha'
 import * as vscode from 'vscode'
-import AsciidocFoldingProvider from '../features/foldingProvider'
-import { InMemoryDocument } from './inMemoryDocument'
 import { AsciidocLoader } from '../asciidocLoader'
 import { AsciidoctorConfig } from '../features/asciidoctorConfig'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
 import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
+import AsciidocFoldingProvider from '../features/foldingProvider'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
 import { extensionContext } from './helper'
-import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
+import { InMemoryDocument } from './inMemoryDocument'
 
 const testFileName = vscode.Uri.file('test.adoc')
 
@@ -153,7 +153,8 @@ An open block can be an anonymous container,
 or it can masquerade as any other block.
 --
 
-this is a paragraph`)
+this is a paragraph`,
+      )
       assert.strictEqual(folds.length, 1, 'expecting 1 fold')
       assert.deepStrictEqual(folds, [
         new vscode.FoldingRange(2, 5, vscode.FoldingRangeKind.Region),
@@ -168,9 +169,12 @@ this is a paragraph`)
 An unterminated open block.
 Fold will end at the end of the document.
 
-this is a paragraph`)
+this is a paragraph`,
+      )
       assert.strictEqual(folds.length, 1, 'expecting 1 fold')
-      assert.deepStrictEqual(folds, [new vscode.FoldingRange(2, 6, vscode.FoldingRangeKind.Region)])
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(2, 6, vscode.FoldingRangeKind.Region),
+      ])
     })
 
     test('Should fold open block acting as a sidebar', async () => {
@@ -185,7 +189,8 @@ This is aside text.
 It is used to present information related to the main content.
 --
 
-this is a paragraph`)
+this is a paragraph`,
+      )
       assert.strictEqual(folds.length, 1, 'expecting 1 fold')
       assert.deepStrictEqual(folds, [
         new vscode.FoldingRange(4, 8, vscode.FoldingRangeKind.Region),
@@ -201,7 +206,8 @@ this is a paragraph`)
 puts "I'm a source block!"
 --
 
-this is a paragraph`)
+this is a paragraph`,
+      )
       assert.strictEqual(folds.length, 1, 'expecting 1 fold')
       assert.deepStrictEqual(folds, [
         new vscode.FoldingRange(3, 5, vscode.FoldingRangeKind.Region),
@@ -218,7 +224,8 @@ this is a paragraph`)
 text
 --
 
-after`)
+after`,
+      )
       assert.strictEqual(folds.length, 1, 'expecting 1 fold')
       assert.deepStrictEqual(folds, [
         new vscode.FoldingRange(4, 6, vscode.FoldingRangeKind.Region),
@@ -236,7 +243,8 @@ puts "I'm a nested block!"
 --
 --
 
-this is a paragraph`)
+this is a paragraph`,
+      )
       assert.strictEqual(folds.length, 2, 'expecting 1 folds')
       assert.deepStrictEqual(folds, [
         new vscode.FoldingRange(3, 4, vscode.FoldingRangeKind.Region),
@@ -253,7 +261,8 @@ this is a paragraph`)
 inside
 --
 
-this is a paragraph`)
+this is a paragraph`,
+      )
       assert.strictEqual(folds.length, 1, 'expecting 1 folds')
       assert.deepStrictEqual(folds, [
         new vscode.FoldingRange(2, 5, vscode.FoldingRangeKind.Region),
@@ -266,7 +275,8 @@ this is a paragraph`)
 This is a paragraph.
 --
 Open
---`)
+--`,
+      )
       assert.strictEqual(folds.length, 1, 'expecting 1 folds')
       assert.deepStrictEqual(folds, [
         new vscode.FoldingRange(2, 4, vscode.FoldingRangeKind.Region),
@@ -284,7 +294,8 @@ A comment block.
 Notice it's a delimited block.
 ////
 
-this is a paragraph`)
+this is a paragraph`,
+      )
       assert.strictEqual(folds.length, 1, 'expecting 1 fold')
       assert.deepStrictEqual(folds, [
         new vscode.FoldingRange(2, 5, vscode.FoldingRangeKind.Region),
@@ -300,7 +311,8 @@ A comment block.
 Notice it's a delimited block.
 /////
 
-this is a paragraph`)
+this is a paragraph`,
+      )
       assert.strictEqual(folds.length, 1, 'expecting 1 fold')
       assert.deepStrictEqual(folds, [
         new vscode.FoldingRange(2, 5, vscode.FoldingRangeKind.Region),
@@ -316,7 +328,8 @@ Some text.
 From a paragraph.
 ///
 
-this is another paragraph`)
+this is another paragraph`,
+      )
       assert.strictEqual(folds.length, 0, 'expecting 0 fold')
     })
 
@@ -328,9 +341,12 @@ this is another paragraph`)
 An unterminated comment block.
 Fold will end at the end of the document.
 
-this is a paragraph`)
+this is a paragraph`,
+      )
       assert.strictEqual(folds.length, 1, 'expecting 1 fold')
-      assert.deepStrictEqual(folds, [new vscode.FoldingRange(2, 6, vscode.FoldingRangeKind.Region)])
+      assert.deepStrictEqual(folds, [
+        new vscode.FoldingRange(2, 6, vscode.FoldingRangeKind.Region),
+      ])
     })
 
     test('Should not fold comment block if slashes are part of literal text ', async () => {
@@ -341,7 +357,8 @@ this is a paragraph`)
 Some text.
 From a paragraph.
 ///
-this is the same paragraph`)
+this is the same paragraph`,
+      )
       assert.strictEqual(folds.length, 0, 'expecting 0 fold')
     })
   })
@@ -355,7 +372,8 @@ this is the same paragraph`)
 // Another single-line comment.
 // A third single-line comment.
 
-this is a paragraph`)
+this is a paragraph`,
+      )
       assert.strictEqual(folds.length, 1, 'expecting 1 fold')
       assert.deepStrictEqual(folds, [
         new vscode.FoldingRange(2, 4, vscode.FoldingRangeKind.Comment),
@@ -372,7 +390,8 @@ this is a paragraph`)
 
 This is a paragraph.
 
-// This is another comment.`)
+// This is another comment.`,
+      )
       assert.strictEqual(folds.length, 0, 'expecting 0 fold')
     })
 
@@ -381,7 +400,8 @@ This is a paragraph.
         `this is a paragraph
  // This is literal text
 // This is a single line comment
-this is the same paragraph`)
+this is the same paragraph`,
+      )
       assert.strictEqual(folds.length, 0, 'expecting 0 fold')
     })
 
@@ -389,7 +409,8 @@ this is the same paragraph`)
       const folds = await getFoldsForDocument(
         `this is a paragraph
 // This is a comment.
-// The last line of the document is also a comment!`)
+// The last line of the document is also a comment!`,
+      )
       assert.strictEqual(folds.length, 1, 'expecting 1 fold')
       assert.deepStrictEqual(folds, [
         new vscode.FoldingRange(1, 2, vscode.FoldingRangeKind.Comment),
@@ -407,22 +428,28 @@ this is the same paragraph`)
 :attribute3: value 3
 :attribute4: value 4
 
-this is a paragraph`)
+this is a paragraph`,
+      )
       assert.strictEqual(folds.length, 1, 'expecting 1 fold')
-      assert.deepStrictEqual(folds, [
-        new vscode.FoldingRange(2, 5),
-      ])
+      assert.deepStrictEqual(folds, [new vscode.FoldingRange(2, 5)])
     })
   })
 })
 
-async function getFoldsForDocument (contents: string) {
+async function getFoldsForDocument(contents: string) {
   const doc = new InMemoryDocument(testFileName, contents)
-  const provider = new AsciidocFoldingProvider(new AsciidocLoader(
-    new AsciidoctorConfig(),
-    new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
-    new AsciidoctorDiagnostic('text'),
-    extensionContext
-  ))
-  return provider.provideFoldingRanges(doc, new vscode.CancellationTokenSource().token)
+  const provider = new AsciidocFoldingProvider(
+    new AsciidocLoader(
+      new AsciidoctorConfig(),
+      new AsciidoctorExtensions(
+        AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+      ),
+      new AsciidoctorDiagnostic('text'),
+      extensionContext,
+    ),
+  )
+  return provider.provideFoldingRanges(
+    doc,
+    new vscode.CancellationTokenSource().token,
+  )
 }

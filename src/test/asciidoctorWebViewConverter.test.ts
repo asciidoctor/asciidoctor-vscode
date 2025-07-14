@@ -1,12 +1,12 @@
-import vscode from 'vscode'
-import path from 'path'
-import { AsciidoctorWebViewConverter } from '../asciidoctorWebViewConverter'
-import { WebviewResourceProvider } from '../util/resources'
-import { AsciidocPreviewConfigurationManager } from '../features/previewConfig'
-import { AsciidocContributions } from '../asciidocExtensions'
 import assert from 'assert'
+import path from 'path'
 import sinon from 'sinon'
+import vscode from 'vscode'
+import { AsciidocContributions } from '../asciidocExtensions'
+import { AsciidoctorWebViewConverter } from '../asciidoctorWebViewConverter'
 import { AntoraDocumentContext } from '../features/antora/antoraContext'
+import { AsciidocPreviewConfigurationManager } from '../features/previewConfig'
+import { WebviewResourceProvider } from '../util/resources'
 import { getDefaultWorkspaceFolderUri } from '../util/workspace'
 import { createDirectory, createFile, removeFiles } from './workspaceHelper'
 
@@ -14,11 +14,11 @@ const asciidoctor = require('@asciidoctor/core')
 const processor = asciidoctor()
 
 class TestWebviewResourceProvider implements WebviewResourceProvider {
-  asWebviewUri (resource: vscode.Uri): vscode.Uri {
+  asWebviewUri(resource: vscode.Uri): vscode.Uri {
     return resource
   }
 
-  asMediaWebViewSrc (...pathSegments: string[]): string {
+  asMediaWebViewSrc(...pathSegments: string[]): string {
     return pathSegments.toString()
   }
 
@@ -31,13 +31,18 @@ class TestAsciidocContributions implements AsciidocContributions {
   readonly previewStyles: ReadonlyArray<vscode.Uri> = []
 }
 
-function createAntoraDocumentContextStub (resourcePath: string | undefined) {
-  const antoraDocumentContextStub = sinon.createStubInstance(AntoraDocumentContext)
+function createAntoraDocumentContextStub(resourcePath: string | undefined) {
+  const antoraDocumentContextStub = sinon.createStubInstance(
+    AntoraDocumentContext,
+  )
   antoraDocumentContextStub.resolveAntoraResourceIds.returns(resourcePath)
   return antoraDocumentContextStub
 }
 
-function createConverterOptions (converter: AsciidoctorWebViewConverter, fileName: string) {
+function createConverterOptions(
+  converter: AsciidoctorWebViewConverter,
+  fileName: string,
+) {
   // treat the file as the source file for conversion to handle xref correctly between documents
   // review src/asciidocEngin.ts for more information
   const intrinsicAttr = {
@@ -61,46 +66,57 @@ function createConverterOptions (converter: AsciidoctorWebViewConverter, fileNam
   }
 }
 
-async function testAsciidoctorWebViewConverter (
+async function testAsciidoctorWebViewConverter(
   input: string,
   antoraDocumentContext: AntoraDocumentContext | undefined,
   expected: string,
   root: vscode.Uri,
-  pathSegments: string[]
+  pathSegments: string[],
 ) {
-  const file = await vscode.workspace.openTextDocument(vscode.Uri.joinPath(root, ...pathSegments))
+  const file = await vscode.workspace.openTextDocument(
+    vscode.Uri.joinPath(root, ...pathSegments),
+  )
   const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter(
     file,
     new TestWebviewResourceProvider(),
     2,
     false,
     new TestAsciidocContributions(),
-    new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(file.uri),
+    new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(
+      file.uri,
+    ),
     antoraDocumentContext,
-    undefined
+    undefined,
   )
 
-  const html = processor.convert(input, createConverterOptions(asciidoctorWebViewConverter, file.fileName))
+  const html = processor.convert(
+    input,
+    createConverterOptions(asciidoctorWebViewConverter, file.fileName),
+  )
   assert.strictEqual(html, expected)
 }
 
-async function testAsciidoctorWebViewConverterStandalone (
+async function testAsciidoctorWebViewConverterStandalone(
   input: string,
   antoraDocumentContext: AntoraDocumentContext | undefined,
   expected: string,
   root: vscode.Uri,
-  pathSegments: string[]
+  pathSegments: string[],
 ) {
-  const file = await vscode.workspace.openTextDocument(vscode.Uri.joinPath(root, ...pathSegments))
+  const file = await vscode.workspace.openTextDocument(
+    vscode.Uri.joinPath(root, ...pathSegments),
+  )
   const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter(
     file,
     new TestWebviewResourceProvider(),
     2,
     false,
     new TestAsciidocContributions(),
-    new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(file.uri),
+    new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(
+      file.uri,
+    ),
     antoraDocumentContext,
-    undefined
+    undefined,
   )
   const html = processor.convert(input, {
     ...createConverterOptions(asciidoctorWebViewConverter, file.fileName),
@@ -116,18 +132,23 @@ suite('AsciidoctorWebViewConverter', async () => {
     await createFile('', 'images', 'ocean', 'waves', 'seaswell.png')
     await createFile('', 'images', 'mountain.jpeg')
     createdFiles.push(await createFile('', 'help.adoc'))
-    const asciidocFile = await createFile(`image::images/ocean/waves/seaswell.png[]
+    const asciidocFile = await createFile(
+      `image::images/ocean/waves/seaswell.png[]
 
 image::images/mountain.jpeg[]
 
 link:help.adoc[]
-`, 'asciidoctorWebViewConverterTest.adoc')
+`,
+      'asciidoctorWebViewConverterTest.adoc',
+    )
     createdFiles.push(await createDirectory('docs'))
     await createFile('', 'docs', 'modules', 'ROOT', 'pages', 'dummy.adoc') // virtual file
     createdFiles.push(asciidocFile)
 
     // these help with testing xref cross documents
-    createdFiles.push(await createFile(`= Parent document
+    createdFiles.push(
+      await createFile(
+        `= Parent document
 
 Some text
 
@@ -136,20 +157,33 @@ Some text
 
 Please scroll me into position
 
-include::docB.adoc[]`, 'docA.adoc'))
-    createdFiles.push(await createFile(`= Child document
+include::docB.adoc[]`,
+        'docA.adoc',
+      ),
+    )
+    createdFiles.push(
+      await createFile(
+        `= Child document
 
 [#other_anchor]
 == Other link to here
 
 Other text
 
-I want to link to xref:docA.adoc#anchor[]`, 'docB.adoc'))
-    createdFiles.push(await createFile(`= Child document
+I want to link to xref:docA.adoc#anchor[]`,
+        'docB.adoc',
+      ),
+    )
+    createdFiles.push(
+      await createFile(
+        `= Child document
 
 third text
 
-I want to link to xref:docB.adoc#other_anchor[]`, 'docC.adoc'))
+I want to link to xref:docB.adoc#other_anchor[]`,
+        'docC.adoc',
+      ),
+    )
   })
   suiteTeardown(async () => {
     await removeFiles(createdFiles)
@@ -160,7 +194,8 @@ I want to link to xref:docB.adoc#other_anchor[]`, 'docC.adoc'))
   const testCases = [
     // images
     {
-      title: 'Unresolved image resource id from Antora (fallback to base converter)',
+      title:
+        'Unresolved image resource id from Antora (fallback to base converter)',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: 'image::1.0@wyoming:sierra-madre:panorama.png[]',
       antoraDocumentContext: createAntoraDocumentContextStub(undefined),
@@ -171,10 +206,13 @@ I want to link to xref:docB.adoc#other_anchor[]`, 'docC.adoc'))
 </div>`,
     },
     {
-      title: 'Should resolve image src with Antora id\'s input and Antora support activated',
+      title:
+        "Should resolve image src with Antora id's input and Antora support activated",
       filePath: ['docs', 'modules', 'ROOT', 'pages', 'dummy.adoc'],
       input: 'image::2.0@cli:commands:seaswell.png[]',
-      antoraDocumentContext: createAntoraDocumentContextStub(`${workspaceUri.path}/antora/multiComponents/cli/modules/commands/images/seaswell.png`),
+      antoraDocumentContext: createAntoraDocumentContextStub(
+        `${workspaceUri.path}/antora/multiComponents/cli/modules/commands/images/seaswell.png`,
+      ),
       expected: `<div class="imageblock">
 <div class="content">
 <img src="${workspaceUri.path}/antora/multiComponents/cli/modules/commands/images/seaswell.png" alt="seaswell">
@@ -202,7 +240,8 @@ I want to link to xref:docB.adoc#other_anchor[]`, 'docC.adoc'))
     },
     // xref
     {
-      title: 'Should resolve "xref:" macro from included document referencing the source document',
+      title:
+        'Should resolve "xref:" macro from included document referencing the source document',
       filePath: ['docA.adoc'],
       input: `= Parent document
 
@@ -219,7 +258,8 @@ include::docB.adoc[]`,
       standalone: true,
     },
     {
-      title: 'Should resolve "xref:" macro from included document referencing a separate included document',
+      title:
+        'Should resolve "xref:" macro from included document referencing a separate included document',
       filePath: ['docA.adoc'],
       input: `= Parent document
 
@@ -234,7 +274,8 @@ include::docB.adoc[]
 
 include::docC.adoc[]`,
       antoraDocumentContext: undefined, // Antora not enabled
-      expected: '<a href="#other_anchor" data-href="#other_anchor">Other link to here</a>',
+      expected:
+        '<a href="#other_anchor" data-href="#other_anchor">Other link to here</a>',
       standalone: true,
     },
     {
@@ -278,7 +319,8 @@ include::docC.adoc[]`,
 `,
     },
     {
-      title: 'Should resolve "xref:" macro for internal cross reference - with explicit text',
+      title:
+        'Should resolve "xref:" macro for internal cross reference - with explicit text',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: `xref:_text_test[Explicit text]
 
@@ -291,7 +333,8 @@ include::docC.adoc[]`,
 `,
     },
     {
-      title: 'Should resolve "xref:" macro for internal cross reference - with reftext',
+      title:
+        'Should resolve "xref:" macro for internal cross reference - with reftext',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: `xref:_reftext_test[]
 
@@ -305,7 +348,8 @@ include::docC.adoc[]`,
 `,
     },
     {
-      title: 'Should resolve "xref:" macro for internal cross reference - with reftext and explicit text',
+      title:
+        'Should resolve "xref:" macro for internal cross reference - with reftext and explicit text',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: `xref:_reftext_test[Explicit text]
 
@@ -319,7 +363,8 @@ include::docC.adoc[]`,
 `,
     },
     {
-      title: 'Should resolve "xref:" macro for internal cross reference - without matching anchor',
+      title:
+        'Should resolve "xref:" macro for internal cross reference - without matching anchor',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: 'xref:_non_existing_ref_test[]',
       antoraDocumentContext: undefined, // Antora not enabled
@@ -342,7 +387,8 @@ include::docC.adoc[]`,
 </div>`,
     },
     {
-      title: 'Should resolve "xref:" macro to inline anchor - with explicit text',
+      title:
+        'Should resolve "xref:" macro to inline anchor - with explicit text',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: `<<inline_anchor_with_explicit_text>>
 
@@ -356,7 +402,8 @@ include::docC.adoc[]`,
 </div>`,
     },
     {
-      title: 'Should not add role doc to content when no Antora context is provided',
+      title:
+        'Should not add role doc to content when no Antora context is provided',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: '= Test Document',
       antoraDocumentContext: undefined, // Antora not enabled
@@ -409,11 +456,25 @@ See xref:my-table[xrefstyle=short] for more reference.
 
   for (const testCase of testCases) {
     if (testCase.standalone) {
-      test(testCase.title, async () => testAsciidoctorWebViewConverterStandalone(
-        testCase.input, testCase.antoraDocumentContext, testCase.expected, workspaceUri, testCase.filePath
-      ))
+      test(testCase.title, async () =>
+        testAsciidoctorWebViewConverterStandalone(
+          testCase.input,
+          testCase.antoraDocumentContext,
+          testCase.expected,
+          workspaceUri,
+          testCase.filePath,
+        ),
+      )
     } else {
-      test(testCase.title, async () => testAsciidoctorWebViewConverter(testCase.input, testCase.antoraDocumentContext, testCase.expected, workspaceUri, testCase.filePath))
+      test(testCase.title, async () =>
+        testAsciidoctorWebViewConverter(
+          testCase.input,
+          testCase.antoraDocumentContext,
+          testCase.expected,
+          workspaceUri,
+          testCase.filePath,
+        ),
+      )
     }
   }
 })

@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
@@ -7,9 +7,9 @@ import * as vscode from 'vscode'
 export class InMemoryDocument implements vscode.TextDocument {
   private readonly _lines: string[]
 
-  constructor (
+  constructor(
     public readonly uri: vscode.Uri,
-    private readonly _contents: string
+    private readonly _contents: string,
   ) {
     this._lines = this._contents.split(/\n/g)
   }
@@ -21,15 +21,15 @@ export class InMemoryDocument implements vscode.TextDocument {
   isClosed: boolean = false
   eol: vscode.EndOfLine = vscode.EndOfLine.LF
 
-  get fileName (): string {
+  get fileName(): string {
     return this.uri.fsPath
   }
 
-  get lineCount (): number {
+  get lineCount(): number {
     return this._lines.length
   }
 
-  lineAt (line: any): vscode.TextLine {
+  lineAt(line: any): vscode.TextLine {
     return {
       lineNumber: line,
       text: this._lines[line],
@@ -40,38 +40,47 @@ export class InMemoryDocument implements vscode.TextDocument {
     }
   }
 
-  offsetAt (position: vscode.Position): number {
+  offsetAt(position: vscode.Position): number {
     let lines = this._contents.split('\n')
     lines = lines.splice(0, position.line + 1)
-    lines[lines.length - 1] = lines[lines.length - 1].substring(0, position.character)
+    lines[lines.length - 1] = lines[lines.length - 1].substring(
+      0,
+      position.character,
+    )
     return lines.join('\n').split('').length
   }
 
-  positionAt (offset: number): vscode.Position {
+  positionAt(offset: number): vscode.Position {
     const before = this._contents.slice(0, offset)
     const newLines = before.match(/\n/g)
     const line = newLines ? newLines.length : 0
     const preCharacters = before.match(/(\n|^).*$/g)
-    return new vscode.Position(line, preCharacters ? preCharacters[0].length : 0)
+    return new vscode.Position(
+      line,
+      preCharacters ? preCharacters[0].length : 0,
+    )
   }
 
-  getText (_range?: vscode.Range | undefined): string {
+  getText(_range?: vscode.Range | undefined): string {
     return this._contents
   }
 
-  getWordRangeAtPosition (_position: vscode.Position, _regex?: RegExp | undefined): never {
+  getWordRangeAtPosition(
+    _position: vscode.Position,
+    _regex?: RegExp | undefined,
+  ): never {
     throw new Error('Method not implemented.')
   }
 
-  validateRange (_range: vscode.Range): never {
+  validateRange(_range: vscode.Range): never {
     throw new Error('Method not implemented.')
   }
 
-  validatePosition (_position: vscode.Position): never {
+  validatePosition(_position: vscode.Position): never {
     throw new Error('Method not implemented.')
   }
 
-  save (): never {
+  save(): never {
     throw new Error('Method not implemented.')
   }
 }

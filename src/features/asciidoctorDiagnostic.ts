@@ -1,32 +1,41 @@
 import { Asciidoctor } from '@asciidoctor/core'
-import { SkinnyTextDocument } from '../util/document'
 import vscode, { DiagnosticCollection } from 'vscode'
+import { SkinnyTextDocument } from '../util/document'
 
 export interface AsciidoctorDiagnosticProvider {
-  delete (textDocumentUri: vscode.Uri): void
+  delete(textDocumentUri: vscode.Uri): void
 
-  clearAll (): void
+  clearAll(): void
 
-  reportErrors (memoryLogger: Asciidoctor.MemoryLogger, textDocument: SkinnyTextDocument): void
+  reportErrors(
+    memoryLogger: Asciidoctor.MemoryLogger,
+    textDocument: SkinnyTextDocument,
+  ): void
 }
 
 export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
   private readonly errorCollection: DiagnosticCollection
 
-  constructor (name: string) {
+  constructor(name: string) {
     this.errorCollection = vscode.languages.createDiagnosticCollection(name)
   }
 
-  public delete (textDocumentUri: vscode.Uri) {
+  public delete(textDocumentUri: vscode.Uri) {
     this.errorCollection.delete(textDocumentUri)
   }
 
-  public clearAll () {
+  public clearAll() {
     this.errorCollection.clear()
   }
 
-  public reportErrors (memoryLogger: Asciidoctor.MemoryLogger, textDocument: SkinnyTextDocument) {
-    const asciidocDebugConfig = vscode.workspace.getConfiguration('asciidoc.debug', null)
+  public reportErrors(
+    memoryLogger: Asciidoctor.MemoryLogger,
+    textDocument: SkinnyTextDocument,
+  ) {
+    const asciidocDebugConfig = vscode.workspace.getConfiguration(
+      'asciidoc.debug',
+      null,
+    )
     if (asciidocDebugConfig.get('enableErrorDiagnostics')) {
       const diagnostics = []
       memoryLogger.getMessages().forEach((error) => {
@@ -37,16 +46,34 @@ export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
         // allocate to line 0 in the absence of information
         let sourceRange = textDocument.lineAt(0).range
         const location = error.getSourceLocation()
-        if (location) { //There is a source location
-          if (location.getPath() === '<stdin>') { //error is within the file we are parsing
+        if (location) {
+          //There is a source location
+          if (location.getPath() === '<stdin>') {
+            //error is within the file we are parsing
             sourceLine = location.getLineNumber() - 1
             // ensure errors are always associated with a valid line
-            sourceLine = sourceLine >= textDocument.lineCount ? textDocument.lineCount - 1 : sourceLine
+            sourceLine =
+              sourceLine >= textDocument.lineCount
+                ? textDocument.lineCount - 1
+                : sourceLine
             sourceRange = textDocument.lineAt(sourceLine).range
-          } else { //error is coming from an included file
+          } else {
+            //error is coming from an included file
             relatedFile = error.getSourceLocation()
             // try to find the 'include' directive responsible from the info provided by Asciidoctor.js
-            sourceLine = textDocument.getText().split('\n').indexOf(textDocument.getText().split('\n').find((str) => str.startsWith('include') && str.includes(relatedFile.path)))
+            sourceLine = textDocument
+              .getText()
+              .split('\n')
+              .indexOf(
+                textDocument
+                  .getText()
+                  .split('\n')
+                  .find(
+                    (str) =>
+                      str.startsWith('include') &&
+                      str.includes(relatedFile.path),
+                  ),
+              )
             if (sourceLine !== -1) {
               sourceRange = textDocument.lineAt(sourceLine).range
             }
@@ -67,15 +94,20 @@ export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
         if (relatedFile) {
           diagnosticRelated = [
             new vscode.DiagnosticRelatedInformation(
-              new vscode.Location(vscode.Uri.file(relatedFile.file),
-                new vscode.Position(0, 0)
+              new vscode.Location(
+                vscode.Uri.file(relatedFile.file),
+                new vscode.Position(0, 0),
               ),
-              errorMessage
+              errorMessage,
             ),
           ]
           errorMessage = 'There was an error in an included file'
         }
-        const diagnosticError = new vscode.Diagnostic(sourceRange, errorMessage, severity)
+        const diagnosticError = new vscode.Diagnostic(
+          sourceRange,
+          errorMessage,
+          severity,
+        )
         diagnosticError.source = diagnosticSource
         if (diagnosticRelated) {
           diagnosticError.relatedInformation = diagnosticRelated

@@ -1,8 +1,7 @@
+import { runTests } from '@vscode/test-electron'
 import * as path from 'path'
 
-import { runTests } from '@vscode/test-electron'
-
-async function main () {
+async function main() {
   try {
     // from dist/src/test/index.js
     const projectRootPath = path.join(__dirname, '..', '..', '..')
@@ -16,7 +15,10 @@ async function main () {
     const extensionTestsPath = path.join(__dirname, 'suite', 'index')
 
     // The path to the extension test workspace directory
-    const testsWorkspaceDirectoryPath = path.join(projectRootPath, 'test-workspace')
+    const testsWorkspaceDirectoryPath = path.join(
+      projectRootPath,
+      'test-workspace',
+    )
 
     const testOptions = {
       extensionDevelopmentPath,
@@ -29,7 +31,7 @@ async function main () {
     const exitCode = await runTests(testOptions)
     console.log('Exit code: ', exitCode)
     process.exit(exitCode)
-  } catch (err) {
+  } catch (_err) {
     console.error('Failed to run tests')
     process.exit(1)
   }

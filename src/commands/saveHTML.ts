@@ -1,20 +1,22 @@
-import * as vscode from 'vscode'
+import { exec } from 'child_process'
 import * as fs from 'fs'
 import * as path from 'path'
-import { exec } from 'child_process'
-import { Command } from '../commandManager'
+import * as vscode from 'vscode'
 import { AsciidocEngine } from '../asciidocEngine'
+import { Command } from '../commandManager'
 
 export class SaveHTML implements Command {
   public readonly id = 'asciidoc.saveHTML'
 
-  constructor (private readonly engine: AsciidocEngine) {
+  constructor(private readonly engine: AsciidocEngine) {
     this.engine = engine
   }
 
-  public async execute () {
+  public async execute() {
     const editor = vscode.window.activeTextEditor
-    if (editor === null || editor === undefined) { return }
+    if (editor === null || editor === undefined) {
+      return
+    }
 
     const textDocument = editor.document
 
@@ -31,10 +33,13 @@ export class SaveHTML implements Command {
 
     fs.writeFile(htmlPath, html, function (err) {
       if (err) {
-        vscode.window.showErrorMessage('Error writing file ' + htmlPath + '\n' + err.toString())
+        vscode.window.showErrorMessage(
+          'Error writing file ' + htmlPath + '\n' + err.toString(),
+        )
         return
       }
-      vscode.window.showInformationMessage('Successfully converted to ', htmlPath)
+      vscode.window
+        .showInformationMessage('Successfully converted to ', htmlPath)
         .then((selection) => {
           if (selection === htmlPath) {
             switch (process.platform) {

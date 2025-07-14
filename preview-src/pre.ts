@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import { CspAlerter } from './csp'
@@ -7,8 +7,8 @@ import { StyleLoadingMonitor } from './loading'
 
 declare global {
   interface Window {
-    cspAlerter: CspAlerter;
-    styleLoadingMonitor: StyleLoadingMonitor;
+    cspAlerter: CspAlerter
+    styleLoadingMonitor: StyleLoadingMonitor
   }
 }
 

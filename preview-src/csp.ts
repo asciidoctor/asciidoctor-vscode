@@ -1,5 +1,5 @@
 /*---------------------------------------------------------------------------------------------
-  *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
 import { MessagePoster } from './messaging'
@@ -15,7 +15,7 @@ export class CspAlerter {
 
   private messaging?: MessagePoster
 
-  constructor () {
+  constructor() {
     document.addEventListener('securitypolicyviolation', () => {
       this.onCspWarning()
     })
@@ -27,19 +27,19 @@ export class CspAlerter {
     })
   }
 
-  public setPoster (poster: MessagePoster) {
+  public setPoster(poster: MessagePoster) {
     this.messaging = poster
     if (this.didHaveCspWarning) {
       this.showCspWarning()
     }
   }
 
-  private onCspWarning () {
+  private onCspWarning() {
     this.didHaveCspWarning = true
     this.showCspWarning()
   }
 
-  private showCspWarning () {
+  private showCspWarning() {
     const strings = getStrings()
     const settings = getSettings()
 
@@ -56,7 +56,9 @@ export class CspAlerter {
     notification.setAttribute('role', 'button')
     notification.setAttribute('aria-label', strings.cspAlertMessageLabel)
     notification.onclick = () => {
-      this.messaging!.postMessage('showPreviewSecuritySelector', { source: settings.source })
+      this.messaging!.postMessage('showPreviewSecuritySelector', {
+        source: settings.source,
+      })
     }
     document.body.appendChild(notification)
   }
