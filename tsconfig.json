@@ -4,9 +4,9 @@
     "resolveJsonModule": true,
     "moduleResolution": "Node16",
     "module": "commonjs",
-    "target": "es2020",
+    "target": "es2022",
     "outDir": "dist",
-    "lib": ["dom", "es2020"],
+    "lib": ["dom", "es2022"],
     "sourceMap": true,
     "rootDir": "."
   },
