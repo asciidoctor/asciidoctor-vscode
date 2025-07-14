@@ -1,5 +1,3 @@
-// This must be the first import in the main entry file
-import './i18n'
 import * as vscode from 'vscode'
 import { AsciidocEngine } from './asciidocEngine'
 import { getAsciidocExtensionContributions } from './asciidocExtensions'

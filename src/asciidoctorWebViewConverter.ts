@@ -1,6 +1,5 @@
 import { Asciidoctor } from '@asciidoctor/core'
 import vscode from 'vscode'
-import * as nls from 'vscode-nls'
 import * as uri from 'vscode-uri'
 import { AsciidocContributions } from './asciidocExtensions'
 import { AntoraDocumentContext } from './features/antora/antoraContext'
@@ -9,8 +8,6 @@ import { AsciidocPreviewSecurityLevel } from './security'
 import { SkinnyTextDocument } from './util/document'
 import { WebviewResourceProvider } from './util/resources'
 import { getWorkspaceFolder } from './util/workspace'
-
-const localize = nls.loadMessageBundle()
 
 const { Opal } = require('asciidoctor-opal-runtime')
 const processor = require('@asciidoctor/core')()
@@ -39,20 +36,11 @@ function isSchemeBlacklisted(href: string): boolean {
  * can be localized using our normal localization process.
  */
 const previewStrings = {
-  cspAlertMessageText: localize(
-    'preview.securityMessage.text',
-    'Some content has been disabled in this document',
-  ),
+  cspAlertMessageText: vscode.l10n.t('preview.securityMessage.text'),
 
-  cspAlertMessageTitle: localize(
-    'preview.securityMessage.title',
-    'Potentially unsafe or insecure content has been disabled in the Asciidoc preview. Change the Asciidoc preview security setting to allow insecure content or enable scripts',
-  ),
+  cspAlertMessageTitle: vscode.l10n.t('preview.securityMessage.title'),
 
-  cspAlertMessageLabel: localize(
-    'preview.securityMessage.label',
-    'Content Disabled Security Warning',
-  ),
+  cspAlertMessageLabel: vscode.l10n.t('preview.securityMessage.label'),
 }
 
 /**
