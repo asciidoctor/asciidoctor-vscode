@@ -331,7 +331,7 @@
         {
           "comment": "attributes",
           "name": "markup.meta.attribute-list.asciidoc",
-          "match": "(?<=\\{|,|.|#|\"|'|%)([^\\],.#%]+)",
+          "match": "(?<=\\{|,|\\.|#|\"|'|%)(?:[^\\],.#%]|\\](?=[ \\t]*\\S))+",
           "captures": {
             "0": {
               "patterns": [
@@ -1707,10 +1707,10 @@
       "patterns": [
         {
           "name": "markup.italic.quotes.asciidoc",
-          "begin": "(?=(?>(?:^\\[(quote|verse)((?:,|#|\\.|%)([^,\\]]+))*\\]$)))",
+          "begin": "(?=(?>(?:^\\[(quote|verse)(?:(?:,|#|\\.|%)(?:[^,\\]]|\\](?=[ \\t]*\\S))+)*\\]$)))",
           "patterns": [
             {
-              "match": "^\\[(quote|verse)((?:,|#|\\.|%)([^,\\]]+))*\\]$",
+              "match": "^\\[(quote|verse)(?:(?:,|#|\\.|%)(?:[^,\\]]|\\](?=[ \\t]*\\S))+)*\\]$",
               "captures": {
                 "0": {
                   "patterns": [
