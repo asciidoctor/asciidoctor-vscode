@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+## 3.4.4 (2025-07-14)
+
+### Bug fixes
+
+* Extension was incorrectly asking to enable Antora support even though no `antora.yml` file existed - thanks @oliviercailloux
+
+
+## 3.4.2 (2024-10-31)
+
 ### Bug fixes
 
 * Replace `ripgrep` by `workspace.findFiles`. `ripgrep` was introduced in 3.4.0 but caused too many compatibility and instability issues.
