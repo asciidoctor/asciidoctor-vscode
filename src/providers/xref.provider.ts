@@ -26,11 +26,11 @@ export async function provideCompletionItems(
  * @param context
  */
 function shouldProvide(context: Context, keyword: string): boolean {
-  const occurence = context.textFullLine.indexOf(
+  const occurrence = context.textFullLine.indexOf(
     keyword,
     context.position.character - keyword.length,
   )
-  return occurence === context.position.character - keyword.length
+  return occurrence === context.position.character - keyword.length
 }
 
 async function getIdsFromFile(file: vscode.Uri) {
@@ -85,38 +85,37 @@ async function provideCrossRef(
   context: Context,
 ): Promise<vscode.CompletionItem[]> {
   const { textFullLine, position } = context
-  const indexOfNextWhiteSpace = textFullLine.includes(' ', position.character)
-    ? textFullLine.indexOf(' ', position.character)
-    : textFullLine.length
-  //Find the text between citenp: and the next whitespace character
-  const search = textFullLine.substring(
-    textFullLine.lastIndexOf(':', position.character + 1) + 1,
-    indexOfNextWhiteSpace,
-  )
+
+  let textLine = textFullLine.substring(position.character)
+  textLine = textLine.split(' ')[0]
+  let search = textLine.split('[')[0]
+  let hasBracket = textLine.includes('[')
 
   const completionItems: vscode.CompletionItem[] = []
   const workspacesAdocFiles = await findFiles('**/*.adoc')
   for (const adocFile of workspacesAdocFiles) {
     const labels = await getIdsFromFile(adocFile)
     for (const label of labels) {
-      if (label.match(search)) {
+      if (!search || label.match(search)) {
+        const labelText = hasBracket ? label : label + '[]'
         if (adocFile.fsPath === context.document.uri.fsPath) {
           completionItems.push(
             new vscode.CompletionItem(
-              label + '[]',
+              labelText,
               vscode.CompletionItemKind.Reference,
             ),
           )
         } else {
+          const relativePath =
+            path.relative(
+              path.dirname(context.document.uri.fsPath),
+              adocFile.fsPath,
+            ) +
+            '#' +
+            labelText
           completionItems.push(
             new vscode.CompletionItem(
-              path.relative(
-                path.dirname(context.document.uri.fsPath),
-                adocFile.fsPath,
-              ) +
-                '#' +
-                label +
-                '[]',
+              relativePath,
               vscode.CompletionItemKind.Reference,
             ),
           )
