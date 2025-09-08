@@ -18,16 +18,28 @@ export class TargetPathCompletionProvider {
     position: vscode.Position,
   ): Promise<vscode.CompletionItem[]> {
     const context = createContext(textDocument, position)
-    if (context.textFullLine.match(macroWithTargetPathRx)) {
+
+    let textLine = context.textFullLine
+    let prevWhitespace = textLine.lastIndexOf(' ', context.position.character)
+    if (prevWhitespace !== -1) {
+      textLine = textLine.substring(prevWhitespace + 1)
+    }
+    textLine = textLine.split(' ')[0]
+
+    if (textLine.match(macroWithTargetPathRx)) {
       const documentText = context.document.getText()
-      const pathExtractedFromMacroString = context.textFullLine
+      const pathExtractedFromMacroString = textLine
         .replace('include::', '')
         .replace('image::', '')
         .replace('image:', '')
-      let entryDir = pathExtractedFromMacroString.slice(
-        0,
-        pathExtractedFromMacroString.lastIndexOf('/'),
-      )
+
+      let hasBracket = pathExtractedFromMacroString.includes('[')
+
+      let entryDir = pathExtractedFromMacroString.split('[')[0]
+        .slice(
+          0,
+          pathExtractedFromMacroString.lastIndexOf('/'),
+        )
 
       // use path defined in a variable used
       if (entryDir.startsWith('{')) {
@@ -40,7 +52,7 @@ export class TargetPathCompletionProvider {
 
       const documentPath = context.document.uri.fsPath
       let documentParentPath = ospath.dirname(documentPath)
-      if (context.textFullLine.includes('image:')) {
+      if (textLine.includes('image:')) {
         const imagesDirValue = (
           await this.asciidocLoader.load(textDocument)
         ).getAttribute('imagesdir', '')
@@ -90,7 +102,7 @@ export class TargetPathCompletionProvider {
         ...items.map((child) => {
           const result = createPathCompletionItem(child)
           result.insertText =
-            result.kind === vscode.CompletionItemKind.File
+            result.kind === vscode.CompletionItemKind.File && !hasBracket
               ? child.file + '[]'
               : child.file
           if (result.kind === vscode.CompletionItemKind.Folder) {
