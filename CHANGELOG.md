@@ -2,12 +2,23 @@
 
 ## Unreleased
 
+### Bug fixes
+
+* Improve completion for `xref` and `image` (#968) - thanks @bongiozzo
+* Fix navigation on anchors that contains underscore (#963) - thanks @bongiozzo
+* Improve source block TextMate grammar (#961)
+
+### Infrastructure
+
+* Switch from `vscode-nls` (deprecated) to `vscode-l10n` (#955)
+* Update node to v22 (#934)
+* Replace eslint by biome (#954)
+
 ## 3.4.4 (2025-07-14)
 
 ### Bug fixes
 
 * Extension was incorrectly asking to enable Antora support even though no `antora.yml` file existed - thanks @oliviercailloux
-
 
 ## 3.4.2 (2024-10-31)
 
