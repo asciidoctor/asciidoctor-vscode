@@ -4,6 +4,7 @@ about: Suggest a formal proposal for an enhancement
 title: ''
 labels: ''
 assignees: ''
+type: 'feature'
 
 ---
 
