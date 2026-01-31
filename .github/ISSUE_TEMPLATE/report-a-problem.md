@@ -4,6 +4,7 @@ about: If something isn't working the way you expect it to
 title: ''
 labels: ''
 assignees: ''
+type: 'bug'
 
 ---
 
