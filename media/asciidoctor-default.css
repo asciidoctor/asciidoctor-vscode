@@ -2163,3 +2163,57 @@ p {
         padding: 0
     }
 }
+
+/* VS Code dark theme overrides */
+.vscode-dark code,
+.vscode-dark kbd {
+    background: var(--vscode-textCodeBlock-background, #2d2d2d);
+    color: var(--vscode-editor-foreground, #d4d4d4);
+}
+
+.vscode-dark pre {
+    color: var(--vscode-editor-foreground, #d4d4d4);
+}
+
+.vscode-dark :not(pre):not([class^=L]) > code {
+    background: var(--vscode-textCodeBlock-background, #2d2d2d);
+    color: var(--vscode-editor-foreground, #d4d4d4);
+}
+
+.vscode-dark .literalblock pre,
+.vscode-dark .listingblock > .content > pre:not(.highlight),
+.vscode-dark .listingblock > .content > pre[class=highlight],
+.vscode-dark .listingblock > .content > pre[class^="highlight "] {
+    background: var(--vscode-editor-background, #1e1e1e);
+}
+
+.vscode-dark .prettyprint {
+    background: var(--vscode-editor-background, #1e1e1e);
+}
+
+/* VS Code high contrast theme overrides */
+.vscode-high-contrast code,
+.vscode-high-contrast kbd {
+    background: var(--vscode-textCodeBlock-background, #000);
+    color: var(--vscode-editor-foreground, #fff);
+}
+
+.vscode-high-contrast pre {
+    color: var(--vscode-editor-foreground, #fff);
+}
+
+.vscode-high-contrast :not(pre):not([class^=L]) > code {
+    background: var(--vscode-textCodeBlock-background, #000);
+    color: var(--vscode-editor-foreground, #fff);
+}
+
+.vscode-high-contrast .literalblock pre,
+.vscode-high-contrast .listingblock > .content > pre:not(.highlight),
+.vscode-high-contrast .listingblock > .content > pre[class=highlight],
+.vscode-high-contrast .listingblock > .content > pre[class^="highlight "] {
+    background: var(--vscode-editor-background, #000);
+}
+
+.vscode-high-contrast .prettyprint {
+    background: var(--vscode-editor-background, #000);
+}

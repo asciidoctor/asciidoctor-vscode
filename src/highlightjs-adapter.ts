@@ -3,6 +3,19 @@ import { WebviewResourceProvider } from './util/resources'
 
 const { Opal } = require('asciidoctor-opal-runtime')
 
+/**
+ * Get the appropriate default highlight.js theme based on VS Code's current color theme.
+ * Returns 'github-dark' for dark themes and 'github' for light themes.
+ */
+function getDefaultHighlightJsTheme(): string {
+  const themeKind = vscode.window.activeColorTheme.kind
+  // ColorThemeKind: Light = 1, Dark = 2, HighContrast = 3, HighContrastLight = 4
+  if (themeKind === vscode.ColorThemeKind.Dark || themeKind === vscode.ColorThemeKind.HighContrast) {
+    return 'github-dark'
+  }
+  return 'github'
+}
+
 module.exports.register = (
   highlightjsBuiltInSyntaxHighlighter,
   context: vscode.ExtensionContext,
@@ -22,7 +35,7 @@ module.exports.register = (
     ($docinfo = function $$docinfo(location, doc, _opts) {
       const _self = this
       if (location === 'head') {
-        const theme = doc.$attr('highlightjs-theme', 'github')
+        const theme = doc.$attr('highlightjs-theme', getDefaultHighlightJsTheme())
         const themeStyleSheetResource = vscode.Uri.joinPath(
           context.extensionUri,
           'media',
