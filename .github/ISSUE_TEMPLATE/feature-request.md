@@ -1,7 +1,10 @@
 ---
 name: Feature Request
 about: Suggest a formal proposal for an enhancement
-labels: '✨ enhancement, 💬 discussion'
+title: ''
+labels: ''
+assignees: ''
+
 ---
 
 Please provide details about:

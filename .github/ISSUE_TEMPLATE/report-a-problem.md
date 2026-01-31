@@ -1,7 +1,10 @@
 ---
 name: Bug Report
 about: If something isn't working the way you expect it to
-labels: '🐞 bug'
+title: ''
+labels: ''
+assignees: ''
+
 ---
 
 Please provide details about:
