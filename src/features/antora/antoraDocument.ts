@@ -20,7 +20,9 @@ const MAX_DEPTH_SEARCH_ANTORA_CONFIG = 100
 export async function findAntoraConfigFile(
   textDocumentUri: Uri,
 ): Promise<Uri | undefined> {
+  console.log('findAntoraConfigFile(textDocumentUri)', textDocumentUri)
   const asciidocFilePath = posixpath.normalize(textDocumentUri.path)
+  console.log('asciidocFilePath', asciidocFilePath)
   const cancellationToken = new CancellationTokenSource()
   cancellationToken.token.onCancellationRequested((e) => {
     console.log('Cancellation requested, cause: ' + e)
@@ -35,6 +37,8 @@ export async function findAntoraConfigFile(
     const modulesDirPath = posixpath.normalize(
       `${antoraConfigParentDirPath}/modules`,
     )
+    console.log('modulesDirPath', modulesDirPath)
+    console.log('antoraConfigParentDirPath', antoraConfigParentDirPath)
     if (
       asciidocFilePath.startsWith(modulesDirPath) &&
       asciidocFilePath.slice(modulesDirPath.length).match(/^\/[^/]+\/pages\/.*/)
