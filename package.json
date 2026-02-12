@@ -618,15 +618,18 @@
     "copy-highlightjs": "cp node_modules/@highlightjs/cdn-assets/highlight.min.js media/highlightjs && cp -r node_modules/@highlightjs/cdn-assets/languages media/highlightjs && cp -r node_modules/@highlightjs/cdn-assets/styles media/highlightjs",
     "copy-assets": "npm run copy-fonts:all && npm run copy-font-awesome && npm run copy-mathjax && npm run copy-mermaid && npm run copy-highlightjs",
     "dev": "npm run build",
-    "build": "npm run copy-assets && npm run build-ext && npm run build-preview",
+    "build": "npm run copy-assets && npm run build-ext && npm run build-preview && npm run build-grammar",
     "build-web": "webpack --config extension-browser.webpack.config --mode none",
     "build-preview": "webpack --config extension-preview.webpack.config --mode production",
     "build-ext": "tsc -p ./",
+    "build-grammar": "node ./syntaxes/generate.js",
     "package": "npm run build && npm run build-web && vsce package",
     "deploy": "vsce publish -p",
     "check": "npx @biomejs/biome check --write",
     "pretest": "npm run build",
-    "test": "node ./dist/src/test/runTest.js",
+    "test": "npm run test:grammar && npm run test:int",
+    "test:int": "node ./dist/src/test/runTest.js",
+    "test:grammar": "npx vscode-tmgrammar-snap -g syntaxes/asciidoc.tmLanguage.json -g syntaxes/ruby.tmLanguage.json  syntaxes/tests/snap/**/**.adoc",
     "coverage": "c8 --clean npm run test"
   },
   "devDependencies": {
@@ -657,6 +660,7 @@
     "sinon": "^14.0.1",
     "ts-loader": "9.5.1",
     "typescript": "4.9.5",
+    "vscode-tmgrammar-test": "^0.1.3",
     "webpack": "5.91.0",
     "webpack-cli": "4.10.0"
   },
