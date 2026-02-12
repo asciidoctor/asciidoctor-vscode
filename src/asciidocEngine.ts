@@ -52,7 +52,10 @@ export class AsciidocEngine {
     await this.asciidoctorConfigProvider.activate(registry, textDocumentUri)
     asciidoctorProcessor.restoreBuiltInSyntaxHighlighter()
 
-    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).baseDir
+    let baseDir = AsciidocTextDocument.fromTextDocument(textDocument).baseDir
+    if (baseDir && baseDir.startsWith('/') && baseDir.includes(':')) {
+      baseDir = baseDir.substring(1)
+    }
     const options: { [key: string]: any } = {
       attributes: {
         'env-vscode': '',
@@ -188,7 +191,10 @@ export class AsciidocEngine {
     const antoraAttributes = await antoraSupport.getAttributes(textDocumentUri)
     const asciidocTextDocument =
       AsciidocTextDocument.fromTextDocument(textDocument)
-    const baseDir = asciidocTextDocument.baseDir
+    let baseDir = asciidocTextDocument.baseDir
+    if (baseDir && baseDir.startsWith('/') && baseDir.includes(':')) {
+      baseDir = baseDir.substring(1)
+    }
     const documentDirectory = asciidocTextDocument.dirName
     const documentBasename = asciidocTextDocument.fileName
     const documentExtensionName = asciidocTextDocument.extensionName
