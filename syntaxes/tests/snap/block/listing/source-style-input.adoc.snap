@@ -1,0 +1,11 @@
+>[source]
+#^ text.asciidoc markup.heading.block-attribute.asciidoc
+# ^^^^^^ text.asciidoc markup.heading.block-attribute.asciidoc markup.meta.attribute-list.asciidoc entity.name.function.asciidoc
+#       ^ text.asciidoc markup.heading.block-attribute.asciidoc
+>----
+#^^^^^ text.asciidoc
+>true
+#^^^^^ text.asciidoc
+>----
+#^^^^^ text.asciidoc
+>

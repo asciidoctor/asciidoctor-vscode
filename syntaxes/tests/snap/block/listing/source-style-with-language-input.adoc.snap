@@ -1,0 +1,14 @@
+>[source,ruby]
+#^ text.asciidoc markup.code.ruby.asciidoc markup.heading.asciidoc
+# ^^^^^^ text.asciidoc markup.code.ruby.asciidoc markup.heading.asciidoc markup.meta.attribute-list.asciidoc entity.name.function.asciidoc
+#       ^ text.asciidoc markup.code.ruby.asciidoc markup.heading.asciidoc punctuation.separator.asciidoc
+#        ^^^^ text.asciidoc markup.code.ruby.asciidoc markup.heading.asciidoc markup.meta.attribute-list.asciidoc
+#            ^ text.asciidoc markup.code.ruby.asciidoc markup.heading.asciidoc
+>----
+#^^^^^ text.asciidoc markup.code.ruby.asciidoc
+>puts 1
+#^^^^ text.asciidoc markup.code.ruby.asciidoc meta.embedded.block.ruby support.function.kernel.ruby
+#    ^^^ text.asciidoc markup.code.ruby.asciidoc meta.embedded.block.ruby
+>----
+#^^^^^ text.asciidoc markup.code.ruby.asciidoc
+>
