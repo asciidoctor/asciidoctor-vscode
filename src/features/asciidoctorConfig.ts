@@ -103,12 +103,11 @@ export async function getAsciidoctorConfigContent(
     const asciidoctorConfigContent = new TextDecoder().decode(
       await vscode.workspace.fs.readFile(asciidoctorConfig),
     )
-    const asciidoctorConfigParentDirectory = asciidoctorConfig.path.slice(
-      0,
-      asciidoctorConfig.path.lastIndexOf('/'),
-    )
+    const asciidoctorConfigParentUri = vscode.Uri.joinPath(asciidoctorConfig, '..')
+    const asciidoctorConfigDirectory = vscode.env.uiKind === vscode.UIKind.Desktop
+      ? asciidoctorConfigParentUri.fsPath : asciidoctorConfigParentUri.path
     configContents.push(
-      `:asciidoctorconfigdir: ${asciidoctorConfigParentDirectory}\n\n${asciidoctorConfigContent.trim()}\n\n`,
+      `:asciidoctorconfigdir: ${asciidoctorConfigDirectory}\n\n${asciidoctorConfigContent.trim()}\n\n`,
     )
   }
   if (configContents.length > 0) {
