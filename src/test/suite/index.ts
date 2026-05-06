@@ -1,40 +1,59 @@
-import * as glob from 'glob'
-import * as Mocha from 'mocha'
+import { readdirSync } from 'node:fs'
+import { run as nodeTestRun } from 'node:test'
+import { spec as SpecReporter } from 'node:test/reporters'
 import * as path from 'path'
+import { fileURLToPath } from 'url'
+import * as vscode from 'vscode'
+import { setExtensionContext } from '../helper.js'
 
-export function run(): Promise<void> {
-  // Create the mocha test
-  // eslint-disable-next-line new-cap
-  const mocha = new Mocha.default({
-    ui: 'tdd',
-    color: true,
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+export async function run(): Promise<void> {
+  const extension = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode')
+  await extension?.activate()
+  setExtensionContext((globalThis as any).testExtensionContext)
+
+  const testDir = path.join(__dirname, '..')
+  const testFiles = readdirSync(testDir)
+    .filter((f) => f.endsWith('.test.js'))
+    .map((f) => path.join(testDir, f))
+
+  const stream = nodeTestRun({
+    files: testFiles,
+    isolation: 'none',
     timeout: 60000,
   })
 
-  const testsRoot = path.resolve(__dirname, '..')
+  let passed = 0
+  let failures = 0
 
-  return new Promise((resolve, reject) => {
-    glob.default('**/**.test.js', { cwd: testsRoot }, (err, files) => {
-      if (err) {
-        return reject(err)
-      }
+  await new Promise<void>((resolve) => {
+    let idleTimer: ReturnType<typeof setTimeout> | null = null
 
-      // Add files to the test suite
-      files.forEach((f) => mocha.addFile(path.resolve(testsRoot, f)))
+    const scheduleExit = () => {
+      if (idleTimer !== null) clearTimeout(idleTimer)
+      idleTimer = setTimeout(resolve, 8000)
+    }
 
-      try {
-        // Run the mocha test
-        mocha.run((failures) => {
-          if (failures > 0) {
-            reject(new Error(`${failures} tests failed.`))
-          } else {
-            resolve()
-          }
-        })
-      } catch (err) {
-        console.error(err)
-        reject(err)
+    stream.on('test:pass', (event) => {
+      if (event.details?.type !== 'suite') passed++
+      scheduleExit()
+    })
+    stream.on('test:fail', (event) => {
+      scheduleExit()
+      if (event.details?.type !== 'suite') {
+        failures++
+        const err = event.details?.error as (Error & { cause?: unknown }) | undefined
+        console.error(`\n  ${err?.stack ?? err?.message ?? String(err)}`)
       }
     })
+    stream.on('end', resolve)
+
+    stream.compose(new SpecReporter()).pipe(process.stdout, { end: false })
   })
+
+  const total = passed + failures
+  console.log(`\nTests: ${passed} passed, ${failures} failed, ${total} total`)
+
+  process.exit(failures > 0 ? 1 : 0)
 }
