@@ -30,7 +30,7 @@ import { AsciidocTargetPathAutoCompletionMonitor } from './util/includeAutoCompl
 
 export async function activate(context: vscode.ExtensionContext) {
   // Set context as a global as some tests depend on it
-  ;(global as any).testExtensionContext = context
+  ;(globalThis as any).testExtensionContext = context
   const contributionProvider = getAsciidocExtensionContributions(context)
   const asciidoctorExtensionsSecurityPolicy =
     AsciidoctorExtensionsSecurityPolicyArbiter.activate(context)

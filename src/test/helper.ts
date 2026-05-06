@@ -7,5 +7,5 @@ suiteSetup(async () => {
     'asciidoctor.asciidoctor-vscode',
   )
   await extension?.activate()
-  extensionContext = (global as any).testExtensionContext
+  extensionContext = (globalThis as any).testExtensionContext
 })

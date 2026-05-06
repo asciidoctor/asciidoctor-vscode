@@ -4,6 +4,7 @@ import { AsciidocIncludeItemsLoader } from '../asciidocLoader.js'
 import { OpenDocumentLinkCommand } from '../commands/index.js'
 import { isSchemeBlacklisted } from '../linkSanitizer.js'
 import { similarArrayMatch } from '../similarArrayMatch.js'
+import { t as l10nT } from '../util/l10n.js'
 import { getUriForLinkWithKnownExternalScheme } from '../util/links.js'
 
 /**
@@ -90,7 +91,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
               ),
               vscode.Uri.parse(url),
             )
-            documentLink.tooltip = vscode.l10n.t('links.navigate.follow')
+            documentLink.tooltip = l10nT('links.navigate.follow')
             results.push(documentLink)
           }
         }
@@ -135,7 +136,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
                   ),
                   normalizeLink(textDocument, `${target}${fragment}`, base),
                 )
-                documentLink.tooltip = vscode.l10n.t(
+                documentLink.tooltip = l10nT(
                   'documentLink.openFile.tooltip',
                   target,
                 )
@@ -152,7 +153,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
                 ),
                 normalizeLink(textDocument, `${target}${fragment}`, base),
               )
-              documentLink.tooltip = vscode.l10n.t(
+              documentLink.tooltip = l10nT(
                 'documentLink.openFile.tooltip',
                 target,
               )
@@ -199,7 +200,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
           ),
           normalizeLink(textDocument, entry.name, base),
         )
-        documentLink.tooltip = vscode.l10n.t(
+        documentLink.tooltip = l10nT(
           'documentLink.openFile.tooltip',
           entry.name,
         )

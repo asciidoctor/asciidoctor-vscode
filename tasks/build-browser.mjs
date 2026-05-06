@@ -22,18 +22,29 @@ const emptyModulePlugin = {
   setup(build) {
     const modules = [
       'fs',
+      'node:fs',
+      'node:fs/promises',
       'assert',
+      'node:assert',
       'unxhr',
       'glob',
       'http',
+      'node:http',
       'https',
+      'node:https',
       'url',
+      'node:url',
       'zlib',
+      'node:zlib',
       'crypto',
+      'node:crypto',
       'stream',
+      'node:stream',
       'child_process',
+      'node:child_process',
     ]
-    const filter = new RegExp(`^(${modules.join('|')})$`)
+    const escapedModules = modules.map((m) => m.replace(/[/]/g, '\\/'))
+    const filter = new RegExp(`^(${escapedModules.join('|')})$`)
     build.onResolve({ filter }, (args) => ({
       path: args.path,
       namespace: 'empty-module',
@@ -60,10 +71,16 @@ await esbuild.build({
   alias: {
     os: 'os-browserify/browser',
     path: 'path-browserify',
+    'node:path': 'path-browserify',
     util: 'util',
     querystring: 'querystring',
     tty: 'tty-browserify',
     worker_threads: 'worker-thread',
+  },
+  define: {
+    __L10N_BUNDLE__: await fs
+      .readFile(path.join(__dirname, '..', 'l10n', 'bundle.l10n.json'), 'utf8')
+      .then((content) => content.trim()),
   },
   inject: [path.join(__dirname, 'process-browser-shim.js')],
   plugins: [replaceAntoraDocumentPlugin, emptyModulePlugin],
@@ -89,4 +106,10 @@ async function copyAssets(srcDir, destDir) {
 
 const root = path.join(__dirname, '..')
 await fs.mkdir(path.join(root, 'dist', 'browser'), { recursive: true })
+// Override "type": "module" from root package.json so the CJS bundle is loaded correctly
+// by VS Code's web worker extension host
+await fs.writeFile(
+  path.join(root, 'dist', 'browser', 'package.json'),
+  JSON.stringify({ type: 'commonjs' }),
+)
 await copyAssets(path.join(root, 'src'), path.join(root, 'dist', 'browser'))

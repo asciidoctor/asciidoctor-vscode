@@ -10,6 +10,7 @@ import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink.js'
 import { Logger } from '../logger.js'
 import { Disposable, disposeAll } from '../util/dispose.js'
 import { isAsciidocFile } from '../util/file.js'
+import { t as l10nT } from '../util/l10n.js'
 import { WebviewResourceProvider } from '../util/resources.js'
 import {
   AsciidocFileTopmostLineMonitor,
@@ -187,7 +188,7 @@ export class AsciidocPreview
           case 'previewStyleLoadError':
             vscode.window
               .showWarningMessage(
-                vscode.l10n.t(
+                l10nT(
                   'preview.styleLoadError.message',
                   e.body.unloadedStyles.join(', '),
                 ),
@@ -394,8 +395,8 @@ export class AsciidocPreview
     locked: boolean,
   ): string {
     return locked
-      ? vscode.l10n.t('preview.locked.title', path.basename(resource.fsPath))
-      : vscode.l10n.t('preview.unlocked.title', path.basename(resource.fsPath))
+      ? l10nT('preview.locked.title', path.basename(resource.fsPath))
+      : l10nT('preview.unlocked.title', path.basename(resource.fsPath))
   }
 
   private updateForView(resource: vscode.Uri, topLine: number | undefined) {

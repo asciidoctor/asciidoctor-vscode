@@ -7,7 +7,6 @@
   "author": "João Pinto <lamego.pinto@gmail.com>",
   "license": "MIT",
   "readme": "README.md",
-  "type": "module",
   "repository": {
     "type": "git",
     "url": "https://github.com/asciidoctor/asciidoctor-vscode"
@@ -20,7 +19,7 @@
   "homepage": "https://github.com/asciidoctor/asciidoctor-vscode/blob/master/README.md",
   "icon": "images/icon.png",
   "browser": "./dist/browser/extension",
-  "main": "./dist/src/extension.js",
+  "main": "./dist/src/extension.mjs",
   "l10n": "./l10n",
   "engines": {
     "vscode": "^1.88.0",

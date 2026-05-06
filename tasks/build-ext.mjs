@@ -6,6 +6,7 @@ await esbuild.build({
   platform: 'node',
   format: 'esm',
   outdir: './dist',
+  outExtension: { '.js': '.mjs' },
   sourcemap: true,
   packages: 'external',
 })

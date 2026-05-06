@@ -9,6 +9,7 @@ import { AntoraDocumentContext } from './features/antora/antoraContext.js'
 import { AsciidocPreviewConfiguration } from './features/previewConfig.js'
 import { AsciidocPreviewSecurityLevel } from './security.js'
 import { SkinnyTextDocument } from './util/document.js'
+import { t as l10nT } from './util/l10n.js'
 import { WebviewResourceProvider } from './util/resources.js'
 import { getWorkspaceFolder } from './util/workspace.js'
 
@@ -36,11 +37,11 @@ function isSchemeBlacklisted(href: string): boolean {
  * can be localized using our normal localization process.
  */
 const previewStrings = {
-  cspAlertMessageText: vscode.l10n.t('preview.securityMessage.text'),
+  cspAlertMessageText: l10nT('preview.securityMessage.text'),
 
-  cspAlertMessageTitle: vscode.l10n.t('preview.securityMessage.title'),
+  cspAlertMessageTitle: l10nT('preview.securityMessage.title'),
 
-  cspAlertMessageLabel: vscode.l10n.t('preview.securityMessage.label'),
+  cspAlertMessageLabel: l10nT('preview.securityMessage.label'),
 }
 
 /**
