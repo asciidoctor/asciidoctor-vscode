@@ -70,6 +70,7 @@ function getCspForResource(
     'object-src': ["'self'", rule, 'https:', 'data:', krokiServerUrl],
     'media-src': ["'self'", rule, 'https:', 'data:', krokiServerUrl],
     'script-src': [
+      rule,
       'https:',
       `'nonce-${nonce}'`,
       `'${highlightjsInlineScriptHash}'`,
