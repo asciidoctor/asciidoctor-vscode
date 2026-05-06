@@ -1,10 +1,10 @@
 import * as path from 'path'
 import * as vscode from 'vscode'
-import { AsciidocIncludeItemsLoader } from '../asciidocLoader'
-import { OpenDocumentLinkCommand } from '../commands'
-import { isSchemeBlacklisted } from '../linkSanitizer'
-import { similarArrayMatch } from '../similarArrayMatch'
-import { getUriForLinkWithKnownExternalScheme } from '../util/links'
+import { AsciidocIncludeItemsLoader } from '../asciidocLoader.js'
+import { OpenDocumentLinkCommand } from '../commands/index.js'
+import { isSchemeBlacklisted } from '../linkSanitizer.js'
+import { similarArrayMatch } from '../similarArrayMatch.js'
+import { getUriForLinkWithKnownExternalScheme } from '../util/links.js'
 
 /**
  * Reference: https://gist.github.com/dperini/729294

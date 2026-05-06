@@ -1,18 +1,18 @@
-import { Asciidoctor } from '@asciidoctor/core'
+import { Registry } from '@asciidoctor/core'
 import chai from 'chai'
 import vscode, { Position } from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader'
-import { AsciidoctorConfigProvider } from '../features/asciidoctorConfig'
-import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
-import { AsciidoctorExtensionsProvider } from '../features/asciidoctorExtensions'
-import { TargetPathCompletionProvider } from '../providers/asciidoc.provider'
-import { extensionContext } from './helper'
+import { AsciidocLoader } from '../asciidocLoader.js'
+import { AsciidoctorConfigProvider } from '../features/asciidoctorConfig.js'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic.js'
+import { AsciidoctorExtensionsProvider } from '../features/asciidoctorExtensions.js'
+import { TargetPathCompletionProvider } from '../providers/asciidoc.provider.js'
+import { extensionContext } from './helper.js'
 import {
   createDirectories,
   createDirectory,
   createFile,
   removeFiles,
-} from './workspaceHelper'
+} from './workspaceHelper.js'
 
 const expect = chai.expect
 
@@ -21,15 +21,12 @@ suite('Target path completion provider', () => {
   setup(() => {
     asciidocLoader = new AsciidocLoader(
       new (class implements AsciidoctorConfigProvider {
-        activate(
-          _: Asciidoctor.Extensions.Registry,
-          __: vscode.Uri,
-        ): Promise<void> {
+        activate(_: Registry, __: vscode.Uri): Promise<void> {
           return Promise.resolve()
         }
       })(),
       new (class implements AsciidoctorExtensionsProvider {
-        activate(_: Asciidoctor.Extensions.Registry): Promise<void> {
+        activate(_: Registry): Promise<void> {
           return Promise.resolve()
         }
       })(),

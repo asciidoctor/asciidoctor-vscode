@@ -1,6 +1,7 @@
-import { Asciidoctor } from '@asciidoctor/core'
-import vscode, { DiagnosticCollection } from 'vscode'
-import { SkinnyTextDocument } from '../util/document'
+import { MemoryLogger } from '@asciidoctor/core'
+import * as vscode from 'vscode'
+import { DiagnosticCollection } from 'vscode'
+import { SkinnyTextDocument } from '../util/document.js'
 
 export interface AsciidoctorDiagnosticProvider {
   delete(textDocumentUri: vscode.Uri): void
@@ -8,7 +9,7 @@ export interface AsciidoctorDiagnosticProvider {
   clearAll(): void
 
   reportErrors(
-    memoryLogger: Asciidoctor.MemoryLogger,
+    memoryLogger: MemoryLogger,
     textDocument: SkinnyTextDocument,
   ): void
 }
@@ -29,7 +30,7 @@ export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
   }
 
   public reportErrors(
-    memoryLogger: Asciidoctor.MemoryLogger,
+    memoryLogger: MemoryLogger,
     textDocument: SkinnyTextDocument,
   ) {
     const asciidocDebugConfig = vscode.workspace.getConfiguration(

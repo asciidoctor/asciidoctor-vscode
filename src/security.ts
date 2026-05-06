@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
-import { AsciidocPreviewManager } from './features/previewManager'
-import { getWorkspaceFolder, getWorkspaceFolders } from './util/workspace'
+import { AsciidocPreviewManager } from './features/previewManager.js'
+import { getWorkspaceFolder, getWorkspaceFolders } from './util/workspace.js'
 
 export const enum AsciidocPreviewSecurityLevel {
   Strict = 0,

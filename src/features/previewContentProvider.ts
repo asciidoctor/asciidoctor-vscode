@@ -1,7 +1,7 @@
 import * as vscode from 'vscode'
-import { AsciidocEngine } from '../asciidocEngine'
-import { WebviewResourceProvider } from '../util/resources'
-import { AsciidocPreviewConfigurationManager } from './previewConfig'
+import { AsciidocEngine } from '../asciidocEngine.js'
+import { WebviewResourceProvider } from '../util/resources.js'
+import { AsciidocPreviewConfigurationManager } from './previewConfig.js'
 
 export class AsciidocContentProvider {
   constructor(

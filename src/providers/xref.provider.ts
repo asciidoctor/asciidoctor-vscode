@@ -1,7 +1,7 @@
 import * as path from 'path'
 import * as vscode from 'vscode'
-import { findFiles } from '../util/findFiles'
-import { Context, createContext } from './createContext'
+import { findFiles } from '../util/findFiles.js'
+import { Context, createContext } from './createContext.js'
 
 export const xrefProvider = {
   provideCompletionItems,
@@ -88,8 +88,8 @@ async function provideCrossRef(
 
   let textLine = textFullLine.substring(position.character)
   textLine = textLine.split(' ')[0]
-  let search = textLine.split('[')[0]
-  let hasBracket = textLine.includes('[')
+  const search = textLine.split('[')[0]
+  const hasBracket = textLine.includes('[')
 
   const completionItems: vscode.CompletionItem[] = []
   const workspacesAdocFiles = await findFiles('**/*.adoc')

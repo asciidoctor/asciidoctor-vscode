@@ -1,10 +1,10 @@
-import vscode from 'vscode'
-import { Command } from '../commandManager'
-import { Import } from '../image-paste'
+import * as vscode from 'vscode'
+import { Command } from '../commandManager.js'
+import { Import } from '../image-paste.js'
 
 import Configuration = Import.Configuration
 
-import { AsciidocLoader } from '../asciidocLoader'
+import { AsciidocLoader } from '../asciidocLoader.js'
 
 export class PasteImage implements Command {
   public readonly id = 'asciidoc.pasteImage'

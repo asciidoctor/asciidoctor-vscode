@@ -1,13 +1,7 @@
 {
   "name": "AsciiDoc",
   "scopeName": "text.asciidoc",
-  "fileTypes": [
-    "ad",
-    "asc",
-    "adoc",
-    "asciidoc",
-    "adoc.txt"
-  ],
+  "fileTypes": ["ad", "asc", "adoc", "asciidoc", "adoc.txt"],
   "limitLineLength": false,
   "maxTokensPerLine": 100,
   "patterns": [

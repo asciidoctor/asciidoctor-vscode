@@ -1,7 +1,7 @@
 import chai from 'chai'
 import os from 'os'
 import { Uri } from 'vscode'
-import { normalizeUri } from '../util/workspace'
+import { normalizeUri } from '../util/workspace.js'
 
 const expect = chai.expect
 

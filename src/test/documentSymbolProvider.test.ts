@@ -1,14 +1,14 @@
 import * as assert from 'assert'
 import 'mocha'
 import * as vscode from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader'
-import { AsciidoctorConfig } from '../features/asciidoctorConfig'
-import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
-import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
-import DocumentSymbolProvider from '../features/documentSymbolProvider'
-import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
-import { extensionContext } from './helper'
-import { InMemoryDocument } from './inMemoryDocument'
+import { AsciidocLoader } from '../asciidocLoader.js'
+import { AsciidoctorConfig } from '../features/asciidoctorConfig.js'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic.js'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions.js'
+import DocumentSymbolProvider from '../features/documentSymbolProvider.js'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
+import { extensionContext } from './helper.js'
+import { InMemoryDocument } from './inMemoryDocument.js'
 
 const testFileName = vscode.Uri.file('test.adoc')
 

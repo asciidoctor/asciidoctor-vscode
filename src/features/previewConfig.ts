@@ -3,7 +3,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
-import { getWorkspaceFolder } from '../util/workspace'
+import { getWorkspaceFolder } from '../util/workspace.js'
 
 export class AsciidocPreviewConfiguration {
   public static getForResource(resource: vscode.Uri) {

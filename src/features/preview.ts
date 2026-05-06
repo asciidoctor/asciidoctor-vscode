@@ -5,22 +5,22 @@
 import * as path from 'path'
 import * as vscode from 'vscode'
 import * as uri from 'vscode-uri'
-import { AsciidocContributionProvider } from '../asciidocExtensions'
-import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink'
-import { Logger } from '../logger'
-import { Disposable, disposeAll } from '../util/dispose'
-import { isAsciidocFile } from '../util/file'
-import { WebviewResourceProvider } from '../util/resources'
+import { AsciidocContributionProvider } from '../asciidocExtensions.js'
+import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink.js'
+import { Logger } from '../logger.js'
+import { Disposable, disposeAll } from '../util/dispose.js'
+import { isAsciidocFile } from '../util/file.js'
+import { WebviewResourceProvider } from '../util/resources.js'
 import {
   AsciidocFileTopmostLineMonitor,
   getVisibleLine,
-} from '../util/topmostLineMonitor'
-import { getWorkspaceFolder, getWorkspaceFolders } from '../util/workspace'
+} from '../util/topmostLineMonitor.js'
+import { getWorkspaceFolder, getWorkspaceFolders } from '../util/workspace.js'
 import {
   AsciidocPreviewConfiguration,
   AsciidocPreviewConfigurationManager,
-} from './previewConfig'
-import { AsciidocContentProvider } from './previewContentProvider'
+} from './previewConfig.js'
+import { AsciidocContentProvider } from './previewContentProvider.js'
 
 export class AsciidocPreview
   extends Disposable

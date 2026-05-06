@@ -2,8 +2,8 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "moduleResolution": "Node16",
-    "module": "commonjs",
+    "module": "es2022",
+    "moduleResolution": "NodeNext",
     "target": "es2022",
     "outDir": "dist",
     "lib": ["dom", "es2022"],

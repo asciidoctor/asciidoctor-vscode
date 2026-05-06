@@ -1,15 +1,15 @@
-import { Asciidoctor } from '@asciidoctor/core'
+import { Document as AsciidoctorDocument } from '@asciidoctor/core'
 import { exec, SpawnOptions, spawn } from 'child_process'
 import * as fs from 'fs'
 import * as os from 'os'
 import * as path from 'path'
-import { uuidv4 } from 'uuid'
+import { v4 as uuidv4 } from 'uuid'
 import * as vscode from 'vscode'
-import { AsciidocEngine } from '../asciidocEngine'
-import { AsciidocTextDocument } from '../asciidocTextDocument'
-import { Command } from '../commandManager'
-import { getAsciidoctorConfigContent } from '../features/asciidoctorConfig'
-import { getWorkspaceFolder } from '../util/workspace'
+import { AsciidocEngine } from '../asciidocEngine.js'
+import { AsciidocTextDocument } from '../asciidocTextDocument.js'
+import { Command } from '../commandManager.js'
+import { getAsciidoctorConfigContent } from '../features/asciidoctorConfig.js'
+import { getWorkspaceFolder } from '../util/workspace.js'
 
 export class ExportAsPDF implements Command {
   public readonly id = 'asciidoc.exportAsPDF'
@@ -417,7 +417,7 @@ function execute(
 export function _generateCoverHtmlContent(
   titlePageLogo: string | undefined,
   baseDir: string,
-  document: Asciidoctor.Document,
+  document: AsciidoctorDocument,
   extensionUri: vscode.Uri,
 ): string {
   let imageHTML = ''
@@ -458,7 +458,7 @@ ${imageHTML}
 function createCoverFile(
   titlePageLogo: string,
   baseDir: string,
-  document: Asciidoctor.Document,
+  document: AsciidoctorDocument,
 ) {
   const extensionContext = vscode.extensions.getExtension(
     'asciidoctor.asciidoctor-vscode',

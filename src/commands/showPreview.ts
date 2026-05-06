@@ -4,9 +4,9 @@
 
 import * as vscode from 'vscode'
 
-import { Command } from '../commandManager'
-import { PreviewSettings } from '../features/preview'
-import { AsciidocPreviewManager } from '../features/previewManager'
+import { Command } from '../commandManager.js'
+import { PreviewSettings } from '../features/preview.js'
+import { AsciidocPreviewManager } from '../features/previewManager.js'
 
 interface ShowPreviewSettings {
   readonly sideBySide?: boolean

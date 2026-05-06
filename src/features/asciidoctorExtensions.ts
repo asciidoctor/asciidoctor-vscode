@@ -1,11 +1,11 @@
-import { Asciidoctor } from '@asciidoctor/core'
-import vscode from 'vscode'
-import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
-import { findFiles } from '../util/findFiles'
-import { mermaidJSProcessor } from './mermaid'
+import { Registry } from '@asciidoctor/core'
+import * as vscode from 'vscode'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
+import { findFiles } from '../util/findFiles.js'
+import { mermaidJSProcessor } from './mermaid.js'
 
 export interface AsciidoctorExtensionsProvider {
-  activate(registry: Asciidoctor.Extensions.Registry): Promise<void>
+  activate(registry: Registry): Promise<void>
 }
 
 export class AsciidoctorExtensions {
@@ -18,7 +18,7 @@ export class AsciidoctorExtensions {
       asciidoctorExtensionsSecurityPolicy
   }
 
-  public async activate(registry: Asciidoctor.Extensions.Registry) {
+  public async activate(registry: Registry) {
     const enableKroki = vscode.workspace
       .getConfiguration('asciidoc.extensions', null)
       .get('enableKroki')

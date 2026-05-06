@@ -1,41 +1,40 @@
+import { SyntaxHighlighter, SyntaxHighlighterBase } from '@asciidoctor/core'
 import * as vscode from 'vscode'
-import { WebviewResourceProvider } from './util/resources'
+import { WebviewResourceProvider } from './util/resources.js'
 
-const { Opal } = require('asciidoctor-opal-runtime')
-
-/**
- * Get the appropriate default highlight.js theme based on VS Code's current color theme.
- * Returns 'github-dark' for dark themes and 'github' for light themes.
- */
 function getDefaultHighlightJsTheme(): string {
   const themeKind = vscode.window.activeColorTheme.kind
   // ColorThemeKind: Light = 1, Dark = 2, HighContrast = 3, HighContrastLight = 4
-  if (themeKind === vscode.ColorThemeKind.Dark || themeKind === vscode.ColorThemeKind.HighContrast) {
+  if (
+    themeKind === vscode.ColorThemeKind.Dark ||
+    themeKind === vscode.ColorThemeKind.HighContrast
+  ) {
     return 'github-dark'
   }
   return 'github'
 }
 
-module.exports.register = (
+export function register(
   highlightjsBuiltInSyntaxHighlighter,
   context: vscode.ExtensionContext,
   webviewPanel: WebviewResourceProvider,
-) => {
-  const customHighlightJsAdapter = Opal.klass(
-    Opal.nil,
-    highlightjsBuiltInSyntaxHighlighter,
-    'CustomHighlightJsAdapter',
-  )
-  customHighlightJsAdapter.$register_for('highlight.js', 'highlightjs')
+) {
+  const BaseClass: any =
+    typeof highlightjsBuiltInSyntaxHighlighter === 'function'
+      ? highlightjsBuiltInSyntaxHighlighter
+      : SyntaxHighlighterBase
 
-  let $docinfo
-  Opal.def(
-    customHighlightJsAdapter,
-    '$docinfo',
-    ($docinfo = function $$docinfo(location, doc, _opts) {
-      const _self = this
+  class CustomHighlightJsAdapter extends BaseClass {
+    hasDocinfo(_location: string) {
+      return true
+    }
+
+    docinfo(location: string, doc: any, _opts: any) {
       if (location === 'head') {
-        const theme = doc.$attr('highlightjs-theme', getDefaultHighlightJsTheme())
+        const theme = doc.getAttribute(
+          'highlightjs-theme',
+          getDefaultHighlightJsTheme(),
+        )
         const themeStyleSheetResource = vscode.Uri.joinPath(
           context.extensionUri,
           'media',
@@ -47,9 +46,9 @@ module.exports.register = (
       }
       // footer
       let languageScripts = ''
-      if (doc['$attr?']('highlightjs-languages')) {
+      if (doc.hasAttribute('highlightjs-languages')) {
         languageScripts = doc
-          .$attr('highlightjs-languages')
+          .getAttribute('highlightjs-languages')
           .split(',')
           .map((lang) => {
             const languageScriptResource = vscode.Uri.joinPath(
@@ -77,7 +76,12 @@ if (!hljs.initHighlighting.called) {
   ;[].slice.call(document.querySelectorAll("pre.highlight > code")).forEach(function (el) { hljs.highlightElement(el) })
 }
 </script>`
-    }),
-    ($docinfo.$$arity = 3),
+    }
+  }
+
+  SyntaxHighlighter.register(
+    CustomHighlightJsAdapter,
+    'highlight.js',
+    'highlightjs',
   )
 }

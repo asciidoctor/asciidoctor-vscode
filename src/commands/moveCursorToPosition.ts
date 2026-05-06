@@ -4,7 +4,7 @@
 
 import * as vscode from 'vscode'
 
-import { Command } from '../commandManager'
+import { Command } from '../commandManager.js'
 
 export class MoveCursorToPositionCommand implements Command {
   public readonly id = '_asciidoc.moveCursorToPosition'

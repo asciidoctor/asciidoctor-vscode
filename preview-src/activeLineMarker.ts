@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { getElementsForSourceLine } from './scroll-sync'
+import { getElementsForSourceLine } from './scroll-sync.js'
 
 export class ActiveLineMarker {
   private _current: any

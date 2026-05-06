@@ -1,7 +1,7 @@
 import * as path from 'path'
 import * as vscode from 'vscode'
 import * as URI from 'vscode-uri'
-import { AsciidocLoader } from '../asciidocLoader'
+import { AsciidocLoader } from '../asciidocLoader.js'
 
 const imageFileExtensions = new Set<string>([
   '.bmp',

@@ -2,16 +2,17 @@ import * as contentClassifier from '@antora/content-classifier'
 import fs from 'fs'
 import yaml from 'js-yaml'
 import { posix as posixpath } from 'path'
-import vscode, { CancellationTokenSource, FileType, Memento, Uri } from 'vscode'
-import { dir, exists } from '../../util/file'
-import { findFiles } from '../../util/findFiles'
-import { getWorkspaceFolder } from '../../util/workspace'
+import * as vscode from 'vscode'
+import { CancellationTokenSource, FileType, Memento, Uri } from 'vscode'
+import { dir, exists } from '../../util/file.js'
+import { findFiles } from '../../util/findFiles.js'
+import { getWorkspaceFolder } from '../../util/workspace.js'
 import {
   AntoraConfig,
   AntoraContext,
   AntoraDocumentContext,
   AntoraSupportManager,
-} from './antoraContext'
+} from './antoraContext.js'
 
 const classifyContent = contentClassifier.default || contentClassifier
 

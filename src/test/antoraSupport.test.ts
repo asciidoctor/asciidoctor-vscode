@@ -5,9 +5,9 @@ import 'mocha'
 import {
   findAntoraConfigFile,
   getAntoraDocumentContext,
-} from '../features/antora/antoraDocument'
-import { getDefaultWorkspaceFolderUri } from '../util/workspace'
-import { extensionContext } from './helper'
+} from '../features/antora/antoraDocument.js'
+import { getDefaultWorkspaceFolderUri } from '../util/workspace.js'
+import { extensionContext } from './helper.js'
 import {
   createDirectories,
   createDirectory,
@@ -16,7 +16,7 @@ import {
   enableAntoraSupport,
   removeFiles,
   resetAntoraSupport,
-} from './workspaceHelper'
+} from './workspaceHelper.js'
 
 async function testGetAntoraConfig({
   asciidocPathUri,

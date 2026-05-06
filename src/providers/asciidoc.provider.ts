@@ -1,12 +1,12 @@
 import ospath from 'path'
 import * as vscode from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader'
+import { AsciidocLoader } from '../asciidocLoader.js'
 import {
   FileInfo,
   getChildrenOfPath,
   sortFilesAndDirectories,
-} from '../util/file'
-import { createContext } from './createContext'
+} from '../util/file.js'
+import { createContext } from './createContext.js'
 
 const macroWithTargetPathRx = /(include::|image::|image:)\S*/gi
 
@@ -20,7 +20,7 @@ export class TargetPathCompletionProvider {
     const context = createContext(textDocument, position)
 
     let textLine = context.textFullLine
-    let prevWhitespace = textLine.lastIndexOf(' ', context.position.character)
+    const prevWhitespace = textLine.lastIndexOf(' ', context.position.character)
     if (prevWhitespace !== -1) {
       textLine = textLine.substring(prevWhitespace + 1)
     }
@@ -33,13 +33,11 @@ export class TargetPathCompletionProvider {
         .replace('image::', '')
         .replace('image:', '')
 
-      let hasBracket = pathExtractedFromMacroString.includes('[')
+      const hasBracket = pathExtractedFromMacroString.includes('[')
 
-      let entryDir = pathExtractedFromMacroString.split('[')[0]
-        .slice(
-          0,
-          pathExtractedFromMacroString.lastIndexOf('/'),
-        )
+      let entryDir = pathExtractedFromMacroString
+        .split('[')[0]
+        .slice(0, pathExtractedFromMacroString.lastIndexOf('/'))
 
       // use path defined in a variable used
       if (entryDir.startsWith('{')) {

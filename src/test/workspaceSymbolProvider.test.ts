@@ -1,16 +1,16 @@
 import * as assert from 'assert'
 import 'mocha'
 import * as vscode from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader'
-import { AsciidoctorConfig } from '../features/asciidoctorConfig'
-import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
-import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
-import AdocDocumentSymbolProvider from '../features/documentSymbolProvider'
+import { AsciidocLoader } from '../asciidocLoader.js'
+import { AsciidoctorConfig } from '../features/asciidoctorConfig.js'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic.js'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions.js'
+import AdocDocumentSymbolProvider from '../features/documentSymbolProvider.js'
 import AsciidocWorkspaceSymbolProvider, {
   WorkspaceAsciidocDocumentProvider,
-} from '../features/workspaceSymbolProvider'
-import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
-import { extensionContext } from './helper'
+} from '../features/workspaceSymbolProvider.js'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
+import { extensionContext } from './helper.js'
 
 const symbolProvider = new AdocDocumentSymbolProvider(
   null,

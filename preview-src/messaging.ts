@@ -2,7 +2,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { getSettings } from './settings'
+import { getSettings } from './settings.js'
 
 export interface MessagePoster {
   /**

@@ -1,7 +1,7 @@
 import * as assert from 'assert'
 import 'mocha'
 import * as vscode from 'vscode'
-import { _generateCoverHtmlContent } from '../commands/exportAsPDF'
+import { _generateCoverHtmlContent } from '../commands/exportAsPDF.js'
 
 const asciidoctor = require('@asciidoctor/core')
 const processor = asciidoctor()

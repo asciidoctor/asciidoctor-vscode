@@ -3,8 +3,8 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
-import { disposeAll } from '../util/dispose'
-import { isAsciidocFile } from './file'
+import { disposeAll } from './dispose.js'
+import { isAsciidocFile } from './file.js'
 
 export class AsciidocFileTopmostLineMonitor {
   private readonly disposables: vscode.Disposable[] = []

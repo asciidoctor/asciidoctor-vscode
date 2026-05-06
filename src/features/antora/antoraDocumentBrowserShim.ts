@@ -1,5 +1,5 @@
 import { Memento, Uri } from 'vscode'
-import { AntoraConfig, AntoraDocumentContext } from './antoraContext'
+import { AntoraConfig, AntoraDocumentContext } from './antoraContext.js'
 
 export async function findAntoraConfigFile(_: Uri): Promise<Uri | undefined> {
   return undefined

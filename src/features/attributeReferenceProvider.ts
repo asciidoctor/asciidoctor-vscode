@@ -1,8 +1,8 @@
-import { Asciidoctor } from '@asciidoctor/core'
+import { Document } from '@asciidoctor/core'
 import * as vscode from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader'
+import { AsciidocLoader } from '../asciidocLoader.js'
 
-function findNearestBlock(document: Asciidoctor.Document, lineNumber: number) {
+function findNearestBlock(document: Document, lineNumber: number) {
   let nearestBlock
   const blocks = document.findBy((block) => {
     const sourceLocation = block.getSourceLocation()

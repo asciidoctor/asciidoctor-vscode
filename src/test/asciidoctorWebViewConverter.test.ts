@@ -1,17 +1,15 @@
+import { convert as asciidoctorConvert } from '@asciidoctor/core'
 import assert from 'assert'
 import path from 'path'
 import sinon from 'sinon'
 import vscode from 'vscode'
-import { AsciidocContributions } from '../asciidocExtensions'
-import { AsciidoctorWebViewConverter } from '../asciidoctorWebViewConverter'
-import { AntoraDocumentContext } from '../features/antora/antoraContext'
-import { AsciidocPreviewConfigurationManager } from '../features/previewConfig'
-import { WebviewResourceProvider } from '../util/resources'
-import { getDefaultWorkspaceFolderUri } from '../util/workspace'
-import { createDirectory, createFile, removeFiles } from './workspaceHelper'
-
-const asciidoctor = require('@asciidoctor/core')
-const processor = asciidoctor()
+import { AsciidocContributions } from '../asciidocExtensions.js'
+import { AsciidoctorWebViewConverter } from '../asciidoctorWebViewConverter.js'
+import { AntoraDocumentContext } from '../features/antora/antoraContext.js'
+import { AsciidocPreviewConfigurationManager } from '../features/previewConfig.js'
+import { WebviewResourceProvider } from '../util/resources.js'
+import { getDefaultWorkspaceFolderUri } from '../util/workspace.js'
+import { createDirectory, createFile, removeFiles } from './workspaceHelper.js'
 
 class TestWebviewResourceProvider implements WebviewResourceProvider {
   asWebviewUri(resource: vscode.Uri): vscode.Uri {
@@ -89,7 +87,7 @@ async function testAsciidoctorWebViewConverter(
     undefined,
   )
 
-  const html = processor.convert(
+  const html = await asciidoctorConvert(
     input,
     createConverterOptions(asciidoctorWebViewConverter, file.fileName),
   )
@@ -118,11 +116,13 @@ async function testAsciidoctorWebViewConverterStandalone(
     antoraDocumentContext,
     undefined,
   )
-  const html = processor.convert(input, {
+  const html = await asciidoctorConvert(input, {
     ...createConverterOptions(asciidoctorWebViewConverter, file.fileName),
     standalone: true,
   })
-  html.includes(expected)
+  if (html instanceof String) {
+    html.includes(expected)
+  }
 }
 
 suite('AsciidoctorWebViewConverter', async () => {

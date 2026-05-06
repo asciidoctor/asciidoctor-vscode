@@ -1,5 +1,6 @@
 import os from 'os'
-import vscode, { Uri, WorkspaceFolder } from 'vscode'
+import * as vscode from 'vscode'
+import { Uri, WorkspaceFolder } from 'vscode'
 
 const driveLetterRx = /(?<=^\/)([A-Z])(?=:\/)/
 

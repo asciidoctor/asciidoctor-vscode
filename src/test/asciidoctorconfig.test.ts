@@ -2,19 +2,19 @@ import 'mocha'
 
 import * as assert from 'assert'
 import * as vscode from 'vscode'
-import { AsciidocEngine } from '../asciidocEngine'
+import { AsciidocEngine } from '../asciidocEngine.js'
 import {
   AsciidocContributionProvider,
   AsciidocContributions,
-} from '../asciidocExtensions'
-import { AsciidoctorConfig } from '../features/asciidoctorConfig'
-import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
-import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
-import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
-import { WebviewResourceProvider } from '../util/resources'
-import { getDefaultWorkspaceFolderUri } from '../util/workspace'
-import { extensionContext } from './helper'
-import { createDirectory, createFile, removeFiles } from './workspaceHelper'
+} from '../asciidocExtensions.js'
+import { AsciidoctorConfig } from '../features/asciidoctorConfig.js'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic.js'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions.js'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
+import { WebviewResourceProvider } from '../util/resources.js'
+import { getDefaultWorkspaceFolderUri } from '../util/workspace.js'
+import { extensionContext } from './helper.js'
+import { createDirectory, createFile, removeFiles } from './workspaceHelper.js'
 
 class EmptyAsciidocContributions implements AsciidocContributions {
   readonly previewScripts = []

@@ -3,7 +3,7 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
-import { lazy } from './util/lazy'
+import { lazy } from './util/lazy.js'
 
 enum TraceType {
   Off,

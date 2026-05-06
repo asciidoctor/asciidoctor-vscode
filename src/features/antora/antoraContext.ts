@@ -1,12 +1,13 @@
 import ospath from 'path'
-import vscode, { l10n, Memento, Uri } from 'vscode'
-import { disposeAll } from '../../util/dispose'
-import AntoraCompletionProvider from './antoraCompletionProvider'
+import * as vscode from 'vscode'
+import { l10n, Memento, Uri } from 'vscode'
+import { disposeAll } from '../../util/dispose.js'
+import AntoraCompletionProvider from './antoraCompletionProvider.js'
 import {
   antoraConfigFileExists,
   getAntoraConfig,
   getAttributes,
-} from './antoraDocument'
+} from './antoraDocument.js'
 
 export interface AntoraResourceContext {
   component: string

@@ -1,42 +1,44 @@
-import { Asciidoctor } from '@asciidoctor/core/types'
-import vscode from 'vscode'
-import { AsciidocTextDocument } from './asciidocTextDocument'
-import { AsciidoctorProcessor } from './asciidoctorProcessor'
+import {
+  Document as AsciidoctorDocument,
+  Extensions,
+  LoggerManager,
+  load,
+  MemoryLogger,
+  Registry,
+} from '@asciidoctor/core'
+import * as vscode from 'vscode'
+import { AsciidocTextDocument } from './asciidocTextDocument.js'
 import {
   getAntoraConfig,
   getAntoraDocumentContext,
-} from './features/antora/antoraDocument'
-import { IncludeProcessor } from './features/antora/includeProcessor'
-import { resolveIncludeFile } from './features/antora/resolveIncludeFile'
-import { AsciidoctorAttributesConfig } from './features/asciidoctorAttributesConfig'
-import { AsciidoctorConfigProvider } from './features/asciidoctorConfig'
-import { AsciidoctorDiagnosticProvider } from './features/asciidoctorDiagnostic'
-import { AsciidoctorExtensionsProvider } from './features/asciidoctorExtensions'
+} from './features/antora/antoraDocument.js'
+import { AntoraIncludeProcessor } from './features/antora/includeProcessor.js'
+import { resolveIncludeFile } from './features/antora/resolveIncludeFile.js'
+import { AsciidoctorAttributesConfig } from './features/asciidoctorAttributesConfig.js'
+import { AsciidoctorConfigProvider } from './features/asciidoctorConfig.js'
+import { AsciidoctorDiagnosticProvider } from './features/asciidoctorDiagnostic.js'
+import { AsciidoctorExtensionsProvider } from './features/asciidoctorExtensions.js'
 import {
   AsciidoctorIncludeItemsProvider,
   IncludeItems,
-} from './features/asciidoctorIncludeItems'
-import { SkinnyTextDocument } from './util/document'
+} from './features/asciidoctorIncludeItems.js'
+import { SkinnyTextDocument } from './util/document.js'
 
 export class AsciidocLoader {
-  protected readonly processor: Asciidoctor
-
   constructor(
     readonly asciidoctorConfigProvider: AsciidoctorConfigProvider,
     readonly asciidoctorExtensionsProvider: AsciidoctorExtensionsProvider,
     readonly asciidoctorDiagnosticProvider: AsciidoctorDiagnosticProvider,
     readonly context: vscode.ExtensionContext,
-  ) {
-    this.processor = AsciidoctorProcessor.getInstance().processor
-  }
+  ) {}
 
   public async load(
     textDocument: SkinnyTextDocument,
-  ): Promise<Asciidoctor.Document> {
+  ): Promise<AsciidoctorDocument> {
     const { memoryLogger, registry } = await this.prepare(textDocument)
     const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).baseDir
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
-    const doc = this.processor.load(
+    const doc = await load(
       textDocument.getText(),
       this.getOptions(attributes, registry, baseDir),
     )
@@ -44,11 +46,7 @@ export class AsciidocLoader {
     return doc
   }
 
-  protected getOptions(
-    attributes: {},
-    registry: Asciidoctor.Extensions.Registry,
-    baseDir: string,
-  ) {
+  protected getOptions(attributes: {}, registry: Registry, baseDir: string) {
     return {
       attributes,
       extension_registry: registry,
@@ -60,11 +58,10 @@ export class AsciidocLoader {
   }
 
   protected async prepare(textDocument: SkinnyTextDocument) {
-    const processor = this.processor
-    const memoryLogger = processor.MemoryLogger.create()
-    processor.LoggerManager.setLogger(memoryLogger)
+    const memoryLogger = MemoryLogger.create()
+    LoggerManager.setLogger(memoryLogger)
 
-    const registry = processor.Extensions.create()
+    const registry = Extensions.create()
     await this.asciidoctorExtensionsProvider.activate(registry)
     const textDocumentUri = textDocument.uri
     await this.asciidoctorConfigProvider.activate(registry, textDocumentUri)
@@ -75,7 +72,7 @@ export class AsciidocLoader {
     if (antoraDocumentContext !== undefined) {
       const antoraConfig = await getAntoraConfig(textDocumentUri)
       registry.includeProcessor(
-        IncludeProcessor.$new((_, target, cursor) =>
+        new AntoraIncludeProcessor((_, target, cursor) =>
           resolveIncludeFile(
             target,
             {
@@ -120,7 +117,7 @@ export class AsciidocIncludeItemsLoader extends AsciidocLoader {
     const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).baseDir
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
     this.asciidoctorIncludeItemsProvider.reset()
-    this.processor.load(
+    await load(
       textDocument.getText(),
       this.getOptions(attributes, registry, baseDir),
     )

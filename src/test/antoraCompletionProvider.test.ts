@@ -2,14 +2,14 @@ import 'mocha'
 import assert from 'assert'
 import * as vscode from 'vscode'
 import { Position } from 'vscode'
-import AntoraCompletionProvider from '../features/antora/antoraCompletionProvider'
+import AntoraCompletionProvider from '../features/antora/antoraCompletionProvider.js'
 import {
   createDirectory,
   createFile,
   enableAntoraSupport,
   removeFiles,
   resetAntoraSupport,
-} from './workspaceHelper'
+} from './workspaceHelper.js'
 
 suite('Antora CompletionsProvider', () => {
   const createdFiles: vscode.Uri[] = []

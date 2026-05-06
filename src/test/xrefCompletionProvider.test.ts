@@ -2,8 +2,8 @@ import 'mocha'
 import assert from 'assert'
 import * as vscode from 'vscode'
 import { Position } from 'vscode'
-import { xrefProvider } from '../providers/xref.provider'
-import { getDefaultWorkspaceFolderUri } from '../util/workspace'
+import { xrefProvider } from '../providers/xref.provider.js'
+import { getDefaultWorkspaceFolderUri } from '../util/workspace.js'
 
 let workspaceUri
 
