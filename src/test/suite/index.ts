@@ -18,36 +18,40 @@ export async function run(): Promise<void> {
     .filter((f) => f.endsWith('.test.js'))
     .map((f) => path.join(testDir, f))
 
+  const controller = new AbortController()
   const stream = nodeTestRun({
     files: testFiles,
     isolation: 'none',
     timeout: 60000,
+    signal: controller.signal,
   })
 
   let passed = 0
   let failures = 0
 
   await new Promise<void>((resolve) => {
+    // node:test stream never emits 'end' in VS Code's extension host because
+    // VS Code keeps async handles alive. We abort after 5s of inactivity.
     let idleTimer: ReturnType<typeof setTimeout> | null = null
 
-    const scheduleExit = () => {
+    const scheduleAbort = () => {
       if (idleTimer !== null) clearTimeout(idleTimer)
-      idleTimer = setTimeout(resolve, 8000)
+      idleTimer = setTimeout(() => { controller.abort(); resolve() }, 5000)
     }
 
     stream.on('test:pass', (event) => {
       if (event.details?.type !== 'suite') passed++
-      scheduleExit()
+      scheduleAbort()
     })
     stream.on('test:fail', (event) => {
-      scheduleExit()
+      scheduleAbort()
       if (event.details?.type !== 'suite') {
         failures++
         const err = event.details?.error as (Error & { cause?: unknown }) | undefined
         console.error(`\n  ${err?.stack ?? err?.message ?? String(err)}`)
       }
     })
-    stream.on('end', resolve)
+    stream.on('end', () => { if (idleTimer !== null) clearTimeout(idleTimer); resolve() })
 
     stream.compose(new SpecReporter()).pipe(process.stdout, { end: false })
   })
