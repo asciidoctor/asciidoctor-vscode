@@ -1,144 +1,86 @@
-import 'mocha'
-import assert from 'assert'
+import assert from 'node:assert/strict'
+import { afterEach, beforeEach, describe, test } from 'node:test'
 import * as vscode from 'vscode'
 import { Position } from 'vscode'
 import { xrefProvider } from '../providers/xref.provider.js'
 import { getDefaultWorkspaceFolderUri } from '../util/workspace.js'
 
-let workspaceUri
+let workspaceUri: vscode.Uri
 
-suite('Xref CompletionsProvider', () => {
+describe('Xref CompletionsProvider', () => {
   let createdFiles: vscode.Uri[] = []
-  setup(() => {
+  beforeEach(() => {
     workspaceUri = getDefaultWorkspaceFolderUri()
   })
-  teardown(async () => {
+  afterEach(async () => {
     for (const createdFile of createdFiles) {
       await vscode.workspace.fs.delete(createdFile)
     }
     createdFiles = []
   })
+
   test('Should return other ids from old style double-brackets as completion after "xref:"', async () => {
-    const fileToAutoComplete = vscode.Uri.joinPath(
-      workspaceUri,
-      'fileToAutoComplete.adoc',
-    )
-    await vscode.workspace.fs.writeFile(
-      fileToAutoComplete,
-      Buffer.from('xref:'),
-    )
+    const fileToAutoComplete = vscode.Uri.joinPath(workspaceUri, 'fileToAutoComplete.adoc')
+    await vscode.workspace.fs.writeFile(fileToAutoComplete, Buffer.from('xref:'))
     createdFiles.push(fileToAutoComplete)
 
-    const fileThatShouldAppearInAutoComplete = vscode.Uri.joinPath(
-      workspaceUri,
-      'fileToAppearInAutoComplete.adoc',
-    )
-    await vscode.workspace.fs.writeFile(
-      fileThatShouldAppearInAutoComplete,
-      Buffer.from('[[anOldStyleID]]'),
-    )
+    const fileThatShouldAppearInAutoComplete = vscode.Uri.joinPath(workspaceUri, 'fileToAppearInAutoComplete.adoc')
+    await vscode.workspace.fs.writeFile(fileThatShouldAppearInAutoComplete, Buffer.from('[[anOldStyleID]]'))
     createdFiles.push(fileThatShouldAppearInAutoComplete)
 
     const file = await vscode.workspace.openTextDocument(fileToAutoComplete)
-    const completionsItems = await xrefProvider.provideCompletionItems(
-      file,
-      new Position(0, 5),
-    )
+    const completionsItems = await xrefProvider.provideCompletionItems(file, new Position(0, 5))
     const filteredCompletionItems = completionsItems.filter(
-      (completionItem) =>
-        completionItem.label ===
-        'fileToAppearInAutoComplete.adoc#anOldStyleID[]',
+      (completionItem) => completionItem.label === 'fileToAppearInAutoComplete.adoc#anOldStyleID[]',
     )
     assert.deepStrictEqual(
       filteredCompletionItems[0],
-      new vscode.CompletionItem(
-        'fileToAppearInAutoComplete.adoc#anOldStyleID[]',
-        vscode.CompletionItemKind.Reference,
-      ),
+      new vscode.CompletionItem('fileToAppearInAutoComplete.adoc#anOldStyleID[]', vscode.CompletionItemKind.Reference),
     )
   })
+
   test('Should return ids declared using the shorthand syntax as completion after "xref:"', async () => {
-    const fileToAutoComplete = vscode.Uri.joinPath(
-      workspaceUri,
-      'fileToAutoComplete.adoc',
-    )
-    await vscode.workspace.fs.writeFile(
-      fileToAutoComplete,
-      Buffer.from('xref:'),
-    )
+    const fileToAutoComplete = vscode.Uri.joinPath(workspaceUri, 'fileToAutoComplete.adoc')
+    await vscode.workspace.fs.writeFile(fileToAutoComplete, Buffer.from('xref:'))
     createdFiles.push(fileToAutoComplete)
 
-    const fileThatShouldAppearInAutoComplete = vscode.Uri.joinPath(
-      workspaceUri,
-      'fileToAppearInAutoComplete.adoc',
-    )
-    await vscode.workspace.fs.writeFile(
-      fileThatShouldAppearInAutoComplete,
-      Buffer.from('[#aShortHandID]'),
-    )
+    const fileThatShouldAppearInAutoComplete = vscode.Uri.joinPath(workspaceUri, 'fileToAppearInAutoComplete.adoc')
+    await vscode.workspace.fs.writeFile(fileThatShouldAppearInAutoComplete, Buffer.from('[#aShortHandID]'))
     createdFiles.push(fileThatShouldAppearInAutoComplete)
 
     const file = await vscode.workspace.openTextDocument(fileToAutoComplete)
-    const completionsItems = await xrefProvider.provideCompletionItems(
-      file,
-      new Position(0, 5),
-    )
+    const completionsItems = await xrefProvider.provideCompletionItems(file, new Position(0, 5))
     const filteredCompletionItems = completionsItems.filter(
-      (completionItem) =>
-        completionItem.label ===
-        'fileToAppearInAutoComplete.adoc#aShortHandID[]',
+      (completionItem) => completionItem.label === 'fileToAppearInAutoComplete.adoc#aShortHandID[]',
     )
     assert.deepStrictEqual(
       filteredCompletionItems[0],
-      new vscode.CompletionItem(
-        'fileToAppearInAutoComplete.adoc#aShortHandID[]',
-        vscode.CompletionItemKind.Reference,
-      ),
+      new vscode.CompletionItem('fileToAppearInAutoComplete.adoc#aShortHandID[]', vscode.CompletionItemKind.Reference),
     )
   })
+
   test('Should return ids declared using the longhand syntax as completion after "xref:" from other document', async () => {
-    const fileToAutoComplete = vscode.Uri.joinPath(
-      workspaceUri,
-      'fileToAutoComplete.adoc',
-    )
-    await vscode.workspace.fs.writeFile(
-      fileToAutoComplete,
-      Buffer.from('xref:'),
-    )
+    const fileToAutoComplete = vscode.Uri.joinPath(workspaceUri, 'fileToAutoComplete.adoc')
+    await vscode.workspace.fs.writeFile(fileToAutoComplete, Buffer.from('xref:'))
     createdFiles.push(fileToAutoComplete)
 
-    const fileThatShouldAppearInAutoComplete = vscode.Uri.joinPath(
-      workspaceUri,
-      'fileToAppearInAutoComplete.adoc',
-    )
-    await vscode.workspace.fs.writeFile(
-      fileThatShouldAppearInAutoComplete,
-      Buffer.from('[id=longHandID]'),
-    )
+    const fileThatShouldAppearInAutoComplete = vscode.Uri.joinPath(workspaceUri, 'fileToAppearInAutoComplete.adoc')
+    await vscode.workspace.fs.writeFile(fileThatShouldAppearInAutoComplete, Buffer.from('[id=longHandID]'))
     createdFiles.push(fileThatShouldAppearInAutoComplete)
 
     const file = await vscode.workspace.openTextDocument(fileToAutoComplete)
-    const completionsItems = await xrefProvider.provideCompletionItems(
-      file,
-      new Position(0, 5),
-    )
+    const completionsItems = await xrefProvider.provideCompletionItems(file, new Position(0, 5))
     const filteredCompletionItems = completionsItems.filter(
-      (completionItem) =>
-        completionItem.label === 'fileToAppearInAutoComplete.adoc#longHandID[]',
+      (completionItem) => completionItem.label === 'fileToAppearInAutoComplete.adoc#longHandID[]',
     )
     assert.deepStrictEqual(
       filteredCompletionItems[0],
-      new vscode.CompletionItem(
-        'fileToAppearInAutoComplete.adoc#longHandID[]',
-        vscode.CompletionItemKind.Reference,
-      ),
+      new vscode.CompletionItem('fileToAppearInAutoComplete.adoc#longHandID[]', vscode.CompletionItemKind.Reference),
     )
   })
+
   test('Should return ids declared using the longhand syntax as completion after "xref:" from same document', async () => {
-    const fileToAutoComplete = vscode.Uri.joinPath(
-      workspaceUri,
-      'fileToAutoCompleteFromSameFile.adoc',
-    )
+    const fileToAutoComplete = vscode.Uri.joinPath(workspaceUri, 'fileToAutoCompleteFromSameFile.adoc')
     await vscode.workspace.fs.writeFile(
       fileToAutoComplete,
       Buffer.from(`[id=longHandID]
@@ -148,26 +90,16 @@ xref:`),
     createdFiles.push(fileToAutoComplete)
 
     const file = await vscode.workspace.openTextDocument(fileToAutoComplete)
-    const completionsItems = await xrefProvider.provideCompletionItems(
-      file,
-      new Position(2, 5),
-    )
-    const filteredCompletionItems = completionsItems.filter(
-      (completionItem) => completionItem.label === 'longHandID[]',
-    )
+    const completionsItems = await xrefProvider.provideCompletionItems(file, new Position(2, 5))
+    const filteredCompletionItems = completionsItems.filter((completionItem) => completionItem.label === 'longHandID[]')
     assert.deepStrictEqual(
       filteredCompletionItems[0],
-      new vscode.CompletionItem(
-        'longHandID[]',
-        vscode.CompletionItemKind.Reference,
-      ),
+      new vscode.CompletionItem('longHandID[]', vscode.CompletionItemKind.Reference),
     )
   })
+
   test('Should return id for inlined anchor', async () => {
-    const fileToAutoComplete = vscode.Uri.joinPath(
-      workspaceUri,
-      'fileToTestXrefAutoComplete.adoc',
-    )
+    const fileToAutoComplete = vscode.Uri.joinPath(workspaceUri, 'fileToTestXrefAutoComplete.adoc')
     await vscode.workspace.fs.writeFile(
       fileToAutoComplete,
       Buffer.from(`* [id=anInlinedAnchor]demo
@@ -177,26 +109,18 @@ xref:`),
     createdFiles.push(fileToAutoComplete)
 
     const file = await vscode.workspace.openTextDocument(fileToAutoComplete)
-    const completionsItems = await xrefProvider.provideCompletionItems(
-      file,
-      new Position(2, 5),
-    )
+    const completionsItems = await xrefProvider.provideCompletionItems(file, new Position(2, 5))
     const filteredCompletionItems = completionsItems.filter(
       (completionItem) => completionItem.label === 'anInlinedAnchor[]',
     )
     assert.deepStrictEqual(
       filteredCompletionItems[0],
-      new vscode.CompletionItem(
-        'anInlinedAnchor[]',
-        vscode.CompletionItemKind.Reference,
-      ),
+      new vscode.CompletionItem('anInlinedAnchor[]', vscode.CompletionItemKind.Reference),
     )
   })
+
   test('Should return id for element in same document after <<', async () => {
-    const fileToAutoComplete = vscode.Uri.joinPath(
-      workspaceUri,
-      'fileToTestXrefAliasAutoComplete.adoc',
-    )
+    const fileToAutoComplete = vscode.Uri.joinPath(workspaceUri, 'fileToTestXrefAliasAutoComplete.adoc')
     await vscode.workspace.fs.writeFile(
       fileToAutoComplete,
       Buffer.from(`[#anIDFromSameFile]
@@ -205,24 +129,13 @@ xref:`),
     )
     createdFiles.push(fileToAutoComplete)
 
-    const fileThatShouldntAppearInAutoComplete = vscode.Uri.joinPath(
-      workspaceUri,
-      'fileToNotAppearInAutoComplete.adoc',
-    )
-    await vscode.workspace.fs.writeFile(
-      fileThatShouldntAppearInAutoComplete,
-      Buffer.from('[#shouldNotAppear]'),
-    )
+    const fileThatShouldntAppearInAutoComplete = vscode.Uri.joinPath(workspaceUri, 'fileToNotAppearInAutoComplete.adoc')
+    await vscode.workspace.fs.writeFile(fileThatShouldntAppearInAutoComplete, Buffer.from('[#shouldNotAppear]'))
     createdFiles.push(fileThatShouldntAppearInAutoComplete)
 
     const file = await vscode.workspace.openTextDocument(fileToAutoComplete)
-    const completionsItems = await xrefProvider.provideCompletionItems(
-      file,
-      new Position(2, 2),
-    )
-    const filteredCompletionItems = completionsItems.filter(
-      (completionItem) => completionItem.label === 'anIDFromSameFile',
-    )
+    const completionsItems = await xrefProvider.provideCompletionItems(file, new Position(2, 2))
+    const filteredCompletionItems = completionsItems.filter((completionItem) => completionItem.label === 'anIDFromSameFile')
     assert.deepStrictEqual(filteredCompletionItems[0], {
       kind: vscode.CompletionItemKind.Reference,
       label: 'anIDFromSameFile',
@@ -230,9 +143,7 @@ xref:`),
     })
 
     assert.strictEqual(
-      completionsItems.filter(
-        (completionItem) => completionItem.label === 'shouldNotAppear',
-      ).length,
+      completionsItems.filter((completionItem) => completionItem.label === 'shouldNotAppear').length,
       0,
     )
   })

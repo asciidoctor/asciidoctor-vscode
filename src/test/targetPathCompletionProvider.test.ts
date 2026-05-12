@@ -1,6 +1,8 @@
+import assert from 'node:assert/strict'
+import { beforeEach, describe, test } from 'node:test'
 import { Registry } from '@asciidoctor/core'
-import chai from 'chai'
-import vscode, { Position } from 'vscode'
+import * as vscode from 'vscode'
+import { Position } from 'vscode'
 import { AsciidocLoader } from '../asciidocLoader.js'
 import { AsciidoctorConfigProvider } from '../features/asciidoctorConfig.js'
 import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic.js'
@@ -14,11 +16,10 @@ import {
   removeFiles,
 } from './workspaceHelper.js'
 
-const expect = chai.expect
+let asciidocLoader: AsciidocLoader
 
-let asciidocLoader
-suite('Target path completion provider', () => {
-  setup(() => {
+describe('Target path completion provider', () => {
+  beforeEach(() => {
     asciidocLoader = new AsciidocLoader(
       new (class implements AsciidoctorConfigProvider {
         activate(_: Registry, __: vscode.Uri): Promise<void> {
@@ -34,6 +35,7 @@ suite('Target path completion provider', () => {
       extensionContext,
     )
   })
+
   test('Should return completion items relative to imagesdir', async () => {
     const testDirectory = await createDirectory('target-path-completion')
     try {
@@ -50,37 +52,30 @@ image::`,
         'asciidoc',
         'index.adoc',
       )
-      await createFile(
-        '',
-        'target-path-completion',
-        'src',
-        'images',
-        'wilderness-map.jpg',
-      )
-      await createFile(
-        '',
-        'target-path-completion',
-        'src',
-        'images',
-        'skyline.jpg',
-      )
+      await createFile('', 'target-path-completion', 'src', 'images', 'wilderness-map.jpg')
+      await createFile('', 'target-path-completion', 'src', 'images', 'skyline.jpg')
       const file = await vscode.workspace.openTextDocument(asciidocFile)
-      const completionsItems = await provider.provideCompletionItems(
-        file,
-        new Position(3, 7),
+      const completionsItems = await provider.provideCompletionItems(file, new Position(3, 7))
+      assert.ok(
+        completionsItems?.some(
+          (item) =>
+            item.label === 'wilderness-map.jpg' &&
+            item.kind === 16 &&
+            item.sortText === '10_wilderness-map.jpg' &&
+            item.insertText === 'wilderness-map.jpg[]',
+        ),
+        'Expected completionsItems to include wilderness-map.jpg',
       )
-      expect(completionsItems).to.deep.include({
-        label: 'wilderness-map.jpg',
-        kind: 16,
-        sortText: '10_wilderness-map.jpg',
-        insertText: 'wilderness-map.jpg[]',
-      })
-      expect(completionsItems).to.deep.include({
-        label: 'skyline.jpg',
-        kind: 16,
-        sortText: '10_skyline.jpg',
-        insertText: 'skyline.jpg[]',
-      })
+      assert.ok(
+        completionsItems?.some(
+          (item) =>
+            item.label === 'skyline.jpg' &&
+            item.kind === 16 &&
+            item.sortText === '10_skyline.jpg' &&
+            item.insertText === 'skyline.jpg[]',
+        ),
+        'Expected completionsItems to include skyline.jpg',
+      )
     } finally {
       await removeFiles([testDirectory])
     }

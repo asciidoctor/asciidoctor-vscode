@@ -1,5 +1,5 @@
-import * as assert from 'assert'
-import 'mocha'
+import assert from 'node:assert/strict'
+import { describe, test } from 'node:test'
 import * as vscode from 'vscode'
 import { AsciidocEngine } from '../asciidocEngine.js'
 import {
@@ -55,8 +55,7 @@ class AsciidocContributionProviderTest implements AsciidocContributionProvider {
   }
 }
 
-suite('AsciiDoc parser with Antora support enabled', function () {
-  this.timeout(60000)
+describe('AsciiDoc parser with Antora support enabled', { timeout: 60000 }, () => {
   test('convert Antora page', async () => {
     const createdFiles = []
     try {
@@ -72,21 +71,12 @@ asciidoc:
         'docs',
         'antora.yml',
       )
-      const asciidocFile = await createFile(
-        '',
-        'docs',
-        'modules',
-        'ROOT',
-        'pages',
-        'index.adoc',
-      ) // virtual
+      const asciidocFile = await createFile('', 'docs', 'modules', 'ROOT', 'pages', 'index.adoc')
       await enableAntoraSupport()
       const asciidocParser = new AsciidocEngine(
         new AsciidocContributionProviderTest(extensionContext.extensionUri),
         new AsciidoctorConfig(),
-        new AsciidoctorExtensions(
-          AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
-        ),
+        new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
         new AsciidoctorDiagnostic('test'),
       )
       const result = await asciidocParser.convertFromTextDocument(

@@ -1,11 +1,7 @@
-import vscode from 'vscode'
+import * as vscode from 'vscode'
 
 export let extensionContext: vscode.ExtensionContext
-suiteSetup(async () => {
-  // Trigger extension activation and grab the context as some tests depend on it
-  const extension = vscode.extensions.getExtension(
-    'asciidoctor.asciidoctor-vscode',
-  )
-  await extension?.activate()
-  extensionContext = (globalThis as any).testExtensionContext
-})
+
+export function setExtensionContext(context: vscode.ExtensionContext) {
+  extensionContext = context
+}

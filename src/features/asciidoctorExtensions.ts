@@ -22,12 +22,13 @@ export class AsciidoctorExtensions {
     const enableKroki = vscode.workspace
       .getConfiguration('asciidoc.extensions', null)
       .get('enableKroki')
+    // asciidoctor-kroki is temporarily disabled: not yet compatible with Asciidoctor 4.0
     if (enableKroki) {
-      const kroki = require('asciidoctor-kroki')
-      kroki.register(registry)
-    } else {
-      registry.block('mermaid', mermaidJSProcessor())
+      vscode.window.showWarningMessage(
+        'Kroki diagrams are temporarily disabled because asciidoctor-kroki is not yet compatible with Asciidoctor 4.0.',
+      )
     }
+    registry.block('mermaid', mermaidJSProcessor())
     await this.registerExtensionsInWorkspace(registry)
   }
 

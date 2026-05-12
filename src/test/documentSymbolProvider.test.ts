@@ -1,5 +1,5 @@
-import * as assert from 'assert'
-import 'mocha'
+import assert from 'node:assert/strict'
+import { describe, test } from 'node:test'
 import * as vscode from 'vscode'
 import { AsciidocLoader } from '../asciidocLoader.js'
 import { AsciidoctorConfig } from '../features/asciidoctorConfig.js'
@@ -18,9 +18,7 @@ function getSymbolsForFile(fileContents: string) {
     null,
     new AsciidocLoader(
       new AsciidoctorConfig(),
-      new AsciidoctorExtensions(
-        AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
-      ),
+      new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
       new AsciidoctorDiagnostic('text'),
       extensionContext,
     ),
@@ -28,7 +26,7 @@ function getSymbolsForFile(fileContents: string) {
   return provider.provideDocumentSymbols(doc)
 }
 
-suite('asciidoc.DocumentSymbolProvider', () => {
+describe('asciidoc.DocumentSymbolProvider', () => {
   test('Should not return anything for empty document', async () => {
     const symbols = await getSymbolsForFile('')
     assert.strictEqual(symbols.length, 0)

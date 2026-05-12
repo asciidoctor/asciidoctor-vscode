@@ -27,7 +27,13 @@ export async function run(): Promise<void> {
   })
 
   let passed = 0
-  let failures = 0
+  const failedTests: Array<{ name: string; error: string }> = []
+
+  // Use 'data' listener instead of pipe so each chunk is written synchronously
+  // as it arrives, avoiding flush timing issues with process.exit()
+  stream.compose(new SpecReporter()).on('data', (chunk: Buffer | string) => {
+    process.stdout.write(chunk)
+  })
 
   await new Promise<void>((resolve) => {
     // node:test stream never emits 'end' in VS Code's extension host because
@@ -46,18 +52,29 @@ export async function run(): Promise<void> {
     stream.on('test:fail', (event) => {
       scheduleAbort()
       if (event.details?.type !== 'suite') {
-        failures++
         const err = event.details?.error as (Error & { cause?: unknown }) | undefined
-        console.error(`\n  ${err?.stack ?? err?.message ?? String(err)}`)
+        failedTests.push({
+          name: event.name,
+          error: err?.stack ?? err?.message ?? String(err),
+        })
       }
     })
     stream.on('end', () => { if (idleTimer !== null) clearTimeout(idleTimer); resolve() })
-
-    stream.compose(new SpecReporter()).pipe(process.stdout, { end: false })
   })
 
-  const total = passed + failures
-  console.log(`\nTests: ${passed} passed, ${failures} failed, ${total} total`)
+  // Yield once so any pending 'data' events from the reporter are flushed first
+  await new Promise<void>((resolve) => setImmediate(resolve))
 
-  process.exit(failures > 0 ? 1 : 0)
+  if (failedTests.length > 0) {
+    process.stdout.write('\nFailures:\n')
+    for (const { name, error } of failedTests) {
+      process.stdout.write(`\n  ✖ ${name}\n`)
+      process.stdout.write(error.split('\n').map((l) => `    ${l}`).join('\n') + '\n')
+    }
+  }
+
+  const total = passed + failedTests.length
+  console.log(`\nTests: ${passed} passed, ${failedTests.length} failed, ${total} total`)
+
+  process.exit(failedTests.length > 0 ? 1 : 0)
 }

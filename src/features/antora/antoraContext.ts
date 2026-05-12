@@ -171,6 +171,7 @@ export class AntoraSupportManager implements vscode.Disposable {
         onDidOpenAsciiDocFileAskAntoraSupport,
       )
     }
+    return AntoraSupportManager.instance
   }
 
   public async getAttributes(

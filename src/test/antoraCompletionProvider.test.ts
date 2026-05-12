@@ -1,5 +1,5 @@
-import 'mocha'
-import assert from 'assert'
+import assert from 'node:assert/strict'
+import { after, before, describe, test } from 'node:test'
 import * as vscode from 'vscode'
 import { Position } from 'vscode'
 import AntoraCompletionProvider from '../features/antora/antoraCompletionProvider.js'
@@ -11,9 +11,9 @@ import {
   resetAntoraSupport,
 } from './workspaceHelper.js'
 
-suite('Antora CompletionsProvider', () => {
+describe('Antora CompletionsProvider', () => {
   const createdFiles: vscode.Uri[] = []
-  suiteSetup(async () => {
+  before(async () => {
     createdFiles.push(await createDirectory('docs'))
     await createFile(
       `name: "api"
@@ -42,7 +42,7 @@ link:help.adoc[]
     )
     createdFiles.push(asciidocFile)
   })
-  suiteTeardown(async () => {
+  after(async () => {
     await removeFiles(createdFiles)
   })
   test('Should return completion items', async () => {
@@ -62,24 +62,12 @@ link:help.adoc[]
       )
       const textDocument = await vscode.workspace.openTextDocument(file)
       await enableAntoraSupport()
-      const completionsItems = await provider.provideCompletionItems(
-        textDocument,
-        new Position(2, 1),
-      )
-      assert.deepStrictEqual(completionsItems[0].label, {
-        description: 'asciidoc@',
-        label: 'source-language',
-      })
+      const completionsItems = await provider.provideCompletionItems(textDocument, new Position(2, 1))
+      assert.deepStrictEqual(completionsItems[0].label, { description: 'asciidoc@', label: 'source-language' })
       assert.strictEqual(completionsItems[0].insertText, '{asciidoc@}')
-      assert.deepStrictEqual(completionsItems[1].label, {
-        description: 'short@',
-        label: 'xrefstyle',
-      })
+      assert.deepStrictEqual(completionsItems[1].label, { description: 'short@', label: 'xrefstyle' })
       assert.strictEqual(completionsItems[1].insertText, '{short@}')
-      assert.deepStrictEqual(completionsItems[2].label, {
-        description: false,
-        label: 'example-caption',
-      })
+      assert.deepStrictEqual(completionsItems[2].label, { description: false, label: 'example-caption' })
       assert.strictEqual(completionsItems[2].insertText, '{false}')
     } finally {
       await resetAntoraSupport()

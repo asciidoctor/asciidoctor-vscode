@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 import * as vscode from 'vscode'
 
 export class InMemoryDocument implements vscode.TextDocument {
@@ -43,10 +39,7 @@ export class InMemoryDocument implements vscode.TextDocument {
   offsetAt(position: vscode.Position): number {
     let lines = this._contents.split('\n')
     lines = lines.splice(0, position.line + 1)
-    lines[lines.length - 1] = lines[lines.length - 1].substring(
-      0,
-      position.character,
-    )
+    lines[lines.length - 1] = lines[lines.length - 1].substring(0, position.character)
     return lines.join('\n').split('').length
   }
 
@@ -55,20 +48,14 @@ export class InMemoryDocument implements vscode.TextDocument {
     const newLines = before.match(/\n/g)
     const line = newLines ? newLines.length : 0
     const preCharacters = before.match(/(\n|^).*$/g)
-    return new vscode.Position(
-      line,
-      preCharacters ? preCharacters[0].length : 0,
-    )
+    return new vscode.Position(line, preCharacters ? preCharacters[0].length : 0)
   }
 
   getText(_range?: vscode.Range | undefined): string {
     return this._contents
   }
 
-  getWordRangeAtPosition(
-    _position: vscode.Position,
-    _regex?: RegExp | undefined,
-  ): never {
+  getWordRangeAtPosition(_position: vscode.Position, _regex?: RegExp | undefined): never {
     throw new Error('Method not implemented.')
   }
 
