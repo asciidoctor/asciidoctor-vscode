@@ -626,7 +626,7 @@
     "deploy": "vsce publish -p",
     "lint": "npx @biomejs/biome check --write",
     "format": "npx @biomejs/biome format --write",
-    "build:test": "node tasks/build-test.mjs",
+    "build:test": "tsc --project tsconfig.test.json",
     "pretest": "npm run build && npm run build:test",
     "test": "node ./src/test/runTest.mjs",
     "test:unit": "npm run build:test && node --test build/src/test/unit/*.test.js",
