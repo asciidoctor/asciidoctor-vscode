@@ -26,7 +26,9 @@ describe('asciidoc.TableOfContentsProvider', () => {
       doc,
       new AsciidocLoader(
         new AsciidoctorConfig(),
-        new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+        new AsciidoctorExtensions(
+          AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+        ),
         new AsciidoctorDiagnostic('test'),
         extensionContext,
       ),
@@ -41,7 +43,9 @@ describe('asciidoc.TableOfContentsProvider', () => {
       doc,
       new AsciidocLoader(
         new AsciidoctorConfig(),
-        new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+        new AsciidoctorExtensions(
+          AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+        ),
         new AsciidoctorDiagnostic('test'),
         extensionContext,
       ),
@@ -56,42 +60,66 @@ describe('asciidoc.TableOfContentsProvider', () => {
     const mainContent = `= test
 
 content`
-    const mainFile = await createFile(mainContent, 'tableofcontents-main-document.adoc')
+    const mainFile = await createFile(
+      mainContent,
+      'tableofcontents-main-document.adoc',
+    )
     createdFiles.push(mainFile)
     const provider = new TableOfContentsProvider(
       new InMemoryDocument(mainFile, mainContent),
       new AsciidocLoader(
         new AsciidoctorConfig(),
-        new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+        new AsciidoctorExtensions(
+          AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+        ),
         new AsciidoctorDiagnostic('test'),
         extensionContext,
       ),
     )
     const toc = await provider.getToc()
-    const documentTitleEntry = toc.find((entry) => entry.text === 'test' && entry.line === 0)
-    assert.deepStrictEqual(documentTitleEntry !== undefined, true, 'should include the document title in the TOC')
+    const documentTitleEntry = toc.find(
+      (entry) => entry.text === 'test' && entry.line === 0,
+    )
+    assert.deepStrictEqual(
+      documentTitleEntry !== undefined,
+      true,
+      'should include the document title in the TOC',
+    )
   })
 
   test('Should include the document title in the TOC (when using an include just below it)', async () => {
-    createdFiles.push(await createFile(`:attr: value\n`, 'tableofcontents-attrs.adoc'))
+    createdFiles.push(
+      await createFile(`:attr: value\n`, 'tableofcontents-attrs.adoc'),
+    )
     const mainContent = `= test
 include::attrs.adoc[]
 
 content`
-    const mainFile = await createFile(mainContent, 'tableofcontents-main-document.adoc')
+    const mainFile = await createFile(
+      mainContent,
+      'tableofcontents-main-document.adoc',
+    )
     createdFiles.push(mainFile)
     const provider = new TableOfContentsProvider(
       new InMemoryDocument(mainFile, mainContent),
       new AsciidocLoader(
         new AsciidoctorConfig(),
-        new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+        new AsciidoctorExtensions(
+          AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+        ),
         new AsciidoctorDiagnostic('test'),
         extensionContext,
       ),
     )
     const toc = await provider.getToc()
-    const documentTitleEntry = toc.find((entry) => entry.text === 'test' && entry.line === 0)
-    assert.deepStrictEqual(documentTitleEntry !== undefined, true, 'should include the document title in the TOC')
+    const documentTitleEntry = toc.find(
+      (entry) => entry.text === 'test' && entry.line === 0,
+    )
+    assert.deepStrictEqual(
+      documentTitleEntry !== undefined,
+      true,
+      'should include the document title in the TOC',
+    )
   })
 
   test('Should properly decode HTML entities', async () => {
@@ -107,7 +135,9 @@ content`
       doc,
       new AsciidocLoader(
         new AsciidoctorConfig(),
-        new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+        new AsciidoctorExtensions(
+          AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+        ),
         new AsciidoctorDiagnostic('test'),
         extensionContext,
       ),
@@ -115,13 +145,21 @@ content`
 
     const toc = await provider.getToc()
     const ddEntry = toc.find((t) => t.text === 'Dungeons & Dragons')
-    assert.strictEqual(ddEntry !== null, true, 'should find an entry with title: Dungeons & Dragons')
+    assert.strictEqual(
+      ddEntry !== null,
+      true,
+      'should find an entry with title: Dungeons & Dragons',
+    )
     assert.deepStrictEqual(
       { text: ddEntry.text, slug: ddEntry.slug.value },
       { text: 'Dungeons & Dragons', slug: '_dungeons_dragons' },
     )
     const ldiEntry = toc.find((t) => t.text === 'Let’s do it!')
-    assert.strictEqual(ldiEntry !== null, true, 'should find an entry with title: Let’s do it!')
+    assert.strictEqual(
+      ldiEntry !== null,
+      true,
+      'should find an entry with title: Let’s do it!',
+    )
     assert.deepStrictEqual(
       { text: ldiEntry.text, slug: ldiEntry.slug.value },
       { text: 'Let’s do it!', slug: '_lets_do_it' },

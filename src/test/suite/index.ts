@@ -9,7 +9,9 @@ import { setExtensionContext } from '../helper.js'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 export async function run(): Promise<void> {
-  const extension = vscode.extensions.getExtension('asciidoctor.asciidoctor-vscode')
+  const extension = vscode.extensions.getExtension(
+    'asciidoctor.asciidoctor-vscode',
+  )
   await extension?.activate()
   setExtensionContext((globalThis as any).testExtensionContext)
 
@@ -41,25 +43,39 @@ export async function run(): Promise<void> {
     let idleTimer: ReturnType<typeof setTimeout> | null = null
 
     const scheduleAbort = () => {
-      if (idleTimer !== null) clearTimeout(idleTimer)
-      idleTimer = setTimeout(() => { controller.abort(); resolve() }, 5000)
+      if (idleTimer !== null) {
+        clearTimeout(idleTimer)
+      }
+      idleTimer = setTimeout(() => {
+        controller.abort()
+        resolve()
+      }, 5000)
     }
 
     stream.on('test:pass', (event) => {
-      if (event.details?.type !== 'suite') passed++
+      if (event.details?.type !== 'suite') {
+        passed++
+      }
       scheduleAbort()
     })
     stream.on('test:fail', (event) => {
       scheduleAbort()
       if (event.details?.type !== 'suite') {
-        const err = event.details?.error as (Error & { cause?: unknown }) | undefined
+        const err = event.details?.error as
+          | (Error & { cause?: unknown })
+          | undefined
         failedTests.push({
           name: event.name,
           error: err?.stack ?? err?.message ?? String(err),
         })
       }
     })
-    stream.on('end', () => { if (idleTimer !== null) clearTimeout(idleTimer); resolve() })
+    stream.on('end', () => {
+      if (idleTimer !== null) {
+        clearTimeout(idleTimer)
+      }
+      resolve()
+    })
   })
 
   // Yield once so any pending 'data' events from the reporter are flushed first
@@ -69,12 +85,19 @@ export async function run(): Promise<void> {
     process.stdout.write('\nFailures:\n')
     for (const { name, error } of failedTests) {
       process.stdout.write(`\n  ✖ ${name}\n`)
-      process.stdout.write(error.split('\n').map((l) => `    ${l}`).join('\n') + '\n')
+      process.stdout.write(
+        error
+          .split('\n')
+          .map((l) => `    ${l}`)
+          .join('\n') + '\n',
+      )
     }
   }
 
   const total = passed + failedTests.length
-  console.log(`\nTests: ${passed} passed, ${failedTests.length} failed, ${total} total`)
+  console.log(
+    `\nTests: ${passed} passed, ${failedTests.length} failed, ${total} total`,
+  )
 
   process.exit(failedTests.length > 0 ? 1 : 0)
 }

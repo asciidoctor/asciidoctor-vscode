@@ -21,28 +21,26 @@ import { AsciidoctorConfigProvider } from './features/asciidoctorConfig.js'
 import { AsciidoctorDiagnosticProvider } from './features/asciidoctorDiagnostic.js'
 import { AsciidoctorExtensionsProvider } from './features/asciidoctorExtensions.js'
 import { AsciidocPreviewConfigurationManager } from './features/previewConfig.js'
+import { register } from './highlightjs-adapter.js'
 import { ExtensionContentSecurityPolicyArbiter } from './security.js'
 import { SkinnyTextDocument } from './util/document.js'
 import { WebviewResourceProvider } from './util/resources.js'
-
-import { register } from './highlightjs-adapter.js'
 
 export type AsciidoctorBuiltInBackends = 'html5' | 'docbook5'
 
 const previewConfigurationManager = new AsciidocPreviewConfigurationManager()
 
 export class AsciidocEngine {
-  constructor (
+  constructor(
     readonly contributionProvider: AsciidocContributionProvider,
     readonly asciidoctorConfigProvider: AsciidoctorConfigProvider,
     readonly asciidoctorExtensionsProvider: AsciidoctorExtensionsProvider,
     readonly asciidoctorDiagnosticProvider: AsciidoctorDiagnosticProvider,
-  ) {
-  }
+  ) {}
 
   // Export
 
-  public async export (
+  public async export(
     textDocument: vscode.TextDocument,
     backend: AsciidoctorBuiltInBackends,
     asciidoctorAttributes = {},
@@ -85,17 +83,14 @@ export class AsciidocEngine {
 
   // Convert (preview)
 
-  public async convertFromUri (
+  public async convertFromUri(
     documentUri: vscode.Uri,
     context: vscode.ExtensionContext,
     editor: WebviewResourceProvider,
     line?: number,
   ): Promise<{ html: string; document?: AsciidoctorDocument }> {
     const textDocument = await vscode.workspace.openTextDocument(documentUri)
-    const {
-      html,
-      document
-    } = await this.convertFromTextDocument(
+    const { html, document } = await this.convertFromTextDocument(
       textDocument,
       context,
       editor,
@@ -107,7 +102,7 @@ export class AsciidocEngine {
     }
   }
 
-  public async convertFromTextDocument (
+  public async convertFromTextDocument(
     textDocument: SkinnyTextDocument,
     context: vscode.ExtensionContext,
     editor: WebviewResourceProvider,
@@ -252,7 +247,7 @@ export class AsciidocEngine {
    * Get user defined template directories from configuration.
    * @private
    */
-  private getTemplateDirs () {
+  private getTemplateDirs() {
     return vscode.workspace
       .getConfiguration('asciidoc.preview', null)
       .get<string[]>('templates', [])

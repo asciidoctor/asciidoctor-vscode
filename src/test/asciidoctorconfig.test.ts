@@ -58,17 +58,29 @@ describe('asciidoc.Asciidoctorconfig', () => {
   const configFileNames = ['.asciidoctorconfig', '.asciidoctorconfig.adoc']
   configFileNames.forEach((configFileName) => {
     test(`Pick up ${configFileName} from root workspace folder`, async () => {
-      const configFile = await createFile(':application-name: Asciidoctor VS Code Extension', '.asciidoctorconfig')
+      const configFile = await createFile(
+        ':application-name: Asciidoctor VS Code Extension',
+        '.asciidoctorconfig',
+      )
       createdFiles.push(configFile)
-      const textDocument = await createFile('= {application-name}', 'attribute-defined-in-asciidoctorconfig.adoc')
+      const textDocument = await createFile(
+        '= {application-name}',
+        'attribute-defined-in-asciidoctorconfig.adoc',
+      )
       createdFiles.push(textDocument)
       const asciidocParser = new AsciidocEngine(
         new AsciidocContributionProviderTest(extensionContext.extensionUri),
         new AsciidoctorConfig(),
-        new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+        new AsciidoctorExtensions(
+          AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+        ),
         new AsciidoctorDiagnostic('test'),
       )
-      const { html } = await asciidocParser.convertFromUri(textDocument, extensionContext, new TestWebviewResourceProvider())
+      const { html } = await asciidocParser.convertFromUri(
+        textDocument,
+        extensionContext,
+        new TestWebviewResourceProvider(),
+      )
       assert.strictEqual(
         html.includes('<h1>Asciidoctor VS Code Extension</h1>'),
         true,
@@ -109,11 +121,17 @@ describe('asciidoc.Asciidoctorconfig', () => {
       const asciidocParser = new AsciidocEngine(
         new AsciidocContributionProviderTest(extensionContext.extensionUri),
         new AsciidoctorConfig(),
-        new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+        new AsciidoctorExtensions(
+          AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+        ),
         new AsciidoctorDiagnostic('test'),
       )
       html = (
-        await asciidocParser.convertFromTextDocument(textDocument, extensionContext, new TestWebviewResourceProvider())
+        await asciidocParser.convertFromTextDocument(
+          textDocument,
+          extensionContext,
+          new TestWebviewResourceProvider(),
+        )
       ).html
     })
 
@@ -199,11 +217,17 @@ describe('asciidoc.Asciidoctorconfig', () => {
       const asciidocParser = new AsciidocEngine(
         new AsciidocContributionProviderTest(extensionContext.extensionUri),
         new AsciidoctorConfig(),
-        new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+        new AsciidoctorExtensions(
+          AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+        ),
         new AsciidoctorDiagnostic('test'),
       )
       html = (
-        await asciidocParser.convertFromTextDocument(textDocument, extensionContext, new TestWebviewResourceProvider())
+        await asciidocParser.convertFromTextDocument(
+          textDocument,
+          extensionContext,
+          new TestWebviewResourceProvider(),
+        )
       ).html
     })
 
@@ -237,7 +261,9 @@ describe('asciidoc.Asciidoctorconfig', () => {
 
     test('Deepest level should be use to substitue var', async () => {
       assert.strictEqual(
-        html.includes('<p>Value of root-and-level1-and-level2 specified in level2. Should appear.</p>'),
+        html.includes(
+          '<p>Value of root-and-level1-and-level2 specified in level2. Should appear.</p>',
+        ),
         true,
         '{root-and-level1-and-level2} should be substituted by the value defined at level 2',
       )
@@ -245,7 +271,9 @@ describe('asciidoc.Asciidoctorconfig', () => {
 
     test('Intermediate but deepest level defined should be use to substitue var', async () => {
       assert.strictEqual(
-        html.includes('<p>Value of root-and-level1 specified in level1. Should appear.</p>'),
+        html.includes(
+          '<p>Value of root-and-level1 specified in level1. Should appear.</p>',
+        ),
         true,
         '{root-and-level1} should be substituted by the value defined at level 1',
       )

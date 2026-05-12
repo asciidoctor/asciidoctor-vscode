@@ -52,10 +52,25 @@ image::`,
         'asciidoc',
         'index.adoc',
       )
-      await createFile('', 'target-path-completion', 'src', 'images', 'wilderness-map.jpg')
-      await createFile('', 'target-path-completion', 'src', 'images', 'skyline.jpg')
+      await createFile(
+        '',
+        'target-path-completion',
+        'src',
+        'images',
+        'wilderness-map.jpg',
+      )
+      await createFile(
+        '',
+        'target-path-completion',
+        'src',
+        'images',
+        'skyline.jpg',
+      )
       const file = await vscode.workspace.openTextDocument(asciidocFile)
-      const completionsItems = await provider.provideCompletionItems(file, new Position(3, 7))
+      const completionsItems = await provider.provideCompletionItems(
+        file,
+        new Position(3, 7),
+      )
       assert.ok(
         completionsItems?.some(
           (item) =>

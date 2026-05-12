@@ -18,7 +18,9 @@ function getSymbolsForFile(fileContents: string) {
     null,
     new AsciidocLoader(
       new AsciidoctorConfig(),
-      new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+      new AsciidoctorExtensions(
+        AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+      ),
       new AsciidoctorDiagnostic('text'),
       extensionContext,
     ),

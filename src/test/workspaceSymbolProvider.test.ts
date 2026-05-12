@@ -20,7 +20,9 @@ describe('asciidoc.WorkspaceSymbolProvider', () => {
       null,
       new AsciidocLoader(
         new AsciidoctorConfig(),
-        new AsciidoctorExtensions(AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext)),
+        new AsciidoctorExtensions(
+          AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+        ),
         new AsciidoctorDiagnostic('text'),
         extensionContext,
       ),
@@ -36,14 +38,22 @@ describe('asciidoc.WorkspaceSymbolProvider', () => {
   })
 })
 
-class InMemoryWorkspaceAsciidocDocumentProvider implements WorkspaceAsciidocDocumentProvider {
+class InMemoryWorkspaceAsciidocDocumentProvider
+  implements WorkspaceAsciidocDocumentProvider
+{
   private readonly _documents = new Map<string, vscode.TextDocument>()
-  private readonly _onDidChangeAsciidocDocumentEmitter = new vscode.EventEmitter<vscode.TextDocument>()
-  public onDidChangeAsciidocDocument = this._onDidChangeAsciidocDocumentEmitter.event
-  private readonly _onDidCreateAsciidocDocumentEmitter = new vscode.EventEmitter<vscode.TextDocument>()
-  public onDidCreateAsciidocDocument = this._onDidCreateAsciidocDocumentEmitter.event
-  private readonly _onDidDeleteAsciidocDocumentEmitter = new vscode.EventEmitter<vscode.Uri>()
-  public onDidDeleteAsciidocDocument = this._onDidDeleteAsciidocDocumentEmitter.event
+  private readonly _onDidChangeAsciidocDocumentEmitter =
+    new vscode.EventEmitter<vscode.TextDocument>()
+  public onDidChangeAsciidocDocument =
+    this._onDidChangeAsciidocDocumentEmitter.event
+  private readonly _onDidCreateAsciidocDocumentEmitter =
+    new vscode.EventEmitter<vscode.TextDocument>()
+  public onDidCreateAsciidocDocument =
+    this._onDidCreateAsciidocDocumentEmitter.event
+  private readonly _onDidDeleteAsciidocDocumentEmitter =
+    new vscode.EventEmitter<vscode.Uri>()
+  public onDidDeleteAsciidocDocument =
+    this._onDidDeleteAsciidocDocumentEmitter.event
 
   constructor(documents: vscode.TextDocument[]) {
     for (const doc of documents) {

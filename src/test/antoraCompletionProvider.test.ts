@@ -62,12 +62,24 @@ link:help.adoc[]
       )
       const textDocument = await vscode.workspace.openTextDocument(file)
       await enableAntoraSupport()
-      const completionsItems = await provider.provideCompletionItems(textDocument, new Position(2, 1))
-      assert.deepStrictEqual(completionsItems[0].label, { description: 'asciidoc@', label: 'source-language' })
+      const completionsItems = await provider.provideCompletionItems(
+        textDocument,
+        new Position(2, 1),
+      )
+      assert.deepStrictEqual(completionsItems[0].label, {
+        description: 'asciidoc@',
+        label: 'source-language',
+      })
       assert.strictEqual(completionsItems[0].insertText, '{asciidoc@}')
-      assert.deepStrictEqual(completionsItems[1].label, { description: 'short@', label: 'xrefstyle' })
+      assert.deepStrictEqual(completionsItems[1].label, {
+        description: 'short@',
+        label: 'xrefstyle',
+      })
       assert.strictEqual(completionsItems[1].insertText, '{short@}')
-      assert.deepStrictEqual(completionsItems[2].label, { description: false, label: 'example-caption' })
+      assert.deepStrictEqual(completionsItems[2].label, {
+        description: false,
+        label: 'example-caption',
+      })
       assert.strictEqual(completionsItems[2].insertText, '{false}')
     } finally {
       await resetAntoraSupport()
