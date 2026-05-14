@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 import * as vscode from 'vscode'
 import { Command } from '../commandManager.js'
 import { AsciidocPreviewManager } from '../features/previewManager.js'

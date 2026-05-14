@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 export function getStrings(): { [key: string]: string } {
   const store = document.getElementById('vscode-asciidoc-preview-data')
   if (store) {

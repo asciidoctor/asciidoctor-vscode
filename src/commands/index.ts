@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 export { DisableAntoraSupport, EnableAntoraSupport } from './antoraSupport.js'
 export { ExportAsPDF } from './exportAsPDF.js'
 export { MoveCursorToPositionCommand } from './moveCursorToPosition.js'

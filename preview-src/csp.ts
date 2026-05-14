@@ -1,7 +1,3 @@
-/*---------------------------------------------------------------------------------------------
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
 import { MessagePoster } from './messaging.js'
 import { getSettings } from './settings.js'
 import { getStrings } from './strings.js'
