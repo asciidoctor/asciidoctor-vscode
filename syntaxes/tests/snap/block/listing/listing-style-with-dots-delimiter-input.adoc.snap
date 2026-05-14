@@ -1,0 +1,18 @@
+>[listing]
+#^ text.asciidoc markup.block.listing.asciidoc
+# ^^^^^^^ text.asciidoc markup.block.listing.asciidoc markup.meta.attribute-list.asciidoc entity.name.function.asciidoc
+#        ^ text.asciidoc markup.block.listing.asciidoc
+>....
+#^^^^^ text.asciidoc markup.block.listing.asciidoc
+>content
+#^^^^^^^^ text.asciidoc markup.block.listing.asciidoc
+>....
+#^^^^ text.asciidoc markup.block.listing.asciidoc
+>
+>////
+#^^^^ text.asciidoc comment.block.asciidoc
+>block comment
+#^^^^^^^^^^^^^^ text.asciidoc comment.block.asciidoc
+>////
+#^^^^ text.asciidoc comment.block.asciidoc
+>
