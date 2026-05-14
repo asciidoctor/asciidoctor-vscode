@@ -119,6 +119,14 @@
       "suiteTeardown"
     ]
   },
+  "overrides": [
+    {
+      "includes": ["syntaxes/asciidoc.tmLanguage.json"],
+      "formatter": {
+        "enabled": false
+      }
+    }
+  ],
   "assist": {
     "enabled": true,
     "actions": {

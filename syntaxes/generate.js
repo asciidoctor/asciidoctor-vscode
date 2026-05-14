@@ -504,12 +504,19 @@ const delimitedCodeBlockDefinition = (
   if (additionalContentName) {
     contentName += ` ${additionalContentName.join(' ')}`
   }
+  // [,js]
+  // [source,js]
+  // [source,javascript,foo=bar]
+  // [#id,js]
+  // [%linenums,js]
+  // [.code,js]
+  const sourceBlockAttrRx = `^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(${identifiers.join('|')}))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$`
   return {
     name: `markup.code.${name}.asciidoc`,
-    begin: `(?=(?>(?:^\\[(source)(?:,|#)\\p{Blank}*(?i:(${identifiers.join('|')}))((?:,|#)[^\\]]+)*\\]$)))`,
+    begin: `(?=${sourceBlockAttrRx})`,
     patterns: [
       {
-        match: `^\\[(source)(?:,|#)\\p{Blank}*(?i:(${identifiers.join('|')}))((?:,|#)([^,\\]]+))*\\]$`,
+        match: sourceBlockAttrRx,
         captures: {
           0: {
             name: 'markup.heading.asciidoc',
@@ -522,13 +529,10 @@ const delimitedCodeBlockDefinition = (
         },
       },
       {
-        include: '#inlines',
-      },
-      {
         include: '#block-title',
       },
       {
-        comment: 'listing block',
+        comment: 'listing block explicit delimiter',
         begin: '(^|\\G)(-{4,})\\s*$',
         end: '(^|\\G)(\\2)\\s*$',
         patterns: [

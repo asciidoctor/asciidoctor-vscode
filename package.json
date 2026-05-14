@@ -618,18 +618,20 @@
     "copy-highlightjs": "cp node_modules/@highlightjs/cdn-assets/highlight.min.js media/highlightjs && cp -r node_modules/@highlightjs/cdn-assets/languages media/highlightjs && cp -r node_modules/@highlightjs/cdn-assets/styles media/highlightjs",
     "copy-assets": "npm run copy-fonts:all && npm run copy-font-awesome && npm run copy-mathjax && npm run copy-mermaid && npm run copy-highlightjs",
     "dev": "npm run build",
-    "build": "npm run copy-assets && npm run build-ext && npm run build-preview",
+    "build": "npm run copy-assets && npm run build-grammar && npm run build-ext && npm run build-preview",
     "build-web": "node tasks/build-browser.mjs",
     "build-preview": "node tasks/build-preview.mjs",
     "build-ext": "node tasks/build-ext.mjs",
+    "build-grammar": "node ./syntaxes/generate.js",
+    "build-test": "tsc --project tsconfig.test.json",
     "package": "npm run build && npm run build-web && vsce package",
     "deploy": "vsce publish -p",
     "lint": "npx @biomejs/biome check --write",
     "format": "npx @biomejs/biome format --write",
-    "build:test": "tsc --project tsconfig.test.json",
-    "pretest": "npm run build && npm run build:test",
-    "test": "node ./src/test/runTest.mjs",
-    "test:unit": "npm run build:test && node --test build/src/test/unit/*.test.js",
+    "pretest": "npm run build && npm run build-test",
+    "test": "node ./src/test/runTest.mjs && npm run test:unit && npm run test:grammar",
+    "test:unit": "node --test build/src/test/unit/*.test.js",
+    "test:grammar": "npx vscode-tmgrammar-snap -g syntaxes/asciidoc.tmLanguage.json -g syntaxes/ruby.tmLanguage.json  syntaxes/tests/snap/**/**.adoc",
     "coverage": "c8 --clean npm run test"
   },
   "devDependencies": {
@@ -653,7 +655,8 @@
     "path-browserify": "1.0.1",
     "semver": "^7.3.7",
     "sinon": "^14.0.1",
-    "typescript": "4.9.5"
+    "typescript": "4.9.5",
+    "vscode-tmgrammar-test": "^0.1.3"
   },
   "dependencies": {
     "@antora/content-classifier": "3.1.7",

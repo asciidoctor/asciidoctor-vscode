@@ -1,0 +1,11 @@
+{
+  "version": "https://github.com/Shopify/ruby-lsp/commit/59da6a0ae3409437474b85d0daa5535f1878699d",
+  "name": "Ruby",
+  "scopeName": "source.ruby",
+  "patterns": [
+    {
+      "match": "\\b((abort|at_exit|autoload|binding|callcc|caller|caller_locations|chomp|chop|eval|exec|exit|fork|format|gets|global_variables|gsub|lambda|load|local_variables|open|p|print|printf|proc|putc|puts|rand|readline|readlines|select|set_trace_func|sleep|spawn|sprintf|srand|sub|syscall|system|test|trace_var|trap|untrace_var|warn)\\b(?![?!])|autoload\\?|exit!)",
+      "name": "support.function.kernel.ruby"
+    }
+  ]
+}
