@@ -1,0 +1,31 @@
+.This is a dash listing because it contains dots
+====
+[listing]
+----
+
+A sequence of dots:
+
+....................
+
+----
+====
+
+////
+This is a block comment.
+////
+
+.This is a dot listing because it contains dashes
+====
+[listing]
+....
+
+A sequence of dashes:
+
+--------------------
+
+....
+====
+
+////
+This is another block comment.
+////

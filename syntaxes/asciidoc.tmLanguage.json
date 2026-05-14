@@ -1572,6 +1572,11 @@
               "end": "^(\\1)$"
             },
             {
+              "comment": "literal block",
+              "begin": "^(\\.{4,})\\s*$",
+              "end": "^(\\1)$"
+            },
+            {
               "comment": "open block",
               "begin": "^(-{2})\\s*$",
               "end": "^(\\1)$"
@@ -1580,7 +1585,7 @@
               "include": "#inlines"
             }
           ],
-          "end": "((?<=--)$|^\\p{Blank}*$)"
+          "end": "((?<=--|\\.\\.)$|^\\p{Blank}*$)"
         }
       ]
     },

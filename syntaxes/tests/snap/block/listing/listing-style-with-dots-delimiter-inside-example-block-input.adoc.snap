@@ -1,0 +1,60 @@
+>.This is a dash listing because it contains dots
+#^ text.asciidoc
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.asciidoc markup.heading.blocktitle.asciidoc
+>====
+#^^^^ text.asciidoc markup.block.example.asciidoc
+>[listing]
+#^ text.asciidoc markup.block.example.asciidoc markup.block.listing.asciidoc
+# ^^^^^^^ text.asciidoc markup.block.example.asciidoc markup.block.listing.asciidoc markup.meta.attribute-list.asciidoc entity.name.function.asciidoc
+#        ^ text.asciidoc markup.block.example.asciidoc markup.block.listing.asciidoc
+>----
+#^^^^^ text.asciidoc markup.block.example.asciidoc markup.block.listing.asciidoc
+>
+>A sequence of dots:
+#^^^^^^^^^^^^^^^^^^^^ text.asciidoc markup.block.example.asciidoc markup.block.listing.asciidoc
+>
+>....................
+#^^^^^^^^^^^^^^^^^^^^^ text.asciidoc markup.block.example.asciidoc markup.block.listing.asciidoc
+>
+>----
+#^^^^ text.asciidoc markup.block.example.asciidoc markup.block.listing.asciidoc
+>====
+#^^^^ text.asciidoc markup.block.example.asciidoc
+>
+>////
+#^^^^ text.asciidoc comment.block.asciidoc
+>This is a block comment.
+#^^^^^^^^^^^^^^^^^^^^^^^^^ text.asciidoc comment.block.asciidoc
+>////
+#^^^^ text.asciidoc comment.block.asciidoc
+>
+>.This is a dot listing because it contains dashes
+#^ text.asciidoc
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.asciidoc markup.heading.blocktitle.asciidoc
+>====
+#^^^^ text.asciidoc markup.block.example.asciidoc
+>[listing]
+#^ text.asciidoc markup.block.example.asciidoc markup.block.listing.asciidoc
+# ^^^^^^^ text.asciidoc markup.block.example.asciidoc markup.block.listing.asciidoc markup.meta.attribute-list.asciidoc entity.name.function.asciidoc
+#        ^ text.asciidoc markup.block.example.asciidoc markup.block.listing.asciidoc
+>....
+#^^^^^ text.asciidoc markup.block.example.asciidoc markup.block.listing.asciidoc
+>
+>A sequence of dashes:
+#^^^^^^^^^^^^^^^^^^^^^^ text.asciidoc markup.block.example.asciidoc markup.block.listing.asciidoc
+>
+>--------------------
+#^^^^^^^^^^^^^^^^^^^^^ text.asciidoc markup.block.example.asciidoc markup.block.listing.asciidoc
+>
+>....
+#^^^^ text.asciidoc markup.block.example.asciidoc markup.block.listing.asciidoc
+>====
+#^^^^ text.asciidoc markup.block.example.asciidoc
+>
+>////
+#^^^^ text.asciidoc comment.block.asciidoc
+>This is another block comment.
+#^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.asciidoc comment.block.asciidoc
+>////
+#^^^^ text.asciidoc comment.block.asciidoc
+>
