@@ -1,0 +1,21 @@
+>image::path/to/image.png[]  
+#^^^^^ text.asciidoc markup.macro.block.general.asciidoc entity.name.function.asciidoc
+#     ^^ text.asciidoc markup.macro.block.general.asciidoc punctuation.separator.asciidoc
+#       ^^^^^^^^^^^^^^^^^ text.asciidoc markup.macro.block.general.asciidoc markup.link.asciidoc
+#                        ^ text.asciidoc markup.macro.block.general.asciidoc punctuation.separator.asciidoc
+#                         ^ text.asciidoc markup.macro.block.general.asciidoc punctuation.separator.asciidoc
+#                          ^^ text.asciidoc markup.macro.block.general.asciidoc
+>include::path/to/file.adoc[]   
+#^^^^^^^ text.asciidoc markup.macro.block.general.asciidoc entity.name.function.asciidoc
+#       ^^ text.asciidoc markup.macro.block.general.asciidoc punctuation.separator.asciidoc
+#         ^^^^^^^^^^^^^^^^^ text.asciidoc markup.macro.block.general.asciidoc markup.link.asciidoc
+#                          ^ text.asciidoc markup.macro.block.general.asciidoc punctuation.separator.asciidoc
+#                           ^ text.asciidoc markup.macro.block.general.asciidoc punctuation.separator.asciidoc
+#                            ^^^ text.asciidoc markup.macro.block.general.asciidoc
+>video::video.mp4[]
+#^^^^^ text.asciidoc markup.macro.block.general.asciidoc entity.name.function.asciidoc
+#     ^^ text.asciidoc markup.macro.block.general.asciidoc punctuation.separator.asciidoc
+#       ^^^^^^^^^ text.asciidoc markup.macro.block.general.asciidoc markup.link.asciidoc
+#                ^ text.asciidoc markup.macro.block.general.asciidoc punctuation.separator.asciidoc
+#                 ^ text.asciidoc markup.macro.block.general.asciidoc punctuation.separator.asciidoc
+>
