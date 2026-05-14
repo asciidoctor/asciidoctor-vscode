@@ -2,20 +2,20 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-export { DisableAntoraSupport, EnableAntoraSupport } from './antoraSupport'
-export { ExportAsPDF } from './exportAsPDF'
-export { MoveCursorToPositionCommand } from './moveCursorToPosition'
-export { OpenDocumentLinkCommand } from './openDocumentLink'
-export { PasteImage } from './pasteImage'
-export { RefreshPreviewCommand } from './refreshPreview'
-export { SaveDocbook } from './saveDocbook'
-export { SaveHTML } from './saveHTML'
-export { ShowAsciidoctorExtensionsTrustModeSelectorCommand } from './showAsciidoctorExtensionsTrustModeSelector'
+export { DisableAntoraSupport, EnableAntoraSupport } from './antoraSupport.js'
+export { ExportAsPDF } from './exportAsPDF.js'
+export { MoveCursorToPositionCommand } from './moveCursorToPosition.js'
+export { OpenDocumentLinkCommand } from './openDocumentLink.js'
+export { PasteImage } from './pasteImage.js'
+export { RefreshPreviewCommand } from './refreshPreview.js'
+export { SaveDocbook } from './saveDocbook.js'
+export { SaveHTML } from './saveHTML.js'
+export { ShowAsciidoctorExtensionsTrustModeSelectorCommand } from './showAsciidoctorExtensionsTrustModeSelector.js'
 export {
   ShowLockedPreviewToSideCommand,
   ShowPreviewCommand,
   ShowPreviewToSideCommand,
-} from './showPreview'
-export { ShowPreviewSecuritySelectorCommand } from './showPreviewSecuritySelector'
-export { ShowSourceCommand } from './showSource'
-export { ToggleLockCommand } from './toggleLock'
+} from './showPreview.js'
+export { ShowPreviewSecuritySelectorCommand } from './showPreviewSecuritySelector.js'
+export { ShowSourceCommand } from './showSource.js'
+export { ToggleLockCommand } from './toggleLock.js'

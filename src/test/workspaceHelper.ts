@@ -1,6 +1,11 @@
-import vscode, { FileSystemError, FileType } from 'vscode'
-import { getDefaultWorkspaceFolderUri, normalizeUri } from '../util/workspace'
-import { extensionContext } from './helper'
+import fsp from 'node:fs/promises'
+import * as vscode from 'vscode'
+import { FileSystemError, FileType } from 'vscode'
+import {
+  getDefaultWorkspaceFolderUri,
+  normalizeUri,
+} from '../util/workspace.js'
+import { extensionContext } from './helper.js'
 
 export async function removeFiles(files: vscode.Uri[]) {
   for (const file of files) {
@@ -77,14 +82,13 @@ export async function createLink(
   existingPathSegments: string[],
   newPathSegments: string[],
 ): Promise<vscode.Uri> {
-  const fs = require('fs').promises
   const workspaceUri = getDefaultWorkspaceFolderUri()
   const existingPath = vscode.Uri.joinPath(
     workspaceUri,
     ...existingPathSegments,
   )
   const newPath = vscode.Uri.joinPath(workspaceUri, ...newPathSegments)
-  await fs.symlink(existingPath.fsPath, newPath.fsPath)
+  await fsp.symlink(existingPath.fsPath, newPath.fsPath)
   return normalizeUri(newPath)
 }
 

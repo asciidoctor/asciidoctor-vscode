@@ -1,25 +1,6 @@
-import { Asciidoctor } from '@asciidoctor/core'
 import * as vscode from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader'
-
-function findNearestBlock(document: Asciidoctor.Document, lineNumber: number) {
-  let nearestBlock
-  const blocks = document.findBy((block) => {
-    const sourceLocation = block.getSourceLocation()
-    if (sourceLocation) {
-      if (sourceLocation.getLineNumber() === lineNumber) {
-        return true
-      } else if (sourceLocation.getLineNumber() < lineNumber) {
-        nearestBlock = block
-      }
-    }
-    return false
-  })
-  if (blocks && blocks.length) {
-    return blocks[0]
-  }
-  return nearestBlock
-}
+import { AsciidocLoader } from '../asciidocLoader.js'
+import { findNearestBlock } from './attributeReferenceUtils.js'
 
 export class AttributeReferenceProvider {
   constructor(private readonly asciidocLoader: AsciidocLoader) {}
@@ -34,7 +15,7 @@ export class AttributeReferenceProvider {
     const nearestBlock = findNearestBlock(document, position.line + 1) // 0-based on VS code but 1-based on Asciidoctor (hence the + 1)
     if (
       nearestBlock &&
-      nearestBlock.content_model === 'verbatim' &&
+      nearestBlock.getContentModel() === 'verbatim' &&
       !nearestBlock.getSubstitutions().includes('attributes')
     ) {
       // verbatim block without attributes subs should not provide attributes completion

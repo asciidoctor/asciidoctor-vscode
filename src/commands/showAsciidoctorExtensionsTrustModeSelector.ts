@@ -2,8 +2,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { Command } from '../commandManager'
-import { AsciidoctorExtensionsTrustModeSelector } from '../security'
+import { Command } from '../commandManager.js'
+import { AsciidoctorExtensionsTrustModeSelector } from '../security.js'
 
 export class ShowAsciidoctorExtensionsTrustModeSelectorCommand
   implements Command

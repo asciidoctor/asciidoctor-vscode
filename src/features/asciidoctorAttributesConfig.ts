@@ -1,5 +1,5 @@
-import vscode from 'vscode'
-import { findDefaultWorkspaceFolderUri } from '../util/workspace'
+import * as vscode from 'vscode'
+import { findDefaultWorkspaceFolderUri } from '../util/workspace.js'
 
 export class AsciidoctorAttributesConfig {
   public static getPreviewAttributes(): {} {
@@ -8,9 +8,10 @@ export class AsciidoctorAttributesConfig {
       null,
     )
     const attributes = asciidocPreviewConfig.get('asciidoctorAttributes', {})
-    const workspacePath = vscode.env.uiKind === vscode.UIKind.Desktop
-      ? findDefaultWorkspaceFolderUri()?.fsPath
-      : findDefaultWorkspaceFolderUri()?.path
+    const workspacePath =
+      vscode.env.uiKind === vscode.UIKind.Desktop
+        ? findDefaultWorkspaceFolderUri()?.fsPath
+        : findDefaultWorkspaceFolderUri()?.path
     Object.keys(attributes).forEach((key) => {
       const attributeValue = attributes[key]
       if (typeof attributeValue === 'string') {

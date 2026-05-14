@@ -1,52 +1,43 @@
-import { Asciidoctor } from '@asciidoctor/core'
+import { Extensions, Preprocessor, Registry } from '@asciidoctor/core'
 import * as vscode from 'vscode'
-import { AsciidoctorProcessor } from '../asciidoctorProcessor'
-import { dir, exists } from '../util/file'
+import { dir, exists } from '../util/file.js'
 
 const MAX_DEPTH_SEARCH_ASCIIDOCCONFIG = 100
 
 export interface AsciidoctorConfigProvider {
-  activate(
-    registry: Asciidoctor.Extensions.Registry,
-    documentUri: vscode.Uri,
-  ): Promise<void>
+  activate(registry: Registry, documentUri: vscode.Uri): Promise<void>
 }
 
 /**
  * .asciidoctorconfig support.
  */
 export class AsciidoctorConfig implements AsciidoctorConfigProvider {
-  private readonly prependExtension: Asciidoctor.Extensions.Preprocessor
+  private readonly prependExtension: Preprocessor
 
   constructor() {
-    const asciidoctorProcessor = AsciidoctorProcessor.getInstance()
-    this.prependExtension =
-      asciidoctorProcessor.processor.Extensions.createPreprocessor(
-        'PrependConfigPreprocessorExtension',
-        {
-          postConstruct: function () {
-            this.asciidoctorConfigContent = ''
-          },
-          process: function (doc, reader) {
-            if (this.asciidoctorConfigContent.length > 0) {
-              // otherwise an empty line at the beginning breaks level 0 detection
-              reader.pushInclude(
-                this.asciidoctorConfigContent,
-                undefined,
-                undefined,
-                1,
-                {},
-              )
-            }
-          },
+    this.prependExtension = Extensions.newPreprocessor(
+      'PrependConfigPreprocessorExtension',
+      {
+        postConstruct: function () {
+          this.asciidoctorConfigContent = ''
         },
-      ).$new()
+        process: function (doc, reader) {
+          if (this.asciidoctorConfigContent.length > 0) {
+            // otherwise an empty line at the beginning breaks level 0 detection
+            reader.pushInclude(
+              this.asciidoctorConfigContent,
+              undefined,
+              undefined,
+              1,
+              {},
+            )
+          }
+        },
+      },
+    )
   }
 
-  public async activate(
-    registry: Asciidoctor.Extensions.Registry,
-    documentUri: vscode.Uri,
-  ) {
+  public async activate(registry: Registry, documentUri: vscode.Uri) {
     await this.configureAsciidoctorConfigPrependExtension(documentUri)
     registry.preprocessor(this.prependExtension)
   }
@@ -103,9 +94,14 @@ export async function getAsciidoctorConfigContent(
     const asciidoctorConfigContent = new TextDecoder().decode(
       await vscode.workspace.fs.readFile(asciidoctorConfig),
     )
-    const asciidoctorConfigParentUri = vscode.Uri.joinPath(asciidoctorConfig, '..')
-    const asciidoctorConfigDirectory = vscode.env.uiKind === vscode.UIKind.Desktop
-      ? asciidoctorConfigParentUri.fsPath : asciidoctorConfigParentUri.path
+    const asciidoctorConfigParentUri = vscode.Uri.joinPath(
+      asciidoctorConfig,
+      '..',
+    )
+    const asciidoctorConfigDirectory =
+      vscode.env.uiKind === vscode.UIKind.Desktop
+        ? asciidoctorConfigParentUri.fsPath
+        : asciidoctorConfigParentUri.path
     configContents.push(
       `:asciidoctorconfigdir: ${asciidoctorConfigDirectory}\n\n${asciidoctorConfigContent.trim()}\n\n`,
     )

@@ -1,12 +1,14 @@
 import ospath from 'path'
-import vscode, { l10n, Memento, Uri } from 'vscode'
-import { disposeAll } from '../../util/dispose'
-import AntoraCompletionProvider from './antoraCompletionProvider'
+import * as vscode from 'vscode'
+import { Memento, Uri } from 'vscode'
+import { disposeAll } from '../../util/dispose.js'
+import { t as l10n_t } from '../../util/l10n.js'
+import AntoraCompletionProvider from './antoraCompletionProvider.js'
 import {
   antoraConfigFileExists,
   getAntoraConfig,
   getAttributes,
-} from './antoraDocument'
+} from './antoraDocument.js'
 
 export interface AntoraResourceContext {
   component: string
@@ -146,10 +148,10 @@ export class AntoraSupportManager implements vscode.Disposable {
               ? Uri.file(textDocument.uri.path)
               : textDocument.uri
           if (await antoraConfigFileExists(textDocumentUri)) {
-            const yesAnswer = l10n.t('antora.activateSupport.yes')
-            const noAnswer = l10n.t('antora.activateSupport.no')
+            const yesAnswer = l10n_t('antora.activateSupport.yes')
+            const noAnswer = l10n_t('antora.activateSupport.no')
             const answer = await vscode.window.showInformationMessage(
-              l10n.t('antora.activateSupport.message'),
+              l10n_t('antora.activateSupport.message'),
               yesAnswer,
               noAnswer,
             )
@@ -169,6 +171,7 @@ export class AntoraSupportManager implements vscode.Disposable {
         onDidOpenAsciiDocFileAskAntoraSupport,
       )
     }
+    return AntoraSupportManager.instance
   }
 
   public async getAttributes(

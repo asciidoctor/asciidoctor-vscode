@@ -5,22 +5,23 @@
 import * as path from 'path'
 import * as vscode from 'vscode'
 import * as uri from 'vscode-uri'
-import { AsciidocContributionProvider } from '../asciidocExtensions'
-import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink'
-import { Logger } from '../logger'
-import { Disposable, disposeAll } from '../util/dispose'
-import { isAsciidocFile } from '../util/file'
-import { WebviewResourceProvider } from '../util/resources'
+import { AsciidocContributionProvider } from '../asciidocExtensions.js'
+import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink.js'
+import { Logger } from '../logger.js'
+import { Disposable, disposeAll } from '../util/dispose.js'
+import { isAsciidocFile } from '../util/file.js'
+import { t as l10nT } from '../util/l10n.js'
+import { WebviewResourceProvider } from '../util/resources.js'
 import {
   AsciidocFileTopmostLineMonitor,
   getVisibleLine,
-} from '../util/topmostLineMonitor'
-import { getWorkspaceFolder, getWorkspaceFolders } from '../util/workspace'
+} from '../util/topmostLineMonitor.js'
+import { getWorkspaceFolder, getWorkspaceFolders } from '../util/workspace.js'
 import {
   AsciidocPreviewConfiguration,
   AsciidocPreviewConfigurationManager,
-} from './previewConfig'
-import { AsciidocContentProvider } from './previewContentProvider'
+} from './previewConfig.js'
+import { AsciidocContentProvider } from './previewContentProvider.js'
 
 export class AsciidocPreview
   extends Disposable
@@ -187,7 +188,7 @@ export class AsciidocPreview
           case 'previewStyleLoadError':
             vscode.window
               .showWarningMessage(
-                vscode.l10n.t(
+                l10nT(
                   'preview.styleLoadError.message',
                   e.body.unloadedStyles.join(', '),
                 ),
@@ -394,8 +395,8 @@ export class AsciidocPreview
     locked: boolean,
   ): string {
     return locked
-      ? vscode.l10n.t('preview.locked.title', path.basename(resource.fsPath))
-      : vscode.l10n.t('preview.unlocked.title', path.basename(resource.fsPath))
+      ? l10nT('preview.locked.title', path.basename(resource.fsPath))
+      : l10nT('preview.unlocked.title', path.basename(resource.fsPath))
   }
 
   private updateForView(resource: vscode.Uri, topLine: number | undefined) {

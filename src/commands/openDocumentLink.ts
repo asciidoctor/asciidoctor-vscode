@@ -1,9 +1,9 @@
 import { extname } from 'path'
 import * as vscode from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader'
-import { Command } from '../commandManager'
-import { TableOfContentsProvider } from '../tableOfContentsProvider'
-import { isAsciidocFile } from '../util/file'
+import { AsciidocLoader } from '../asciidocLoader.js'
+import { Command } from '../commandManager.js'
+import { TableOfContentsProvider } from '../tableOfContentsProvider.js'
+import { isAsciidocFile } from '../util/file.js'
 
 export interface OpenDocumentLinkArgs {
   path: string

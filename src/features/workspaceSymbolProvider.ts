@@ -3,12 +3,12 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
-import { disposeAll } from '../util/dispose'
-import { SkinnyTextDocument } from '../util/document'
-import { isAsciidocFile } from '../util/file'
-import { findFiles } from '../util/findFiles'
-import { Lazy, lazy } from '../util/lazy'
-import AdocDocumentSymbolProvider from './documentSymbolProvider'
+import { disposeAll } from '../util/dispose.js'
+import { SkinnyTextDocument } from '../util/document.js'
+import { isAsciidocFile } from '../util/file.js'
+import { findFiles } from '../util/findFiles.js'
+import { Lazy, lazy } from '../util/lazy.js'
+import AdocDocumentSymbolProvider from './documentSymbolProvider.js'
 
 export interface WorkspaceAsciidocDocumentProvider {
   getAllAsciidocDocuments(): Promise<Iterable<SkinnyTextDocument>>

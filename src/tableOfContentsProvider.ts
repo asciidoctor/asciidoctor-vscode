@@ -1,8 +1,8 @@
 import { decode as htmlEntitiesDecode } from 'html-entities'
 import * as vscode from 'vscode'
-import { AsciidocLoader } from './asciidocLoader'
-import { githubSlugifier, Slug } from './slugify'
-import { SkinnyTextDocument } from './util/document'
+import { AsciidocLoader } from './asciidocLoader.js'
+import { githubSlugifier, Slug } from './slugify.js'
+import { SkinnyTextDocument } from './util/document.js'
 
 export interface TocEntry {
   readonly slug: Slug

@@ -1,36 +1,39 @@
-import * as assert from 'assert'
-import 'mocha'
+import assert from 'node:assert/strict'
+import { before, describe, test } from 'node:test'
 import * as vscode from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader'
-import { AsciidoctorConfig } from '../features/asciidoctorConfig'
-import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
-import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
-import AdocDocumentSymbolProvider from '../features/documentSymbolProvider'
+import { AsciidocLoader } from '../asciidocLoader.js'
+import { AsciidoctorConfig } from '../features/asciidoctorConfig.js'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic.js'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions.js'
+import AdocDocumentSymbolProvider from '../features/documentSymbolProvider.js'
 import AsciidocWorkspaceSymbolProvider, {
   WorkspaceAsciidocDocumentProvider,
-} from '../features/workspaceSymbolProvider'
-import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
-import { extensionContext } from './helper'
+} from '../features/workspaceSymbolProvider.js'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
+import { extensionContext } from './helper.js'
 
-const symbolProvider = new AdocDocumentSymbolProvider(
-  null,
-  new AsciidocLoader(
-    new AsciidoctorConfig(),
-    new AsciidoctorExtensions(
-      AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
-    ),
-    new AsciidoctorDiagnostic('text'),
-    extensionContext,
-  ),
-)
+describe('asciidoc.WorkspaceSymbolProvider', () => {
+  let symbolProvider: AdocDocumentSymbolProvider
 
-suite('asciidoc.WorkspaceSymbolProvider', () => {
+  before(() => {
+    symbolProvider = new AdocDocumentSymbolProvider(
+      null,
+      new AsciidocLoader(
+        new AsciidoctorConfig(),
+        new AsciidoctorExtensions(
+          AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+        ),
+        new AsciidoctorDiagnostic('text'),
+        extensionContext,
+      ),
+    )
+  })
+
   test('Should not return anything for empty workspace', async () => {
     const provider = new AsciidocWorkspaceSymbolProvider(
       symbolProvider,
       new InMemoryWorkspaceAsciidocDocumentProvider([]),
     )
-
     assert.deepEqual(await provider.provideWorkspaceSymbols(''), [])
   })
 })
@@ -69,7 +72,6 @@ class InMemoryWorkspaceAsciidocDocumentProvider
 
   public createDocument(document: vscode.TextDocument) {
     assert.ok(!this._documents.has(document.uri.fsPath))
-
     this._documents.set(document.uri.fsPath, document)
     this._onDidCreateAsciidocDocumentEmitter.fire(document)
   }

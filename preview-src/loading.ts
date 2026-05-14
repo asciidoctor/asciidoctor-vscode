@@ -1,7 +1,7 @@
 /*---------------------------------------------------------------------------------------------
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { MessagePoster } from './messaging'
+import { MessagePoster } from './messaging.js'
 
 export class StyleLoadingMonitor {
   private unloadedStyles: string[] = []

@@ -1,19 +1,19 @@
-import 'mocha'
-import assert from 'assert'
+import assert from 'node:assert/strict'
+import { after, before, describe, test } from 'node:test'
 import * as vscode from 'vscode'
 import { Position } from 'vscode'
-import AntoraCompletionProvider from '../features/antora/antoraCompletionProvider'
+import AntoraCompletionProvider from '../features/antora/antoraCompletionProvider.js'
 import {
   createDirectory,
   createFile,
   enableAntoraSupport,
   removeFiles,
   resetAntoraSupport,
-} from './workspaceHelper'
+} from './workspaceHelper.js'
 
-suite('Antora CompletionsProvider', () => {
+describe('Antora CompletionsProvider', () => {
   const createdFiles: vscode.Uri[] = []
-  suiteSetup(async () => {
+  before(async () => {
     createdFiles.push(await createDirectory('docs'))
     await createFile(
       `name: "api"
@@ -42,7 +42,7 @@ link:help.adoc[]
     )
     createdFiles.push(asciidocFile)
   })
-  suiteTeardown(async () => {
+  after(async () => {
     await removeFiles(createdFiles)
   })
   test('Should return completion items', async () => {

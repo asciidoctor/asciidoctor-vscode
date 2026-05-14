@@ -1,4 +1,4 @@
-import { range } from './util/range'
+import { range } from './util/range.js'
 
 /**
  * Calculate the cost for mapping between two different arrays

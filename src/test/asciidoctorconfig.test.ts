@@ -1,20 +1,19 @@
-import 'mocha'
-
-import * as assert from 'assert'
+import assert from 'node:assert/strict'
+import { after, afterEach, before, describe, test } from 'node:test'
 import * as vscode from 'vscode'
-import { AsciidocEngine } from '../asciidocEngine'
+import { AsciidocEngine } from '../asciidocEngine.js'
 import {
   AsciidocContributionProvider,
   AsciidocContributions,
-} from '../asciidocExtensions'
-import { AsciidoctorConfig } from '../features/asciidoctorConfig'
-import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
-import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
-import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
-import { WebviewResourceProvider } from '../util/resources'
-import { getDefaultWorkspaceFolderUri } from '../util/workspace'
-import { extensionContext } from './helper'
-import { createDirectory, createFile, removeFiles } from './workspaceHelper'
+} from '../asciidocExtensions.js'
+import { AsciidoctorConfig } from '../features/asciidoctorConfig.js'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic.js'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions.js'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
+import { WebviewResourceProvider } from '../util/resources.js'
+import { getDefaultWorkspaceFolderUri } from '../util/workspace.js'
+import { extensionContext } from './helper.js'
+import { createDirectory, createFile, removeFiles } from './workspaceHelper.js'
 
 class EmptyAsciidocContributions implements AsciidocContributions {
   readonly previewScripts = []
@@ -48,9 +47,9 @@ class TestWebviewResourceProvider implements WebviewResourceProvider {
   }
 }
 
-suite('asciidoc.Asciidoctorconfig', () => {
+describe('asciidoc.Asciidoctorconfig', () => {
   let createdFiles: vscode.Uri[] = []
-  teardown(async () => {
+  afterEach(async () => {
     for (const createdFile of createdFiles) {
       await vscode.workspace.fs.delete(createdFile)
     }
@@ -90,155 +89,124 @@ suite('asciidoc.Asciidoctorconfig', () => {
     })
   })
 
-  suite(
-    'Pick up .asciidoctorconfig and .asciidoctorconfig.adoc from root workspace folder',
-    async () => {
-      let html: string
-      const createdFiles: vscode.Uri[] = []
-
-      suiteSetup(async () => {
-        const workspaceUri = getDefaultWorkspaceFolderUri()
-
-        createdFiles.push(
-          await createFileWithContentAtWorkspaceRoot(
-            workspaceUri,
-            '.asciidoctorconfig',
-            `:var-only-in-asciidoctorconfig: From .asciidoctorconfig
-:var-in-both: var-in-both value from .asciidoctorconfig`,
-          ),
-        )
-        createdFiles.push(
-          await createFileWithContentAtWorkspaceRoot(
-            workspaceUri,
-            '.asciidoctorconfig.adoc',
-            `:var-only-in-asciidoctorconfig-adoc: From .asciidoctorconfig.adoc
-:var-in-both: var-in-both value from .asciidoctorconfig.adoc`,
-          ),
-        )
-
-        const adocForTest = await createFileWithContentAtWorkspaceRoot(
-          workspaceUri,
-          'test-pickup-both-asciidoctorconfig-at-workspace-root.adoc',
-          `{var-in-both}
-
-{var-only-in-asciidoctorconfig-adoc}
-
-{var-only-in-asciidoctorconfig}`,
-        )
-        createdFiles.push(adocForTest)
-        const textDocument =
-          await vscode.workspace.openTextDocument(adocForTest)
-        const asciidocParser = new AsciidocEngine(
-          new AsciidocContributionProviderTest(extensionContext.extensionUri),
-          new AsciidoctorConfig(),
-          new AsciidoctorExtensions(
-            AsciidoctorExtensionsSecurityPolicyArbiter.activate(
-              extensionContext,
-            ),
-          ),
-          new AsciidoctorDiagnostic('test'),
-        )
-        html = (
-          await asciidocParser.convertFromTextDocument(
-            textDocument,
-            extensionContext,
-            new TestWebviewResourceProvider(),
-          )
-        ).html
-      })
-
-      suiteTeardown(async () => {
-        for (const createdFile of createdFiles) {
-          await vscode.workspace.fs.delete(createdFile)
-        }
-      })
-
-      test('Var from .asciidocforconfig is used', async () => {
-        assert.strictEqual(
-          html.includes('<p>From .asciidoctorconfig</p>'),
-          true,
-          '{var-only-in-asciidoctorconfig} should be substituted by the value defined in .asciidoctorconfig',
-        )
-      })
-
-      test('Var from .asciidocforconfig.adoc is used', async () => {
-        assert.strictEqual(
-          html.includes('<p>From .asciidoctorconfig.adoc</p>'),
-          true,
-          '{var-only-in-asciidoctorconfig.adoc} should be substituted by the value defined in .asciidoctorconfig.adoc',
-        )
-      })
-
-      test('Var from .asciidocforconfig.adoc has precedence on .asciidoctorconfig.adoc', async () => {
-        assert.strictEqual(
-          html.includes(
-            '<p>var-in-both value from .asciidoctorconfig.adoc</p>',
-          ),
-          true,
-          '{var-in-both} should be substituted by the value defined in .asciidoctorconfig.adoc',
-        )
-      })
-
-      async function createFileWithContentAtWorkspaceRoot(
-        workspaceUri: vscode.Uri,
-        configFileName: string,
-        fileContent: string,
-      ) {
-        const configFile = vscode.Uri.joinPath(workspaceUri, configFileName)
-        await vscode.workspace.fs.writeFile(
-          configFile,
-          Buffer.from(fileContent),
-        )
-        return configFile
-      }
-    },
-  )
-
-  suite('Pick up .asciidocConfig file recursively', async () => {
+  describe('Pick up .asciidoctorconfig and .asciidoctorconfig.adoc from root workspace folder', async () => {
     let html: string
     const createdFiles: vscode.Uri[] = []
 
-    suiteSetup(async () => {
+    before(async () => {
+      const workspaceUri = getDefaultWorkspaceFolderUri()
+
+      createdFiles.push(
+        await createFileWithContentAtWorkspaceRoot(
+          workspaceUri,
+          '.asciidoctorconfig',
+          `:var-only-in-asciidoctorconfig: From .asciidoctorconfig\n:var-in-both: var-in-both value from .asciidoctorconfig`,
+        ),
+      )
+      createdFiles.push(
+        await createFileWithContentAtWorkspaceRoot(
+          workspaceUri,
+          '.asciidoctorconfig.adoc',
+          `:var-only-in-asciidoctorconfig-adoc: From .asciidoctorconfig.adoc\n:var-in-both: var-in-both value from .asciidoctorconfig.adoc`,
+        ),
+      )
+
+      const adocForTest = await createFileWithContentAtWorkspaceRoot(
+        workspaceUri,
+        'test-pickup-both-asciidoctorconfig-at-workspace-root.adoc',
+        `{var-in-both}\n\n{var-only-in-asciidoctorconfig-adoc}\n\n{var-only-in-asciidoctorconfig}`,
+      )
+      createdFiles.push(adocForTest)
+      const textDocument = await vscode.workspace.openTextDocument(adocForTest)
+      const asciidocParser = new AsciidocEngine(
+        new AsciidocContributionProviderTest(extensionContext.extensionUri),
+        new AsciidoctorConfig(),
+        new AsciidoctorExtensions(
+          AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+        ),
+        new AsciidoctorDiagnostic('test'),
+      )
+      html = (
+        await asciidocParser.convertFromTextDocument(
+          textDocument,
+          extensionContext,
+          new TestWebviewResourceProvider(),
+        )
+      ).html
+    })
+
+    after(async () => {
+      for (const createdFile of createdFiles) {
+        await vscode.workspace.fs.delete(createdFile)
+      }
+    })
+
+    test('Var from .asciidocforconfig is used', async () => {
+      assert.strictEqual(
+        html.includes('<p>From .asciidoctorconfig</p>'),
+        true,
+        '{var-only-in-asciidoctorconfig} should be substituted by the value defined in .asciidoctorconfig',
+      )
+    })
+
+    test('Var from .asciidocforconfig.adoc is used', async () => {
+      assert.strictEqual(
+        html.includes('<p>From .asciidoctorconfig.adoc</p>'),
+        true,
+        '{var-only-in-asciidoctorconfig.adoc} should be substituted by the value defined in .asciidoctorconfig.adoc',
+      )
+    })
+
+    test('Var from .asciidocforconfig.adoc has precedence on .asciidoctorconfig.adoc', async () => {
+      assert.strictEqual(
+        html.includes('<p>var-in-both value from .asciidoctorconfig.adoc</p>'),
+        true,
+        '{var-in-both} should be substituted by the value defined in .asciidoctorconfig.adoc',
+      )
+    })
+
+    async function createFileWithContentAtWorkspaceRoot(
+      workspaceUri: vscode.Uri,
+      configFileName: string,
+      fileContent: string,
+    ) {
+      const configFile = vscode.Uri.joinPath(workspaceUri, configFileName)
+      await vscode.workspace.fs.writeFile(configFile, Buffer.from(fileContent))
+      return configFile
+    }
+  })
+
+  describe('Pick up .asciidocConfig file recursively', async () => {
+    let html: string
+    const createdFiles: vscode.Uri[] = []
+
+    before(async () => {
       const workspaceUri = getDefaultWorkspaceFolderUri()
       const configFileName = '.asciidoctorconfig'
       const rootConfigFile = vscode.Uri.joinPath(workspaceUri, configFileName)
       await vscode.workspace.fs.writeFile(
         rootConfigFile,
         Buffer.from(
-          `:only-root: Only root. Should appear.
-:root-and-level1: Value of root-and-level1 specified in root. Should not appear.
-:root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in root. Should not appear.`,
+          `:only-root: Only root. Should appear.\n:root-and-level1: Value of root-and-level1 specified in root. Should not appear.\n:root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in root. Should not appear.`,
         ),
       )
       createdFiles.push(rootConfigFile)
       createdFiles.push(await createDirectory('level-empty'))
       await createFile(
-        `:only-level1: Only level 1. Should appear.
-:root-and-level1: Value of root-and-level1 specified in level1. Should appear.
-:root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in level1. Should not appear.`,
+        `:only-level1: Only level 1. Should appear.\n:root-and-level1: Value of root-and-level1 specified in level1. Should appear.\n:root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in level1. Should not appear.`,
         'level-empty',
         'level1',
         configFileName,
       )
       await createFile(
-        `:only-level2: Only level 2. Should appear.
-:root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in level2. Should appear.`,
+        `:only-level2: Only level 2. Should appear.\n:root-and-level1-and-level2: Value of root-and-level1-and-level2 specified in level2. Should appear.`,
         'level-empty',
         'level1',
         'level2',
         configFileName,
       )
       const adocFile = await createFile(
-        `{only-root}
-
-{only-level1}
-
-{only-level2}
-
-{root-and-level1}
-
-{root-and-level1-and-level2}
-              `,
+        `{only-root}\n\n{only-level1}\n\n{only-level2}\n\n{root-and-level1}\n\n{root-and-level1-and-level2}\n              `,
         'level-empty',
         'level1',
         'level2',
@@ -263,7 +231,7 @@ suite('asciidoc.Asciidoctorconfig', () => {
       ).html
     })
 
-    suiteTeardown(async () => {
+    after(async () => {
       await removeFiles(createdFiles)
     })
 

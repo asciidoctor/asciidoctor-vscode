@@ -1,23 +1,24 @@
-import 'mocha'
-import assert from 'assert'
+import assert from 'node:assert/strict'
+import { afterEach, beforeEach, describe, test } from 'node:test'
 import * as vscode from 'vscode'
 import { Position } from 'vscode'
-import { xrefProvider } from '../providers/xref.provider'
-import { getDefaultWorkspaceFolderUri } from '../util/workspace'
+import { xrefProvider } from '../providers/xref.provider.js'
+import { getDefaultWorkspaceFolderUri } from '../util/workspace.js'
 
-let workspaceUri
+let workspaceUri: vscode.Uri
 
-suite('Xref CompletionsProvider', () => {
+describe('Xref CompletionsProvider', () => {
   let createdFiles: vscode.Uri[] = []
-  setup(() => {
+  beforeEach(() => {
     workspaceUri = getDefaultWorkspaceFolderUri()
   })
-  teardown(async () => {
+  afterEach(async () => {
     for (const createdFile of createdFiles) {
       await vscode.workspace.fs.delete(createdFile)
     }
     createdFiles = []
   })
+
   test('Should return other ids from old style double-brackets as completion after "xref:"', async () => {
     const fileToAutoComplete = vscode.Uri.joinPath(
       workspaceUri,
@@ -57,6 +58,7 @@ suite('Xref CompletionsProvider', () => {
       ),
     )
   })
+
   test('Should return ids declared using the shorthand syntax as completion after "xref:"', async () => {
     const fileToAutoComplete = vscode.Uri.joinPath(
       workspaceUri,
@@ -96,6 +98,7 @@ suite('Xref CompletionsProvider', () => {
       ),
     )
   })
+
   test('Should return ids declared using the longhand syntax as completion after "xref:" from other document', async () => {
     const fileToAutoComplete = vscode.Uri.joinPath(
       workspaceUri,
@@ -134,6 +137,7 @@ suite('Xref CompletionsProvider', () => {
       ),
     )
   })
+
   test('Should return ids declared using the longhand syntax as completion after "xref:" from same document', async () => {
     const fileToAutoComplete = vscode.Uri.joinPath(
       workspaceUri,
@@ -163,6 +167,7 @@ xref:`),
       ),
     )
   })
+
   test('Should return id for inlined anchor', async () => {
     const fileToAutoComplete = vscode.Uri.joinPath(
       workspaceUri,
@@ -192,6 +197,7 @@ xref:`),
       ),
     )
   })
+
   test('Should return id for element in same document after <<', async () => {
     const fileToAutoComplete = vscode.Uri.joinPath(
       workspaceUri,

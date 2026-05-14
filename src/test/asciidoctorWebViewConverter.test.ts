@@ -1,17 +1,16 @@
-import assert from 'assert'
-import path from 'path'
+import assert from 'node:assert/strict'
+import { after, before, describe, test } from 'node:test'
+import { convert as asciidoctorConvert } from '@asciidoctor/core'
+import * as path from 'path'
 import sinon from 'sinon'
-import vscode from 'vscode'
-import { AsciidocContributions } from '../asciidocExtensions'
-import { AsciidoctorWebViewConverter } from '../asciidoctorWebViewConverter'
-import { AntoraDocumentContext } from '../features/antora/antoraContext'
-import { AsciidocPreviewConfigurationManager } from '../features/previewConfig'
-import { WebviewResourceProvider } from '../util/resources'
-import { getDefaultWorkspaceFolderUri } from '../util/workspace'
-import { createDirectory, createFile, removeFiles } from './workspaceHelper'
-
-const asciidoctor = require('@asciidoctor/core')
-const processor = asciidoctor()
+import * as vscode from 'vscode'
+import { AsciidocContributions } from '../asciidocExtensions.js'
+import { AsciidoctorWebViewConverter } from '../asciidoctorWebViewConverter.js'
+import { AntoraDocumentContext } from '../features/antora/antoraContext.js'
+import { AsciidocPreviewConfigurationManager } from '../features/previewConfig.js'
+import { WebviewResourceProvider } from '../util/resources.js'
+import { getDefaultWorkspaceFolderUri } from '../util/workspace.js'
+import { createDirectory, createFile, removeFiles } from './workspaceHelper.js'
 
 class TestWebviewResourceProvider implements WebviewResourceProvider {
   asWebviewUri(resource: vscode.Uri): vscode.Uri {
@@ -43,8 +42,6 @@ function createConverterOptions(
   converter: AsciidoctorWebViewConverter,
   fileName: string,
 ) {
-  // treat the file as the source file for conversion to handle xref correctly between documents
-  // review src/asciidocEngin.ts for more information
   const intrinsicAttr = {
     docdir: path.dirname(fileName),
     docfile: fileName,
@@ -57,12 +54,9 @@ function createConverterOptions(
     converter,
     attributes: {
       ...intrinsicAttr,
-
-      // required for navigation between source files in preview
-      // see: https://docs.asciidoctor.org/asciidoc/latest/macros/inter-document-xref/#navigating-between-source-files
       relfilesuffix: '.adoc',
     },
-    safe: 'unsafe', // needed so that we can actually perform includes, enabling xref tests
+    safe: 'unsafe',
   }
 }
 
@@ -89,7 +83,7 @@ async function testAsciidoctorWebViewConverter(
     undefined,
   )
 
-  const html = processor.convert(
+  const html = await asciidoctorConvert(
     input,
     createConverterOptions(asciidoctorWebViewConverter, file.fileName),
   )
@@ -118,16 +112,18 @@ async function testAsciidoctorWebViewConverterStandalone(
     antoraDocumentContext,
     undefined,
   )
-  const html = processor.convert(input, {
+  const html = await asciidoctorConvert(input, {
     ...createConverterOptions(asciidoctorWebViewConverter, file.fileName),
     standalone: true,
   })
-  html.includes(expected)
+  if (html instanceof String) {
+    html.includes(expected)
+  }
 }
 
-suite('AsciidoctorWebViewConverter', async () => {
+describe('AsciidoctorWebViewConverter', async () => {
   const createdFiles: vscode.Uri[] = []
-  suiteSetup(async () => {
+  before(async () => {
     createdFiles.push(await createDirectory('images'))
     await createFile('', 'images', 'ocean', 'waves', 'seaswell.png')
     await createFile('', 'images', 'mountain.jpeg')
@@ -142,10 +138,9 @@ link:help.adoc[]
       'asciidoctorWebViewConverterTest.adoc',
     )
     createdFiles.push(await createDirectory('docs'))
-    await createFile('', 'docs', 'modules', 'ROOT', 'pages', 'dummy.adoc') // virtual file
+    await createFile('', 'docs', 'modules', 'ROOT', 'pages', 'dummy.adoc')
     createdFiles.push(asciidocFile)
 
-    // these help with testing xref cross documents
     createdFiles.push(
       await createFile(
         `= Parent document
@@ -185,14 +180,12 @@ I want to link to xref:docB.adoc#other_anchor[]`,
       ),
     )
   })
-  suiteTeardown(async () => {
+  after(async () => {
     await removeFiles(createdFiles)
   })
 
   const workspaceUri = getDefaultWorkspaceFolderUri()
-  // WIP need to find more interesting test cases
   const testCases = [
-    // images
     {
       title:
         'Unresolved image resource id from Antora (fallback to base converter)',
@@ -219,12 +212,11 @@ I want to link to xref:docB.adoc#other_anchor[]`,
 </div>
 </div>`,
     },
-    // links
     {
       title: 'Should resolve macro link',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: 'link:full.adoc[]',
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected: `<div class="paragraph">
 <p><a href="full.adoc" class="bare" data-href="full.adoc">full.adoc</a></p>
 </div>`,
@@ -233,12 +225,11 @@ I want to link to xref:docB.adoc#other_anchor[]`,
       title: 'Should resolve macro link with roles',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: 'link:full.adoc[role="action button"]',
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected: `<div class="paragraph">
 <p><a href="full.adoc" class="bare action button" data-href="full.adoc">full.adoc</a></p>
 </div>`,
     },
-    // xref
     {
       title:
         'Should resolve "xref:" macro from included document referencing the source document',
@@ -253,7 +244,7 @@ Some text
 Please scroll me into position
 
 include::docB.adoc[]`,
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected: '<a href="#anchor" data-href="#anchor">Link to here</a>',
       standalone: true,
     },
@@ -273,7 +264,7 @@ Please scroll me into position
 include::docB.adoc[]
 
 include::docC.adoc[]`,
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected:
         '<a href="#other_anchor" data-href="#other_anchor">Other link to here</a>',
       standalone: true,
@@ -282,7 +273,7 @@ include::docC.adoc[]`,
       title: 'Should resolve "xref:" macro to document',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: 'xref:other.adoc[]',
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected: `<div class="paragraph">
 <p><a href="other.adoc" data-href="other.adoc">other.adoc</a></p>
 </div>`,
@@ -291,7 +282,7 @@ include::docC.adoc[]`,
       title: 'Should resolve "xref:" macro to document - with explicit text',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: 'xref:other.adoc[Other document]',
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected: `<div class="paragraph">
 <p><a href="other.adoc" data-href="other.adoc">Other document</a></p>
 </div>`,
@@ -300,7 +291,7 @@ include::docC.adoc[]`,
       title: 'Should resolve "xref:" macro to document - with roles',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: 'xref:other.adoc[role="foo"]',
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected: `<div class="paragraph">
 <p><a href="other.adoc" class="foo" data-href="other.adoc">other.adoc</a></p>
 </div>`,
@@ -311,7 +302,7 @@ include::docC.adoc[]`,
       input: `xref:_text_test[]
 
 = Text test`,
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected: `<div class="paragraph">
 <p><a href="#_text_test" data-href="#_text_test">Text test</a></p>
 </div>
@@ -325,7 +316,7 @@ include::docC.adoc[]`,
       input: `xref:_text_test[Explicit text]
 
 = Text test`,
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected: `<div class="paragraph">
 <p><a href="#_text_test" data-href="#_text_test">Explicit text</a></p>
 </div>
@@ -340,7 +331,7 @@ include::docC.adoc[]`,
 
 [reftext="Test reftext"]
 = Reftext Test`,
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected: `<div class="paragraph">
 <p><a href="#_reftext_test" data-href="#_reftext_test">Test reftext</a></p>
 </div>
@@ -355,7 +346,7 @@ include::docC.adoc[]`,
 
 [reftext="Test reftext"]
 = Reftext Test`,
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected: `<div class="paragraph">
 <p><a href="#_reftext_test" data-href="#_reftext_test">Explicit text</a></p>
 </div>
@@ -367,7 +358,7 @@ include::docC.adoc[]`,
         'Should resolve "xref:" macro for internal cross reference - without matching anchor',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: 'xref:_non_existing_ref_test[]',
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected: `<div class="paragraph">
 <p><a href="#_non_existing_ref_test" data-href="#_non_existing_ref_test">_non_existing_ref_test</a></p>
 </div>`,
@@ -378,7 +369,7 @@ include::docC.adoc[]`,
       input: `<<inline_anchor_without_text>>
 
 [[inline_anchor_without_text]]Some text`,
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected: `<div class="paragraph">
 <p><a href="#inline_anchor_without_text" data-href="#inline_anchor_without_text">inline_anchor_without_text</a></p>
 </div>
@@ -393,7 +384,7 @@ include::docC.adoc[]`,
       input: `<<inline_anchor_with_explicit_text>>
 
 [[inline_anchor_with_explicit_text,Explicit text]]Some text`,
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected: `<div class="paragraph">
 <p><a href="#inline_anchor_with_explicit_text" data-href="#inline_anchor_with_explicit_text">Explicit text</a></p>
 </div>
@@ -406,7 +397,7 @@ include::docC.adoc[]`,
         'Should not add role doc to content when no Antora context is provided',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: '= Test Document',
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected: '<div id="content">',
       standalone: true,
     },
@@ -433,7 +424,7 @@ See xref:my-table[xrefstyle=short] for more reference.
 |===
 |data
 |===`,
-      antoraDocumentContext: undefined, // Antora not enabled
+      antoraDocumentContext: undefined,
       expected: `<div class="paragraph">
 <p>See <a href="#my-table" data-href="#my-table">Table 1</a> for more reference.</p>
 </div>
@@ -443,7 +434,7 @@ See xref:my-table[xrefstyle=short] for more reference.
 <table id="my-table" class="tableblock frame-all grid-all stretch">
 <caption class="title">Table 1. Title of my table</caption>
 <colgroup>
-<col style="width: 100%;">
+<col width="100%">
 </colgroup>
 <tbody>
 <tr>

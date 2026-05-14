@@ -1,9 +1,9 @@
 import * as vscode from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader'
-import { TargetPathCompletionProvider } from '../providers/asciidoc.provider'
-import { BibtexProvider } from '../providers/bibtex.provider'
-import { xrefProvider } from '../providers/xref.provider'
-import { disposeAll } from './dispose'
+import { AsciidocLoader } from '../asciidocLoader.js'
+import { TargetPathCompletionProvider } from '../providers/asciidoc.provider.js'
+import { BibtexProvider } from '../providers/bibtex.provider.js'
+import { xrefProvider } from '../providers/xref.provider.js'
+import { disposeAll } from './dispose.js'
 
 export class AsciidocTargetPathAutoCompletionMonitor {
   private readonly disposables: vscode.Disposable[] = []

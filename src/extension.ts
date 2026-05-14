@@ -1,36 +1,36 @@
 import * as vscode from 'vscode'
-import { AsciidocEngine } from './asciidocEngine'
-import { getAsciidocExtensionContributions } from './asciidocExtensions'
-import { AsciidocIncludeItemsLoader, AsciidocLoader } from './asciidocLoader'
-import { CommandManager } from './commandManager'
-import { antoraSupportEnabledContextKey } from './commands/antoraSupport'
-import * as commands from './commands/index'
-import { AntoraSupportManager } from './features/antora/antoraContext'
-import { AsciidoctorConfig } from './features/asciidoctorConfig'
-import { AsciidoctorDiagnostic } from './features/asciidoctorDiagnostic'
-import { AsciidoctorExtensions } from './features/asciidoctorExtensions'
-import { AsciidoctorIncludeItems } from './features/asciidoctorIncludeItems'
-import { AttributeReferenceProvider } from './features/attributeReferenceProvider'
-import { BuiltinDocumentAttributeProvider } from './features/builtinDocumentAttributeProvider'
-import LinkProvider from './features/documentLinkProvider'
-import AdocDocumentSymbolProvider from './features/documentSymbolProvider'
-import { DropImageIntoEditorProvider } from './features/dropIntoEditor'
-import AsciidocFoldingRangeProvider from './features/foldingProvider'
-import { AsciidocContentProvider } from './features/previewContentProvider'
-import { AsciidocPreviewManager } from './features/previewManager'
-import AsciidocWorkspaceSymbolProvider from './features/workspaceSymbolProvider'
-import { Logger } from './logger'
+import { AsciidocEngine } from './asciidocEngine.js'
+import { getAsciidocExtensionContributions } from './asciidocExtensions.js'
+import { AsciidocIncludeItemsLoader, AsciidocLoader } from './asciidocLoader.js'
+import { CommandManager } from './commandManager.js'
+import { antoraSupportEnabledContextKey } from './commands/antoraSupport.js'
+import * as commands from './commands/index.js'
+import { AntoraSupportManager } from './features/antora/antoraContext.js'
+import { AsciidoctorConfig } from './features/asciidoctorConfig.js'
+import { AsciidoctorDiagnostic } from './features/asciidoctorDiagnostic.js'
+import { AsciidoctorExtensions } from './features/asciidoctorExtensions.js'
+import { AsciidoctorIncludeItems } from './features/asciidoctorIncludeItems.js'
+import { AttributeReferenceProvider } from './features/attributeReferenceProvider.js'
+import { BuiltinDocumentAttributeProvider } from './features/builtinDocumentAttributeProvider.js'
+import LinkProvider from './features/documentLinkProvider.js'
+import AdocDocumentSymbolProvider from './features/documentSymbolProvider.js'
+import { DropImageIntoEditorProvider } from './features/dropIntoEditor.js'
+import AsciidocFoldingRangeProvider from './features/foldingProvider.js'
+import { AsciidocContentProvider } from './features/previewContentProvider.js'
+import { AsciidocPreviewManager } from './features/previewManager.js'
+import AsciidocWorkspaceSymbolProvider from './features/workspaceSymbolProvider.js'
+import { Logger } from './logger.js'
 import {
   AsciidoctorExtensionsSecurityPolicyArbiter,
   AsciidoctorExtensionsTrustModeSelector,
   ExtensionContentSecurityPolicyArbiter,
   PreviewSecuritySelector,
-} from './security'
-import { AsciidocTargetPathAutoCompletionMonitor } from './util/includeAutoCompletion'
+} from './security.js'
+import { AsciidocTargetPathAutoCompletionMonitor } from './util/includeAutoCompletion.js'
 
 export async function activate(context: vscode.ExtensionContext) {
   // Set context as a global as some tests depend on it
-  ;(global as any).testExtensionContext = context
+  ;(globalThis as any).testExtensionContext = context
   const contributionProvider = getAsciidocExtensionContributions(context)
   const asciidoctorExtensionsSecurityPolicy =
     AsciidoctorExtensionsSecurityPolicyArbiter.activate(context)

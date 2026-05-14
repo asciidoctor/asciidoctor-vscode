@@ -1,15 +1,15 @@
-import 'mocha'
-import assert from 'assert'
+import assert from 'node:assert/strict'
+import { afterEach, describe, test } from 'node:test'
 import * as vscode from 'vscode'
 import { Position } from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader'
-import { AsciidoctorConfig } from '../features/asciidoctorConfig'
-import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
-import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
-import { AttributeReferenceProvider } from '../features/attributeReferenceProvider'
-import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
-import { extensionContext } from './helper'
-import { createFile } from './workspaceHelper'
+import { AsciidocLoader } from '../asciidocLoader.js'
+import { AsciidoctorConfig } from '../features/asciidoctorConfig.js'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic.js'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions.js'
+import { AttributeReferenceProvider } from '../features/attributeReferenceProvider.js'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
+import { extensionContext } from './helper.js'
+import { createFile } from './workspaceHelper.js'
 
 function filterByLabel(label: string): (CompletionItem) => boolean {
   return (item) => {
@@ -43,9 +43,9 @@ async function findCompletionItems(
   return completionsItems
 }
 
-suite('Attribute ref CompletionsProvider', () => {
+describe('Attribute ref CompletionsProvider', () => {
   let createdFiles: vscode.Uri[] = []
-  teardown(async () => {
+  afterEach(async () => {
     for (const createdFile of createdFiles) {
       await vscode.workspace.fs.delete(createdFile)
     }
@@ -158,6 +158,7 @@ The above function is {
       fileToAutoComplete,
       new Position(3, 17),
     )
+    process.stdout.write(JSON.stringify({ items }) + '\n')
     assert.deepStrictEqual(
       items.length,
       0,

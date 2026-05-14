@@ -1,16 +1,17 @@
-import { Asciidoctor } from '@asciidoctor/core'
-import vscode from 'vscode'
+import {
+  Document as AsciidoctorDocument,
+  Html5Converter,
+} from '@asciidoctor/core'
+import * as vscode from 'vscode'
 import * as uri from 'vscode-uri'
-import { AsciidocContributions } from './asciidocExtensions'
-import { AntoraDocumentContext } from './features/antora/antoraContext'
-import { AsciidocPreviewConfiguration } from './features/previewConfig'
-import { AsciidocPreviewSecurityLevel } from './security'
-import { SkinnyTextDocument } from './util/document'
-import { WebviewResourceProvider } from './util/resources'
-import { getWorkspaceFolder } from './util/workspace'
-
-const { Opal } = require('asciidoctor-opal-runtime')
-const processor = require('@asciidoctor/core')()
+import { AsciidocContributions } from './asciidocExtensions.js'
+import { AntoraDocumentContext } from './features/antora/antoraContext.js'
+import { AsciidocPreviewConfiguration } from './features/previewConfig.js'
+import { AsciidocPreviewSecurityLevel } from './security.js'
+import { SkinnyTextDocument } from './util/document.js'
+import { t as l10nT } from './util/l10n.js'
+import { WebviewResourceProvider } from './util/resources.js'
+import { getWorkspaceFolder } from './util/workspace.js'
 
 const BAD_PROTO_RE = /^(vbscript|javascript|data):/i
 const GOOD_DATA_RE = /^data:image\/(gif|png|jpeg|webp);/i
@@ -36,11 +37,11 @@ function isSchemeBlacklisted(href: string): boolean {
  * can be localized using our normal localization process.
  */
 const previewStrings = {
-  cspAlertMessageText: vscode.l10n.t('preview.securityMessage.text'),
+  cspAlertMessageText: l10nT('preview.securityMessage.text'),
 
-  cspAlertMessageTitle: vscode.l10n.t('preview.securityMessage.title'),
+  cspAlertMessageTitle: l10nT('preview.securityMessage.title'),
 
-  cspAlertMessageLabel: vscode.l10n.t('preview.securityMessage.label'),
+  cspAlertMessageLabel: l10nT('preview.securityMessage.label'),
 }
 
 /**
@@ -69,6 +70,7 @@ function getCspForResource(
     'object-src': ["'self'", rule, 'https:', 'data:', krokiServerUrl],
     'media-src': ["'self'", rule, 'https:', 'data:', krokiServerUrl],
     'script-src': [
+      rule,
       'https:',
       `'nonce-${nonce}'`,
       `'${highlightjsInlineScriptHash}'`,
@@ -154,7 +156,7 @@ export class AsciidoctorWebViewConverter {
     this.basebackend = 'html'
     this.outfilesuffix = '.html'
     this.supports_templates = true
-    this.baseConverter = processor.Html5Converter.create()
+    this.baseConverter = Html5Converter.create()
     this.securityLevel = asciidocPreviewSecurityLevel
     this.config = previewConfigurations
     this.initialData = {
@@ -170,18 +172,14 @@ export class AsciidoctorWebViewConverter {
     this.state = state || {}
   }
 
-  // alias to $convert method to use AsciidoctorWebViewConverter as option in processor.convert method in Asciidoctor.js
-  $convert(node, transform) {
-    return this.convert(node, transform)
-  }
-
   /**
    Convert links to ensure WebView security for preview through use of data-href attribute
    * @param node        Type of node in Asciidoctor AST
    * @param transform   An optional string transform that hints at which transformation should be applied to this node
    * @returns           Converted node
    */
-  convert(node, transform) {
+  async convert(node, transform) {
+    console.log({ node })
     const nodeName = transform || node.getNodeName()
     if (nodeName === 'document') {
       // Content Security Policy
@@ -193,22 +191,23 @@ export class AsciidoctorWebViewConverter {
         this.krokiServerUrl,
         nonce,
       )
-      const syntaxHighlighter = node.$syntax_highlighter()
+      const syntaxHighlighter = node.getSyntaxHighlighter()
       let assetUriScheme = node.getAttribute('asset-uri-scheme', 'https')
       if (assetUriScheme.trim() !== '') {
         assetUriScheme = `${assetUriScheme}:`
       }
       const syntaxHighlighterHeadContent =
-        syntaxHighlighter !== Opal.nil && syntaxHighlighter['$docinfo?']('head')
-          ? syntaxHighlighter.$docinfo('head', node, {})
+        syntaxHighlighter !== null && syntaxHighlighter.hasDocinfo('head')
+          ? await syntaxHighlighter.docinfo('head', node, {})
           : ''
       const syntaxHighlighterFooterContent =
-        syntaxHighlighter !== Opal.nil &&
-        syntaxHighlighter['$docinfo?']('footer')
-          ? syntaxHighlighter.$docinfo('footer', node, {})
+        syntaxHighlighter !== null && syntaxHighlighter.hasDocinfo('footer')
+          ? await syntaxHighlighter.docinfo('footer', node, {})
           : ''
-      const headerDocinfo = node.getDocinfo('header')
-      const footerDocinfo = node.getDocinfo('footer')
+      const headerDocinfo = await node.getDocinfo('header')
+      const footerDocinfo = await node.getDocinfo('footer')
+      const docinfo = await node.getDocinfo()
+      const content = await node.getContent()
       return `<!DOCTYPE html>
      <html style="${escapeAttribute(this.getSettingsOverrideStyles(this.config))}">
       <head>
@@ -221,14 +220,14 @@ export class AsciidoctorWebViewConverter {
         <script src="${this.extensionResourcePath('pre.js')}" nonce="${nonce}"></script>
         ${this.getStyles(node, webviewResourceProvider, this.textDocument.uri, this.config, this.state)}
         ${syntaxHighlighterHeadContent}
-        ${node.getDocinfo()}
+        ${docinfo}
         <base href="${webviewResourceProvider.asWebviewUri(this.textDocument.uri)}">
       </head>
       <body${node.getId() ? ` id="${node.getId()}"` : ''} class="${this.getBodyCssClasses(node)}">
         ${headerDocinfo}
         ${this.getDocumentHeader(node)}
         <div id="content"${this.antoraDocumentContext ? ' class="doc"' : ''}>
-          ${node.getContent()}
+          ${content}
         </div>
         ${this.generateFootnotes(node)}
         ${this.generateFooter(node)}
@@ -294,15 +293,17 @@ export class AsciidoctorWebViewConverter {
             if (typeof refNode !== 'undefined') {
               // maybe the referred node has a reftext which should be used
               const xrefStyle = node.getAttribute('xrefstyle', undefined, true)
-              const xrefText = refNode.$xreftext(xrefStyle ?? Opal.nil)
-              if (xrefText && xrefText !== Opal.nil) {
+              const xrefText = await (refNode as any).xreftext(
+                xrefStyle ?? null,
+              )
+              if (xrefText) {
                 text = xrefText
               } else {
                 // maybe the referred node has a reftext which should be used
                 if (refNode.hasAttribute('reftext')) {
                   text = refNode.getReftext()
                   const xrefStyle = node.getAttribute('xrefstyle')
-                  text = refNode.$xreftext(xrefStyle ?? Opal.nil)
+                  text = await (refNode as any).xreftext(xrefStyle ?? null)
                 } else {
                   // fall back and try title
                   if (typeof refNode.getTitle === 'function') {
@@ -333,7 +334,7 @@ export class AsciidoctorWebViewConverter {
         node.setAttribute('alt', alt)
       }
     }
-    return this.baseConverter.convert(node, transform)
+    return await this.baseConverter.convert(node, transform)
   }
 
   private generateMathJax(node, webviewResourceProvider, nonce) {
@@ -468,12 +469,12 @@ ${headerContent}
     const details = []
     node.getAuthors().forEach((author, idx) => {
       details.push(
-        `<span id="author${idx > 0 ? idx + 1 : ''}" class="author">${node.$sub_replacements(author.getName())}</span><br/>`,
+        `<span id="author${idx > 0 ? idx + 1 : ''}" class="author">${(node as any).subReplacements(author.getName())}</span><br/>`,
       )
       const authorEmail = author.getEmail()
       if (authorEmail) {
         details.push(
-          `<span id="email${idx > 0 ? idx + 1 : ''}" class="email">${node.$sub_macros(authorEmail)}</span><br/>`,
+          `<span id="email${idx > 0 ? idx + 1 : ''}" class="email">${(node as any).subMacros(authorEmail)}</span><br/>`,
         )
       }
     })
@@ -556,7 +557,7 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
     } else {
       classes.push(node.getDoctype())
     }
-    if (node.isRole()) {
+    if (node.hasRoleAttribute()) {
       classes.push(node.getRole())
     }
     return classes.filter((cssClass) => cssClass !== undefined).join(' ')
@@ -581,7 +582,7 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
   }
 
   private getStyles(
-    node: Asciidoctor.Document,
+    node: AsciidoctorDocument,
     webviewResourceProvider: WebviewResourceProvider,
     textDocumentUri: vscode.Uri,
     config: AsciidocPreviewConfiguration,

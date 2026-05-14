@@ -29,10 +29,10 @@
         "${workspaceFolder}/test-workspace",
         "--disable-extensions",
         "--extensionDevelopmentPath=${workspaceFolder}",
-        "--extensionTestsPath=${workspaceFolder}/dist/src/test/suite"
+        "--extensionTestsPath=${workspaceFolder}/build/src/test/suite/index"
       ],
       "outFiles": [
-        "${workspaceFolder}/dist/src/test/**/*.js"
+        "${workspaceFolder}/build/src/test/**/*.js"
       ],
       "preLaunchTask": "npm: pretest"
     }

@@ -3,13 +3,13 @@
  *--------------------------------------------------------------------------------------------*/
 
 import * as vscode from 'vscode'
-import { AsciidocContributionProvider } from '../asciidocExtensions'
-import { Logger } from '../logger'
-import { disposeAll } from '../util/dispose'
-import { AsciidocFileTopmostLineMonitor } from '../util/topmostLineMonitor'
-import { AsciidocPreview, PreviewSettings } from './preview'
-import { AsciidocPreviewConfigurationManager } from './previewConfig'
-import { AsciidocContentProvider } from './previewContentProvider'
+import { AsciidocContributionProvider } from '../asciidocExtensions.js'
+import { Logger } from '../logger.js'
+import { disposeAll } from '../util/dispose.js'
+import { AsciidocFileTopmostLineMonitor } from '../util/topmostLineMonitor.js'
+import { AsciidocPreview, PreviewSettings } from './preview.js'
+import { AsciidocPreviewConfigurationManager } from './previewConfig.js'
+import { AsciidocContentProvider } from './previewContentProvider.js'
 
 export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer {
   private static readonly asciidocPreviewActiveContextKey =

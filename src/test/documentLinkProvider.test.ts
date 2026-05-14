@@ -1,15 +1,15 @@
-import * as assert from 'assert'
-import 'mocha'
+import assert from 'node:assert/strict'
+import { describe, test } from 'node:test'
 import * as vscode from 'vscode'
-import { AsciidocIncludeItemsLoader } from '../asciidocLoader'
-import { AsciidoctorConfig } from '../features/asciidoctorConfig'
-import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
-import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
-import { AsciidoctorIncludeItems } from '../features/asciidoctorIncludeItems'
-import LinkProvider from '../features/documentLinkProvider'
-import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
-import { extensionContext } from './helper'
-import { InMemoryDocument } from './inMemoryDocument'
+import { AsciidocIncludeItemsLoader } from '../asciidocLoader.js'
+import { AsciidoctorConfig } from '../features/asciidoctorConfig.js'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic.js'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions.js'
+import { AsciidoctorIncludeItems } from '../features/asciidoctorIncludeItems.js'
+import LinkProvider from '../features/documentLinkProvider.js'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
+import { extensionContext } from './helper.js'
+import { InMemoryDocument } from './inMemoryDocument.js'
 
 const noopToken = new (class implements vscode.CancellationToken {
   private _onCancellationRequestedEmitter = new vscode.EventEmitter<void>()
@@ -49,7 +49,7 @@ function assertRangeEqual(expected: vscode.Range, actual: vscode.Range) {
   assert.strictEqual(expected.end.character, actual.end.character)
 }
 
-suite('asciidoc.DocumentLinkProvider', async () => {
+describe('asciidoc.DocumentLinkProvider', async () => {
   test('Should not return anything for empty document', async () => {
     const links = await getLinksForFile('')
     assert.strictEqual(links.length, 0)
@@ -116,15 +116,11 @@ See xref:test.adoc#first-section[]
 `)
     assert.strictEqual(links.length, 1)
     const [link] = links
-
     assert.strictEqual(link.target.scheme, 'command')
     assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
     assert.strictEqual(
       link.target.query,
-      JSON.stringify({
-        path: 'test.adoc',
-        fragment: 'L3',
-      }),
+      JSON.stringify({ path: 'test.adoc', fragment: 'L3' }),
     )
     assertRangeEqual(link.range, new vscode.Range(9, 9, 9, 32))
   })
@@ -148,10 +144,7 @@ See xref:test.adoc#second-section[]
     assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
     assert.strictEqual(
       link.target.query,
-      JSON.stringify({
-        path: 'test.adoc',
-        fragment: 'L9',
-      }),
+      JSON.stringify({ path: 'test.adoc', fragment: 'L9' }),
     )
     assertRangeEqual(link.range, new vscode.Range(6, 9, 6, 33))
   })

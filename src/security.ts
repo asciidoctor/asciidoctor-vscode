@@ -1,6 +1,7 @@
 import * as vscode from 'vscode'
-import { AsciidocPreviewManager } from './features/previewManager'
-import { getWorkspaceFolder, getWorkspaceFolders } from './util/workspace'
+import { AsciidocPreviewManager } from './features/previewManager.js'
+import { t as l10nT } from './util/l10n.js'
+import { getWorkspaceFolder, getWorkspaceFolders } from './util/workspace.js'
 
 export const enum AsciidocPreviewSecurityLevel {
   Strict = 0,
@@ -146,8 +147,8 @@ export class PreviewSecuritySelector {
             label:
               markActiveWhen(
                 currentSecurityLevel === AsciidocPreviewSecurityLevel.Strict,
-              ) + vscode.l10n.t('security.strict.title'),
-            description: vscode.l10n.t('security.strict.description'),
+              ) + l10nT('security.strict.title'),
+            description: l10nT('security.strict.description'),
           },
           {
             type: AsciidocPreviewSecurityLevel.AllowInsecureLocalContent,
@@ -155,10 +156,8 @@ export class PreviewSecuritySelector {
               markActiveWhen(
                 currentSecurityLevel ===
                   AsciidocPreviewSecurityLevel.AllowInsecureLocalContent,
-              ) + vscode.l10n.t('security.insecureLocalContent.title'),
-            description: vscode.l10n.t(
-              'security.insecureLocalContent.description',
-            ),
+              ) + l10nT('security.insecureLocalContent.title'),
+            description: l10nT('security.insecureLocalContent.description'),
           },
           {
             type: AsciidocPreviewSecurityLevel.AllowInsecureContent,
@@ -166,8 +165,8 @@ export class PreviewSecuritySelector {
               markActiveWhen(
                 currentSecurityLevel ===
                   AsciidocPreviewSecurityLevel.AllowInsecureContent,
-              ) + vscode.l10n.t('security.insecureContent.title'),
-            description: vscode.l10n.t('security.insecureContent.description'),
+              ) + l10nT('security.insecureContent.title'),
+            description: l10nT('security.insecureContent.description'),
           },
           {
             type: AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent,
@@ -175,23 +174,19 @@ export class PreviewSecuritySelector {
               markActiveWhen(
                 currentSecurityLevel ===
                   AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent,
-              ) + vscode.l10n.t('security.disable.title'),
-            description: vscode.l10n.t('security.disable.description'),
+              ) + l10nT('security.disable.title'),
+            description: l10nT('security.disable.description'),
           },
           {
             type: 'toggle',
             label: this.cspArbiter.shouldDisableSecurityWarnings()
-              ? vscode.l10n.t('security.enableSecurityWarning.title')
-              : vscode.l10n.t('security.disableSecurityWarning.title'),
-            description: vscode.l10n.t(
-              'security.toggleSecurityWarning.description',
-            ),
+              ? l10nT('security.enableSecurityWarning.title')
+              : l10nT('security.disableSecurityWarning.title'),
+            description: l10nT('security.toggleSecurityWarning.description'),
           },
         ],
         {
-          placeHolder: vscode.l10n.t(
-            'security.showPreviewSecuritySelector.title',
-          ),
+          placeHolder: l10nT('security.showPreviewSecuritySelector.title'),
         },
       )
     if (!selection) {
@@ -332,10 +327,8 @@ export class AsciidoctorExtensionsTrustModeSelector {
           type: 'deny_asciidoctor_extensions_authors',
           label:
             markActiveWhen(asciidoctorExtensionsAuthorsTrusted === false) +
-            vscode.l10n.t(
-              'security.restrictAsciidoctorExtensionsAuthors.title',
-            ),
-          description: vscode.l10n.t(
+            l10nT('security.restrictAsciidoctorExtensionsAuthors.title'),
+          description: l10nT(
             'security.restrictAsciidoctorExtensionsAuthors.description',
           ),
         },
@@ -343,14 +336,14 @@ export class AsciidoctorExtensionsTrustModeSelector {
           type: 'trust_asciidoctor_extensions_authors',
           label:
             markActiveWhen(asciidoctorExtensionsAuthorsTrusted === true) +
-            vscode.l10n.t('security.trustAsciidoctorExtensionsAuthors.title'),
-          description: vscode.l10n.t(
+            l10nT('security.trustAsciidoctorExtensionsAuthors.title'),
+          description: l10nT(
             'security.trustAsciidoctorExtensionsAuthors.description',
           ),
         },
       ],
       {
-        placeHolder: vscode.l10n.t(
+        placeHolder: l10nT(
           'security.asciidoctorExtensionsTrustModeSelector.title',
         ),
       },

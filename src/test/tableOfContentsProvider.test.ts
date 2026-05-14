@@ -1,24 +1,19 @@
-/*---------------------------------------------------------------------------------------------
- *  Licensed under the MIT License. See License.txt in the project root for license information.
- *--------------------------------------------------------------------------------------------*/
-
-import * as assert from 'assert'
+import assert from 'node:assert/strict'
+import { afterEach, describe, test } from 'node:test'
 import * as vscode from 'vscode'
-import 'mocha'
+import { AsciidocLoader } from '../asciidocLoader.js'
+import { AsciidoctorConfig } from '../features/asciidoctorConfig.js'
+import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic.js'
+import { AsciidoctorExtensions } from '../features/asciidoctorExtensions.js'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
+import { TableOfContentsProvider } from '../tableOfContentsProvider.js'
+import { extensionContext } from './helper.js'
+import { InMemoryDocument } from './inMemoryDocument.js'
+import { createFile } from './workspaceHelper.js'
 
-import { AsciidocLoader } from '../asciidocLoader'
-import { AsciidoctorConfig } from '../features/asciidoctorConfig'
-import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic'
-import { AsciidoctorExtensions } from '../features/asciidoctorExtensions'
-import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security'
-import { TableOfContentsProvider } from '../tableOfContentsProvider'
-import { extensionContext } from './helper'
-import { InMemoryDocument } from './inMemoryDocument'
-import { createFile } from './workspaceHelper'
-
-suite('asciidoc.TableOfContentsProvider', () => {
+describe('asciidoc.TableOfContentsProvider', () => {
   let createdFiles: vscode.Uri[] = []
-  teardown(async () => {
+  afterEach(async () => {
     for (const createdFile of createdFiles) {
       await vscode.workspace.fs.delete(createdFile)
     }
@@ -38,7 +33,6 @@ suite('asciidoc.TableOfContentsProvider', () => {
         extensionContext,
       ),
     )
-
     assert.strictEqual(await provider.lookup(''), undefined)
     assert.strictEqual(await provider.lookup('foo'), undefined)
   })
@@ -56,7 +50,6 @@ suite('asciidoc.TableOfContentsProvider', () => {
         extensionContext,
       ),
     )
-
     assert.strictEqual(await provider.lookup(''), undefined)
     assert.strictEqual(await provider.lookup('foo'), undefined)
     assert.strictEqual(await provider.lookup('a'), undefined)
@@ -96,11 +89,7 @@ content`
 
   test('Should include the document title in the TOC (when using an include just below it)', async () => {
     createdFiles.push(
-      await createFile(
-        `:attr: value
-`,
-        'tableofcontents-attrs.adoc',
-      ),
+      await createFile(`:attr: value\n`, 'tableofcontents-attrs.adoc'),
     )
     const mainContent = `= test
 include::attrs.adoc[]
@@ -140,7 +129,7 @@ content`
 
 == Dungeons & Dragons
 
-== Let's do it!`,
+== Let’s do it!`,
     )
     const provider = new TableOfContentsProvider(
       doc,
@@ -162,16 +151,9 @@ content`
       'should find an entry with title: Dungeons & Dragons',
     )
     assert.deepStrictEqual(
-      {
-        text: ddEntry.text,
-        slug: ddEntry.slug.value,
-      },
-      {
-        text: 'Dungeons & Dragons',
-        slug: '_dungeons_dragons',
-      },
+      { text: ddEntry.text, slug: ddEntry.slug.value },
+      { text: 'Dungeons & Dragons', slug: '_dungeons_dragons' },
     )
-    console.log(toc.map((t) => t.text))
     const ldiEntry = toc.find((t) => t.text === 'Let’s do it!')
     assert.strictEqual(
       ldiEntry !== null,
@@ -179,14 +161,8 @@ content`
       'should find an entry with title: Let’s do it!',
     )
     assert.deepStrictEqual(
-      {
-        text: ldiEntry.text,
-        slug: ldiEntry.slug.value,
-      },
-      {
-        text: 'Let’s do it!',
-        slug: '_lets_do_it',
-      },
+      { text: ldiEntry.text, slug: ldiEntry.slug.value },
+      { text: 'Let’s do it!', slug: '_lets_do_it' },
     )
   })
 })

@@ -2,14 +2,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { ActiveLineMarker } from './activeLineMarker'
-import { onceDocumentLoaded } from './events'
-import { createPosterForVsCode } from './messaging'
+import { ActiveLineMarker } from './activeLineMarker.js'
+import { onceDocumentLoaded } from './events.js'
+import { createPosterForVsCode } from './messaging.js'
 import {
   getEditorLineNumberForPageOffset,
   scrollToRevealSourceLine,
-} from './scroll-sync'
-import { getData, getSettings } from './settings'
+} from './scroll-sync.js'
+import { getData, getSettings } from './settings.js'
 
 import throttle = require('lodash.throttle')
 

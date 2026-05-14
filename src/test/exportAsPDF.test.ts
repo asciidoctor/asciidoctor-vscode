@@ -1,14 +1,16 @@
-import * as assert from 'assert'
-import 'mocha'
+import assert from 'node:assert/strict'
+import { describe, test } from 'node:test'
+import { load } from '@asciidoctor/core'
+import * as path from 'path'
+import { fileURLToPath } from 'url'
 import * as vscode from 'vscode'
-import { _generateCoverHtmlContent } from '../commands/exportAsPDF'
+import { _generateCoverHtmlContent } from '../commands/exportAsPDF.js'
 
-const asciidoctor = require('@asciidoctor/core')
-const processor = asciidoctor()
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-suite('asciidoc.exportAsPDF', async () => {
+describe('asciidoc.exportAsPDF', () => {
   test('Should create an HTML cover page without title page logo', async () => {
-    const document = processor.load(`= The Intrepid Chronicles
+    const document = await load(`= The Intrepid Chronicles
 Kismet R. Lee <kismet@asciidoctor.org>`)
     const coverHtmlContent = _generateCoverHtmlContent(
       undefined,

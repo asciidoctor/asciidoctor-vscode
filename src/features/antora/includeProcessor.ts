@@ -1,49 +1,40 @@
-'use strict'
+import { IncludeProcessor } from '@asciidoctor/core'
 
-class $Antora {}
 const DBL_COLON = '::'
 const DBL_SQUARE = '[]'
 const NEWLINE_RX = /\r\n?|\n/
 const TAG_DIRECTIVE_RX = /\b(?:tag|(e)nd)::(\S+?)\[\](?=$|[ \r])/m
 
-export const IncludeProcessor = (() => {
-  const $callback = Symbol('callback')
-  const classDef = global.Opal.klass(
-    globalThis.Opal.Antora || global.Opal.module(null, 'Antora', $Antora),
-    global.Opal.Asciidoctor.Extensions.IncludeProcessor,
-    'IncludeProcessor',
-  )
+export class AntoraIncludeProcessor extends IncludeProcessor {
+  private readonly _callback: (doc: any, target: string, cursor: any) => any
 
-  global.Opal.defn(classDef, '$initialize', function initialize(callback) {
-    global.Opal.send(
-      this,
-      global.Opal.find_super_dispatcher(this, 'initialize', initialize),
-    )
-    this[$callback] = callback
-  })
+  constructor(callback: (doc: any, target: string, cursor: any) => any) {
+    super()
+    this._callback = callback
+  }
 
-  global.Opal.defn(classDef, '$process', function (doc, reader, target, attrs) {
-    if (reader.maxdepth === global.Opal.nil) {
-      return
-    }
-    const sourceCursor = reader.$cursor_at_prev_line()
-    if (
-      reader.$include_depth() >= global.Opal.hash_get(reader.maxdepth, 'curr')
-    ) {
+  process(
+    doc: any,
+    reader: any,
+    target: string,
+    attrs: Record<string, any>,
+  ): void {
+    if (reader.exceedsMaxDepth()) {
       log(
         'error',
-        `maximum include depth of ${global.Opal.hash_get(reader.maxdepth, 'rel')} exceeded`,
+        `maximum include depth of ${reader._maxdepth.rel} exceeded`,
         reader,
-        sourceCursor,
+        reader.cursorAtPrevLine(),
       )
       return
     }
-    const resolvedFile = this[$callback](doc, target, sourceCursor)
+    const sourceCursor = reader.cursorAtPrevLine()
+    const resolvedFile = this._callback(doc, target, sourceCursor)
     if (resolvedFile) {
-      let includeContents
-      let linenums
-      let tags
-      let startLineNum
+      let includeContents: string | string[]
+      let linenums: number[] | undefined
+      let tags: Map<string, boolean> | undefined
+      let startLineNum: number
       if ((linenums = getLines(attrs))) {
         ;[includeContents, startLineNum] = filterLinesByLineNumbers(
           reader,
@@ -63,7 +54,7 @@ export const IncludeProcessor = (() => {
         includeContents = resolvedFile.contents
         startLineNum = 1
       }
-      global.Opal.hash_put(attrs, 'partial-option', '')
+      attrs['partial-option'] = ''
       // eslint-disable-next-line no-new-wrappers
       const file = Object.assign(String(resolvedFile.file), {
         src: resolvedFile.src,
@@ -77,7 +68,7 @@ export const IncludeProcessor = (() => {
         attrs,
       )
     } else {
-      if (attrs['$key?']('optional-option')) {
+      if ('optional-option' in attrs) {
         log(
           'info',
           `optional include dropped because include file not found: ${target}`,
@@ -91,38 +82,40 @@ export const IncludeProcessor = (() => {
           reader,
           sourceCursor,
         )
-        reader.$unshift(
+        reader.unshiftLine(
           `Unresolved include directive in ${sourceCursor.file} - include::${target}[]`,
         )
       }
     }
-  })
+  }
+}
 
-  return classDef
-})()
-
-function getLines(attrs) {
-  if (attrs['$key?']('lines')) {
-    const lines = attrs['$[]']('lines')
+function getLines(attrs: Record<string, any>): number[] | undefined {
+  if ('lines' in attrs) {
+    const lines = attrs.lines
     if (lines) {
-      const linenums = []
-      let filtered
+      const linenums: (number | typeof Infinity)[] = []
+      let filtered: boolean
       ;(~lines.indexOf(',') ? lines.split(',') : lines.split(';'))
-        .filter((it) => it)
-        .forEach((linedef) => {
+        .filter((it: string) => it)
+        .forEach((linedef: string) => {
           filtered = true
-          let delim
-          let from
+          let delim: number
+          let from: number
           if (~(delim = linedef.indexOf('..'))) {
-            from = linedef.substr(0, delim)
-            let to = linedef.substr(delim + 2)
-            if ((to = parseInt(to, 10) || -1) > 0) {
-              if ((from = parseInt(from, 10) || -1) > 0) {
-                for (let i = from; i <= to; i++) {
+            from =
+              parseInt(linedef.substr(0, delim) as unknown as string, 10) || -1
+            const to = parseInt(linedef.substr(delim + 2) as string, 10) || -1
+            if (to > 0) {
+              if (from > 0) {
+                for (let i = from; i <= (to as number); i++) {
                   linenums.push(i)
                 }
               }
-            } else if (to === -1 && (from = parseInt(from, 10) || -1) > 0) {
+            } else if (
+              to === -1 &&
+              (from = parseInt(from as unknown as string, 10) || -1) > 0
+            ) {
               linenums.push(from, Infinity)
             }
           } else if ((from = parseInt(linedef, 10) || -1) > 0) {
@@ -130,7 +123,9 @@ function getLines(attrs) {
           }
         })
       if (linenums.length) {
-        return [...new Set(linenums.sort((a, b) => a - b))]
+        return [
+          ...new Set(linenums.sort((a, b) => (a as number) - (b as number))),
+        ] as number[]
       }
       if (filtered) {
         return []
@@ -139,23 +134,23 @@ function getLines(attrs) {
   }
 }
 
-function getTags(attrs) {
-  if (attrs['$key?']('tag')) {
-    const tag = attrs['$[]']('tag')
+function getTags(attrs: Record<string, any>): Map<string, boolean> | undefined {
+  if ('tag' in attrs) {
+    const tag = attrs.tag
     if (tag && tag !== '!') {
       return tag.charAt() === '!'
         ? new Map().set(tag.substr(1), false)
         : new Map().set(tag, true)
     }
-  } else if (attrs['$key?']('tags')) {
-    const tags = attrs['$[]']('tags')
+  } else if ('tags' in attrs) {
+    const tags = attrs.tags
     if (tags) {
-      const result = new Map()
+      const result = new Map<string, boolean>()
       let any = false
-      tags.split(~tags.indexOf(',') ? ',' : ';').forEach((tag) => {
+      tags.split(~tags.indexOf(',') ? ',' : ';').forEach((tag: string) => {
         if (tag && tag !== '!') {
           any = true
-          tag.charAt() === '!'
+          tag.charAt(0) === '!'
             ? result.set(tag.substr(1), false)
             : result.set(tag, true)
         }
@@ -167,12 +162,17 @@ function getTags(attrs) {
   }
 }
 
-function filterLinesByLineNumbers(reader, target, file, linenums) {
+function filterLinesByLineNumbers(
+  reader: any,
+  target: string,
+  file: any,
+  linenums: (number | typeof Infinity)[],
+): [string[], number] {
   let lineNum = 0
-  let startLineNum
-  let selectRest
-  const lines = []
-  file.contents.split(NEWLINE_RX).some((line) => {
+  let startLineNum: number
+  let selectRest: boolean
+  const lines: string[] = []
+  file.contents.split(NEWLINE_RX).some((line: string) => {
     lineNum++
     if (selectRest || (selectRest = linenums[0] === Infinity)) {
       if (!startLineNum) {
@@ -196,10 +196,16 @@ function filterLinesByLineNumbers(reader, target, file, linenums) {
   return [lines, startLineNum || 1]
 }
 
-function filterLinesByTags(reader, target, file, tags, sourceCursor) {
-  let selectingDefault
-  let selecting
-  let wildcard
+function filterLinesByTags(
+  reader: any,
+  target: string,
+  file: any,
+  tags: Map<string, boolean>,
+  sourceCursor: any,
+): [string[], number] {
+  let selectingDefault: boolean
+  let selecting: boolean
+  let wildcard: boolean
   const globstar = tags.get('**')
   const star = tags.get('*')
   if (globstar === undefined) {
@@ -226,15 +232,15 @@ function filterLinesByTags(reader, target, file, tags, sourceCursor) {
     }
   }
 
-  const lines = []
-  const tagStack = []
-  const foundTags = []
-  let activeTag
+  const lines: string[] = []
+  const tagStack: [string, boolean, number][] = []
+  const foundTags: string[] = []
+  let activeTag: string
   let lineNum = 0
-  let startLineNum
-  file.contents.split(NEWLINE_RX).forEach((line) => {
+  let startLineNum: number
+  file.contents.split(NEWLINE_RX).forEach((line: string) => {
     lineNum++
-    let m
+    let m: RegExpMatchArray | null
     if (
       ~line.indexOf(DBL_COLON) &&
       ~line.indexOf(DBL_SQUARE) &&
@@ -313,8 +319,13 @@ function filterLinesByTags(reader, target, file, tags, sourceCursor) {
   return [lines, startLineNum || 1]
 }
 
-function createIncludeCursor(reader, { file, src }, path, lineno) {
-  return reader.$create_include_cursor(
+function createIncludeCursor(
+  reader: any,
+  { file, src }: { file: any; src: any },
+  path: string,
+  lineno: number,
+) {
+  return reader.createIncludeCursor(
     // eslint-disable-next-line no-new-wrappers
     Object.assign(String(file), {
       src,
@@ -326,26 +337,29 @@ function createIncludeCursor(reader, { file, src }, path, lineno) {
 }
 
 function log(
-  severity,
-  message,
-  reader,
-  sourceCursor,
-  includeCursor = undefined,
+  severity: 'error' | 'warn' | 'info',
+  message: string,
+  reader: any,
+  sourceCursor: any,
+  includeCursor?: any,
 ) {
-  const opts = includeCursor
-    ? { source_location: sourceCursor, include_location: includeCursor }
-    : { source_location: sourceCursor }
-  reader
-    .$logger()
-    ['$' + severity](
-      reader.$message_with_context(message, global.Opal.hash(opts)),
-    )
+  if (severity === 'info') {
+    reader._logInfo(message, { sourceLocation: sourceCursor })
+  } else if (severity === 'warn') {
+    reader._logWarn(message, {
+      sourceLocation: sourceCursor,
+      ...(includeCursor && { includeLocation: includeCursor }),
+    })
+  } else {
+    reader._logError(message, { sourceLocation: sourceCursor })
+  }
 }
 
-function mapContainsValue(map, value) {
+function mapContainsValue(map: Map<string, boolean>, value: boolean): boolean {
   for (const v of map.values()) {
     if (v === value) {
       return true
     }
   }
+  return false
 }

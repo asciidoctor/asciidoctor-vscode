@@ -1,4 +1,5 @@
-import vscode, { Uri } from 'vscode'
+import * as vscode from 'vscode'
+import { Uri } from 'vscode'
 
 /**
  * Find files across all workspace folders in the workspace using a glob expression.
