@@ -7,11 +7,19 @@
 * Fix web extension: highlight.js (`hljs`) not defined due to missing `cspSource` in the preview `script-src` CSP directive
 * Fix web extension: l10n keys shown as-is instead of translated strings — embed `bundle.l10n.json` at build time as a fallback when VS Code web does not load the bundle
 * Fix web extension: `global is not defined` — replace `global` with `globalThis` for cross-environment compatibility
+* Fix preview dark theme support and missing English localization (#981) - thanks @ryanCodes
+* Fix incorrect scope for `markup.inline.raw` in TextMate grammar (#986)
+* Fix Windows path generation by using `fsPath` (#998) - thanks @anoymouserver
+* Fix TextMate grammar: support dots as delimiter in listing paragraph (#1004)
 
 ### Infrastructure
 
 * Migrate from webpack to esbuild
 * Switch Node.js extension output to `.mjs` and remove `"type": "module"` from `package.json` to prevent VS Code web worker host from misidentifying the CJS browser bundle as ESM
+* Migrate to Asciidoctor.js 4.0.x (#999)
+* Upgrade Mermaid from 10.9.0 to 11.15.0
+* Upgrade TypeScript from 4.9.5 to 5.x (#1003)
+* Reduce npm audit vulnerabilities (#1002)
 
 ## 3.4.5  (2025-09-16)
 
