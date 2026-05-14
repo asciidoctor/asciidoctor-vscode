@@ -1,5 +1,7 @@
 import * as vscode from 'vscode'
-import builtinAttributes from './builtinDocumentAttribute.json'
+import builtinAttributes from './builtinDocumentAttribute.json' with {
+  type: 'json',
+}
 
 export class BuiltinDocumentAttributeProvider {
   private readonly completionItems = Object.keys(builtinAttributes).map(

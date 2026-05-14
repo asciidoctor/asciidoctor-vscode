@@ -2,7 +2,7 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "resolveJsonModule": true,
-    "module": "es2022",
+    "module": "NodeNext",
     "moduleResolution": "NodeNext",
     "target": "es2022",
     "outDir": "dist",
