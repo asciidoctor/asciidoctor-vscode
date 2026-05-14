@@ -12,8 +12,55 @@
     },
     {
       "matchManagers": ["npm"],
-      "groupName": "Node dependencies"
+      "matchPackageNames": ["@fontsource/**", "font-awesome"],
+      "groupName": "Fonts"
     },
+    {
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["@asciidoctor/**"],
+      "groupName": "Asciidoctor"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["mathjax"],
+      "groupName": "MathJax"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["mermaid"],
+      "groupName": "Mermaid"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchPackageNames": [
+        "@playwright/test",
+        "@vscode/test-electron",
+        "c8",
+        "sinon"
+      ],
+      "groupName": "Test"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchPackageNames": [
+        "@biomejs/biome",
+        "esbuild",
+        "os-browserify",
+        "path-browserify",
+        "tty-browserify"
+      ],
+      "groupName": "Build"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["@types/vscode", "@vscode/vsce"],
+      "groupName": "VSCode"
+    },
+    {
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["typescript", "@types/node", "@types/lodash.throttle"],
+      "groupName": "TypeScript"
+    }
   ],
   "lockFileMaintenance": {
     "enabled": true
