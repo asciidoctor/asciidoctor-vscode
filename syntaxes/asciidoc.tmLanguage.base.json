@@ -858,7 +858,7 @@
       "patterns": [
         {
           "name": "markup.macro.block.general.asciidoc",
-          "match": "^(\\p{Word}+)(::)(\\S*?)(\\[)((?:\\\\\\]|[^\\]])*?)(\\])$",
+          "match": "^(\\p{Word}+)(::)(\\S*?)(\\[)((?:\\\\\\]|[^\\]])*?)(\\])[ \\t]*$",
           "captures": {
             "1": {
               "name": "entity.name.function.asciidoc"
