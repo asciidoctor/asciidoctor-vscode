@@ -1,7 +1,4 @@
 = Contributing
-:uri-atom-textmate-language: https://github.com/asciidoctor/atom-language-asciidoc/blob/master/grammars/language-asciidoc.cson
-:uri-atom-textmate-language-raw: https://raw.githubusercontent.com/asciidoctor/atom-language-asciidoc/master/grammars/language-asciidoc.cson
-:uri-npm-package-cson: https://www.npmjs.com/package/cson
 
 This guide describes how to develop changes for this Visual Studio Code plugin and how to test them locally.
 
@@ -9,7 +6,7 @@ This guide describes how to develop changes for this Visual Studio Code plugin a
 
 Before developing changes, install the following prerequisites:
 
-. https://nodejs.org/en/[Node 16 or later]
+. https://nodejs.org/en/[Node 20 or later]
 . https://code.visualstudio.com/[Visual Studio Code]
 . https://git-scm.com/[Git]
 
@@ -43,7 +40,7 @@ Testing is done differently on the desktop client and the web client.
 * The extension logs -- Go to the Command Palette and select the option 'Developer: Open Extension Logs Folder'.
 * The web view developer tools -- Go to the Command Palette and select the option 'Developer: Open Webview Developer Tools'.
 
-To run the tests suite, select 'Run Extension Tests' in the 'Run' view then, click on the green play button or run the 'Start Debbuging' command.
+To run the tests suite, select 'Run Extension Tests' in the 'Run' view then, click on the green play button or run the 'Start Debugging' command.
 
 You can also run the tests suite from a terminal using:
 
@@ -58,7 +55,7 @@ In that case, you must close your Visual Studio code instance otherwise you will
 
 === Running the Web version
 
-On Linux to test the extension run the following command within the repository folder from the command line:
+To test the extension, run the following command within the repository folder from the command line:
 
  $ npm run build-web && npm run build-preview && npx @vscode/test-web --browserType=chromium --extensionDevelopmentPath=${PWD}
 
@@ -68,21 +65,23 @@ TIP: Looking at the browser's Web Developer tools can often help locate errors.
 
 == Updating The Grammar
 
-This package now uses the {uri-atom-textmate-language}[Atom language package] to generate a grammar.
+The grammar is maintained directly in this repository.
+The base grammar is defined in `syntaxes/asciidoc.tmLanguage.base.json`.
+The `syntaxes/generate.js` script generates the final `syntaxes/asciidoc.tmLanguage.json` by injecting language-specific code block patterns into the base grammar.
 
-This can be updated manually using the following process:
+To regenerate the grammar after editing the base file or `generate.js`, run:
 
-. Install the `cson` npm package
-+
-  npm install --global cson
+ $ npm run build-grammar
 
-. Retrieve and convert the grammar:
-+
-[source,bash,subs=attributes+]
-curl {uri-atom-textmate-language-raw} | cson2json > ./syntaxes/Asciidoctor.json
+=== Grammar Tests
 
-. Now manually edit and change the scope name from `"scopeName": "source.asciidoc"` to `"scopeName": "text.asciidoc"`
+Grammar snapshot tests live under `syntaxes/tests/snap/`.
+Each test consists of an `.adoc` input file and a corresponding `.snap` file that captures the expected token scopes.
 
-Because this package has diverged slightly from upstream it may be best to cherry-pick commits after the original conversion or do before/after comparisons and account for each change.
+To run the grammar tests:
 
-Where possible it is recommended to do PRs upstream and then use that result here.
+ $ npm run test:grammar
+
+To update the snapshots after intentional grammar changes:
+
+ $ npx vscode-tmgrammar-snap -u -g syntaxes/asciidoc.tmLanguage.json -g syntaxes/ruby.tmLanguage.json syntaxes/tests/snap/**/**.adoc
