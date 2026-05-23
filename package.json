@@ -635,7 +635,7 @@
     "coverage": "c8 --clean npm run test"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.1.1",
+    "@biomejs/biome": "2.4.15",
     "@fontsource/noto-serif": "4.5.11",
     "@fontsource/open-sans": "4.5.14",
     "@fontsource/roboto-mono": "4.5.10",
