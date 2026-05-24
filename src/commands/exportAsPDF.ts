@@ -5,10 +5,10 @@ import * as os from 'os'
 import * as path from 'path'
 import { v4 as uuidv4 } from 'uuid'
 import * as vscode from 'vscode'
-import { AsciidocEngine } from '../asciidocEngine.js'
-import { AsciidocTextDocument } from '../asciidocTextDocument.js'
 import { Command } from '../commandManager.js'
-import { getAsciidoctorConfigContent } from '../features/asciidoctorConfig.js'
+import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
+import { AsciidocTextDocument } from '../features/asciidoctor/asciidocTextDocument.js'
+import { getAsciidoctorConfigContent } from '../features/asciidoctor/asciidoctorConfig.js'
 import { getWorkspaceFolder } from '../util/workspace.js'
 
 export class ExportAsPDF implements Command {

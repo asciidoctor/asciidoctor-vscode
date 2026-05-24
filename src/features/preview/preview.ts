@@ -1,18 +1,21 @@
 import * as path from 'path'
 import * as vscode from 'vscode'
 import * as uri from 'vscode-uri'
-import { AsciidocContributionProvider } from '../asciidocExtensions.js'
-import { resolveLinkToAsciidocFile } from '../commands/openDocumentLink.js'
-import { Logger } from '../logger.js'
-import { Disposable, disposeAll } from '../util/dispose.js'
-import { isAsciidocFile } from '../util/file.js'
-import { t as l10nT } from '../util/l10n.js'
-import { WebviewResourceProvider } from '../util/resources.js'
+import { AsciidocContributionProvider } from '../../asciidocExtensions.js'
+import { resolveLinkToAsciidocFile } from '../../commands/openDocumentLink.js'
+import { Logger } from '../../logger.js'
+import { Disposable, disposeAll } from '../../util/dispose.js'
+import { isAsciidocFile } from '../../util/file.js'
+import { t as l10nT } from '../../util/l10n.js'
+import { WebviewResourceProvider } from '../../util/resources.js'
 import {
   AsciidocFileTopmostLineMonitor,
   getVisibleLine,
-} from '../util/topmostLineMonitor.js'
-import { getWorkspaceFolder, getWorkspaceFolders } from '../util/workspace.js'
+} from '../../util/topmostLineMonitor.js'
+import {
+  getWorkspaceFolder,
+  getWorkspaceFolders,
+} from '../../util/workspace.js'
 import {
   AsciidocPreviewConfiguration,
   AsciidocPreviewConfigurationManager,

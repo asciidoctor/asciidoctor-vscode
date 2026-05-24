@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import { AsciidocPreviewManager } from './features/previewManager.js'
+import { AsciidocPreviewManager } from './features/preview/previewManager.js'
 import { t as l10nT } from './util/l10n.js'
 import { getWorkspaceFolder, getWorkspaceFolders } from './util/workspace.js'
 

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 import { Command } from '../commandManager.js'
-import { AsciidocPreviewManager } from '../features/previewManager.js'
+import { AsciidocPreviewManager } from '../features/preview/previewManager.js'
 
 export class ShowSourceCommand implements Command {
   public readonly id = 'asciidoc.showSource'

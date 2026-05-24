@@ -1,14 +1,14 @@
 import assert from 'node:assert/strict'
 import { after, afterEach, before, describe, test } from 'node:test'
 import * as vscode from 'vscode'
-import { AsciidocEngine } from '../asciidocEngine.js'
 import {
   AsciidocContributionProvider,
   AsciidocContributions,
 } from '../asciidocExtensions.js'
-import { AsciidoctorConfig } from '../features/asciidoctorConfig.js'
-import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic.js'
-import { AsciidoctorExtensions } from '../features/asciidoctorExtensions.js'
+import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
+import { AsciidoctorConfig } from '../features/asciidoctor/asciidoctorConfig.js'
+import { AsciidoctorDiagnostic } from '../features/asciidoctor/asciidoctorDiagnostic.js'
+import { AsciidoctorExtensions } from '../features/asciidoctor/asciidoctorExtensions.js'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
 import { WebviewResourceProvider } from '../util/resources.js'
 import { getDefaultWorkspaceFolderUri } from '../util/workspace.js'

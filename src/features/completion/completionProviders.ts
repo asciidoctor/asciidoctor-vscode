@@ -1,7 +1,7 @@
 import * as vscode from 'vscode'
-import { AsciidocLoader } from '../../asciidocLoader.js'
 import { disposeAll } from '../../util/dispose.js'
 import { asciidocDocumentSelector } from '../../util/document.js'
+import { AsciidocLoader } from '../asciidoctor/asciidocLoader.js'
 import { BibtexProvider } from './bibtexCompletionProvider.js'
 import { TargetPathCompletionProvider } from './targetPathCompletionProvider.js'
 import { xrefProvider } from './xrefCompletionProvider.js'

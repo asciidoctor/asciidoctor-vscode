@@ -1,7 +1,7 @@
 import { MemoryLogger } from '@asciidoctor/core'
 import * as vscode from 'vscode'
 import { DiagnosticCollection } from 'vscode'
-import { SkinnyTextDocument } from '../util/document.js'
+import { SkinnyTextDocument } from '../../util/document.js'
 
 export interface AsciidoctorDiagnosticProvider {
   delete(textDocumentUri: vscode.Uri): void

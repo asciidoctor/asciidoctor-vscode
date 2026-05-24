@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import { findDefaultWorkspaceFolderUri } from '../util/workspace.js'
+import { findDefaultWorkspaceFolderUri } from '../../util/workspace.js'
 
 export class AsciidoctorAttributesConfig {
   public static getPreviewAttributes(): {} {

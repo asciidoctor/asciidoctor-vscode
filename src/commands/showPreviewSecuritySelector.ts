@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 import { Command } from '../commandManager.js'
-import { AsciidocPreviewManager } from '../features/previewManager.js'
+import { AsciidocPreviewManager } from '../features/preview/previewManager.js'
 import { PreviewSecuritySelector } from '../security.js'
 import { isAsciidocFile } from '../util/file.js'
 
