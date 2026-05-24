@@ -1,4 +1,9 @@
-import { TextLine, Uri } from 'vscode'
+import { DocumentSelector, TextLine, Uri } from 'vscode'
+
+export const asciidocDocumentSelector: DocumentSelector = [
+  { language: 'asciidoc', scheme: 'file' },
+  { language: 'asciidoc', scheme: 'untitled' },
+]
 
 export interface SkinnyTextDocument {
   /**

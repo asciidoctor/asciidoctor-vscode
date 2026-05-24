@@ -26,6 +26,7 @@ import {
   ExtensionContentSecurityPolicyArbiter,
   PreviewSecuritySelector,
 } from './security.js'
+import { asciidocDocumentSelector } from './util/document.js'
 import { AsciidocTargetPathAutoCompletionMonitor } from './util/includeAutoCompletion.js'
 
 export async function activate(context: vscode.ExtensionContext) {
@@ -70,16 +71,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const logger = new Logger()
   logger.log('Extension was started')
 
-  const selector: vscode.DocumentSelector = [
-    {
-      language: 'asciidoc',
-      scheme: 'file',
-    },
-    {
-      language: 'asciidoc',
-      scheme: 'untitled',
-    },
-  ]
+  const selector = asciidocDocumentSelector
 
   const contentProvider = new AsciidocContentProvider(asciidocEngine, context)
   const symbolProvider = new AdocDocumentSymbolProvider(null, asciidocLoader)
@@ -164,7 +156,6 @@ export async function activate(context: vscode.ExtensionContext) {
   commandManager.register(new commands.ExportAsPDF(asciidocEngine, context))
   commandManager.register(new commands.PasteImage(asciidocLoader))
   commandManager.register(new commands.ToggleLockCommand(previewManager))
-  commandManager.register(new commands.ShowPreviewCommand(previewManager))
   commandManager.register(new commands.SaveHTML(asciidocEngine))
   commandManager.register(new commands.SaveDocbook(asciidocEngine))
   commandManager.register(
