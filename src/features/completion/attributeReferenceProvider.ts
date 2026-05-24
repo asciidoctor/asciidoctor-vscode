@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader.js'
+import { AsciidocLoader } from '../../asciidocLoader.js'
 import { findNearestBlock } from './attributeReferenceUtils.js'
 
 export class AttributeReferenceProvider {

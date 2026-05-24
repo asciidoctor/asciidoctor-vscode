@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 import { load } from '@asciidoctor/core'
-import { findNearestBlock } from '../../features/attributeReferenceUtils.js'
+import { findNearestBlock } from '../../features/completion/attributeReferenceUtils.js'
 
 const OPTIONS = { sourcemap: true }
 
