@@ -1,7 +1,7 @@
 import { readdirSync } from 'node:fs'
+import * as path from 'node:path'
 import { run as nodeTestRun } from 'node:test'
 import { spec as SpecReporter } from 'node:test/reporters'
-import * as path from 'path'
 import { fileURLToPath } from 'url'
 import * as vscode from 'vscode'
 import { setExtensionContext } from '../helper.js'

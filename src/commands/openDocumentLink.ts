@@ -1,4 +1,4 @@
-import { extname } from 'path'
+import { extname } from 'node:path'
 import * as vscode from 'vscode'
 import { Command } from '../commandManager.js'
 import { isAsciidocFile } from '../core/file.js'

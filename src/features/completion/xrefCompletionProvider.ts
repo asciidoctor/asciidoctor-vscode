@@ -1,4 +1,4 @@
-import * as path from 'path'
+import * as path from 'node:path'
 import * as vscode from 'vscode'
 import { findFiles } from '../../core/findFiles.js'
 import { Context, createContext } from './createContext.js'

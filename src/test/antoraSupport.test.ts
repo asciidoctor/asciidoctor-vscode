@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
+import os from 'node:os'
 import { after, before, describe, test } from 'node:test'
-import os from 'os'
 import * as vscode from 'vscode'
 import { getDefaultWorkspaceFolderUri } from '../core/workspace.js'
 import {

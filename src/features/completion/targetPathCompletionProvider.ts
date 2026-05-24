@@ -1,4 +1,4 @@
-import ospath from 'path'
+import ospath from 'node:path'
 import * as vscode from 'vscode'
 import {
   FileInfo,

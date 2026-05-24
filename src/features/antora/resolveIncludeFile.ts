@@ -1,6 +1,6 @@
 'use strict'
 
-import ospath from 'path'
+import ospath from 'node:path'
 
 const EXAMPLES_DIR_TOKEN = 'example$'
 const PARTIALS_DIR_TOKEN = 'partial$'

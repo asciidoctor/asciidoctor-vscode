@@ -1,4 +1,4 @@
-import path from 'path'
+import path from 'node:path'
 import * as vscode from 'vscode'
 import { Uri } from 'vscode'
 import { getWorkspaceFolder } from '../../core/workspace.js'

@@ -21,26 +21,14 @@ const emptyModulePlugin = {
   name: 'empty-modules',
   setup(build) {
     const modules = [
-      'fs',
       'node:fs',
       'node:fs/promises',
-      'assert',
       'node:assert',
-      'unxhr',
-      'glob',
-      'http',
       'node:http',
-      'https',
       'node:https',
-      'url',
       'node:url',
-      'zlib',
-      'node:zlib',
-      'crypto',
-      'node:crypto',
-      'stream',
       'node:stream',
-      'child_process',
+      'node:child_process',
       'node:child_process',
     ]
     const escapedModules = modules.map((m) => m.replace(/[/]/g, '\\/'))
@@ -69,8 +57,7 @@ await esbuild.build({
     '@opentelemetry/tracing',
   ],
   alias: {
-    os: 'os-browserify/browser',
-    path: 'path-browserify',
+    'node:os': 'os-browserify/browser',
     'node:path': 'path-browserify',
     util: 'util',
     querystring: 'querystring',

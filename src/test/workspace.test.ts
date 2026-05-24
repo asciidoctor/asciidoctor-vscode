@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
+import os from 'node:os'
 import { describe, test } from 'node:test'
-import os from 'os'
 import { Uri } from 'vscode'
 import { normalizeUri } from '../core/workspace.js'
 
