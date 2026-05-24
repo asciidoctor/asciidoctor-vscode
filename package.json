@@ -639,7 +639,7 @@
     "@fontsource/noto-serif": "4.5.11",
     "@fontsource/open-sans": "4.5.14",
     "@fontsource/roboto-mono": "4.5.10",
-    "@highlightjs/cdn-assets": "~11.9.0",
+    "@highlightjs/cdn-assets": "~11.11.0",
     "@playwright/test": "^1.47.2",
     "@types/lodash.throttle": "~4.1",
     "@types/node": "^22.19.17",
