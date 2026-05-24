@@ -2,7 +2,9 @@ import * as vscode from 'vscode'
 import { disposeAll } from '../../core/dispose.js'
 import { asciidocDocumentSelector } from '../../core/document.js'
 import { AsciidocLoader } from '../asciidoctor/asciidocLoader.js'
+import { AttributeReferenceProvider } from './attributeReferenceProvider.js'
 import { BibtexProvider } from './bibtexCompletionProvider.js'
+import { BuiltinDocumentAttributeProvider } from './builtinDocumentAttributeProvider.js'
 import { TargetPathCompletionProvider } from './targetPathCompletionProvider.js'
 import { xrefProvider } from './xrefCompletionProvider.js'
 
@@ -25,6 +27,16 @@ export class AsciidocCompletionProviders {
         asciidocDocumentSelector,
         xrefProvider,
         ...[':', '/'],
+      ),
+      vscode.languages.registerCompletionItemProvider(
+        asciidocDocumentSelector,
+        new AttributeReferenceProvider(asciidocLoader),
+        '{',
+      ),
+      vscode.languages.registerCompletionItemProvider(
+        asciidocDocumentSelector,
+        new BuiltinDocumentAttributeProvider(),
+        ':',
       ),
     )
   }

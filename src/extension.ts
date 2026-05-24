@@ -14,8 +14,6 @@ import { AsciidoctorConfig } from './features/asciidoctor/asciidoctorConfig.js'
 import { AsciidoctorDiagnostic } from './features/asciidoctor/asciidoctorDiagnostic.js'
 import { AsciidoctorExtensions } from './features/asciidoctor/asciidoctorExtensions.js'
 import { AsciidoctorIncludeItems } from './features/asciidoctor/asciidoctorIncludeItems.js'
-import { AttributeReferenceProvider } from './features/completion/attributeReferenceProvider.js'
-import { BuiltinDocumentAttributeProvider } from './features/completion/builtinDocumentAttributeProvider.js'
 import { AsciidocCompletionProviders } from './features/completion/completionProviders.js'
 import LinkProvider from './features/documentLinkProvider.js'
 import AdocDocumentSymbolProvider from './features/documentSymbolProvider.js'
@@ -100,20 +98,6 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.languages.registerWorkspaceSymbolProvider(
       new AsciidocWorkspaceSymbolProvider(symbolProvider),
-    ),
-  )
-  context.subscriptions.push(
-    vscode.languages.registerCompletionItemProvider(
-      selector,
-      new AttributeReferenceProvider(asciidocLoader),
-      '{',
-    ),
-  )
-  context.subscriptions.push(
-    vscode.languages.registerCompletionItemProvider(
-      selector,
-      new BuiltinDocumentAttributeProvider(),
-      ':',
     ),
   )
   context.subscriptions.push(
