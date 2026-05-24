@@ -1,6 +1,6 @@
 import { Extensions, Preprocessor, Registry } from '@asciidoctor/core'
 import * as vscode from 'vscode'
-import { dir, exists } from '../../util/file.js'
+import { dir, exists } from '../../core/file.js'
 
 const MAX_DEPTH_SEARCH_ASCIIDOCCONFIG = 100
 

@@ -6,9 +6,9 @@ import {
 } from '@asciidoctor/core'
 import * as vscode from 'vscode'
 import { AsciidocContributionProvider } from '../../asciidocExtensions.js'
+import { SkinnyTextDocument } from '../../core/document.js'
+import { WebviewResourceProvider } from '../../core/resources.js'
 import { ExtensionContentSecurityPolicyArbiter } from '../../security.js'
-import { SkinnyTextDocument } from '../../util/document.js'
-import { WebviewResourceProvider } from '../../util/resources.js'
 import { AntoraSupportManager } from '../antora/antoraContext.js'
 import {
   getAntoraConfig,

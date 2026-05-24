@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import { WebviewResourceProvider } from '../../util/resources.js'
+import { WebviewResourceProvider } from '../../core/resources.js'
 import { AsciidocEngine } from '../asciidoctor/asciidocEngine.js'
 import { AsciidocPreviewConfigurationManager } from './previewConfig.js'
 

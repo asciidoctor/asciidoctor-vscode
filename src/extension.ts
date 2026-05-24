@@ -3,6 +3,7 @@ import { getAsciidocExtensionContributions } from './asciidocExtensions.js'
 import { CommandManager } from './commandManager.js'
 import { antoraSupportEnabledContextKey } from './commands/antoraSupport.js'
 import * as commands from './commands/index.js'
+import { asciidocDocumentSelector } from './core/document.js'
 import { AntoraSupportManager } from './features/antora/antoraContext.js'
 import { AsciidocEngine } from './features/asciidoctor/asciidocEngine.js'
 import {
@@ -30,7 +31,6 @@ import {
   ExtensionContentSecurityPolicyArbiter,
   PreviewSecuritySelector,
 } from './security.js'
-import { asciidocDocumentSelector } from './util/document.js'
 
 export async function activate(context: vscode.ExtensionContext) {
   // Set context as a global as some tests depend on it

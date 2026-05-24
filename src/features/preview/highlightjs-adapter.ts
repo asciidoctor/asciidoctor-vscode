@@ -1,6 +1,6 @@
 import { SyntaxHighlighter, SyntaxHighlighterBase } from '@asciidoctor/core'
 import * as vscode from 'vscode'
-import { WebviewResourceProvider } from '../../util/resources.js'
+import { WebviewResourceProvider } from '../../core/resources.js'
 
 function getDefaultHighlightJsTheme(): string {
   const themeKind = vscode.window.activeColorTheme.kind

@@ -1,11 +1,11 @@
 import * as vscode from 'vscode'
 import { AsciidocContributionProvider } from '../../asciidocExtensions.js'
+import { disposeAll } from '../../core/dispose.js'
 import { Logger } from '../../logger.js'
-import { disposeAll } from '../../util/dispose.js'
-import { AsciidocFileTopmostLineMonitor } from '../../util/topmostLineMonitor.js'
 import { AsciidocPreview, PreviewSettings } from './preview.js'
 import { AsciidocPreviewConfigurationManager } from './previewConfig.js'
 import { AsciidocContentProvider } from './previewContentProvider.js'
+import { AsciidocFileTopmostLineMonitor } from './topmostLineMonitor.js'
 
 export class AsciidocPreviewManager implements vscode.WebviewPanelSerializer {
   private static readonly asciidocPreviewActiveContextKey =

@@ -4,7 +4,7 @@ import { FileSystemError, FileType } from 'vscode'
 import {
   getDefaultWorkspaceFolderUri,
   normalizeUri,
-} from '../util/workspace.js'
+} from '../core/workspace.js'
 import { extensionContext } from './helper.js'
 
 export async function removeFiles(files: vscode.Uri[]) {

@@ -1,7 +1,7 @@
 import { decode as htmlEntitiesDecode } from 'html-entities'
 import * as vscode from 'vscode'
-import { SkinnyTextDocument } from '../util/document.js'
-import { githubSlugifier, Slug } from '../util/slugify.js'
+import { SkinnyTextDocument } from '../core/document.js'
+import { githubSlugifier, Slug } from '../lib/slugify.js'
 import { AsciidocLoader } from './asciidoctor/asciidocLoader.js'
 
 export interface TocEntry {

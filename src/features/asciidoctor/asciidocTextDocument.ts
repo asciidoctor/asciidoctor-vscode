@@ -1,7 +1,7 @@
 import path from 'path'
 import * as vscode from 'vscode'
 import { Uri } from 'vscode'
-import { getWorkspaceFolder } from '../../util/workspace.js'
+import { getWorkspaceFolder } from '../../core/workspace.js'
 
 interface DocumentWithUri {
   readonly uri: Uri

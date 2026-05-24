@@ -2,11 +2,11 @@ import assert from 'node:assert/strict'
 import { after, before, describe, test } from 'node:test'
 import os from 'os'
 import * as vscode from 'vscode'
+import { getDefaultWorkspaceFolderUri } from '../core/workspace.js'
 import {
   findAntoraConfigFile,
   getAntoraDocumentContext,
 } from '../features/antora/antoraDocument.js'
-import { getDefaultWorkspaceFolderUri } from '../util/workspace.js'
 import { extensionContext } from './helper.js'
 import {
   createDirectories,

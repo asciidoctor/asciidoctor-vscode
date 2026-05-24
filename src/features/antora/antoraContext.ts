@@ -1,8 +1,8 @@
 import ospath from 'path'
 import * as vscode from 'vscode'
 import { Memento, Uri } from 'vscode'
-import { disposeAll } from '../../util/dispose.js'
-import { t as l10n_t } from '../../util/l10n.js'
+import { disposeAll } from '../../core/dispose.js'
+import { t as l10n_t } from '../../core/l10n.js'
 import AntoraCompletionProvider from './antoraCompletionProvider.js'
 import {
   antoraConfigFileExists,

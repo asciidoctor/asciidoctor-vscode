@@ -4,7 +4,7 @@ import {
   FileInfo,
   getChildrenOfPath,
   sortFilesAndDirectories,
-} from '../../util/file.js'
+} from '../../core/file.js'
 import { AsciidocLoader } from '../asciidoctor/asciidocLoader.js'
 import { createContext } from './createContext.js'
 

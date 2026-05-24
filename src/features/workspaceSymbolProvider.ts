@@ -1,9 +1,9 @@
 import * as vscode from 'vscode'
-import { disposeAll } from '../util/dispose.js'
-import { SkinnyTextDocument } from '../util/document.js'
-import { isAsciidocFile } from '../util/file.js'
-import { findFiles } from '../util/findFiles.js'
-import { Lazy, lazy } from '../util/lazy.js'
+import { disposeAll } from '../core/dispose.js'
+import { SkinnyTextDocument } from '../core/document.js'
+import { isAsciidocFile } from '../core/file.js'
+import { findFiles } from '../core/findFiles.js'
+import { Lazy, lazy } from '../lib/lazy.js'
 import AdocDocumentSymbolProvider from './documentSymbolProvider.js'
 
 export interface WorkspaceAsciidocDocumentProvider {

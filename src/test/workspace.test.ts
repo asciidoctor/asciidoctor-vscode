@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 import os from 'os'
 import { Uri } from 'vscode'
-import { normalizeUri } from '../util/workspace.js'
+import { normalizeUri } from '../core/workspace.js'
 
 describe('Normalize URI', () => {
   test('Should lowercase drive letter on Windows', async () => {
