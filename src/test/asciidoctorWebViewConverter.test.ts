@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
+import * as path from 'node:path'
 import { after, before, describe, test } from 'node:test'
 import { convert as asciidoctorConvert } from '@asciidoctor/core'
-import * as path from 'path'
 import sinon from 'sinon'
 import * as vscode from 'vscode'
 import { AsciidocContributions } from '../asciidocExtensions.js'

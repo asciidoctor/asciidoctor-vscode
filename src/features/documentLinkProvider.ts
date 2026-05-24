@@ -1,4 +1,4 @@
-import * as path from 'path'
+import * as path from 'node:path'
 import * as vscode from 'vscode'
 import { OpenDocumentLinkCommand } from '../commands/index.js'
 import { t as l10nT } from '../core/l10n.js'

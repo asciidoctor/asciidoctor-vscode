@@ -1,5 +1,5 @@
+import * as path from 'node:path'
 import { runTests } from '@vscode/test-electron'
-import * as path from 'path'
 import { fileURLToPath } from 'url'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))

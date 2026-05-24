@@ -1,4 +1,4 @@
-import * as path from 'path'
+import * as path from 'node:path'
 import * as vscode from 'vscode'
 import * as uri from 'vscode-uri'
 import { AsciidocContributionProvider } from '../../asciidocExtensions.js'

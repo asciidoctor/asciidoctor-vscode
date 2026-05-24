@@ -1,5 +1,5 @@
+import { readFileSync } from 'node:fs'
 import bibtexParse from '@orcid/bibtex-parse-js'
-import { readFileSync } from 'fs'
 import * as vscode from 'vscode'
 import { findFiles } from '../../core/findFiles.js'
 import { Context, createContext } from './createContext.js'

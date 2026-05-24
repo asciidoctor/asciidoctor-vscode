@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
+import * as path from 'node:path'
 import { describe, test } from 'node:test'
 import { load } from '@asciidoctor/core'
-import * as path from 'path'
 import { fileURLToPath } from 'url'
 import * as vscode from 'vscode'
 import { _generateCoverHtmlContent } from '../commands/exportAsPDF.js'

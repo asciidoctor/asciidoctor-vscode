@@ -1,4 +1,4 @@
-import ospath from 'path'
+import ospath from 'node:path'
 import * as vscode from 'vscode'
 import { Memento, Uri } from 'vscode'
 import { disposeAll } from '../../core/dispose.js'

@@ -1,5 +1,5 @@
-import * as fs from 'fs'
-import ospath from 'path'
+import * as fs from 'node:fs'
+import ospath from 'node:path'
 import * as vscode from 'vscode'
 
 export function isAsciidocFile(document: vscode.TextDocument) {
