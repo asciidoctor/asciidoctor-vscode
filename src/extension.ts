@@ -1,9 +1,9 @@
 import * as vscode from 'vscode'
-import { getAsciidocExtensionContributions } from './asciidocExtensions.js'
 import { antoraSupportEnabledContextKey } from './commands/antoraSupport.js'
 import * as commands from './commands/index.js'
 import { CommandManager } from './core/commandManager.js'
 import { asciidocDocumentSelector } from './core/document.js'
+import { Logger } from './core/logger.js'
 import { AntoraSupportManager } from './features/antora/antoraContext.js'
 import { AsciidocEngine } from './features/asciidoctor/asciidocEngine.js'
 import {
@@ -18,17 +18,17 @@ import { AsciidocCompletionProviders } from './features/completion/completionPro
 import LinkProvider from './features/documentLinkProvider.js'
 import AdocDocumentSymbolProvider from './features/documentSymbolProvider.js'
 import { DropImageIntoEditorProvider } from './features/dropIntoEditor.js'
+import { getAsciidocExtensionContributions } from './features/extensionContributions.js'
 import AsciidocFoldingRangeProvider from './features/foldingProvider.js'
 import { AsciidocContentProvider } from './features/preview/previewContentProvider.js'
 import { AsciidocPreviewManager } from './features/preview/previewManager.js'
-import AsciidocWorkspaceSymbolProvider from './features/workspaceSymbolProvider.js'
-import { Logger } from './core/logger.js'
 import {
   AsciidoctorExtensionsSecurityPolicyArbiter,
   AsciidoctorExtensionsTrustModeSelector,
   ExtensionContentSecurityPolicyArbiter,
   PreviewSecuritySelector,
 } from './features/security.js'
+import AsciidocWorkspaceSymbolProvider from './features/workspaceSymbolProvider.js'
 
 export async function activate(context: vscode.ExtensionContext) {
   // Set context as a global as some tests depend on it

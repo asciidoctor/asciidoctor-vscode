@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import { lazy } from './lib/lazy.js'
+import { lazy } from '../lib/lazy.js'
 
 enum TraceType {
   Off,

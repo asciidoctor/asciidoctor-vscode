@@ -5,10 +5,8 @@ import {
   load,
 } from '@asciidoctor/core'
 import * as vscode from 'vscode'
-import { AsciidocContributionProvider } from '../../asciidocExtensions.js'
 import { SkinnyTextDocument } from '../../core/document.js'
 import { WebviewResourceProvider } from '../../core/resources.js'
-import { ExtensionContentSecurityPolicyArbiter } from '../security.js'
 import { AntoraSupportManager } from '../antora/antoraContext.js'
 import {
   getAntoraConfig,
@@ -16,9 +14,11 @@ import {
 } from '../antora/antoraDocument.js'
 import { AntoraIncludeProcessor } from '../antora/includeProcessor.js'
 import { resolveIncludeFile } from '../antora/resolveIncludeFile.js'
+import { AsciidocContributionProvider } from '../extensionContributions.js'
 import { AsciidoctorWebViewConverter } from '../preview/asciidoctorWebViewConverter.js'
 import { register } from '../preview/highlightjs-adapter.js'
 import { AsciidocPreviewConfigurationManager } from '../preview/previewConfig.js'
+import { ExtensionContentSecurityPolicyArbiter } from '../security.js'
 import { AsciidocTextDocument } from './asciidocTextDocument.js'
 import { AsciidoctorAttributesConfig } from './asciidoctorAttributesConfig.js'
 import { AsciidoctorConfigProvider } from './asciidoctorConfig.js'

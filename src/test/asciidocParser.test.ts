@@ -1,15 +1,15 @@
 import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 import * as vscode from 'vscode'
-import {
-  AsciidocContributionProvider,
-  AsciidocContributions,
-} from '../asciidocExtensions.js'
 import { WebviewResourceProvider } from '../core/resources.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
 import { AsciidoctorConfig } from '../features/asciidoctor/asciidoctorConfig.js'
 import { AsciidoctorDiagnostic } from '../features/asciidoctor/asciidoctorDiagnostic.js'
 import { AsciidoctorExtensions } from '../features/asciidoctor/asciidoctorExtensions.js'
+import {
+  AsciidocContributionProvider,
+  AsciidocContributions,
+} from '../features/extensionContributions.js'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../features/security.js'
 import { extensionContext } from './helper.js'
 import { InMemoryDocument } from './inMemoryDocument.js'
