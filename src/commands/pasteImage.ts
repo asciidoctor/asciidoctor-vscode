@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 import { Command } from '../commandManager.js'
-import { Import } from '../image-paste.js'
+import { Import } from './clipboardImage.js'
 
 import Configuration = Import.Configuration
 
