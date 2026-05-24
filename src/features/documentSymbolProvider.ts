@@ -1,10 +1,7 @@
 import * as vscode from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader.js'
-import {
-  TableOfContentsProvider,
-  TocEntry,
-} from './tableOfContentsProvider.js'
 import { SkinnyTextDocument } from '../util/document.js'
+import { AsciidocLoader } from './asciidoctor/asciidocLoader.js'
+import { TableOfContentsProvider, TocEntry } from './tableOfContentsProvider.js'
 
 interface AsciidocSymbol {
   readonly level: number

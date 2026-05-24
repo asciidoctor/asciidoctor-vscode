@@ -1,10 +1,10 @@
 import assert from 'node:assert/strict'
 import { before, describe, test } from 'node:test'
 import * as vscode from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader.js'
-import { AsciidoctorConfig } from '../features/asciidoctorConfig.js'
-import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic.js'
-import { AsciidoctorExtensions } from '../features/asciidoctorExtensions.js'
+import { AsciidocLoader } from '../features/asciidoctor/asciidocLoader.js'
+import { AsciidoctorConfig } from '../features/asciidoctor/asciidoctorConfig.js'
+import { AsciidoctorDiagnostic } from '../features/asciidoctor/asciidoctorDiagnostic.js'
+import { AsciidoctorExtensions } from '../features/asciidoctor/asciidoctorExtensions.js'
 import AdocDocumentSymbolProvider from '../features/documentSymbolProvider.js'
 import AsciidocWorkspaceSymbolProvider, {
   WorkspaceAsciidocDocumentProvider,

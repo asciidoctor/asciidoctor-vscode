@@ -1,7 +1,7 @@
 import { extname } from 'path'
 import * as vscode from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader.js'
 import { Command } from '../commandManager.js'
+import { AsciidocLoader } from '../features/asciidoctor/asciidocLoader.js'
 import { TableOfContentsProvider } from '../features/tableOfContentsProvider.js'
 import { isAsciidocFile } from '../util/file.js'
 

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
 import { FoldingRangeKind } from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader.js'
+import { AsciidocLoader } from './asciidoctor/asciidocLoader.js'
 import { TableOfContentsProvider } from './tableOfContentsProvider.js'
 
 //https://github.com/asciidoctor/asciidoctor/blob/0aad7459d1fe548219733b4a2b4f00fd3bf6f362/lib/asciidoctor/rx.rb#L76

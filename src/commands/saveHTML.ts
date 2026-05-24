@@ -2,8 +2,8 @@ import { exec } from 'child_process'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as vscode from 'vscode'
-import { AsciidocEngine } from '../asciidocEngine.js'
 import { Command } from '../commandManager.js'
+import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
 
 export class SaveHTML implements Command {
   public readonly id = 'asciidoc.saveHTML'

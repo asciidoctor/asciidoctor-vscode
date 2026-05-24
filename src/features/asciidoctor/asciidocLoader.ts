@@ -7,22 +7,22 @@ import {
   Registry,
 } from '@asciidoctor/core'
 import * as vscode from 'vscode'
-import { AsciidocTextDocument } from './asciidocTextDocument.js'
+import { SkinnyTextDocument } from '../../util/document.js'
 import {
   getAntoraConfig,
   getAntoraDocumentContext,
-} from './features/antora/antoraDocument.js'
-import { AntoraIncludeProcessor } from './features/antora/includeProcessor.js'
-import { resolveIncludeFile } from './features/antora/resolveIncludeFile.js'
-import { AsciidoctorAttributesConfig } from './features/asciidoctorAttributesConfig.js'
-import { AsciidoctorConfigProvider } from './features/asciidoctorConfig.js'
-import { AsciidoctorDiagnosticProvider } from './features/asciidoctorDiagnostic.js'
-import { AsciidoctorExtensionsProvider } from './features/asciidoctorExtensions.js'
+} from '../antora/antoraDocument.js'
+import { AntoraIncludeProcessor } from '../antora/includeProcessor.js'
+import { resolveIncludeFile } from '../antora/resolveIncludeFile.js'
+import { AsciidocTextDocument } from './asciidocTextDocument.js'
+import { AsciidoctorAttributesConfig } from './asciidoctorAttributesConfig.js'
+import { AsciidoctorConfigProvider } from './asciidoctorConfig.js'
+import { AsciidoctorDiagnosticProvider } from './asciidoctorDiagnostic.js'
+import { AsciidoctorExtensionsProvider } from './asciidoctorExtensions.js'
 import {
   AsciidoctorIncludeItemsProvider,
   IncludeItems,
-} from './features/asciidoctorIncludeItems.js'
-import { SkinnyTextDocument } from './util/document.js'
+} from './asciidoctorIncludeItems.js'
 
 export class AsciidocLoader {
   constructor(
