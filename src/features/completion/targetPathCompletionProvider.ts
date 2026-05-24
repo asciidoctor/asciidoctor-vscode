@@ -1,11 +1,11 @@
 import ospath from 'path'
 import * as vscode from 'vscode'
-import { AsciidocLoader } from '../asciidocLoader.js'
+import { AsciidocLoader } from '../../asciidocLoader.js'
 import {
   FileInfo,
   getChildrenOfPath,
   sortFilesAndDirectories,
-} from '../util/file.js'
+} from '../../util/file.js'
 import { createContext } from './createContext.js'
 
 const macroWithTargetPathRx = /(include::|image::|image:)\S*/gi
