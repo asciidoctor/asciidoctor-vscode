@@ -3,7 +3,7 @@ import { AsciidocLoader } from '../asciidocLoader.js'
 import {
   TableOfContentsProvider,
   TocEntry,
-} from '../tableOfContentsProvider.js'
+} from './tableOfContentsProvider.js'
 import { SkinnyTextDocument } from '../util/document.js'
 
 interface AsciidocSymbol {
