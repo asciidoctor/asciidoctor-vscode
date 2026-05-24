@@ -1,0 +1,15 @@
+>* West wood maze
+#^ text.asciidoc markup.list.unnumbered.asciidoc markup.list.unnumbered.markdown punctuation.definition.list.begin.asciidoc punctuation.definition.list.begin.markdown
+# ^^^^^^^^^^^^^^^^ text.asciidoc
+>** Maze heart
+#^^ text.asciidoc markup.list.unnumbered.asciidoc markup.list.unnumbered.markdown punctuation.definition.list.begin.asciidoc punctuation.definition.list.begin.markdown
+#  ^^^^^^^^^^^^ text.asciidoc
+>*** Reflection pool
+#^^^ text.asciidoc markup.list.unnumbered.asciidoc markup.list.unnumbered.markdown punctuation.definition.list.begin.asciidoc punctuation.definition.list.begin.markdown
+#   ^^^^^^^^^^^^^^^^^ text.asciidoc
+>** Secret exit
+#^^ text.asciidoc markup.list.unnumbered.asciidoc markup.list.unnumbered.markdown punctuation.definition.list.begin.asciidoc punctuation.definition.list.begin.markdown
+#  ^^^^^^^^^^^^^ text.asciidoc
+>* Untracked file in git repository
+#^ text.asciidoc markup.list.unnumbered.asciidoc markup.list.unnumbered.markdown punctuation.definition.list.begin.asciidoc punctuation.definition.list.begin.markdown
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ text.asciidoc

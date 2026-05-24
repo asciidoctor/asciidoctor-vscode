@@ -1,0 +1,16 @@
+>`E=mc^2^`; the `E` represents _energy_, but also pure _genius!_
+#^ text.asciidoc markup.monospace.constrained.asciidoc markup.inline.raw.monospace.asciidoc punctuation.definition.asciidoc
+# ^^^^^^^ text.asciidoc markup.monospace.constrained.asciidoc markup.inline.raw.monospace.asciidoc
+#        ^ text.asciidoc markup.monospace.constrained.asciidoc markup.inline.raw.monospace.asciidoc punctuation.definition.asciidoc
+#         ^^^^^^ text.asciidoc
+#               ^ text.asciidoc markup.monospace.constrained.asciidoc markup.inline.raw.monospace.asciidoc punctuation.definition.asciidoc
+#                ^ text.asciidoc markup.monospace.constrained.asciidoc markup.inline.raw.monospace.asciidoc
+#                 ^ text.asciidoc markup.monospace.constrained.asciidoc markup.inline.raw.monospace.asciidoc punctuation.definition.asciidoc
+#                  ^^^^^^^^^^^^ text.asciidoc
+#                              ^ text.asciidoc markup.emphasis.constrained.asciidoc markup.italic.asciidoc punctuation.definition.asciidoc
+#                               ^^^^^^ text.asciidoc markup.emphasis.constrained.asciidoc markup.italic.asciidoc
+#                                     ^ text.asciidoc markup.emphasis.constrained.asciidoc markup.italic.asciidoc punctuation.definition.asciidoc
+#                                      ^^^^^^^^^^^^^^^^ text.asciidoc
+#                                                      ^ text.asciidoc markup.emphasis.constrained.asciidoc markup.italic.asciidoc punctuation.definition.asciidoc
+#                                                       ^^^^^^^ text.asciidoc markup.emphasis.constrained.asciidoc markup.italic.asciidoc
+#                                                              ^ text.asciidoc markup.emphasis.constrained.asciidoc markup.italic.asciidoc punctuation.definition.asciidoc

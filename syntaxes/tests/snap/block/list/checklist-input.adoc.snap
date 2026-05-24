@@ -1,0 +1,15 @@
+>- [*] checked
+#^ text.asciidoc markup.list.todo.asciidoc punctuation.definition.list.begin.asciidoc punctuation.definition.list.begin.markdown punctuation.definition.metadata.asciidoc punctuation.definition.metadata.markdown
+# ^^^^ text.asciidoc markup.list.todo.asciidoc punctuation.definition.list.begin.asciidoc punctuation.definition.list.begin.markdown
+#     ^^^^^^^^^ text.asciidoc
+>- [x] also checked
+#^ text.asciidoc markup.list.todo.asciidoc punctuation.definition.list.begin.asciidoc punctuation.definition.list.begin.markdown punctuation.definition.metadata.asciidoc punctuation.definition.metadata.markdown
+# ^^^^ text.asciidoc markup.list.todo.asciidoc punctuation.definition.list.begin.asciidoc punctuation.definition.list.begin.markdown
+#     ^^^^^^^^^^^^^^ text.asciidoc
+>- [ ] not checked
+#^ text.asciidoc markup.list.todo.asciidoc punctuation.definition.list.begin.asciidoc punctuation.definition.list.begin.markdown punctuation.definition.metadata.asciidoc punctuation.definition.metadata.markdown
+# ^^^^ text.asciidoc markup.list.todo.asciidoc punctuation.definition.list.begin.asciidoc punctuation.definition.list.begin.markdown
+#     ^^^^^^^^^^^^^ text.asciidoc
+>- normal list item
+#^ text.asciidoc markup.list.unnumbered.asciidoc markup.list.unnumbered.markdown punctuation.definition.list.begin.asciidoc punctuation.definition.list.begin.markdown
+# ^^^^^^^^^^^^^^^^^^ text.asciidoc

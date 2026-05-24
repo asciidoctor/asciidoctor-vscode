@@ -179,7 +179,6 @@ export class AsciidoctorWebViewConverter {
    * @returns           Converted node
    */
   async convert(node, transform) {
-    console.log({ node })
     const nodeName = transform || node.getNodeName()
     if (nodeName === 'document') {
       // Content Security Policy
