@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import { SkinnyTextDocument } from '../util/document.js'
+import { SkinnyTextDocument } from '../core/document.js'
 import { AsciidocLoader } from './asciidoctor/asciidocLoader.js'
 import { TableOfContentsProvider, TocEntry } from './tableOfContentsProvider.js'
 

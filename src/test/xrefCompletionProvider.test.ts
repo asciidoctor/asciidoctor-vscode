@@ -2,8 +2,8 @@ import assert from 'node:assert/strict'
 import { afterEach, beforeEach, describe, test } from 'node:test'
 import * as vscode from 'vscode'
 import { Position } from 'vscode'
+import { getDefaultWorkspaceFolderUri } from '../core/workspace.js'
 import { xrefProvider } from '../features/completion/xrefCompletionProvider.js'
-import { getDefaultWorkspaceFolderUri } from '../util/workspace.js'
 
 let workspaceUri: vscode.Uri
 

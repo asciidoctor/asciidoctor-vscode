@@ -4,9 +4,9 @@ import yaml from 'js-yaml'
 import { posix as posixpath } from 'path'
 import * as vscode from 'vscode'
 import { CancellationTokenSource, FileType, Memento, Uri } from 'vscode'
-import { dir, exists } from '../../util/file.js'
-import { findFiles } from '../../util/findFiles.js'
-import { getWorkspaceFolder } from '../../util/workspace.js'
+import { dir, exists } from '../../core/file.js'
+import { findFiles } from '../../core/findFiles.js'
+import { getWorkspaceFolder } from '../../core/workspace.js'
 import {
   AntoraConfig,
   AntoraContext,

@@ -5,11 +5,11 @@ import * as path from 'path'
 import sinon from 'sinon'
 import * as vscode from 'vscode'
 import { AsciidocContributions } from '../asciidocExtensions.js'
+import { WebviewResourceProvider } from '../core/resources.js'
+import { getDefaultWorkspaceFolderUri } from '../core/workspace.js'
 import { AntoraDocumentContext } from '../features/antora/antoraContext.js'
 import { AsciidoctorWebViewConverter } from '../features/preview/asciidoctorWebViewConverter.js'
 import { AsciidocPreviewConfigurationManager } from '../features/preview/previewConfig.js'
-import { WebviewResourceProvider } from '../util/resources.js'
-import { getDefaultWorkspaceFolderUri } from '../util/workspace.js'
 import { createDirectory, createFile, removeFiles } from './workspaceHelper.js'
 
 class TestWebviewResourceProvider implements WebviewResourceProvider {

@@ -6,10 +6,10 @@ import * as path from 'path'
 import { v4 as uuidv4 } from 'uuid'
 import * as vscode from 'vscode'
 import { Command } from '../commandManager.js'
+import { getWorkspaceFolder } from '../core/workspace.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
 import { AsciidocTextDocument } from '../features/asciidoctor/asciidocTextDocument.js'
 import { getAsciidoctorConfigContent } from '../features/asciidoctor/asciidoctorConfig.js'
-import { getWorkspaceFolder } from '../util/workspace.js'
 
 export class ExportAsPDF implements Command {
   public readonly id = 'asciidoc.exportAsPDF'

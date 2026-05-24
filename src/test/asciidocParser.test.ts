@@ -5,12 +5,12 @@ import {
   AsciidocContributionProvider,
   AsciidocContributions,
 } from '../asciidocExtensions.js'
+import { WebviewResourceProvider } from '../core/resources.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
 import { AsciidoctorConfig } from '../features/asciidoctor/asciidoctorConfig.js'
 import { AsciidoctorDiagnostic } from '../features/asciidoctor/asciidoctorDiagnostic.js'
 import { AsciidoctorExtensions } from '../features/asciidoctor/asciidoctorExtensions.js'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
-import { WebviewResourceProvider } from '../util/resources.js'
 import { extensionContext } from './helper.js'
 import { InMemoryDocument } from './inMemoryDocument.js'
 import {

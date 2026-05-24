@@ -7,7 +7,7 @@ import {
   Registry,
 } from '@asciidoctor/core'
 import * as vscode from 'vscode'
-import { SkinnyTextDocument } from '../../util/document.js'
+import { SkinnyTextDocument } from '../../core/document.js'
 import {
   getAntoraConfig,
   getAntoraDocumentContext,
