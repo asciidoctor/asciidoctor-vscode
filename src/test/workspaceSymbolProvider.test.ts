@@ -9,7 +9,7 @@ import AdocDocumentSymbolProvider from '../features/documentSymbolProvider.js'
 import AsciidocWorkspaceSymbolProvider, {
   WorkspaceAsciidocDocumentProvider,
 } from '../features/workspaceSymbolProvider.js'
-import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../features/security.js'
 import { extensionContext } from './helper.js'
 
 describe('asciidoc.WorkspaceSymbolProvider', () => {

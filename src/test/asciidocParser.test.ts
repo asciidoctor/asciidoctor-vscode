@@ -10,7 +10,7 @@ import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
 import { AsciidoctorConfig } from '../features/asciidoctor/asciidoctorConfig.js'
 import { AsciidoctorDiagnostic } from '../features/asciidoctor/asciidoctorDiagnostic.js'
 import { AsciidoctorExtensions } from '../features/asciidoctor/asciidoctorExtensions.js'
-import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../features/security.js'
 import { extensionContext } from './helper.js'
 import { InMemoryDocument } from './inMemoryDocument.js'
 import {

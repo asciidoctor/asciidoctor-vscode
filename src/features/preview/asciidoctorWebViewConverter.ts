@@ -9,7 +9,7 @@ import { SkinnyTextDocument } from '../../core/document.js'
 import { t as l10nT } from '../../core/l10n.js'
 import { WebviewResourceProvider } from '../../core/resources.js'
 import { getWorkspaceFolder } from '../../core/workspace.js'
-import { AsciidocPreviewSecurityLevel } from '../../security.js'
+import { AsciidocPreviewSecurityLevel } from '../security.js'
 import { AntoraDocumentContext } from '../antora/antoraContext.js'
 import { AsciidocPreviewConfiguration } from './previewConfig.js'
 

@@ -7,7 +7,7 @@ import { AsciidoctorDiagnostic } from '../features/asciidoctor/asciidoctorDiagno
 import { AsciidoctorExtensions } from '../features/asciidoctor/asciidoctorExtensions.js'
 import { AsciidoctorIncludeItems } from '../features/asciidoctor/asciidoctorIncludeItems.js'
 import LinkProvider from '../features/documentLinkProvider.js'
-import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../features/security.js'
 import { extensionContext } from './helper.js'
 import { InMemoryDocument } from './inMemoryDocument.js'
 

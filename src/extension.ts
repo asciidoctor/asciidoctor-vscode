@@ -22,13 +22,13 @@ import AsciidocFoldingRangeProvider from './features/foldingProvider.js'
 import { AsciidocContentProvider } from './features/preview/previewContentProvider.js'
 import { AsciidocPreviewManager } from './features/preview/previewManager.js'
 import AsciidocWorkspaceSymbolProvider from './features/workspaceSymbolProvider.js'
-import { Logger } from './logger.js'
+import { Logger } from './core/logger.js'
 import {
   AsciidoctorExtensionsSecurityPolicyArbiter,
   AsciidoctorExtensionsTrustModeSelector,
   ExtensionContentSecurityPolicyArbiter,
   PreviewSecuritySelector,
-} from './security.js'
+} from './features/security.js'
 
 export async function activate(context: vscode.ExtensionContext) {
   // Set context as a global as some tests depend on it
