@@ -2,7 +2,7 @@ import { exec } from 'child_process'
 import * as fs from 'fs'
 import * as path from 'path'
 import * as vscode from 'vscode'
-import { Command } from '../commandManager.js'
+import { Command } from '../core/commandManager.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
 
 export class SaveDocbook implements Command {

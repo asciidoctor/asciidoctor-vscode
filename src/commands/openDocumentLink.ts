@@ -1,6 +1,6 @@
 import { extname } from 'path'
 import * as vscode from 'vscode'
-import { Command } from '../commandManager.js'
+import { Command } from '../core/commandManager.js'
 import { isAsciidocFile } from '../core/file.js'
 import { AsciidocLoader } from '../features/asciidoctor/asciidocLoader.js'
 import { TableOfContentsProvider } from '../features/tableOfContentsProvider.js'
