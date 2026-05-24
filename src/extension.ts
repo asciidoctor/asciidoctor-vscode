@@ -12,6 +12,7 @@ import { AsciidoctorExtensions } from './features/asciidoctorExtensions.js'
 import { AsciidoctorIncludeItems } from './features/asciidoctorIncludeItems.js'
 import { AttributeReferenceProvider } from './features/attributeReferenceProvider.js'
 import { BuiltinDocumentAttributeProvider } from './features/builtinDocumentAttributeProvider.js'
+import { AsciidocCompletionProviders } from './features/completion/completionProviders.js'
 import LinkProvider from './features/documentLinkProvider.js'
 import AdocDocumentSymbolProvider from './features/documentSymbolProvider.js'
 import { DropImageIntoEditorProvider } from './features/dropIntoEditor.js'
@@ -27,7 +28,6 @@ import {
   PreviewSecuritySelector,
 } from './security.js'
 import { asciidocDocumentSelector } from './util/document.js'
-import { AsciidocTargetPathAutoCompletionMonitor } from './util/includeAutoCompletion.js'
 
 export async function activate(context: vscode.ExtensionContext) {
   // Set context as a global as some tests depend on it
@@ -81,9 +81,7 @@ export async function activate(context: vscode.ExtensionContext) {
     contributionProvider,
   )
   context.subscriptions.push(previewManager)
-  context.subscriptions.push(
-    new AsciidocTargetPathAutoCompletionMonitor(asciidocLoader),
-  )
+  context.subscriptions.push(new AsciidocCompletionProviders(asciidocLoader))
   context.subscriptions.push(
     AntoraSupportManager.getInstance(context.workspaceState),
   )

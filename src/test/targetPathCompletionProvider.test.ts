@@ -7,7 +7,7 @@ import { AsciidocLoader } from '../asciidocLoader.js'
 import { AsciidoctorConfigProvider } from '../features/asciidoctorConfig.js'
 import { AsciidoctorDiagnostic } from '../features/asciidoctorDiagnostic.js'
 import { AsciidoctorExtensionsProvider } from '../features/asciidoctorExtensions.js'
-import { TargetPathCompletionProvider } from '../providers/asciidoc.provider.js'
+import { TargetPathCompletionProvider } from '../features/completion/targetPathCompletionProvider.js'
 import { extensionContext } from './helper.js'
 import {
   createDirectories,
