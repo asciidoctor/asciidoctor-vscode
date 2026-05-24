@@ -1,9 +1,9 @@
 import * as vscode from 'vscode'
-import { getAsciidocExtensionContributions } from './asciidocExtensions.js'
-import { CommandManager } from './commandManager.js'
 import { antoraSupportEnabledContextKey } from './commands/antoraSupport.js'
 import * as commands from './commands/index.js'
+import { CommandManager } from './core/commandManager.js'
 import { asciidocDocumentSelector } from './core/document.js'
+import { Logger } from './core/logger.js'
 import { AntoraSupportManager } from './features/antora/antoraContext.js'
 import { AsciidocEngine } from './features/asciidoctor/asciidocEngine.js'
 import {
@@ -14,23 +14,21 @@ import { AsciidoctorConfig } from './features/asciidoctor/asciidoctorConfig.js'
 import { AsciidoctorDiagnostic } from './features/asciidoctor/asciidoctorDiagnostic.js'
 import { AsciidoctorExtensions } from './features/asciidoctor/asciidoctorExtensions.js'
 import { AsciidoctorIncludeItems } from './features/asciidoctor/asciidoctorIncludeItems.js'
-import { AttributeReferenceProvider } from './features/completion/attributeReferenceProvider.js'
-import { BuiltinDocumentAttributeProvider } from './features/completion/builtinDocumentAttributeProvider.js'
 import { AsciidocCompletionProviders } from './features/completion/completionProviders.js'
 import LinkProvider from './features/documentLinkProvider.js'
 import AdocDocumentSymbolProvider from './features/documentSymbolProvider.js'
 import { DropImageIntoEditorProvider } from './features/dropIntoEditor.js'
+import { getAsciidocExtensionContributions } from './features/extensionContributions.js'
 import AsciidocFoldingRangeProvider from './features/foldingProvider.js'
 import { AsciidocContentProvider } from './features/preview/previewContentProvider.js'
 import { AsciidocPreviewManager } from './features/preview/previewManager.js'
-import AsciidocWorkspaceSymbolProvider from './features/workspaceSymbolProvider.js'
-import { Logger } from './logger.js'
 import {
   AsciidoctorExtensionsSecurityPolicyArbiter,
   AsciidoctorExtensionsTrustModeSelector,
   ExtensionContentSecurityPolicyArbiter,
   PreviewSecuritySelector,
-} from './security.js'
+} from './features/security.js'
+import AsciidocWorkspaceSymbolProvider from './features/workspaceSymbolProvider.js'
 
 export async function activate(context: vscode.ExtensionContext) {
   // Set context as a global as some tests depend on it
@@ -100,20 +98,6 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.languages.registerWorkspaceSymbolProvider(
       new AsciidocWorkspaceSymbolProvider(symbolProvider),
-    ),
-  )
-  context.subscriptions.push(
-    vscode.languages.registerCompletionItemProvider(
-      selector,
-      new AttributeReferenceProvider(asciidocLoader),
-      '{',
-    ),
-  )
-  context.subscriptions.push(
-    vscode.languages.registerCompletionItemProvider(
-      selector,
-      new BuiltinDocumentAttributeProvider(),
-      ':',
     ),
   )
   context.subscriptions.push(

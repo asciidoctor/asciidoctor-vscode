@@ -4,13 +4,13 @@ import {
 } from '@asciidoctor/core'
 import * as vscode from 'vscode'
 import * as uri from 'vscode-uri'
-import { AsciidocContributions } from '../../asciidocExtensions.js'
 import { SkinnyTextDocument } from '../../core/document.js'
 import { t as l10nT } from '../../core/l10n.js'
 import { WebviewResourceProvider } from '../../core/resources.js'
 import { getWorkspaceFolder } from '../../core/workspace.js'
-import { AsciidocPreviewSecurityLevel } from '../../security.js'
 import { AntoraDocumentContext } from '../antora/antoraContext.js'
+import { AsciidocContributions } from '../extensionContributions.js'
+import { AsciidocPreviewSecurityLevel } from '../security.js'
 import { AsciidocPreviewConfiguration } from './previewConfig.js'
 
 const BAD_PROTO_RE = /^(vbscript|javascript|data):/i

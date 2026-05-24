@@ -1,5 +1,5 @@
-import { Command } from '../commandManager.js'
-import { AsciidoctorExtensionsTrustModeSelector } from '../security.js'
+import { Command } from '../core/commandManager.js'
+import { AsciidoctorExtensionsTrustModeSelector } from '../features/security.js'
 
 export class ShowAsciidoctorExtensionsTrustModeSelectorCommand
   implements Command

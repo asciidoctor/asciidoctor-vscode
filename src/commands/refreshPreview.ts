@@ -1,4 +1,4 @@
-import { Command } from '../commandManager.js'
+import { Command } from '../core/commandManager.js'
 import { AsciidocPreviewManager } from '../features/preview/previewManager.js'
 
 export class RefreshPreviewCommand implements Command {

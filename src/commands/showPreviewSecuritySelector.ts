@@ -1,8 +1,8 @@
 import * as vscode from 'vscode'
-import { Command } from '../commandManager.js'
+import { Command } from '../core/commandManager.js'
 import { isAsciidocFile } from '../core/file.js'
 import { AsciidocPreviewManager } from '../features/preview/previewManager.js'
-import { PreviewSecuritySelector } from '../security.js'
+import { PreviewSecuritySelector } from '../features/security.js'
 
 export class ShowPreviewSecuritySelectorCommand implements Command {
   public readonly id = 'asciidoc.showPreviewSecuritySelector'

@@ -1,6 +1,6 @@
 import * as vscode from 'vscode'
-import { Disposable } from './core/dispose.js'
-import * as arrays from './lib/arrays.js'
+import { Disposable } from '../core/dispose.js'
+import * as arrays from '../lib/arrays.js'
 
 const resolveExtensionResource = (
   extension: vscode.Extension<any>,

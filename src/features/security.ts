@@ -1,7 +1,7 @@
 import * as vscode from 'vscode'
-import { t as l10nT } from './core/l10n.js'
-import { getWorkspaceFolder, getWorkspaceFolders } from './core/workspace.js'
-import { AsciidocPreviewManager } from './features/preview/previewManager.js'
+import { t as l10nT } from '../core/l10n.js'
+import { getWorkspaceFolder, getWorkspaceFolders } from '../core/workspace.js'
+import { AsciidocPreviewManager } from './preview/previewManager.js'
 
 export const enum AsciidocPreviewSecurityLevel {
   Strict = 0,
