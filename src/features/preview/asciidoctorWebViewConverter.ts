@@ -4,14 +4,14 @@ import {
 } from '@asciidoctor/core'
 import * as vscode from 'vscode'
 import * as uri from 'vscode-uri'
-import { AsciidocContributions } from './asciidocExtensions.js'
-import { AntoraDocumentContext } from './features/antora/antoraContext.js'
-import { AsciidocPreviewConfiguration } from './features/previewConfig.js'
-import { AsciidocPreviewSecurityLevel } from './security.js'
-import { SkinnyTextDocument } from './util/document.js'
-import { t as l10nT } from './util/l10n.js'
-import { WebviewResourceProvider } from './util/resources.js'
-import { getWorkspaceFolder } from './util/workspace.js'
+import { AsciidocContributions } from '../../asciidocExtensions.js'
+import { AsciidocPreviewSecurityLevel } from '../../security.js'
+import { SkinnyTextDocument } from '../../util/document.js'
+import { t as l10nT } from '../../util/l10n.js'
+import { WebviewResourceProvider } from '../../util/resources.js'
+import { getWorkspaceFolder } from '../../util/workspace.js'
+import { AntoraDocumentContext } from '../antora/antoraContext.js'
+import { AsciidocPreviewConfiguration } from './previewConfig.js'
 
 const BAD_PROTO_RE = /^(vbscript|javascript|data):/i
 const GOOD_DATA_RE = /^data:image\/(gif|png|jpeg|webp);/i

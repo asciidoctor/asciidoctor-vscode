@@ -2,7 +2,7 @@ import { Registry } from '@asciidoctor/core'
 import * as vscode from 'vscode'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
 import { findFiles } from '../util/findFiles.js'
-import { mermaidJSProcessor } from './mermaid.js'
+import { mermaidJSProcessor } from './preview/mermaid.js'
 
 export interface AsciidoctorExtensionsProvider {
   activate(registry: Registry): Promise<void>

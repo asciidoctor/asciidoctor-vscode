@@ -1,6 +1,6 @@
 import { commands, Memento } from 'vscode'
 import { Command } from '../commandManager.js'
-import { AsciidocPreviewManager } from '../features/previewManager.js'
+import { AsciidocPreviewManager } from '../features/preview/previewManager.js'
 
 export const antoraSupportEnabledContextKey = 'antoraSupportEnabled'
 
