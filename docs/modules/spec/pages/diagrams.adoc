@@ -1,0 +1,56 @@
+= Diagram Integration
+
+== Overview
+
+AsciiDoc documents commonly embed diagrams defined in textual domain-specific languages. An editor SHOULD render these diagrams in the live preview.
+
+== Kroki
+
+An editor SHOULD support the https://kroki.io[Kroki] diagram rendering service, which provides a unified API for over 30 diagram types, including:
+
+* PlantUML
+* Graphviz / DOT
+* Mermaid
+* BPMN
+* C4 (with PlantUML)
+* D2
+* Ditaa
+* Erd
+* Excalidraw
+* Nomnoml
+* Structurizr
+* Vega / Vega-Lite
+* WireViz
+
+An editor implementing Kroki support MUST allow authors to configure whether to use the public Kroki service or a self-hosted Kroki instance.
+An editor SHOULD allow configuring the Kroki server URL.
+
+== PlantUML
+
+An editor MAY support PlantUML diagram rendering using a locally installed PlantUML tool (or the Asciidoctor Diagram extension).
+An editor implementing local PlantUML SHOULD support Graphviz/DOT as a backend for class and component diagrams.
+
+== Mermaid
+
+An editor MAY support embedded Mermaid diagram rendering without requiring an external tool, using a bundled JavaScript Mermaid library.
+
+== Asciidoctor Diagram Extension
+
+An editor MAY support loading the Asciidoctor Diagram extension, which delegates rendering to locally installed tools.
+
+== SVG Interactivity
+
+An editor SHOULD preserve SVG interactivity features in the preview, including:
+
+* Hyperlinks within SVG diagrams
+* Hover effects
+* Pan and zoom (where supported by the SVG)
+
+== Diagram Download
+
+An editor MAY allow authors to save a rendered diagram as a PNG or SVG file from the preview.
+
+== Performance
+
+An editor SHOULD cache rendered diagrams to avoid re-rendering on every keystroke.
+An editor SHOULD render diagrams asynchronously so that editing is not blocked while diagrams are being generated.

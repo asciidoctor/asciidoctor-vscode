@@ -1,0 +1,130 @@
+= Editing
+
+== Auto-Completion
+
+=== Cross-Reference Completion
+
+An editor MUST provide auto-completion for cross-references using both syntaxes:
+
+* Shorthand syntax: `<<` triggers completion with available anchor IDs and section titles from the current document
+* Xref macro: `xref:` triggers completion with anchor IDs and section titles from all AsciiDoc files in the workspace
+
+An editor SHOULD resolve IDs defined via explicit anchors (`[[id]]`, `[id]`), auto-generated section title IDs, and anchors defined in included files.
+
+=== Include Path Completion
+
+An editor MUST provide path completion for `include::` directives, suggesting files relative to the current document's directory.
+
+An editor SHOULD scope suggestions based on the `:includedir:` or `:root:` document attributes when set.
+
+=== Image and Media Path Completion
+
+An editor MUST provide path completion for image and media macros:
+
+* `image::` (block) and `image:` (inline)
+* `video::` and `audio::`
+
+An editor SHOULD resolve paths relative to `:imagesdir:` when that attribute is defined in the document or in a `.asciidoctorconfig` file.
+
+=== Attribute Completion
+
+An editor MUST provide completion for attribute references (`{`), suggesting:
+
+* Attributes declared in the current document header
+* Attributes declared in `.asciidoctorconfig` files in the project
+
+An editor SHOULD also suggest built-in Asciidoctor attributes (e.g., `toc`, `doctype`, `imagesdir`, `source-highlighter`).
+
+=== BibTeX Citation Completion
+
+An editor MAY provide completion for citation macros (e.g., `cite:`, `citenp:`) by reading `.bib` files present in the workspace.
+
+== Snippets
+
+An editor SHOULD provide live templates or snippets for commonly used AsciiDoc constructs, including:
+
+* Document header template (title, author, revision line, common attributes)
+* Admonition blocks: `NOTE`, `TIP`, `IMPORTANT`, `WARNING`, `CAUTION`
+* Block types: listing, literal, sidebar, quote, example, passthrough
+* `[source,lang]` block with language placeholder
+* `include::` directive
+* Block and inline `image::` / `image:` macros
+* `link:` and `mailto:` macros
+* Table skeleton (header row + data rows)
+* Callout list entry
+* Conditional blocks: `ifdef::[]`, `ifndef::[]`
+
+An editor MAY allow users to define and manage custom snippets.
+
+== Text Formatting Shortcuts
+
+An editor SHOULD provide keyboard shortcuts or auto-format triggers to apply inline formatting to selected text:
+
+* Bold: `*selected*`
+* Italic: `_selected_`
+* Monospace: `` `selected` ``
+* Highlight: `#selected#`
+* Subscript: `~selected~`
+* Superscript: `^selected^`
+* Passthrough: `+selected+`
+
+An editor MAY provide these actions via a toolbar in addition to keyboard shortcuts.
+
+== Smart Pairing
+
+An editor SHOULD automatically close the following delimiter pairs when typed:
+
+* `(` → `)`
+* `[` → `]`
+* `{` → `}`
+* `"` → `"`
+* `'` → `'`
+* `` ` `` → `` ` ``
+
+An editor SHOULD wrap selected text when one of the following characters is typed while text is selected: `*`, `_`, `` ` ``, `#`, `^`, `~`, `(`, `[`, `{`.
+
+== Comment Shortcuts
+
+An editor MUST support line comment toggling using `//` as the line comment prefix.
+An editor SHOULD support block comment toggling using `////` delimiters.
+
+== Image Insertion
+
+=== Drag and Drop
+
+An editor SHOULD support dragging image files from the file explorer into the editor to insert an `image::` macro with the correct relative path.
+
+=== Paste from Clipboard
+
+An editor SHOULD support pasting image data from the clipboard.
+When an image is pasted, the editor SHOULD:
+
+1. Prompt for or automatically generate a file name
+2. Save the image file to a configurable location (defaulting to `:imagesdir:` or the document directory)
+3. Insert an `image::` macro pointing to the saved file with a relative path
+
+=== Paste Formatted Text
+
+An editor MAY support converting HTML content on the clipboard to AsciiDoc markup when pasting (e.g., via Pandoc).
+
+== Reformat Document
+
+An editor SHOULD provide a "reformat document" action that:
+
+* Normalizes blank lines around headings and blocks (exactly one blank line before and after)
+* Normalizes list continuation markers
+* Optionally converts inline admonitions to block style
+
+An editor MAY support "one-sentence-per-line" reformatting as a code style option.
+
+== Table Generation
+
+An editor MAY provide a table builder UI or snippet that generates AsciiDoc table markup from user-specified dimensions (rows × columns).
+
+== Word Wrap
+
+An editor SHOULD enable soft word wrap by default for AsciiDoc files.
+
+== TODO/FIXME Indexing
+
+An editor MAY index `TODO` and `FIXME` markers in AsciiDoc comments and display them in a dedicated task or TODO view.
