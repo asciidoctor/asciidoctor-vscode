@@ -529,31 +529,31 @@
       "patterns": [
         {
           "match": "^\\s*(-)\\p{Blank}(\\[[\\p{Blank}\\*x]\\])(?=\\p{Blank})",
-          "name": "markup.todo.asciidoc",
+          "name": "markup.list.todo.asciidoc",
           "captures": {
-            "1": {
-              "name": "markup.list.bullet.asciidoc"
+            "0": {
+              "name": "punctuation.definition.list.begin.asciidoc punctuation.definition.list.begin.markdown"
             },
-            "2": {
-              "name": "markup.todo.box.asciidoc"
+            "1": {
+              "name": "punctuation.definition.metadata.asciidoc punctuation.definition.metadata.markdown"
             }
           }
         },
         {
-          "name": "markup.list.asciidoc",
+          "name": "markup.list.unnumbered.asciidoc markup.list.unnumbered.markdown",
           "match": "^\\p{Blank}*(-|\\*{1,5}|\\u2022{1,5})(?=\\p{Blank})",
           "captures": {
-            "1": {
-              "name": "markup.list.bullet.asciidoc"
+            "0": {
+              "name": "punctuation.definition.list.begin.asciidoc punctuation.definition.list.begin.markdown"
             }
           }
         },
         {
-          "name": "markup.list.asciidoc",
+          "name": "markup.list.numbered.asciidoc markup.list.numbered.markdown",
           "match": "^\\p{Blank}*(\\.{1,5}|\\d+\\.|[a-zA-Z]\\.|[IVXivx]+\\))(?=\\p{Blank})",
           "captures": {
-            "1": {
-              "name": "markup.list.bullet.asciidoc"
+            "0": {
+              "name": "punctuation.definition.list.begin.asciidoc punctuation.definition.list.begin.markdown"
             }
           }
         },
@@ -1086,7 +1086,7 @@
               "name": "markup.meta.attribute-list.asciidoc"
             },
             "2": {
-              "name": "markup.raw.monospace.asciidoc"
+              "name": "markup.inline.raw.monospace.asciidoc"
             },
             "3": {
               "name": "punctuation.definition.asciidoc"
@@ -1104,7 +1104,7 @@
               "name": "markup.meta.attribute-list.asciidoc"
             },
             "2": {
-              "name": "markup.raw.monospace.asciidoc"
+              "name": "markup.inline.raw.monospace.asciidoc"
             },
             "3": {
               "name": "punctuation.definition.asciidoc"

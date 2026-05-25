@@ -1,0 +1,6 @@
+>The command will re``link`` all packages.
+#^^^^^^^^^^^^^^^^^^^ text.asciidoc
+#                   ^^ text.asciidoc markup.monospace.unconstrained.asciidoc markup.inline.raw.monospace.asciidoc punctuation.definition.asciidoc
+#                     ^^^^ text.asciidoc markup.monospace.unconstrained.asciidoc markup.inline.raw.monospace.asciidoc
+#                         ^^ text.asciidoc markup.monospace.unconstrained.asciidoc markup.inline.raw.monospace.asciidoc punctuation.definition.asciidoc
+#                           ^^^^^^^^^^^^^^^ text.asciidoc
