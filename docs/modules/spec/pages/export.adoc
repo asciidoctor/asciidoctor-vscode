@@ -1,0 +1,53 @@
+= Export
+
+== HTML Export
+
+An editor MUST provide an "Export as HTML" action that converts the current AsciiDoc document to a standalone HTML file using Asciidoctor.
+
+The generated HTML file MUST be self-contained (embedded CSS and assets where possible) or reference the Asciidoctor default stylesheet.
+An editor SHOULD allow configuring custom attributes and stylesheets for HTML export.
+An editor SHOULD open the generated HTML file in the system default browser upon completion.
+
+== PDF Export
+
+An editor SHOULD provide an "Export as PDF" action that converts the current AsciiDoc document to PDF.
+
+An editor implementing PDF export MUST support at least one of the following backends:
+
+* Asciidoctor PDF (`asciidoctor-pdf` gem or equivalent)
+* wkhtmltopdf (HTML-to-PDF via WebKit)
+
+An editor implementing PDF export SHOULD:
+
+* Allow configuring the path to the PDF generation tool
+* Allow passing additional command-line arguments
+* Allow selecting a PDF theme file (`:pdf-theme:`)
+* Open the generated PDF file in the system default PDF viewer upon completion
+
+An editor MAY support non-Latin character sets in PDF output by allowing custom font configuration (TTF fonts, per-language themes).
+
+== DOCX Export
+
+An editor MAY provide an "Export as DOCX" action using a two-step pipeline:
+
+1. AsciiDoc → DocBook 5 (via Asciidoctor)
+2. DocBook 5 → DOCX (via Pandoc)
+
+An editor implementing DOCX export SHOULD:
+
+* Allow specifying a `reference.docx` template file for styling
+* Open the generated DOCX file in the system default word processor upon completion
+
+== DocBook Export
+
+An editor MAY provide an "Export as DocBook" action that converts the document to DocBook 5 XML using Asciidoctor.
+
+== Export Configuration
+
+An editor SHOULD allow authors to configure per-workspace defaults for export actions:
+
+* Output directory
+* Asciidoctor attributes to pass during export
+* Backend selection
+
+An editor MAY persist export settings in a project-level configuration file.

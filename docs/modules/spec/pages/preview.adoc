@@ -1,0 +1,92 @@
+= Preview
+
+== Live Preview
+
+An editor MUST provide a live HTML preview of the current AsciiDoc document rendered by Asciidoctor.
+
+An editor MUST support opening the preview in a side-by-side panel alongside the editor.
+An editor SHOULD support opening the preview as a full tab.
+
+The preview MUST automatically update when the document is saved.
+An editor SHOULD support configurable auto-refresh on edit (e.g., after a debounce interval).
+An editor SHOULD provide a manual "refresh preview" action.
+
+== Rendering Engine
+
+An editor MUST use Asciidoctor (or a compatible implementation) as the rendering engine.
+The rendering engine MUST support all standard AsciiDoc constructs.
+The rendering engine SHOULD support Asciidoctor extensions loaded from the project's `.asciidoctor/lib/` directory.
+
+An editor SHOULD expose the Asciidoctor version in use and allow configuring additional attributes passed to the renderer.
+
+== Environment Attribute
+
+An editor MUST set an environment attribute in the preview to allow authors to use conditional content for IDE-specific output.
+Recommended attribute names: `env-idea` (IntelliJ), `env-vscode` (VS Code), or the generic `env` attribute set to the IDE name.
+
+== Preview Styling
+
+An editor SHOULD apply the Asciidoctor default stylesheet to the preview by default.
+An editor SHOULD allow authors to:
+
+* Switch to the IDE's own theme-derived stylesheet
+* Supply a custom CSS file via configuration
+* Configure font family, font size, and line height for the preview
+
+An editor MAY support Asciidoctor custom templates (e.g., Slim/ERB templates) that override the default HTML output.
+
+== Scroll Synchronization
+
+An editor SHOULD synchronize the preview scroll position with the editor cursor position, so that the preview automatically scrolls to show the content corresponding to the current cursor location.
+
+An editor SHOULD also synchronize in the reverse direction: scrolling the preview should scroll the editor to the corresponding position.
+
+An editor MUST allow users to disable scroll synchronization independently for each direction.
+
+== Preview-to-Source Navigation
+
+An editor SHOULD allow authors to navigate from a location in the preview to the corresponding source line in the editor.
+Recommended interactions: double-click or `Ctrl+Click` on preview content.
+
+An editor SHOULD highlight the editor line or block corresponding to the currently focused preview element.
+
+== Zoom
+
+An editor MAY support zooming the preview in and out (e.g., via `Ctrl+scroll wheel`).
+
+== Security
+
+An editor MUST enforce a content security policy for the preview to protect against script injection.
+
+An editor MUST provide multiple security levels, including at minimum:
+
+Strict::
+No scripts, no remote content, no `file://` access. Safest default.
+
+Allow Insecure Content::
+Permits mixed `http://` and `https://` content.
+
+Allow Scripts and Unsafe Content::
+Permits JavaScript execution and arbitrary remote content loading.
+
+An editor SHOULD default to the strictest security mode.
+An editor MUST warn users when they downgrade to a less restrictive security mode.
+An editor SHOULD remember the security level per workspace.
+
+== MathML / LaTeX Rendering
+
+An editor SHOULD support rendering of mathematical formulas using MathML or a compatible renderer (e.g., MathJax, KaTeX).
+
+== Link Handling
+
+An editor MUST open external URLs (`http://`, `https://`) in the system default browser when clicked in the preview.
+
+An editor SHOULD open internal AsciiDoc file links either in the preview or in the editor, based on user configuration.
+
+== Locked Preview
+
+An editor MAY support a "locked" preview mode that pins the preview to a specific document and prevents it from switching when the editor focus changes to a different file.
+
+== Preview State Preservation
+
+An editor MAY keep the preview rendering in memory when the preview panel is hidden, so that it reloads instantly without re-rendering when shown again.

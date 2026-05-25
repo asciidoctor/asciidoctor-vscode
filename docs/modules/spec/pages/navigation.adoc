@@ -1,0 +1,68 @@
+= Navigation
+
+== Document Outline
+
+An editor MUST provide a document outline (structure view) showing the hierarchical tree of section titles in the current document.
+
+An editor SHOULD include the following items in the outline:
+
+* Section titles at all levels (level 0–5)
+* Explicitly defined anchors and block IDs
+
+An editor MAY also include the following items in the outline:
+
+* Tables
+* Listing and literal blocks with a title (`.Title`)
+* Images with a title
+
+An editor MUST allow navigation to any outline item by clicking or selecting it, positioning the editor cursor at the corresponding line.
+
+== Workspace Symbol Search
+
+An editor SHOULD provide a workspace-wide symbol search that allows authors to locate section titles, anchor IDs, and attribute names across all AsciiDoc files in the project.
+
+== Breadcrumbs
+
+An editor SHOULD display a breadcrumb bar showing the current cursor position within the document hierarchy (e.g., document title > section > subsection).
+
+== Go-to-Definition
+
+=== Cross-References
+
+An editor MUST provide a "Go to Definition" action for cross-references (`<<target>>` and `xref:target[]`) that navigates to the anchor or section with the matching ID, either in the current file or in another file in the workspace.
+
+=== Include Directives
+
+An editor MUST provide a "Go to Definition" action for `include::` directives that opens the referenced file at the beginning, or at the specified tag or line range if one is specified.
+
+=== Images and Media
+
+An editor SHOULD provide a "Go to Definition" action for `image::`, `video::`, and `audio::` macros that opens or reveals the referenced file.
+
+=== Attribute Declarations
+
+An editor SHOULD provide a "Go to Definition" action for attribute references (`{name}`) that navigates to the attribute declaration in the document header or in an `.asciidoctorconfig` file.
+
+== Find References
+
+An editor SHOULD provide a "Find All References" action for:
+
+* Anchor IDs — lists all cross-references pointing to the anchor
+* Document attributes — lists all locations where the attribute is referenced
+* Included files — lists all `include::` directives that reference the file
+
+== Peek Definition
+
+An editor MAY provide an inline "Peek Definition" panel for cross-references and includes that shows the referenced content without leaving the current document.
+
+== Document Links
+
+An editor MUST detect and make clickable the following link types within the editor:
+
+* External URLs (`http://`, `https://`, `ftp://`, `irc://`)
+* Cross-references: `<<target>>` and `xref:target[]`
+* Include paths: `include::path[]`
+* Image and media paths: `image::path[]`, `video::path[]`, `audio::path[]`
+
+An editor SHOULD open external URLs in the default system browser.
+An editor SHOULD open internal file references in the editor.

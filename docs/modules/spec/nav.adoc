@@ -1,0 +1,13 @@
+.AsciiDoc Editor Specification
+* xref:spec:outline.adoc[Overview]
+* xref:spec:language-support.adoc[Language Support]
+* xref:spec:editing.adoc[Editing]
+* xref:spec:text-folding.adoc[Text Folding]
+* xref:spec:navigation.adoc[Navigation]
+* xref:spec:diagnostics.adoc[Diagnostics & Validation]
+* xref:spec:preview.adoc[Preview]
+* xref:spec:diagrams.adoc[Diagram Integration]
+* xref:spec:export.adoc[Export]
+* xref:spec:refactoring.adoc[Refactoring]
+* xref:spec:configuration.adoc[Configuration]
+* xref:spec:antora.adoc[Antora Integration]

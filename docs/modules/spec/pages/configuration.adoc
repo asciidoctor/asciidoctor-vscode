@@ -1,0 +1,81 @@
+= Configuration
+
+== Asciidoctor Config File
+
+An editor MUST support the `.asciidoctorconfig` file convention for project-level Asciidoctor configuration.
+
+=== File Naming
+
+An editor MUST recognize both of the following file names:
+
+* `.asciidoctorconfig`
+* `.asciidoctorconfig.adoc`
+
+=== Location and Scope
+
+An editor MUST look for `.asciidoctorconfig` files in the following locations and apply them to the document being rendered:
+
+* The workspace root directory
+* Every directory on the path from the workspace root to the directory containing the document
+
+When multiple `.asciidoctorconfig` files are found, an editor MUST apply them in order from the outermost (workspace root) to the innermost (document's directory), with inner files taking precedence over outer files.
+
+=== Content
+
+`.asciidoctorconfig` files MUST be processed as AsciiDoc header fragments.
+They SHOULD support:
+
+* Document attribute declarations (`:[name]: value`)
+* `include::` directives
+* `ifdef::` / `ifndef::` / `ifeval::` / `endif::` preprocessor directives
+
+An editor implementing `.asciidoctorconfig` SHOULD expose a built-in `{asciidoctorconfigdir}` attribute that resolves to the directory containing the config file, so that relative include paths within the config file work correctly regardless of where the document being edited is located.
+
+=== IDE-Agnostic Convention
+
+The `.asciidoctorconfig` convention SHOULD be treated as an open standard.
+Implementations across different IDEs and editors SHOULD behave consistently to enable portability of project-level configuration.
+
+== Custom Asciidoctor Extensions
+
+An editor MAY support loading custom Asciidoctor extensions for use in the preview renderer.
+
+=== Extension Location
+
+An editor implementing custom extension support MUST load extensions from the `.asciidoctor/lib/` directory at the workspace root.
+
+=== Extension Types
+
+* **Ruby extensions** (`.rb` files) loaded via the standard Asciidoctor extension API
+* **AsciidoctorJ extensions** (JAR files with a Java service loader entry) where a JVM runtime is available
+
+=== Trust and Security
+
+An editor MUST NOT load extensions automatically without explicit user consent, as extensions run with the same privileges as the IDE process.
+
+An editor SHOULD implement a per-workspace trust model:
+
+* First encounter: prompt the user to trust or decline extensions in the workspace
+* Trusted workspaces: load extensions automatically on subsequent opens
+* Untrusted workspaces: skip extension loading and notify the user
+
+An editor SHOULD display a clear warning explaining the security implications before granting extension trust.
+
+== Safe Mode
+
+An editor SHOULD allow configuring the Asciidoctor safe mode used during preview rendering.
+Supported values (in increasing restriction order): `UNSAFE`, `SERVER`, `SAFE`, `SECURE`.
+
+An editor SHOULD default to `SAFE` mode for preview rendering.
+
+== Workspace Settings
+
+An editor SHOULD provide a settings UI or configuration file for the following categories:
+
+* Preview behavior (refresh interval, stylesheet, scroll sync, security level)
+* PDF export (engine selection, custom command path and arguments)
+* Extension loading (enable/disable, trusted workspaces)
+* Antora support (enable/disable, auto-detect)
+* Debug and trace logging
+
+An editor SHOULD support both user-level and workspace-level settings, with workspace settings taking precedence over user settings.
