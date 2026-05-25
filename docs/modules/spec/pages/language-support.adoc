@@ -1,0 +1,56 @@
+= Language Support
+
+== File Recognition
+
+An editor MUST recognize and activate AsciiDoc support for the following file extensions:
+
+* `.adoc`
+* `.asciidoc`
+* `.ad`
+* `.asc`
+
+An editor MAY also recognize `.txt` files as AsciiDoc when they contain an AsciiDoc document header.
+
+== Syntax Highlighting
+
+An editor MUST provide syntax highlighting for the following AsciiDoc constructs:
+
+* Document header (title, author, revision, document attributes)
+* Section titles (levels 0–5)
+* Constrained and unconstrained inline formatting: bold (`*`), italic (`_`), monospace (`` ` ``), highlight (`#`), subscript (`~`), superscript (`^`)
+* Macro syntax: inline macros (e.g., `link:`, `image:`, `kbd:`, `btn:`, `menu:`) and block macros (e.g., `image::`, `include::`, `video::`, `audio::`)
+* Block delimiters: listing (` ---- `), literal (` .... `), sidebar (`****`), quote (`____`), example (`====`), passthrough (`++++`), open (`--`), comment (`////`)
+* Admonitions: `NOTE`, `TIP`, `IMPORTANT`, `WARNING`, `CAUTION`
+* List markers: unordered (`*`, `-`), ordered (`.`), description (`::`), callout (`<n>`)
+* Attribute declarations (`:[name]:`) and references (`{name}`)
+* Cross-references: `<<target>>` and `xref:target[]`
+* Block and inline comments (`//` and `////...////`)
+* Preprocessor directives: `ifdef::`, `ifndef::`, `ifeval::`, `endif::`, `include::`
+* Table syntax (header rows, column separators, cell specifiers)
+
+An editor SHOULD additionally provide syntax highlighting for embedded languages within source code blocks (e.g., Java, Python, JavaScript, Ruby) when using `[source,lang]` blocks.
+
+An editor MAY provide distinct visual cues (e.g., folding, dimming) for comment blocks and conditional blocks.
+
+== Language Configuration
+
+An editor MUST configure the following language behaviors:
+
+* Line comment prefix: `// `
+* Block comment delimiters: `////` (open) and `////` (close)
+* Auto-closing pairs: `(`, `[`, `{`, `"`, `'`, `` ` ``
+
+An editor SHOULD also configure:
+
+* Surrounding pairs for inline formatting characters: `*`, `_`, `` ` ``, `#`, `^`, `~`
+* Word pattern that recognizes attribute references (`{name}`) as word tokens
+
+== YAML Front Matter
+
+An editor SHOULD recognize and highlight YAML front matter at the start of an AsciiDoc file (delimited by `---`) for compatibility with static site generators (Hugo, Jekyll, etc.).
+An editor implementing front matter support MUST set the `skip-front-matter` attribute during rendering so the front matter is not included in the rendered output.
+
+== Encoding
+
+An editor MUST handle AsciiDoc files encoded as UTF-8.
+An editor SHOULD detect and handle UTF-8 BOM.

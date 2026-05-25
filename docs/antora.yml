@@ -13,3 +13,4 @@ asciidoc:
     url-vscode-web: https://code.visualstudio.com/docs/editor/vscode-web
 nav:
 - modules/ROOT/nav.adoc
+- modules/spec/nav.adoc

@@ -1,0 +1,53 @@
+= Text Folding
+
+== Overview
+
+Text folding (also called code folding) allows authors to collapse and expand regions of an AsciiDoc document to reduce visual noise and focus on the content currently being edited.
+
+== Section Folding
+
+An editor MUST support folding of document sections starting from the section title line down to (but not including) the next section at the same or higher level.
+
+An editor MUST support folding at all section levels (level 1 through level 5, i.e., `==` through `======`).
+
+An editor SHOULD display a fold indicator (e.g., a chevron or triangle) in the gutter next to each foldable section title.
+
+== Block Folding
+
+An editor SHOULD support folding of delimited blocks, including:
+
+* Listing blocks (` ---- `)
+* Literal blocks (` .... `)
+* Sidebar blocks (`****`)
+* Quote blocks (`____`)
+* Example blocks (`====`)
+* Passthrough blocks (`++++`)
+* Open blocks (`--`)
+* Comment blocks (`////`)
+* Table blocks (`|===`)
+
+The fold region MUST span from the opening delimiter line to the closing delimiter line (inclusive).
+
+== Conditional Block Folding
+
+An editor SHOULD support folding of conditional preprocessor blocks:
+
+* `ifdef::attribute[]` ... `endif::attribute[]`
+* `ifndef::attribute[]` ... `endif::attribute[]`
+* `ifeval::[expression]` ... `endif::[]`
+
+The fold region MUST span from the `ifdef::`/`ifndef::`/`ifeval::` directive to the matching `endif::` directive.
+
+== Comment Block Folding
+
+An editor SHOULD support folding of comment blocks delimited by `////`.
+
+An editor MAY collapse comment blocks by default when a document is first opened.
+
+== Attribute Folding
+
+An editor MAY visually replace attribute references (e.g., `{plus}`, `{sp}`, `{nbsp}`) with their resolved values or Unicode equivalents in the editor view, using a "folded" inline representation.
+
+== Fold State Persistence
+
+An editor MAY persist the fold state of a document across editing sessions so that previously collapsed sections remain collapsed when the document is reopened.

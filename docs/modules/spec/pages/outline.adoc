@@ -1,40 +1,36 @@
 = AsciiDoc Editor Specification
+:description: Specification for AsciiDoc IDE and editor plugin features
+:keywords: AsciiDoc, IDE, specification, RFC
 
-== Specification Goals
+== Overview
 
-The AsciiDoc Editor Specification outlines the desired goals, functionalities, and features of an ideal text editor specifically designed for AsciiDoc authors and writers. This specification aims to define the standards and guidelines for creating a comprehensive Integrated Development Environment (IDE) tailored to the unique needs of AsciiDoc users.
+This specification defines the features and behaviors that a conformant AsciiDoc editor or IDE plugin MUST, SHOULD, or MAY implement to deliver a productive authoring experience for AsciiDoc writers.
 
-By describing how the text editor should work, how features should be implemented, and what capabilities should be available, this specification provides a clear roadmap for the development of a powerful and intuitive AsciiDoc editing tool.
+The keywords "MUST", "MUST NOT", "REQUIRED", "SHOULD", "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are interpreted as described in https://www.rfc-editor.org/rfc/rfc2119[RFC 2119].
 
+== Feature Areas
 
-== AsciiDoc Language Support
+* xref:language-support.adoc[Language Support] — File recognition, syntax highlighting, language configuration
+* xref:editing.adoc[Editing] — Auto-completion, snippets, text formatting shortcuts, smart pairing, image insertion
+* xref:text-folding.adoc[Text Folding] — Folding of sections, blocks, and conditional directives
+* xref:navigation.adoc[Navigation] — Document outline, go-to-definition, breadcrumbs, cross-references
+* xref:diagnostics.adoc[Diagnostics & Validation] — Error reporting, inspections, spell and grammar checking
+* xref:preview.adoc[Preview] — Live preview, scroll synchronization, security modes
+* xref:diagrams.adoc[Diagram Integration] — PlantUML, Mermaid, Kroki and other diagram renderers
+* xref:export.adoc[Export] — HTML, PDF, DOCX document generation
+* xref:refactoring.adoc[Refactoring] — Rename, extract include, inline include
+* xref:configuration.adoc[Configuration] — `.asciidoctorconfig`, custom Asciidoctor extensions
+* xref:antora.adoc[Antora Integration] — Project detection, cross-reference resolution, attribute completion
 
-// AsciiDoc Syntax highlighting
-// 
+== Conformance Levels
 
-== User Experience
+Editors implementing this specification may conform at one of the following levels:
 
-// Text folding
-// Attributes completion
-// Target completion (images, videos, include)
+Basic::
+Implements all MUST requirements across Language Support, Editing, Preview, and Export.
 
+Standard::
+Satisfies Basic, plus all SHOULD requirements across all feature areas.
 
-== Advanced Editing Capabilities
-
-// Shortcuts to apply text formatting and punctuation?
-// Tool to generate a table structure
-
-== Customization and Extensibility
-
-// Load Asciidoctor extension
-// Asciidoctor Config file .asciidoctorconfig
-// 
-
-== Collaboration and Version Control Integration
-
-
-== Preview
-
-
-== Export
-
+Advanced::
+Satisfies Standard, plus all MAY requirements, including Antora integration, diagram rendering, refactoring, and CI/CD validation.
