@@ -645,7 +645,7 @@
     "@types/node": "^22.19.17",
     "@types/vscode": "~1.88.0",
     "@vscode/test-electron": "^2.5.2",
-    "@vscode/vsce": "2.27.0",
+    "@vscode/vsce": "3.9.1",
     "c8": "~10.1",
     "esbuild": "^0.28.0",
     "font-awesome": "^4.7.0",
