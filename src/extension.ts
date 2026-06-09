@@ -12,7 +12,10 @@ import {
 } from './features/asciidoctor/asciidocLoader.js'
 import { AsciidoctorConfig } from './features/asciidoctor/asciidoctorConfig.js'
 import { AsciidoctorDiagnostic } from './features/asciidoctor/asciidoctorDiagnostic.js'
-import { AsciidoctorExtensions } from './features/asciidoctor/asciidoctorExtensions.js'
+import {
+  AsciidoctorExtensionRegistrationApi,
+  AsciidoctorExtensions,
+} from './features/asciidoctor/asciidoctorExtensions.js'
 import { AsciidoctorIncludeItems } from './features/asciidoctor/asciidoctorIncludeItems.js'
 import { AsciidocCompletionProviders } from './features/completion/completionProviders.js'
 import LinkProvider from './features/documentLinkProvider.js'
@@ -30,7 +33,9 @@ import {
 } from './features/security.js'
 import AsciidocWorkspaceSymbolProvider from './features/workspaceSymbolProvider.js'
 
-export async function activate(context: vscode.ExtensionContext) {
+export async function activate(
+  context: vscode.ExtensionContext,
+): Promise<AsciidoctorExtensionRegistrationApi> {
   // Set context as a global as some tests depend on it
   ;(globalThis as any).testExtensionContext = context
   const contributionProvider = getAsciidocExtensionContributions(context)
@@ -198,4 +203,9 @@ export async function activate(context: vscode.ExtensionContext) {
       }
     }),
   )
+
+  return {
+    registerAsciidoctorExtension:
+      AsciidoctorExtensions.registerAsciidoctorExtension,
+  }
 }

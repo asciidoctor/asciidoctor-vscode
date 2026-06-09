@@ -5,10 +5,22 @@ import { mermaidJSProcessor } from '../preview/mermaid.js'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
 
 export interface AsciidoctorExtensionsProvider {
-  activate(registry: Registry): Promise<void>
+  activate(registry: Registry, documentUri?: vscode.Uri): Promise<void>
+}
+
+export interface AsciidoctorExtensionRegistration {
+  register(registry: Registry, documentUri?: vscode.Uri): void | Promise<void>
+}
+
+export interface AsciidoctorExtensionRegistrationApi {
+  registerAsciidoctorExtension(
+    extension: AsciidoctorExtensionRegistration,
+  ): vscode.Disposable
 }
 
 export class AsciidoctorExtensions {
+  private static readonly registeredExtensions =
+    new Set<AsciidoctorExtensionRegistration>()
   private asciidoctorExtensionsSecurityPolicy: AsciidoctorExtensionsSecurityPolicyArbiter
 
   constructor(
@@ -18,7 +30,18 @@ export class AsciidoctorExtensions {
       asciidoctorExtensionsSecurityPolicy
   }
 
-  public async activate(registry: Registry) {
+  public static registerAsciidoctorExtension(
+    extension: AsciidoctorExtensionRegistration,
+  ): vscode.Disposable {
+    AsciidoctorExtensions.registeredExtensions.add(extension)
+    return {
+      dispose(): void {
+        AsciidoctorExtensions.registeredExtensions.delete(extension)
+      },
+    }
+  }
+
+  public async activate(registry: Registry, documentUri?: vscode.Uri) {
     const enableKroki = vscode.workspace
       .getConfiguration('asciidoc.extensions', null)
       .get('enableKroki')
@@ -29,7 +52,21 @@ export class AsciidoctorExtensions {
       )
     }
     registry.block('mermaid', mermaidJSProcessor())
+    await this.registerExtensionsFromApi(registry, documentUri)
     await this.registerExtensionsInWorkspace(registry)
+  }
+
+  private async registerExtensionsFromApi(
+    registry: Registry,
+    documentUri?: vscode.Uri,
+  ): Promise<void> {
+    for (const extension of AsciidoctorExtensions.registeredExtensions) {
+      try {
+        await extension.register(registry, documentUri)
+      } catch (e) {
+        vscode.window.showErrorMessage(e.toString())
+      }
+    }
   }
 
   private async confirmAsciidoctorExtensionsTrusted(): Promise<boolean> {

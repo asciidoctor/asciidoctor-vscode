@@ -50,8 +50,8 @@ export class AsciidocEngine {
     const memoryLogger = asciidoctorProcessor.activateMemoryLogger()
 
     const registry = Extensions.create()
-    await this.asciidoctorExtensionsProvider.activate(registry)
     const textDocumentUri = textDocument.uri
+    await this.asciidoctorExtensionsProvider.activate(registry, textDocumentUri)
     await this.asciidoctorConfigProvider.activate(registry, textDocumentUri)
     asciidoctorProcessor.restoreBuiltInSyntaxHighlighter()
 
@@ -154,8 +154,8 @@ export class AsciidocEngine {
     ConverterFactory.register(asciidoctorWebViewConverter, 'webview-html5')
 
     const registry = Extensions.create()
-    await this.asciidoctorExtensionsProvider.activate(registry)
     const textDocumentUri = textDocument.uri
+    await this.asciidoctorExtensionsProvider.activate(registry, textDocumentUri)
     await this.asciidoctorConfigProvider.activate(registry, textDocumentUri)
     if (antoraDocumentContext !== undefined) {
       const antoraConfig = await getAntoraConfig(textDocumentUri)
