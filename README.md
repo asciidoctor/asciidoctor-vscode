@@ -163,55 +163,6 @@ Here's an example of how to use the [asciidoctor-emoji](https://github.com/mogzt
 
 ![Asciidoctor.js Emoji extension enabled!](images/asciidoctor-vscode-emoji-ext.png)
 
-### Register Asciidoctor.js extensions from another VS Code extension
-
-VS Code extensions can register Asciidoctor.js extensions with this extension
-without writing JavaScript files into the user's workspace. This is intended for
-extension authors who want to provide a packaged Asciidoctor.js extension that is
-automatically used by the normal AsciiDoc preview and export commands.
-
-Activate `asciidoctor.asciidoctor-vscode`, then call
-`registerAsciidoctorExtension()` on the returned API:
-
-```typescript
-import * as vscode from 'vscode'
-
-interface AsciidoctorExtensionRegistration {
-  register(registry: unknown, documentUri?: vscode.Uri): void | Promise<void>
-}
-
-interface AsciidoctorVscodeApi {
-  registerAsciidoctorExtension(
-    extension: AsciidoctorExtensionRegistration,
-  ): vscode.Disposable
-}
-
-export async function activate(context: vscode.ExtensionContext): Promise<void> {
-  const asciidoctorVscode =
-    vscode.extensions.getExtension<AsciidoctorVscodeApi>(
-      'asciidoctor.asciidoctor-vscode',
-    )
-
-  if (asciidoctorVscode === undefined) {
-    return
-  }
-
-  const api = await asciidoctorVscode.activate()
-  context.subscriptions.push(
-    api.registerAsciidoctorExtension({
-      register(registry, documentUri) {
-        // Register your Asciidoctor.js extension here.
-        // Use documentUri to read resource-scoped VS Code settings if needed.
-      },
-    }),
-  )
-}
-```
-
-The callback is invoked each time this extension creates a new Asciidoctor
-extension registry for preview, export, or document analysis. The returned
-`Disposable` unregisters the callback when disposed.
-
 ### Asciidoctor Config File
 
 To provide a common set of variables when rendering the preview, the extension reads an `.asciidoctorconfig` or `.asciidoctorconfig.adoc` configuration file. Use this to optimize the preview when the project contains a document that is split out to multiple include-files.
@@ -269,6 +220,55 @@ This extension contributes the following settings:
 |:----------------------------------------|:--------------------------------------------------------------------------------|:--------------|
 | `asciidoc.debug.trace`                  | Enable debug logging for this extension. Possible values: `"off"`, `"verbose"`. | `"off"`       |
 | `asciidoc.debug.enableErrorDiagnostics` | Provide error diagnostics.                                                      | `true`        |
+
+## Register Asciidoctor.js extensions from another VS Code extension
+
+VS Code extensions can register Asciidoctor.js extensions with this extension
+without writing JavaScript files into the user's workspace. This is intended for
+extension authors who want to provide a packaged Asciidoctor.js extension that is
+automatically used by the normal AsciiDoc preview and export commands.
+
+Activate `asciidoctor.asciidoctor-vscode`, then call
+`registerAsciidoctorExtension()` on the returned API:
+
+```typescript
+import * as vscode from 'vscode'
+
+interface AsciidoctorExtensionRegistration {
+  register(registry: unknown, documentUri?: vscode.Uri): void | Promise<void>
+}
+
+interface AsciidoctorVscodeApi {
+  registerAsciidoctorExtension(
+    extension: AsciidoctorExtensionRegistration,
+  ): vscode.Disposable
+}
+
+export async function activate(context: vscode.ExtensionContext): Promise<void> {
+  const asciidoctorVscode =
+    vscode.extensions.getExtension<AsciidoctorVscodeApi>(
+      'asciidoctor.asciidoctor-vscode',
+    )
+
+  if (asciidoctorVscode === undefined) {
+    return
+  }
+
+  const api = await asciidoctorVscode.activate()
+  context.subscriptions.push(
+    api.registerAsciidoctorExtension({
+      register(registry, documentUri) {
+        // Register your Asciidoctor.js extension here.
+        // Use documentUri to read resource-scoped VS Code settings if needed.
+      },
+    }),
+  )
+}
+```
+
+The callback is invoked each time this extension creates a new Asciidoctor
+extension registry for preview, export, or document analysis. The returned
+`Disposable` unregisters the callback when disposed.
 
 ## Build and Install from Source
 
