@@ -62,8 +62,8 @@ export class AsciidocLoader {
     LoggerManager.setLogger(memoryLogger)
 
     const registry = Extensions.create()
-    await this.asciidoctorExtensionsProvider.activate(registry)
     const textDocumentUri = textDocument.uri
+    await this.asciidoctorExtensionsProvider.activate(registry, textDocumentUri)
     await this.asciidoctorConfigProvider.activate(registry, textDocumentUri)
     const antoraDocumentContext = await getAntoraDocumentContext(
       textDocument.uri,
