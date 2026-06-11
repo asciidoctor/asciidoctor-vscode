@@ -1,0 +1,85 @@
+= Antora Integration
+
+== Overview
+
+https://antora.org[Antora] is the multi-repository documentation site generator for AsciiDoc. Editors with Antora support enable accurate cross-reference resolution, attribute injection, and path completion for Antora component structures.
+
+== Project Detection
+
+An editor SHOULD automatically detect Antora projects by looking for `antora.yml` files combined with the standard `modules/` directory structure.
+
+An editor SHOULD also detect Antora playbook files by common naming conventions (e.g., `antora-playbook.yml`, `site.yml`).
+
+An editor MUST NOT activate Antora-specific behaviors in non-Antora projects.
+An editor SHOULD provide a user-facing toggle to enable or disable Antora support per workspace.
+An editor SHOULD prompt the author to enable Antora support when an Antora project is first detected.
+
+== Attribute Resolution
+
+When Antora support is active, an editor MUST resolve document attributes from `antora.yml` component and module descriptors, including:
+
+* Component-level attributes defined in `antora.yml` under `asciidoc.attributes`
+* Module-level attributes (where supported by Antora)
+* Automatically generated Antora page attributes: `{page-component-name}`, `{page-component-version}`, `{page-module}`, `{page-relative-src-path}`, `{page-origin-url}`, etc.
+* Directory attributes: `{imagesdir}`, `{partialsdir}`, `{examplesdir}`, `{attachmentsdir}`
+
+== Cross-Reference Resolution
+
+An editor MUST resolve Antora cross-references (`xref:`) using the full Antora coordinates syntax:
+
+----
+xref:version@component:module:page.adoc#anchor[text]
+----
+
+All coordinate segments are optional; an editor MUST apply Antora's default resolution rules for omitted segments.
+
+An editor MUST support cross-references targeting all Antora file families:
+
+* `page$` (default) — navigable pages
+* `partial$` — included partial files
+* `example$` — example files
+* `attachment$` — downloadable attachments
+
+An editor SHOULD validate cross-references and highlight any that cannot be resolved within the detected Antora project structure.
+
+== Auto-Completion
+
+An editor SHOULD provide auto-completion (triggered by `xref:` or `<<`) for:
+
+* Component names found in the workspace
+* Module names within a component
+* Page and partial file names within a module
+* Anchor IDs within pages
+
+An editor SHOULD also complete `include::` paths using Antora family coordinates (e.g., `partial$`, `example$`).
+
+== Include Path Resolution
+
+An editor MUST resolve `include::` directives using Antora's resource ID syntax, for example:
+
+----
+\include::partial$common-attributes.adoc[]
+\include::version@component:module:partial$shared.adoc[]
+----
+
+== Preview Integration
+
+When Antora support is active, an editor SHOULD apply the Antora UI theme (or a reasonable approximation) to the preview, including:
+
+* Antora-bundled stylesheets
+* Light/dark mode support where the theme provides it
+
+== Multi-Repository Support
+
+An editor SHOULD support workspaces that contain multiple Antora components across separate Git repositories.
+
+In multi-repository workspaces, cross-reference completion and validation MUST span all detected components.
+
+== Playbook Support
+
+An editor MAY parse the Antora playbook file (`antora-playbook.yml`) to discover content sources that are not present as local directories (e.g., remote Git repositories).
+When playbook-declared sources are not locally available, the editor SHOULD gracefully degrade by disabling completion and validation for those sources without breaking support for locally available content.
+
+== JSON Schema Validation
+
+An editor SHOULD validate `antora.yml` and Antora playbook YAML files against their respective JSON Schemas, providing inline diagnostics for invalid or missing required fields.

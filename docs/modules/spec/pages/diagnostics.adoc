@@ -1,0 +1,63 @@
+= Diagnostics & Validation
+
+== Asciidoctor Parser Diagnostics
+
+An editor MUST surface Asciidoctor parser errors and warnings as inline diagnostics in the editor.
+Each diagnostic MUST include:
+
+* Severity level (error or warning)
+* A human-readable message describing the problem
+* The file and line number where the problem was detected
+
+An editor SHOULD map Asciidoctor severity levels to editor severity levels:
+
+* `ERROR` → error diagnostic (red)
+* `WARN` → warning diagnostic (yellow)
+
+An editor SHOULD provide a way to navigate to the file and line referenced in include-related errors.
+
+An editor MAY allow authors to configure the severity mapping (e.g., demote errors to warnings).
+
+== Broken Reference Inspection
+
+An editor SHOULD highlight as warnings:
+
+* Cross-references (`xref:`, `<<>>`) pointing to non-existent anchors or section IDs
+* `include::` directives pointing to files that do not exist
+* `image::` and `image:` macros pointing to files that do not exist
+
+An editor MAY distinguish between missing files and missing anchors within existing files.
+
+== Deprecated Syntax Inspection
+
+An editor SHOULD warn about deprecated AsciiDoc constructs (e.g., two-colon include syntax variants, deprecated attribute names) and suggest the modern equivalent.
+
+== Spell Checking
+
+An editor SHOULD provide spell checking for prose content in AsciiDoc documents.
+
+Spell checking MUST NOT flag:
+
+* Markup syntax (macros, delimiters, attribute declarations)
+* Source code within `[source]` blocks
+* Passthrough content
+* Attribute names and values
+
+An editor SHOULD allow authors to configure which content categories are spell-checked (e.g., headings, list items, table cells, bold/italic text).
+
+An editor SHOULD allow adding words to a custom dictionary.
+
+== Grammar Checking
+
+An editor MAY provide grammar and style checking for AsciiDoc prose.
+
+Grammar checking MUST respect the same content exclusions as spell checking.
+Grammar checking SHOULD be configurable per AsciiDoc element type (e.g., apply only to headings and paragraph text).
+
+== Batch Validation
+
+An editor MAY provide a "run inspections" or "analyze project" action that validates all AsciiDoc files in the workspace and aggregates the results in a dedicated panel.
+
+== CI/CD Integration
+
+An editor MAY produce machine-readable validation reports (e.g., SARIF format) compatible with CI/CD pipelines and code scanning tools (e.g., GitHub Code Scanning, Qodana).

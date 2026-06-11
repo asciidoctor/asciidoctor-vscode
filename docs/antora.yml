@@ -8,3 +8,4 @@ asciidoc:
     url-marketplace: https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode
 nav:
 - modules/ROOT/nav.adoc
+- modules/spec/nav.adoc
