@@ -17,7 +17,8 @@
 
 * Improve Antora performance on large projects: cache the Antora configuration and content catalog instead of rebuilding them on every preview render, invalidating through file system watchers, and stop loading the bytes of binary resources (images, attachments) into the content catalog (#434)
 * Add go-to-definition / Ctrl+click navigation on Antora resource ids in `image:`, `xref:` and `include::` macros (#434)
-* Add Antora-aware auto-completion of resource ids (pages, images, partials, examples) in `image:`, `xref:` and `include::` macros, sourced from the content catalog. Every valid form is offered, from the shortest relative path to the fully qualified id (e.g. `seaswell.png`, `commands:seaswell.png`, `cli:commands:seaswell.png`, `2.0@cli:commands:seaswell.png`) (#434)
+* Add Antora-aware auto-completion of resource ids (pages, images, partials, examples) in `image:`, `xref:` and `include::` macros, sourced from the content catalog. Every valid form is offered, from the shortest relative path to the fully qualified id (e.g. `seaswell.png`, `commands:seaswell.png`, `cli:commands:seaswell.png`, `2.0@cli:commands:seaswell.png`), and selecting one completes the macro with its `[]` (#434)
+* Restrict `image::`/`image:` path completion to image files (png, jpg, jpeg, gif, svg, …) instead of listing every file such as `.adoc` pages
 
 ### Infrastructure
 

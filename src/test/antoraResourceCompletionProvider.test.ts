@@ -181,6 +181,53 @@ describe('AntoraResourceCompletionProvider', () => {
         true,
         'Must suggest the image of another module qualified with its module',
       )
+      const logoItem = items.find((item) => item.label === 'logo.png')
+      assert.strictEqual(
+        logoItem.insertText instanceof vscode.SnippetString,
+        true,
+        'The macro must be completed with a snippet',
+      )
+      assert.strictEqual(
+        (logoItem.insertText as vscode.SnippetString).value,
+        'logo.png[$0]',
+        'The macro brackets must be appended automatically',
+      )
+    } finally {
+      await removeFiles(createdFiles)
+      await resetAntoraSupport()
+    }
+  })
+
+  test('Should not append brackets when the macro already has them', async () => {
+    const createdFiles = []
+    try {
+      createdFiles.push(await createDirectory('modules'))
+      await createDirectories('modules', 'ROOT', 'pages')
+      const page = await createFile(
+        'image::[]',
+        'modules',
+        'ROOT',
+        'pages',
+        'bracket.adoc',
+      )
+      createdFiles.push(page)
+      createdFiles.push(
+        await createFile('', 'modules', 'ROOT', 'images', 'logo.png'),
+      )
+      createdFiles.push(
+        await createFile(`name: docs\nversion: '1.0'\n`, 'antora.yml'),
+      )
+      await enableAntoraSupport()
+      const provider = new AntoraResourceCompletionProvider(
+        extensionContext.workspaceState,
+      )
+      const document = await vscode.workspace.openTextDocument(page)
+      const items = await provider.provideCompletionItems(
+        document,
+        new Position(0, 7), // between "image::" and "[]"
+      )
+      const logoItem = items.find((item) => item.label === 'logo.png')
+      assert.strictEqual(logoItem.insertText, 'logo.png')
     } finally {
       await removeFiles(createdFiles)
       await resetAntoraSupport()
