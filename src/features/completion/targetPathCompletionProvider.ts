@@ -5,6 +5,7 @@ import {
   getChildrenOfPath,
   sortFilesAndDirectories,
 } from '../../core/file.js'
+import { getAntoraDocumentContext } from '../antora/antoraDocument.js'
 import { AsciidocLoader } from '../asciidoctor/asciidocLoader.js'
 import { createContext } from './createContext.js'
 
@@ -27,6 +28,17 @@ export class TargetPathCompletionProvider {
     textLine = textLine.split(' ')[0]
 
     if (textLine.match(macroWithTargetPathRx)) {
+      // On Antora pages, resource ids (e.g. `image::2.0@cli:commands:logo.png[]`)
+      // are handled by the Antora resource completion provider. File-system path
+      // completion does not apply and its attribute heuristic mistakes resource
+      // id segments for attributes, so let the Antora provider take over.
+      const antoraDocumentContext = await getAntoraDocumentContext(
+        textDocument.uri,
+        this.asciidocLoader.context.workspaceState,
+      )
+      if (antoraDocumentContext !== undefined) {
+        return []
+      }
       const documentText = context.document.getText()
       const pathExtractedFromMacroString = textLine
         .replace('include::', '')
