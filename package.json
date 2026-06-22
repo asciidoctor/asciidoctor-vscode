@@ -642,7 +642,7 @@
     "@highlightjs/cdn-assets": "~11.11.0",
     "@playwright/test": "^1.47.2",
     "@types/lodash.throttle": "~4.1",
-    "@types/node": "^22.19.17",
+    "@types/node": "^24.0.0",
     "@types/vscode": "~1.88.0",
     "@vscode/test-electron": "^3.0.0",
     "@vscode/vsce": "3.9.1",
