@@ -13,7 +13,9 @@ import {
   createDirectories,
   createDirectory,
   createFile,
+  enableAntoraSupport,
   removeFiles,
+  resetAntoraSupport,
 } from './workspaceHelper.js'
 
 let asciidocLoader: AsciidocLoader
@@ -93,6 +95,39 @@ image::`,
       )
     } finally {
       await removeFiles([testDirectory])
+    }
+  })
+
+  test('Should not provide file path completion on an Antora page', async () => {
+    const createdFiles = []
+    try {
+      const provider = new TargetPathCompletionProvider(asciidocLoader)
+      createdFiles.push(await createDirectory('modules'))
+      await createDirectories('modules', 'ROOT', 'pages')
+      const asciidocFile = await createFile(
+        'image::',
+        'modules',
+        'ROOT',
+        'pages',
+        'index.adoc',
+      )
+      createdFiles.push(asciidocFile)
+      createdFiles.push(
+        await createFile('', 'modules', 'ROOT', 'images', 'logo.png'),
+      )
+      createdFiles.push(
+        await createFile(`name: docs\nversion: '1.0'\n`, 'antora.yml'),
+      )
+      await enableAntoraSupport()
+      const file = await vscode.workspace.openTextDocument(asciidocFile)
+      const completionsItems = await provider.provideCompletionItems(
+        file,
+        new Position(0, 7),
+      )
+      assert.deepStrictEqual(completionsItems, [])
+    } finally {
+      await removeFiles(createdFiles)
+      await resetAntoraSupport()
     }
   })
 })
