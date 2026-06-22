@@ -11,6 +11,24 @@ import { createContext } from './createContext.js'
 
 const macroWithTargetPathRx = /(include::|image::|image:)\S*/gi
 
+const IMAGE_EXTENSIONS = new Set([
+  '.png',
+  '.jpg',
+  '.jpeg',
+  '.gif',
+  '.svg',
+  '.bmp',
+  '.webp',
+  '.avif',
+  '.ico',
+  '.tif',
+  '.tiff',
+])
+
+function isImageFile(fileName: string): boolean {
+  return IMAGE_EXTENSIONS.has(ospath.extname(fileName).toLowerCase())
+}
+
 export class TargetPathCompletionProvider {
   constructor(private readonly asciidocLoader: AsciidocLoader) {}
 
@@ -28,15 +46,17 @@ export class TargetPathCompletionProvider {
     textLine = textLine.split(' ')[0]
 
     if (textLine.match(macroWithTargetPathRx)) {
-      // On Antora pages, the attribute-substitution heuristic below mistakes
-      // resource id segments (e.g. `2.0@cli:commands:`) for attribute references
-      // and proposes bogus `{...}` entries. Resource ids are completed by the
-      // Antora resource completion provider, so only file-system paths remain.
-      const isAntoraPage =
-        (await getAntoraDocumentContext(
-          textDocument.uri,
-          this.asciidocLoader.context.workspaceState,
-        )) !== undefined
+      // On Antora pages, image/xref/include targets are resource ids, handled by
+      // the Antora resource completion provider. File-system path completion does
+      // not apply (images live under `modules/<module>/images`, not next to the
+      // page) and would list irrelevant sibling files such as other pages.
+      const antoraDocumentContext = await getAntoraDocumentContext(
+        textDocument.uri,
+        this.asciidocLoader.context.workspaceState,
+      )
+      if (antoraDocumentContext !== undefined) {
+        return []
+      }
       const documentText = context.document.getText()
       const pathExtractedFromMacroString = textLine
         .replace('include::', '')
@@ -73,7 +93,12 @@ export class TargetPathCompletionProvider {
       }
       const searchPath = ospath.join(documentParentPath, entryDir)
       const childrenOfPath = await getChildrenOfPath(searchPath)
-      const items = sortFilesAndDirectories(childrenOfPath)
+      // An `image::` macro must only offer image files (directories are kept for
+      // navigation); other files such as `.adoc` pages are irrelevant.
+      const isImageMacro = textLine.includes('image:')
+      const items = sortFilesAndDirectories(childrenOfPath).filter(
+        (child) => !isImageMacro || !child.isFile || isImageFile(child.file),
+      )
       const levelUpCompletionItem: vscode.CompletionItem = {
         label: '..',
         kind: vscode.CompletionItemKind.Folder,
@@ -87,7 +112,7 @@ export class TargetPathCompletionProvider {
       const editorConfig = vscode.workspace.getConfiguration('editor')
       const doAutoCloseBrackets =
         editorConfig.get('autoClosingBrackets') === 'always'
-      if (globalVariableDefinitions && !isAntoraPage) {
+      if (globalVariableDefinitions) {
         variablePathSubstitutions = globalVariableDefinitions
           .map((variableDef) => {
             const label = variableDef.match(/:\S+:/g)[0].replace(/:/g, '')

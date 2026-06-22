@@ -98,22 +98,56 @@ image::`,
     }
   })
 
-  test('Should not propose bogus attribute variables from resource ids on an Antora page', async () => {
+  test('Should only propose image files for an image macro', async () => {
+    const testDirectory = await createDirectory('image-extension-filter')
+    try {
+      const provider = new TargetPathCompletionProvider(asciidocLoader)
+      const asciidocFile = await createFile(
+        'image::',
+        'image-extension-filter',
+        'index.adoc',
+      )
+      await createFile('', 'image-extension-filter', 'photo.png')
+      await createFile('= Notes', 'image-extension-filter', 'notes.adoc')
+      const file = await vscode.workspace.openTextDocument(asciidocFile)
+      const completionsItems = await provider.provideCompletionItems(
+        file,
+        new Position(0, 7),
+      )
+      const labels = completionsItems.map((item) => item.label)
+      assert.strictEqual(
+        labels.includes('photo.png'),
+        true,
+        'Image files must be proposed for an image macro',
+      )
+      assert.strictEqual(
+        labels.includes('notes.adoc'),
+        false,
+        'AsciiDoc files must not be proposed for an image macro',
+      )
+    } finally {
+      await removeFiles([testDirectory])
+    }
+  })
+
+  test('Should not provide file path completion on an Antora page', async () => {
     const createdFiles = []
     try {
       const provider = new TargetPathCompletionProvider(asciidocLoader)
       createdFiles.push(await createDirectory('modules'))
       await createDirectories('modules', 'ROOT', 'pages')
       const asciidocFile = await createFile(
-        // The resource id on the first line would, without the Antora guard,
-        // be mistaken for an attribute and proposed as `{2.0@clicommands}`.
-        'image::2.0@cli:commands:logo.png[]\nimage::',
+        'image::',
         'modules',
         'ROOT',
         'pages',
         'index.adoc',
       )
       createdFiles.push(asciidocFile)
+      // A sibling page that must not show up as an `image::` path suggestion.
+      createdFiles.push(
+        await createFile('= Other', 'modules', 'ROOT', 'pages', 'other.adoc'),
+      )
       createdFiles.push(
         await createFile('', 'modules', 'ROOT', 'images', 'logo.png'),
       )
@@ -124,16 +158,9 @@ image::`,
       const file = await vscode.workspace.openTextDocument(asciidocFile)
       const completionsItems = await provider.provideCompletionItems(
         file,
-        new Position(1, 7),
+        new Position(0, 7),
       )
-      const bogusItems = completionsItems.filter((item) =>
-        (item.label as string).startsWith('{'),
-      )
-      assert.deepStrictEqual(
-        bogusItems,
-        [],
-        'No attribute-variable items must be proposed on an Antora page',
-      )
+      assert.deepStrictEqual(completionsItems, [])
     } finally {
       await removeFiles(createdFiles)
       await resetAntoraSupport()

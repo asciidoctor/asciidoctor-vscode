@@ -109,9 +109,8 @@ export class AntoraResourceCompletionProvider
     document: vscode.TextDocument,
     position: vscode.Position,
   ): Promise<vscode.CompletionItem[]> {
-    const lineTextBeforeCursor = document
-      .lineAt(position.line)
-      .text.slice(0, position.character)
+    const lineText = document.lineAt(position.line).text
+    const lineTextBeforeCursor = lineText.slice(0, position.character)
     const macroContext = findAntoraResourceMacroPrefix(lineTextBeforeCursor)
     if (macroContext === undefined) {
       return []
@@ -129,6 +128,9 @@ export class AntoraResourceCompletionProvider
       new vscode.Position(position.line, macroContext.targetStart),
       position,
     )
+    // Complete the macro with its `[]` unless it is already there, placing the
+    // cursor between the brackets for the alt text / attributes.
+    const hasClosingBracket = lineText.charAt(position.character) === '['
     const items: vscode.CompletionItem[] = []
     for (const family of macroContext.families) {
       const kind = KIND_BY_FAMILY[family] ?? vscode.CompletionItemKind.Reference
@@ -140,6 +142,9 @@ export class AntoraResourceCompletionProvider
           item.detail =
             `${family} · ${src.component} ${src.version ?? ''}`.trim()
           item.range = replaceRange
+          item.insertText = hasClosingBracket
+            ? id
+            : new vscode.SnippetString(`${id}[$0]`)
           // Keep the variants of a resource grouped and ordered from the
           // shortest (preferred) to the fully qualified form.
           item.sortText = `${family}_${src.relative}_${index}`
