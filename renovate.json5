@@ -60,6 +60,21 @@
       "matchManagers": ["npm"],
       "matchPackageNames": ["typescript", "@types/node", "@types/lodash.throttle"],
       "groupName": "TypeScript"
+    },
+    {
+      // Keep @types/node aligned with the Node.js major we target (24);
+      // never bump to 25+.
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": "<25"
+    },
+    {
+      // Hold off on TypeScript major upgrades (e.g. 6.x) for 3 weeks
+      // so the ecosystem can stabilise first.
+      "matchManagers": ["npm"],
+      "matchPackageNames": ["typescript"],
+      "matchUpdateTypes": ["major"],
+      "minimumReleaseAge": "21 days"
     }
   ],
   "lockFileMaintenance": {
