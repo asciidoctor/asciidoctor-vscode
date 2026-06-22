@@ -1,0 +1,6 @@
+# TextMate grammar snapshot tests embed source lines and exact offsets.
+# The textmate-grammar-test fork does not normalize line endings, so these
+# fixtures must stay LF or the Windows CI checkout (core.autocrlf=true) would
+# add a trailing CR and break the snapshot comparison.
+syntaxes/tests/snap/**/*.adoc text eol=lf
+syntaxes/tests/snap/**/*.snap text eol=lf
