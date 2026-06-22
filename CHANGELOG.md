@@ -12,6 +12,10 @@
 * Fix Windows path generation by using `fsPath` (#998) - thanks @anoymouserver
 * Fix TextMate grammar: support dots as delimiter in listing paragraph (#1004)
 
+### Improvements
+
+* Improve Antora performance on large projects: cache the Antora configuration and content catalog instead of rebuilding them on every preview render, invalidating through file system watchers, and stop loading the bytes of binary resources (images, attachments) into the content catalog (#434)
+
 ### Infrastructure
 
 * Migrate from webpack to esbuild
