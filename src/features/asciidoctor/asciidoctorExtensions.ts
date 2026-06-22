@@ -4,9 +4,16 @@ import * as vscode from 'vscode'
 import { findFiles } from '../../core/findFiles.js'
 import { mermaidJSProcessor } from '../preview/mermaid.js'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
+import {
+  type AsciidoctorExtensionContext,
+  registerContributedAsciidoctorExtensions,
+} from './asciidoctorExtensionContributions.js'
 
 export interface AsciidoctorExtensionsProvider {
-  activate(registry: Registry): Promise<void>
+  activate(
+    registry: Registry,
+    context?: AsciidoctorExtensionContext,
+  ): Promise<void>
 }
 
 export class AsciidoctorExtensions {
@@ -19,7 +26,10 @@ export class AsciidoctorExtensions {
       asciidoctorExtensionsSecurityPolicy
   }
 
-  public async activate(registry: Registry) {
+  public async activate(
+    registry: Registry,
+    context?: AsciidoctorExtensionContext,
+  ) {
     const enableKroki = vscode.workspace
       .getConfiguration('asciidoc.extensions', null)
       .get('enableKroki')
@@ -27,7 +37,33 @@ export class AsciidoctorExtensions {
       kroki.register(registry)
     }
     registry.block('mermaid', mermaidJSProcessor())
+    if (context !== undefined) {
+      await this.registerExtensionsFromContributingExtensions(registry, context)
+    }
     await this.registerExtensionsInWorkspace(registry)
+  }
+
+  /**
+   * Let other installed VS Code extensions register their packaged
+   * Asciidoctor.js extensions on the registry. Extensions are discovered
+   * through the `asciidoc.asciidoctorExtensions` contribution point and only
+   * those are activated, mirroring the `markdownItPlugins` mechanism of the
+   * built-in Markdown extension.
+   */
+  private async registerExtensionsFromContributingExtensions(
+    registry: Registry,
+    context: AsciidoctorExtensionContext,
+  ): Promise<void> {
+    const failures = await registerContributedAsciidoctorExtensions(
+      vscode.extensions.all,
+      registry,
+      context,
+    )
+    for (const { extensionId, error } of failures) {
+      vscode.window.showErrorMessage(
+        `Failed to register Asciidoctor extensions contributed by '${extensionId}': ${error.message}`,
+      )
+    }
   }
 
   private async confirmAsciidoctorExtensionsTrusted(): Promise<boolean> {

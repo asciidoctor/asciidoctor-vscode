@@ -1,0 +1,83 @@
+= Contribute Asciidoctor.js extensions from another VS Code extension
+:description: Register Asciidoctor.js extensions from your own VS Code extension so they are used by the preview, the export commands and the language features.
+:navtitle: Contribute extensions (API)
+:url-asciidoctorjs-extensions: https://docs.asciidoctor.org/asciidoctor.js/latest/extend/extensions/
+
+Another VS Code extension can register {url-asciidoctorjs-extensions}[Asciidoctor.js extensions] that are automatically used by the AsciiDoc preview, the export commands and the language features -- without asking users to copy executable JavaScript into their workspace (see the `.asciidoctor/lib` mechanism described in xref:asciidoctorjs-extensions.adoc[]).
+
+This mirrors the `markdownItPlugins` mechanism of the built-in Markdown extension: the contributing extension _declares_ a contribution point and _exports_ a hook; this extension discovers it, activates it and hands it the Asciidoctor.js registry.
+
+== Declare the contribution point
+
+In the contributing extension's `package.json`:
+
+[source,jsonc]
+----
+{
+  "contributes": {
+    "asciidoc.asciidoctorExtensions": true
+  }
+}
+----
+
+This flag is read statically, so your extension is only activated when AsciiDoc content is actually processed.
+
+[NOTE]
+====
+VS Code may log an "Unknown contribution point" warning for `asciidoc.asciidoctorExtensions`; this is expected and harmless.
+====
+
+== Export the registration hook from `activate()`
+
+Return an object exposing `registerAsciidoctorExtensions(registry, context)` from your extension's `activate()` function:
+
+Add `@asciidoctor/core` to your extension's `devDependencies` to type the registry:
+
+[source,typescript]
+----
+import type { Registry } from '@asciidoctor/core'
+import * as vscode from 'vscode'
+
+// What the registry is being built for.
+type AsciidoctorProcessingMode = 'preview' | 'export' | 'load'
+
+interface AsciidoctorExtensionContext {
+  readonly mode: AsciidoctorProcessingMode
+  readonly documentUri?: vscode.Uri
+}
+
+export function activate() {
+  return {
+    registerAsciidoctorExtensions(
+      registry: Registry,
+      context: AsciidoctorExtensionContext,
+    ): void | Promise<void> {
+      // Register your Asciidoctor.js extension(s) on the registry, e.g.:
+      registry.block('shout', function () {
+        this.onContext('paragraph')
+        this.process((parent, reader) =>
+          this.createBlock(
+            parent,
+            'paragraph',
+            reader.getLines().join('\n').toUpperCase(),
+          ),
+        )
+      })
+
+      // `context.mode` tells you whether the registry is for a 'preview',
+      // an 'export' or a 'load' (language features). `context.documentUri`,
+      // when defined, can be used to read resource-scoped settings.
+    },
+  }
+}
+----
+
+The hook is invoked every time this extension creates a new Asciidoctor.js registry (for each preview render, export and document analysis), so keep it side-effect free and idempotent: register on the provided `registry` and return.
+An error thrown by the hook is reported to the user and isolated -- it never breaks the other contributing extensions or the document processing.
+
+[NOTE]
+====
+`AsciidoctorProcessingMode` and `AsciidoctorExtensionContext` are not published as a package you can depend on; redeclare them in your extension as shown above.
+They form a purely structural contract, so as long as your declarations match, TypeScript accepts the hook.
+The contract only ever grows in a backward-compatible way (new modes and new optional fields), so treat unknown `mode` values and unknown fields defensively.
+====

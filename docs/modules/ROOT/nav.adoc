@@ -15,6 +15,8 @@
 ** xref:antora.adoc[]
 ** xref:vscode-environment.adoc[]
 * xref:settings.adoc[]
+* Extending
+** xref:contribute-asciidoctorjs-extensions.adoc[]
 * Contributing
 ** xref:build-from-source.adoc[]
 ** xref:contributing.adoc[]
