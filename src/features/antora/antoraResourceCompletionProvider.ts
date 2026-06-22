@@ -49,11 +49,14 @@ export function findAntoraResourceMacroPrefix(
 }
 
 /**
- * Build the shortest resource id that unambiguously points at `target` from the
- * `current` page context, following Antora's resource id coordinates
- * `version@component:module:family$relative`.
+ * Build every valid resource id that points at `target` from the `current` page
+ * context, following Antora's resource id coordinates
+ * `version@component:module:family$relative`, from the shortest unambiguous form
+ * to the fully qualified one. For example, an image of the same module yields
+ * `seaswell.png`, `commands:seaswell.png`, `cli:commands:seaswell.png` and
+ * `2.0@cli:commands:seaswell.png`.
  */
-export function buildResourceId(
+export function buildResourceIds(
   target: {
     component: string
     version: string
@@ -63,31 +66,34 @@ export function buildResourceId(
   },
   current: AntoraResourceContext,
   defaultFamily: string,
-): string {
-  let needComponent = target.component !== current.component
-  const needVersion = target.version !== current.version
-  if (needVersion) {
-    needComponent = true
-  }
-  const needModule = target.module !== current.module || needComponent
-  const needFamily = target.family !== defaultFamily
+): string[] {
+  const familyPrefix =
+    target.family === defaultFamily ? '' : `${target.family}$`
+  const relative = `${familyPrefix}${target.relative}`
+  // The ROOT module is referenced with an empty module segment.
+  const moduleSegment = target.module === 'ROOT' ? '' : target.module
+  const sameComponent = target.component === current.component
+  const sameVersion = target.version === current.version
+  const sameModule = target.module === current.module
 
-  let id = target.relative
-  if (needFamily) {
-    id = `${target.family}$${id}`
+  const ids: string[] = []
+  // Shortest: just the relative path, valid within the same module.
+  if (sameComponent && sameVersion && sameModule) {
+    ids.push(relative)
   }
-  if (needModule) {
-    // The ROOT module is referenced with an empty module segment.
-    const moduleSegment = target.module === 'ROOT' ? '' : target.module
-    id = `${moduleSegment}:${id}`
+  // Module-qualified, valid within the same component and version.
+  if (sameComponent && sameVersion && (!sameModule || moduleSegment !== '')) {
+    ids.push(`${moduleSegment}:${relative}`)
   }
-  if (needComponent) {
-    id = `${target.component}:${id}`
-    if (needVersion && target.version) {
-      id = `${target.version}@${id}`
-    }
+  // Component/module-qualified (version is optional).
+  ids.push(`${target.component}:${moduleSegment}:${relative}`)
+  // Fully qualified, including the version.
+  if (target.version) {
+    ids.push(
+      `${target.version}@${target.component}:${moduleSegment}:${relative}`,
+    )
   }
-  return id
+  return [...new Set(ids)]
 }
 
 /**
@@ -125,16 +131,20 @@ export class AntoraResourceCompletionProvider
     )
     const items: vscode.CompletionItem[] = []
     for (const family of macroContext.families) {
+      const kind = KIND_BY_FAMILY[family] ?? vscode.CompletionItemKind.Reference
       for (const resource of contentCatalog.findBy({ family })) {
         const src = resource.src
-        const id = buildResourceId(src, current, macroContext.defaultFamily)
-        const item = new vscode.CompletionItem(
-          id,
-          KIND_BY_FAMILY[family] ?? vscode.CompletionItemKind.Reference,
-        )
-        item.detail = `${family} · ${src.component} ${src.version ?? ''}`.trim()
-        item.range = replaceRange
-        items.push(item)
+        const ids = buildResourceIds(src, current, macroContext.defaultFamily)
+        ids.forEach((id, index) => {
+          const item = new vscode.CompletionItem(id, kind)
+          item.detail =
+            `${family} · ${src.component} ${src.version ?? ''}`.trim()
+          item.range = replaceRange
+          // Keep the variants of a resource grouped and ordered from the
+          // shortest (preferred) to the fully qualified form.
+          item.sortText = `${family}_${src.relative}_${index}`
+          items.push(item)
+        })
       }
     }
     return items

@@ -9,9 +9,20 @@ export class AttributeReferenceProvider {
     textDocument: vscode.TextDocument,
     position: vscode.Position,
   ): Promise<vscode.CompletionItem[]> {
+    const lineText = textDocument.lineAt(position).text
+    const linePrefix = lineText.substring(0, position.character)
+    // Only complete attribute references, i.e. when the cursor is inside an
+    // unclosed `{ ... }`. Suggesting every document attribute on any word is too
+    // noisy (and pollutes macro targets such as `image::`).
+    const openBraceIndex = linePrefix.lastIndexOf('{')
+    if (
+      openBraceIndex === -1 ||
+      linePrefix.indexOf('}', openBraceIndex) !== -1
+    ) {
+      return []
+    }
     const document = await this.asciidocLoader.load(textDocument)
     const attributes = document.getAttributes()
-    const lineText = textDocument.lineAt(position).text
     const nearestBlock = findNearestBlock(document, position.line + 1) // 0-based on VS code but 1-based on Asciidoctor (hence the + 1)
     if (
       nearestBlock &&
@@ -21,28 +32,28 @@ export class AttributeReferenceProvider {
       // verbatim block without attributes subs should not provide attributes completion
       return []
     }
-    const prefix = lineText.substring(
-      position.character - 1,
-      position.character,
-    )
     const suffix = lineText.substring(
       position.character,
       position.character + 1,
     )
+    // Replace the `{`-prefixed text already typed so the brace is never doubled.
+    const replaceRange = new vscode.Range(
+      new vscode.Position(position.line, openBraceIndex),
+      position,
+    )
     return Object.keys(attributes).map((key) => {
+      const value = attributes[key]?.toString()
       const completionItem = new vscode.CompletionItem(
         {
           label: key,
-          description: attributes[key]?.toString(),
+          description: value,
         },
         vscode.CompletionItemKind.Variable,
       )
-      let insertText = key
-      insertText = prefix !== '{' ? `{${insertText}` : insertText
-      insertText = suffix !== '}' ? `${insertText}}` : insertText
-      completionItem.insertText = insertText
+      completionItem.insertText = suffix === '}' ? `{${key}` : `{${key}}`
+      completionItem.range = replaceRange
       completionItem.sortText = `20_${key}`
-      completionItem.filterText = key + ' ' + attributes[key]?.toString()
+      completionItem.filterText = `{${key} ${value ?? ''}`
       return completionItem
     })
   }

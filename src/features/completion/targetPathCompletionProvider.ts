@@ -28,17 +28,15 @@ export class TargetPathCompletionProvider {
     textLine = textLine.split(' ')[0]
 
     if (textLine.match(macroWithTargetPathRx)) {
-      // On Antora pages, resource ids (e.g. `image::2.0@cli:commands:logo.png[]`)
-      // are handled by the Antora resource completion provider. File-system path
-      // completion does not apply and its attribute heuristic mistakes resource
-      // id segments for attributes, so let the Antora provider take over.
-      const antoraDocumentContext = await getAntoraDocumentContext(
-        textDocument.uri,
-        this.asciidocLoader.context.workspaceState,
-      )
-      if (antoraDocumentContext !== undefined) {
-        return []
-      }
+      // On Antora pages, the attribute-substitution heuristic below mistakes
+      // resource id segments (e.g. `2.0@cli:commands:`) for attribute references
+      // and proposes bogus `{...}` entries. Resource ids are completed by the
+      // Antora resource completion provider, so only file-system paths remain.
+      const isAntoraPage =
+        (await getAntoraDocumentContext(
+          textDocument.uri,
+          this.asciidocLoader.context.workspaceState,
+        )) !== undefined
       const documentText = context.document.getText()
       const pathExtractedFromMacroString = textLine
         .replace('include::', '')
@@ -89,7 +87,7 @@ export class TargetPathCompletionProvider {
       const editorConfig = vscode.workspace.getConfiguration('editor')
       const doAutoCloseBrackets =
         editorConfig.get('autoClosingBrackets') === 'always'
-      if (globalVariableDefinitions) {
+      if (globalVariableDefinitions && !isAntoraPage) {
         variablePathSubstitutions = globalVariableDefinitions
           .map((variableDef) => {
             const label = variableDef.match(/:\S+:/g)[0].replace(/:/g, '')

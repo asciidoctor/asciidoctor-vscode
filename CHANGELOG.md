@@ -11,12 +11,13 @@
 * Fix incorrect scope for `markup.inline.raw` in TextMate grammar (#986)
 * Fix Windows path generation by using `fsPath` (#998) - thanks @anoymouserver
 * Fix TextMate grammar: support dots as delimiter in listing paragraph (#1004)
+* Only provide attribute reference completion when typing inside `{ ... }`, instead of on every word, to reduce noise (notably inside macro targets such as `image::`)
 
 ### Improvements
 
 * Improve Antora performance on large projects: cache the Antora configuration and content catalog instead of rebuilding them on every preview render, invalidating through file system watchers, and stop loading the bytes of binary resources (images, attachments) into the content catalog (#434)
 * Add go-to-definition / Ctrl+click navigation on Antora resource ids in `image:`, `xref:` and `include::` macros (#434)
-* Add Antora-aware auto-completion of resource ids (pages, images, partials, examples) in `image:`, `xref:` and `include::` macros, sourced from the content catalog and shortened relative to the current page (#434)
+* Add Antora-aware auto-completion of resource ids (pages, images, partials, examples) in `image:`, `xref:` and `include::` macros, sourced from the content catalog. Every valid form is offered, from the shortest relative path to the fully qualified id (e.g. `seaswell.png`, `commands:seaswell.png`, `cli:commands:seaswell.png`, `2.0@cli:commands:seaswell.png`) (#434)
 
 ### Infrastructure
 

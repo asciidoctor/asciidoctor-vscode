@@ -4,7 +4,7 @@ import * as vscode from 'vscode'
 import { Position } from 'vscode'
 import {
   AntoraResourceCompletionProvider,
-  buildResourceId,
+  buildResourceIds,
   findAntoraResourceMacroPrefix,
 } from '../features/antora/antoraResourceCompletionProvider.js'
 import { extensionContext } from './helper.js'
@@ -19,36 +19,9 @@ import {
 
 const current = { component: 'docs', version: '1.0', module: 'ROOT' }
 
-describe('buildResourceId', () => {
-  test('Should use only the relative path within the same module', () => {
-    const id = buildResourceId(
-      { ...current, family: 'image', relative: 'logo.png' },
-      current,
-      'image',
-    )
-    assert.strictEqual(id, 'logo.png')
-  })
-
-  test('Should prefix the module for another module of the same component', () => {
-    const id = buildResourceId(
-      { ...current, module: 'ui', family: 'image', relative: 'button.png' },
-      current,
-      'image',
-    )
-    assert.strictEqual(id, 'ui:button.png')
-  })
-
-  test('Should use an empty module segment for the ROOT module', () => {
-    const id = buildResourceId(
-      { ...current, family: 'image', relative: 'logo.png' },
-      { component: 'docs', version: '1.0', module: 'ui' },
-      'image',
-    )
-    assert.strictEqual(id, ':logo.png')
-  })
-
-  test('Should qualify with version and component when both differ', () => {
-    const id = buildResourceId(
+describe('buildResourceIds', () => {
+  test('Should offer the relative, module, component and version forms within the same module', () => {
+    const ids = buildResourceIds(
       {
         component: 'cli',
         version: '2.0',
@@ -56,14 +29,45 @@ describe('buildResourceId', () => {
         family: 'image',
         relative: 'seaswell.png',
       },
+      { component: 'cli', version: '2.0', module: 'commands' },
+      'image',
+    )
+    assert.deepStrictEqual(ids, [
+      'seaswell.png',
+      'commands:seaswell.png',
+      'cli:commands:seaswell.png',
+      '2.0@cli:commands:seaswell.png',
+    ])
+  })
+
+  test('Should offer module-qualified forms for another module of the same component', () => {
+    const ids = buildResourceIds(
+      { ...current, module: 'ui', family: 'image', relative: 'button.png' },
       current,
       'image',
     )
-    assert.strictEqual(id, '2.0@cli:commands:seaswell.png')
+    assert.deepStrictEqual(ids, [
+      'ui:button.png',
+      'docs:ui:button.png',
+      '1.0@docs:ui:button.png',
+    ])
   })
 
-  test('Should qualify with component only when the version matches', () => {
-    const id = buildResourceId(
+  test('Should use an empty module segment for the ROOT module', () => {
+    const ids = buildResourceIds(
+      { ...current, family: 'image', relative: 'logo.png' },
+      { component: 'docs', version: '1.0', module: 'ui' },
+      'image',
+    )
+    assert.deepStrictEqual(ids, [
+      ':logo.png',
+      'docs::logo.png',
+      '1.0@docs::logo.png',
+    ])
+  })
+
+  test('Should only offer component/version forms for another component', () => {
+    const ids = buildResourceIds(
       {
         component: 'api',
         version: '1.0',
@@ -74,16 +78,23 @@ describe('buildResourceId', () => {
       current,
       'page',
     )
-    assert.strictEqual(id, 'api:auth:page3.adoc')
+    assert.deepStrictEqual(ids, [
+      'api:auth:page3.adoc',
+      '1.0@api:auth:page3.adoc',
+    ])
   })
 
   test('Should prefix the family when it is not the default of the macro', () => {
-    const id = buildResourceId(
+    const ids = buildResourceIds(
       { ...current, family: 'partial', relative: 'intro.adoc' },
       current,
       'page',
     )
-    assert.strictEqual(id, 'partial$intro.adoc')
+    assert.deepStrictEqual(ids, [
+      'partial$intro.adoc',
+      'docs::partial$intro.adoc',
+      '1.0@docs::partial$intro.adoc',
+    ])
   })
 })
 
