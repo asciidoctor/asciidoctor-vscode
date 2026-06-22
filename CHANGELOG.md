@@ -15,6 +15,7 @@
 ### Improvements
 
 * Improve Antora performance on large projects: cache the Antora configuration and content catalog instead of rebuilding them on every preview render, invalidating through file system watchers, and stop loading the bytes of binary resources (images, attachments) into the content catalog (#434)
+* Add go-to-definition / Ctrl+click navigation on Antora resource ids in `image:`, `xref:` and `include::` macros (#434)
 
 ### Infrastructure
 
