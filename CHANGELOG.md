@@ -20,6 +20,7 @@
 * Upgrade Mermaid from 10.9.0 to 11.15.0
 * Upgrade TypeScript from 4.9.5 to 5.x (#1003)
 * Reduce npm audit vulnerabilities (#1002)
+* Source the CI Node.js version from `package.json` (`volta.node`) and bump `actions/checkout` to v7 and `actions/setup-node` to v6
 
 ## 3.4.5  (2025-09-16)
 
