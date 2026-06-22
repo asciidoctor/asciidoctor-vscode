@@ -54,13 +54,13 @@ describe('Attribute ref CompletionsProvider', () => {
   test('Should return attribute key defined in same file', async () => {
     const fileToAutoComplete = await createFile(
       `:my-attribute-to-find-in-completion: dummy value
-`,
+{`,
       'fileToAutoComplete-attributeRef-samefile.adoc',
     )
     createdFiles.push(fileToAutoComplete)
     const items = await findCompletionItems(
       fileToAutoComplete,
-      new Position(1, 0),
+      new Position(1, 1),
       filterByLabel('my-attribute-to-find-in-completion'),
     )
     const completionItem = items[0]
@@ -76,13 +76,13 @@ describe('Attribute ref CompletionsProvider', () => {
   test('Should return attribute key defined in same file corresponding to its value', async () => {
     const fileToAutoComplete = await createFile(
       `:my-attribute-to-find-in-completion: dummy value
-dumm`,
+{dumm`,
       'fileToAutoComplete-attributeRef.adoc',
     )
     createdFiles.push(fileToAutoComplete)
     const items = await findCompletionItems(
       fileToAutoComplete,
-      new Position(1, 3),
+      new Position(1, 5),
       filterByLabel('my-attribute-to-find-in-completion'),
     )
     const completionItem = items[0]
@@ -98,13 +98,13 @@ dumm`,
   test('Should return no completion when nothing corresponds', async () => {
     const fileToAutoComplete = await createFile(
       `:my-attribute-to-find-in-completion: dummy value
-somethingVeryDifferent`,
+{somethingVeryDifferent`,
       'fileToAutoComplete-attributeRef-samefile-basedOnValue.adoc',
     )
     createdFiles.push(fileToAutoComplete)
     const items = await findCompletionItems(
       fileToAutoComplete,
-      new Position(1, 22),
+      new Position(1, 23),
     )
     assert.notStrictEqual(
       items.length,
@@ -117,7 +117,7 @@ somethingVeryDifferent`,
       `= test
 include::file-referenced-with-an-attribute.adoc[]
 
-
+{
     `,
       'fileToAutoComplete-attributeRef-differentFile.adoc',
     )
@@ -129,7 +129,7 @@ include::file-referenced-with-an-attribute.adoc[]
     createdFiles.push(fileReferencedWithAnAttribute)
     const items = await findCompletionItems(
       fileToAutoComplete,
-      new Position(3, 0),
+      new Position(3, 1),
       filterByLabel('my-attribute-to-find-in-completion'),
     )
     const completionItem = items[0]
@@ -165,7 +165,7 @@ The above function is {
       'should not provide attributes completion on literal paragraphs.',
     )
 
-    items = await findCompletionItems(fileToAutoComplete, new Position(5, 1))
+    items = await findCompletionItems(fileToAutoComplete, new Position(5, 23))
     assert.deepStrictEqual(
       items.length > 0,
       true,
@@ -283,7 +283,7 @@ Install version {
     createdFiles.push(asciidoctorConfigFile)
     const completionsItems = await findCompletionItems(
       fileToAutoComplete,
-      new Position(3, 2),
+      new Position(2, 1),
       filterByLabel('attribute-defined-in-asciidoctorconfig'),
     )
     const completionItem = completionsItems[0]
@@ -315,7 +315,7 @@ Install version {
       createdFiles.push(fileToAutoComplete)
       const completionsItems = await findCompletionItems(
         fileToAutoComplete,
-        new Position(3, 2),
+        new Position(2, 1),
         filterByLabel('attribute-defined-in-config'),
       )
       const completionItem = completionsItems[0]
@@ -358,7 +358,7 @@ include::autocompletion-{include-target}.adoc[]
       createdFiles.push(fileReferencedWithAnAttribute)
       const completionsItems = await findCompletionItems(
         fileToAutoComplete,
-        new Position(4, 2),
+        new Position(3, 1),
         filterByLabel('foo'),
       )
       const completionItem = completionsItems[0]

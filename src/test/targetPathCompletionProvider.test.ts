@@ -98,14 +98,16 @@ image::`,
     }
   })
 
-  test('Should not provide file path completion on an Antora page', async () => {
+  test('Should not propose bogus attribute variables from resource ids on an Antora page', async () => {
     const createdFiles = []
     try {
       const provider = new TargetPathCompletionProvider(asciidocLoader)
       createdFiles.push(await createDirectory('modules'))
       await createDirectories('modules', 'ROOT', 'pages')
       const asciidocFile = await createFile(
-        'image::',
+        // The resource id on the first line would, without the Antora guard,
+        // be mistaken for an attribute and proposed as `{2.0@clicommands}`.
+        'image::2.0@cli:commands:logo.png[]\nimage::',
         'modules',
         'ROOT',
         'pages',
@@ -122,9 +124,16 @@ image::`,
       const file = await vscode.workspace.openTextDocument(asciidocFile)
       const completionsItems = await provider.provideCompletionItems(
         file,
-        new Position(0, 7),
+        new Position(1, 7),
       )
-      assert.deepStrictEqual(completionsItems, [])
+      const bogusItems = completionsItems.filter((item) =>
+        (item.label as string).startsWith('{'),
+      )
+      assert.deepStrictEqual(
+        bogusItems,
+        [],
+        'No attribute-variable items must be proposed on an Antora page',
+      )
     } finally {
       await removeFiles(createdFiles)
       await resetAntoraSupport()
