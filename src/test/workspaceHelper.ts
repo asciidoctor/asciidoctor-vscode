@@ -5,9 +5,11 @@ import {
   getDefaultWorkspaceFolderUri,
   normalizeUri,
 } from '../core/workspace.js'
+import { clearAntoraCache } from '../features/antora/antoraDocument.js'
 import { extensionContext } from './helper.js'
 
 export async function removeFiles(files: vscode.Uri[]) {
+  clearAntoraCache()
   for (const file of files) {
     if (await exists(file)) {
       await vscode.workspace.fs.delete(file, { recursive: true })
@@ -37,6 +39,7 @@ export async function createFile(
     ...pathSegments,
   )
   await vscode.workspace.fs.writeFile(file, Buffer.from(content))
+  clearAntoraCache()
   return normalizeUri(file)
 }
 
@@ -93,10 +96,16 @@ export async function createLink(
 }
 
 export async function enableAntoraSupport() {
+  // The Antora caches are keyed on the workspace state and invalidated through
+  // file system watchers, which do not fire deterministically within a test
+  // run. Clear them explicitly so each scenario rebuilds from the files it just
+  // created.
+  clearAntoraCache()
   await extensionContext.workspaceState.update('antoraSupportSetting', true)
 }
 
 export async function resetAntoraSupport() {
+  clearAntoraCache()
   await extensionContext.workspaceState.update(
     'antoraSupportSetting',
     undefined,

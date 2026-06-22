@@ -5,6 +5,7 @@ import { CommandManager } from './core/commandManager.js'
 import { asciidocDocumentSelector } from './core/document.js'
 import { Logger } from './core/logger.js'
 import { AntoraSupportManager } from './features/antora/antoraContext.js'
+import { registerAntoraCacheInvalidation } from './features/antora/antoraDocument.js'
 import { AsciidocEngine } from './features/asciidoctor/asciidocEngine.js'
 import {
   AsciidocIncludeItemsLoader,
@@ -86,6 +87,7 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     AntoraSupportManager.getInstance(context.workspaceState),
   )
+  context.subscriptions.push(registerAntoraCacheInvalidation())
   context.subscriptions.push(
     vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider),
   )

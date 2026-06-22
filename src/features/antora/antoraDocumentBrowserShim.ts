@@ -1,5 +1,15 @@
+import * as vscode from 'vscode'
 import { Memento, Uri } from 'vscode'
 import { AntoraConfig, AntoraDocumentContext } from './antoraContext.js'
+
+export function clearAntoraCache(): void {
+  // no-op in the browser, Antora support is not available
+}
+
+export function registerAntoraCacheInvalidation(): vscode.Disposable {
+  // no-op in the browser, Antora support is not available
+  return new vscode.Disposable(() => undefined)
+}
 
 export async function findAntoraConfigFile(_: Uri): Promise<Uri | undefined> {
   return undefined

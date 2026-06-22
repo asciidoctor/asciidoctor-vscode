@@ -4,6 +4,7 @@ import { after, before, describe, test } from 'node:test'
 import * as vscode from 'vscode'
 import { getDefaultWorkspaceFolderUri } from '../core/workspace.js'
 import {
+  clearAntoraCache,
   findAntoraConfigFile,
   getAntoraDocumentContext,
 } from '../features/antora/antoraDocument.js'
@@ -317,6 +318,185 @@ describe('Antora support with single documentation component', () => {
       assert.strictEqual(images[0].src.component, 'ROOT')
       assert.strictEqual(images[0].src.family, 'image')
       assert.strictEqual(images[0].src.version, null)
+    } finally {
+      await removeFiles(createdFiles)
+      await resetAntoraSupport()
+    }
+  })
+})
+
+describe('Antora content catalog construction', () => {
+  test('Should load contents of text resources but not of binary resources', async () => {
+    const createdFiles = []
+    try {
+      createdFiles.push(await createDirectory('modules'))
+      await createDirectories('modules', 'ROOT', 'pages')
+      const asciidocFile = await createFile(
+        'include::partial$intro.adoc[]\n\nimage:mountain.jpeg[]',
+        'modules',
+        'ROOT',
+        'pages',
+        'landscape.adoc',
+      )
+      createdFiles.push(asciidocFile)
+      createdFiles.push(
+        await createFile(
+          'Reusable introduction',
+          'modules',
+          'ROOT',
+          'partials',
+          'intro.adoc',
+        ),
+      )
+      // Give the image a non-empty content on purpose: the catalog must NOT read
+      // those bytes, so its contents in the catalog must stay empty.
+      createdFiles.push(
+        await createFile(
+          'pretend-this-is-a-large-binary-image',
+          'modules',
+          'ROOT',
+          'images',
+          'mountain.jpeg',
+        ),
+      )
+      createdFiles.push(
+        await createFile(`name: ROOT\nversion: ~\n`, 'antora.yml'),
+      )
+      await enableAntoraSupport()
+      const result = await getAntoraDocumentContext(
+        asciidocFile,
+        extensionContext.workspaceState,
+      )
+      const contentCatalog = result.getContentCatalog()
+
+      const partial = contentCatalog.findBy({ family: 'partial' })[0]
+      assert.strictEqual(
+        partial !== undefined,
+        true,
+        'Partial must be present in the content catalog',
+      )
+      assert.strictEqual(
+        partial.contents.toString(),
+        'Reusable introduction',
+        'Contents of text resources (partials) must be loaded in the catalog',
+      )
+
+      const image = contentCatalog.findBy({ family: 'image' })[0]
+      assert.strictEqual(
+        image !== undefined,
+        true,
+        'Image must be present in the content catalog',
+      )
+      assert.strictEqual(
+        image.contents.length,
+        0,
+        'Contents of binary resources (images) must not be loaded in the catalog',
+      )
+    } finally {
+      await removeFiles(createdFiles)
+      await resetAntoraSupport()
+    }
+  })
+
+  test('Should resolve a resource id to its absolute path', async () => {
+    const createdFiles = []
+    try {
+      createdFiles.push(await createDirectory('modules'))
+      await createDirectories('modules', 'ROOT', 'pages')
+      const asciidocFile = await createFile(
+        'image:mountain.jpeg[]',
+        'modules',
+        'ROOT',
+        'pages',
+        'landscape.adoc',
+      )
+      createdFiles.push(asciidocFile)
+      const imageFile = await createFile(
+        '',
+        'modules',
+        'ROOT',
+        'images',
+        'mountain.jpeg',
+      )
+      createdFiles.push(imageFile)
+      createdFiles.push(
+        await createFile(`name: ROOT\nversion: ~\n`, 'antora.yml'),
+      )
+      await enableAntoraSupport()
+      const result = await getAntoraDocumentContext(
+        asciidocFile,
+        extensionContext.workspaceState,
+      )
+      const resolved = result.resolveAntoraResourceIds('mountain.jpeg', 'image')
+      assert.strictEqual(
+        resolved,
+        imageFile.path,
+        'Resource id must resolve to the absolute path of the image',
+      )
+    } finally {
+      await removeFiles(createdFiles)
+      await resetAntoraSupport()
+    }
+  })
+})
+
+describe('Antora content catalog caching', () => {
+  async function createSingleComponent(createdFiles: vscode.Uri[]) {
+    createdFiles.push(await createDirectory('modules'))
+    await createDirectories('modules', 'ROOT', 'pages')
+    const asciidocFile = await createFile(
+      '= Landscape',
+      'modules',
+      'ROOT',
+      'pages',
+      'landscape.adoc',
+    )
+    createdFiles.push(asciidocFile)
+    createdFiles.push(
+      await createFile(`name: ROOT\nversion: ~\n`, 'antora.yml'),
+    )
+    return asciidocFile
+  }
+
+  test('Should reuse the cached content catalog across calls', async () => {
+    const createdFiles = []
+    try {
+      const asciidocFile = await createSingleComponent(createdFiles)
+      await enableAntoraSupport()
+      const workspaceState = extensionContext.workspaceState
+      const first = await getAntoraDocumentContext(asciidocFile, workspaceState)
+      const second = await getAntoraDocumentContext(
+        asciidocFile,
+        workspaceState,
+      )
+      assert.strictEqual(
+        first.getContentCatalog(),
+        second.getContentCatalog(),
+        'The content catalog must be reused from the cache between calls',
+      )
+    } finally {
+      await removeFiles(createdFiles)
+      await resetAntoraSupport()
+    }
+  })
+
+  test('Should rebuild the content catalog after the cache is cleared', async () => {
+    const createdFiles = []
+    try {
+      const asciidocFile = await createSingleComponent(createdFiles)
+      await enableAntoraSupport()
+      const workspaceState = extensionContext.workspaceState
+      const first = await getAntoraDocumentContext(asciidocFile, workspaceState)
+      clearAntoraCache()
+      const second = await getAntoraDocumentContext(
+        asciidocFile,
+        workspaceState,
+      )
+      assert.notStrictEqual(
+        first.getContentCatalog(),
+        second.getContentCatalog(),
+        'The content catalog must be rebuilt once the cache is invalidated',
+      )
     } finally {
       await removeFiles(createdFiles)
       await resetAntoraSupport()
