@@ -5,9 +5,9 @@ The `env-vscode` attribute is set on all documents rendered by the extension.
 
 To conditionally include content when rendering inside VS Code, use an `ifdef` block:
 
-[source,asciidoc]
+[,asciidoc]
 ----
-ifdef::env-vscode[]
+\ifdef::env-vscode[]
 This is for VS Code only
-endif::[]
+\endif::[]
 ----
