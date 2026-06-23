@@ -2,10 +2,10 @@ import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 import * as vscode from 'vscode'
 import { CancellationTokenSource, Position } from 'vscode'
-import {
-  AntoraResourceDefinitionProvider,
-  findAntoraResourceMacroAt,
-} from '../features/antora/antoraResourceDefinitionProvider.js'
+// Note: the pure `findAntoraResourceMacroAt` matching logic is unit-tested in
+// `test/unit/antoraResourceMacro.test.ts`; this suite only covers the provider's
+// integration with the extension host.
+import { AntoraResourceDefinitionProvider } from '../features/antora/antoraResourceDefinitionProvider.js'
 import { extensionContext } from './helper.js'
 import {
   createDirectories,
@@ -15,48 +15,6 @@ import {
   removeFiles,
   resetAntoraSupport,
 } from './workspaceHelper.js'
-
-describe('findAntoraResourceMacroAt', () => {
-  test('Should detect an inline image resource id under the cursor', () => {
-    const line = 'image:commands:output.png[]'
-    const macro = findAntoraResourceMacroAt(line, 0, 10)
-    assert.strictEqual(macro?.id, 'commands:output.png')
-    assert.strictEqual(macro?.family, 'image')
-  })
-
-  test('Should detect a block image resource id with version and component', () => {
-    const line = 'image::2.0@cli:commands:output.png[]'
-    const macro = findAntoraResourceMacroAt(line, 0, 12)
-    assert.strictEqual(macro?.id, '2.0@cli:commands:output.png')
-    assert.strictEqual(macro?.family, 'image')
-  })
-
-  test('Should drop the fragment of an xref resource id', () => {
-    const line = 'xref:page.adoc#anchor[text]'
-    const macro = findAntoraResourceMacroAt(line, 0, 8)
-    assert.strictEqual(macro?.id, 'page.adoc')
-    assert.strictEqual(macro?.family, 'page')
-  })
-
-  test('Should ignore a plain relative include path', () => {
-    const line = 'include::intro.adoc[]'
-    const macro = findAntoraResourceMacroAt(line, 0, 12)
-    assert.strictEqual(macro, undefined)
-  })
-
-  test('Should detect a partial include resource id', () => {
-    const line = 'include::partial$intro.adoc[]'
-    const macro = findAntoraResourceMacroAt(line, 0, 15)
-    assert.strictEqual(macro?.id, 'partial$intro.adoc')
-    assert.strictEqual(macro?.family, 'page')
-  })
-
-  test('Should return undefined when the cursor is outside the target', () => {
-    const line = 'image::output.png[]'
-    // cursor on the `image` keyword, before the target
-    assert.strictEqual(findAntoraResourceMacroAt(line, 0, 2), undefined)
-  })
-})
 
 describe('AntoraResourceDefinitionProvider', () => {
   test('Should resolve an image resource id to its file', async () => {
