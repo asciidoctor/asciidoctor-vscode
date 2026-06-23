@@ -297,6 +297,18 @@ include::docC.adoc[]`,
 </div>`,
     },
     {
+      title:
+        'Should resolve "xref:" Antora resource id to the referenced page and anchor',
+      filePath: ['docs', 'modules', 'ROOT', 'pages', 'dummy.adoc'],
+      input: 'xref:api:auth:page3.adoc#oauth[]',
+      antoraDocumentContext: createAntoraDocumentContextStub(
+        `${workspaceUri.path}/antora/multiComponents/api/modules/auth/pages/page3.adoc`,
+      ),
+      expected: `<div class="paragraph">
+<p><a href="${workspaceUri.path}/antora/multiComponents/api/modules/auth/pages/page3.adoc#oauth" data-href="${workspaceUri.path}/antora/multiComponents/api/modules/auth/pages/page3.adoc#oauth">api:auth:page3.adoc</a></p>
+</div>`,
+    },
+    {
       title: 'Should resolve "xref:" macro for internal cross reference',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: `xref:_text_test[]

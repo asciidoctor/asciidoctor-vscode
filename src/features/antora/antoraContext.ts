@@ -76,6 +76,21 @@ export class AntoraDocumentContext {
     return undefined
   }
 
+  /**
+   * Resolve a resource id to its content catalog entry. Unlike
+   * `resolveAntoraResourceIds`, this exposes the whole resource (including its
+   * loaded `contents`) so callers can, for example, read the anchors declared in
+   * a referenced page.
+   */
+  public resolveResource(id: string, defaultFamily: string): any | undefined {
+    return this.antoraContext.contentCatalog.resolveResource(
+      id,
+      this.resourceContext,
+      defaultFamily,
+      this.PERMITTED_FAMILIES,
+    )
+  }
+
   public getComponents() {
     return this.antoraContext.contentCatalog.getComponents()
   }

@@ -3,14 +3,17 @@ import { afterEach, beforeEach, describe, test } from 'node:test'
 import * as vscode from 'vscode'
 import { Position } from 'vscode'
 import { getDefaultWorkspaceFolderUri } from '../core/workspace.js'
-import { xrefProvider } from '../features/completion/xrefCompletionProvider.js'
+import { XrefCompletionProvider } from '../features/completion/xrefCompletionProvider.js'
+import { extensionContext } from './helper.js'
 
 let workspaceUri: vscode.Uri
 
 describe('Xref CompletionsProvider', () => {
   let createdFiles: vscode.Uri[] = []
+  let xrefProvider: XrefCompletionProvider
   beforeEach(() => {
     workspaceUri = getDefaultWorkspaceFolderUri()
+    xrefProvider = new XrefCompletionProvider(extensionContext.workspaceState)
   })
   afterEach(async () => {
     for (const createdFile of createdFiles) {

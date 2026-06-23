@@ -100,7 +100,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.languages.registerCompletionItemProvider(
       selector,
       new AntoraResourceCompletionProvider(context.workspaceState),
-      ...[':', '$', '@', '/'],
+      ...[':', '$', '@', '/', '#'],
     ),
   )
   context.subscriptions.push(

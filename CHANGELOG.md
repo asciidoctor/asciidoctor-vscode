@@ -19,6 +19,9 @@
 * Add go-to-definition / Ctrl+click navigation on Antora resource ids in `image:`, `xref:` and `include::` macros (#434)
 * Add Antora-aware auto-completion of resource ids (pages, images, partials, examples) in `image:`, `xref:` and `include::` macros, sourced from the content catalog. Every valid form is offered, from the shortest relative path to the fully qualified id (e.g. `seaswell.png`, `commands:seaswell.png`, `cli:commands:seaswell.png`, `2.0@cli:commands:seaswell.png`), and selecting one completes the macro with its `[]` (#434)
 * Restrict `image::`/`image:` path completion to image files (png, jpg, jpeg, gif, svg, …) instead of listing every file such as `.adoc` pages
+* On Antora pages, stop the workspace-wide `xref:` file-path completion (e.g. `../../../../full.adoc#…`) that competed with the Antora resource id completion, leaving the Antora-aware provider as the sole contributor (#434)
+* Complete the anchors of the referenced page after `xref:<page>#` on Antora pages, sourced from the block ids declared in the target page (e.g. `xref:api:auth:page3.adoc#oauth`) (#434)
+* Resolve Antora `xref:` resource ids in the preview so cross-component/cross-module links (and their `#anchor`) navigate to the referenced page instead of producing a broken link (#434)
 
 ### Infrastructure
 

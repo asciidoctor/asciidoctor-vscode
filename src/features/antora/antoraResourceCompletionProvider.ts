@@ -1,4 +1,6 @@
 import * as vscode from 'vscode'
+import { getIdsFromContent } from '../completion/xrefIdExtractor.js'
+import { AntoraDocumentContext } from './antoraContext.js'
 import { getAntoraDocumentContext } from './antoraDocument.js'
 import {
   buildResourceIds,
@@ -43,6 +45,20 @@ export class AntoraResourceCompletionProvider
     if (antoraDocumentContext === undefined) {
       return []
     }
+    // Once a page resource id is followed by `#`, complete the anchors declared
+    // in the referenced page (e.g. `xref:api:auth:page3.adoc#oauth[]`) instead of
+    // other resource ids.
+    const targetTyped = lineTextBeforeCursor.slice(macroContext.targetStart)
+    const fragmentIndex = targetTyped.indexOf('#')
+    if (macroContext.macro === 'xref' && fragmentIndex !== -1) {
+      return this.provideFragments(
+        document,
+        position,
+        antoraDocumentContext,
+        targetTyped.slice(0, fragmentIndex),
+        macroContext.targetStart + fragmentIndex + 1,
+      )
+    }
     const current = antoraDocumentContext.resourceContext
     const contentCatalog = antoraDocumentContext.getContentCatalog()
     const replaceRange = new vscode.Range(
@@ -74,5 +90,45 @@ export class AntoraResourceCompletionProvider
       }
     }
     return items
+  }
+
+  /**
+   * Suggest the anchors (block ids) declared in the page referenced by `pageId`,
+   * so `xref:<page>#` completes with the fragments available in that page.
+   */
+  private provideFragments(
+    document: vscode.TextDocument,
+    position: vscode.Position,
+    antoraDocumentContext: AntoraDocumentContext,
+    pageId: string,
+    fragmentStart: number,
+  ): vscode.CompletionItem[] {
+    if (pageId.length === 0) {
+      return []
+    }
+    const resource = antoraDocumentContext.resolveResource(pageId, 'page')
+    const contents = resource?.contents
+    if (contents === undefined) {
+      return []
+    }
+    const lineText = document.lineAt(position.line).text
+    const hasClosingBracket = lineText.charAt(position.character) === '['
+    const replaceRange = new vscode.Range(
+      new vscode.Position(position.line, fragmentStart),
+      position,
+    )
+    const ids = getIdsFromContent(contents.toString())
+    return ids.map((id) => {
+      const item = new vscode.CompletionItem(
+        id,
+        vscode.CompletionItemKind.Reference,
+      )
+      item.detail = `anchor · ${pageId}`
+      item.range = replaceRange
+      item.insertText = hasClosingBracket
+        ? id
+        : new vscode.SnippetString(`${id}[$0]`)
+      return item
+    })
   }
 }

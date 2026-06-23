@@ -251,7 +251,12 @@ export class AsciidoctorWebViewConverter {
       }
       if (node.type === 'xref') {
         const attrs = []
-        attrs.push(` href="${node.target}"`)
+        // On Antora pages, the target is a resource id (e.g.
+        // `api:auth:page3.adoc#oauth`) that the base converter leaves untouched,
+        // producing a broken link in the preview. Resolve it to the actual file
+        // so the link navigates to the referenced page (and anchor).
+        const href = this.resolveXrefHref(node.target)
+        attrs.push(` href="${href}"`)
 
         if (node.hasAttribute('id')) {
           attrs.push(` id="${node.id}"`)
@@ -263,7 +268,7 @@ export class AsciidoctorWebViewConverter {
           attrs.push(` title="${node.title}"`)
         }
 
-        attrs.push(` data-href="${node.target}"`)
+        attrs.push(` data-href="${href}"`)
 
         let text: string
 
@@ -334,6 +339,36 @@ export class AsciidoctorWebViewConverter {
       }
     }
     return await this.baseConverter.convert(node, transform)
+  }
+
+  /**
+   * Resolve an `xref:` target to a link that works inside the preview. On Antora
+   * pages the target is a resource id (e.g. `api:auth:page3.adoc#oauth`); resolve
+   * the page part to its file path so clicking the link opens the referenced page
+   * at the right anchor. Targets that are not Antora resource ids (plain relative
+   * paths, internal anchors) are returned unchanged.
+   */
+  private resolveXrefHref(target: string): string {
+    if (
+      this.antoraDocumentContext === undefined ||
+      typeof target !== 'string'
+    ) {
+      return target
+    }
+    const hashIndex = target.indexOf('#')
+    const id = hashIndex === -1 ? target : target.slice(0, hashIndex)
+    const fragment = hashIndex === -1 ? '' : target.slice(hashIndex)
+    if (id.length === 0) {
+      return target
+    }
+    const resourcePath = this.antoraDocumentContext.resolveAntoraResourceIds(
+      id,
+      'page',
+    )
+    if (resourcePath === undefined) {
+      return target
+    }
+    return `${resourcePath}${fragment}`
   }
 
   private generateMathJax(node, webviewResourceProvider, nonce) {
