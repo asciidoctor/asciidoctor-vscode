@@ -16,7 +16,7 @@
     "theme": "light"
   },
   "bugs": "https://github.com/asciidoctor/asciidoctor-vscode/issues",
-  "homepage": "https://github.com/asciidoctor/asciidoctor-vscode/blob/master/README.md",
+  "homepage": "https://github.com/asciidoctor/asciidoctor-vscode/blob/main/README.md",
   "icon": "images/icon.png",
   "browser": "./dist/browser/extension",
   "main": "./dist/src/extension.mjs",
