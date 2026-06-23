@@ -5,6 +5,12 @@
   "extends": [
     ":preserveSemverRanges"
   ],
+  // Only open PRs once a week, on Monday morning.
+  "timezone": "Europe/Paris",
+  "schedule": ["before 9am on monday"],
+  // Limit how many PRs Renovate opens to keep the noise down.
+  "prConcurrentLimit": 3,
+  "prHourlyLimit": 0,
   "packageRules": [
     {
       "matchManagers": ["github-actions"],
