@@ -145,6 +145,52 @@ describe('AntoraResourceCompletionProvider', () => {
     }
   })
 
+  test('Should suggest the anchors of the referenced page after "xref:<page>#"', async () => {
+    const createdFiles = []
+    try {
+      createdFiles.push(await createDirectory('modules'))
+      await createDirectories('modules', 'ROOT', 'pages')
+      const page = await createFile(
+        'xref:target.adoc#',
+        'modules',
+        'ROOT',
+        'pages',
+        'source.adoc',
+      )
+      createdFiles.push(page)
+      createdFiles.push(
+        await createFile(
+          '= Target\n\n[#oauth]\n== OAuth\n',
+          'modules',
+          'ROOT',
+          'pages',
+          'target.adoc',
+        ),
+      )
+      createdFiles.push(
+        await createFile(`name: docs\nversion: '1.0'\n`, 'antora.yml'),
+      )
+      await enableAntoraSupport()
+      const provider = new AntoraResourceCompletionProvider(
+        extensionContext.workspaceState,
+      )
+      const document = await vscode.workspace.openTextDocument(page)
+      const items = await provider.provideCompletionItems(
+        document,
+        new Position(0, 17), // right after the "#"
+      )
+      const labels = items.map((item) => item.label)
+      assert.strictEqual(
+        labels.includes('oauth'),
+        true,
+        'Must suggest the anchor declared in the referenced page',
+      )
+    } finally {
+      await removeFiles(createdFiles)
+      await resetAntoraSupport()
+    }
+  })
+
   test('Should not suggest anything when Antora support is disabled', async () => {
     const createdFiles = []
     try {

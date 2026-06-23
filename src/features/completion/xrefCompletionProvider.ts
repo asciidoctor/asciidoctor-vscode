@@ -1,24 +1,39 @@
 import * as path from 'node:path'
 import * as vscode from 'vscode'
 import { findFiles } from '../../core/findFiles.js'
+import { getAntoraDocumentContext } from '../antora/antoraDocument.js'
 import { Context, createContext } from './createContext.js'
 import { getIdsFromContent } from './xrefIdExtractor.js'
 
-export const xrefProvider = {
-  provideCompletionItems,
-}
+/**
+ * Completes `xref:` cross references (to files and their anchors) and `<<`
+ * internal references. On Antora pages, cross references use resource ids
+ * resolved against the content catalog, so the workspace-wide file-path
+ * suggestions produced here are noise; the `AntoraResourceCompletionProvider`
+ * takes over the `xref:` macro instead.
+ */
+export class XrefCompletionProvider implements vscode.CompletionItemProvider {
+  constructor(private readonly workspaceState: vscode.Memento) {}
 
-export async function provideCompletionItems(
-  document: vscode.TextDocument,
-  position: vscode.Position,
-): Promise<vscode.CompletionItem[]> {
-  const context = createContext(document, position)
-  if (shouldProvide(context, 'xref:')) {
-    return provideCrossRef(context)
-  } else if (shouldProvide(context, '<<')) {
-    return provideInternalRef(context)
-  } else {
-    return Promise.resolve([])
+  public async provideCompletionItems(
+    document: vscode.TextDocument,
+    position: vscode.Position,
+  ): Promise<vscode.CompletionItem[]> {
+    const context = createContext(document, position)
+    if (shouldProvide(context, 'xref:')) {
+      const antoraDocumentContext = await getAntoraDocumentContext(
+        document.uri,
+        this.workspaceState,
+      )
+      if (antoraDocumentContext !== undefined) {
+        return []
+      }
+      return provideCrossRef(context)
+    } else if (shouldProvide(context, '<<')) {
+      return provideInternalRef(context)
+    } else {
+      return []
+    }
   }
 }
 

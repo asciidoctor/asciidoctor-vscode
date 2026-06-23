@@ -6,7 +6,7 @@ import { AttributeReferenceProvider } from './attributeReferenceProvider.js'
 import { BibtexProvider } from './bibtexCompletionProvider.js'
 import { BuiltinDocumentAttributeProvider } from './builtinDocumentAttributeProvider.js'
 import { TargetPathCompletionProvider } from './targetPathCompletionProvider.js'
-import { xrefProvider } from './xrefCompletionProvider.js'
+import { XrefCompletionProvider } from './xrefCompletionProvider.js'
 
 export class AsciidocCompletionProviders {
   private readonly disposables: vscode.Disposable[] = []
@@ -25,7 +25,7 @@ export class AsciidocCompletionProviders {
       ),
       vscode.languages.registerCompletionItemProvider(
         asciidocDocumentSelector,
-        xrefProvider,
+        new XrefCompletionProvider(asciidocLoader.context.workspaceState),
         ...[':', '/'],
       ),
       vscode.languages.registerCompletionItemProvider(
