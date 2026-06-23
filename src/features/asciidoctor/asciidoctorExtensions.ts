@@ -1,4 +1,5 @@
 import { Registry } from '@asciidoctor/core'
+import kroki from 'asciidoctor-kroki'
 import * as vscode from 'vscode'
 import { findFiles } from '../../core/findFiles.js'
 import { mermaidJSProcessor } from '../preview/mermaid.js'
@@ -22,11 +23,8 @@ export class AsciidoctorExtensions {
     const enableKroki = vscode.workspace
       .getConfiguration('asciidoc.extensions', null)
       .get('enableKroki')
-    // asciidoctor-kroki is temporarily disabled: not yet compatible with Asciidoctor 4.0
     if (enableKroki) {
-      vscode.window.showWarningMessage(
-        'Kroki diagrams are temporarily disabled because asciidoctor-kroki is not yet compatible with Asciidoctor 4.0.',
-      )
+      kroki.register(registry)
     }
     registry.block('mermaid', mermaidJSProcessor())
     await this.registerExtensionsInWorkspace(registry)
