@@ -650,7 +650,7 @@
     "esbuild": "^0.28.0",
     "font-awesome": "^4.7.0",
     "lodash.throttle": "4.1.1",
-    "mathjax": "^2.7.9",
+    "mathjax": "^4.0.0",
     "mermaid": "^11.15.0",
     "path-browserify": "1.0.1",
     "semver": "^7.3.7",
