@@ -25,7 +25,7 @@
 
 ### Infrastructure
 
-* Extract the pure completion logic (Antora resource id forms, Antora resource macro matching, xref/`<<` anchor id extraction) into `vscode`-free modules and cover it with fast Node `test:unit` unit tests instead of the extension-host suite (#434)
+* Extract the pure completion logic (Antora resource id forms, Antora resource macro matching, xref/`<<` anchor id extraction, and the xref/`<<` query parsing and label building) into `vscode`-free modules and cover it with fast Node `test:unit` unit tests instead of the extension-host suite (#434)
 * Migrate from webpack to esbuild
 * Switch Node.js extension output to `.mjs` and remove `"type": "module"` from `package.json` to prevent VS Code web worker host from misidentifying the CJS browser bundle as ESM
 * Migrate to Asciidoctor.js 4.0.x (#999)
