@@ -12,6 +12,7 @@
 ** xref:diagram.adoc[]
 ** xref:asciidoctorjs-extensions.adoc[]
 ** xref:asciidoctorconfig.adoc[]
+** xref:antora.adoc[]
 ** xref:vscode-environment.adoc[]
 * xref:settings.adoc[]
 * Contributing

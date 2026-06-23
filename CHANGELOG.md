@@ -26,6 +26,7 @@
 ### Documentation
 
 * Migrate the README content into the Antora documentation (`docs/`): one page per topic (install, quick start, preview, export as PDF/HTML/DocBook, paste image, snippets, diagram integration, Asciidoctor.js extensions, Asciidoctor config file, VS Code environment, settings, build from source, contributing, get help) wired into the navigation, and slim the README down to an overview that links to the documentation
+* Add an Antora support page documenting how to enable it and the features available (resource id completion, cross-reference anchor completion, go-to-definition, attribute completion, preview), along with the current limitations
 
 ### Infrastructure
 

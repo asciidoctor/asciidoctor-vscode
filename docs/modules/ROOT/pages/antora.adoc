@@ -1,0 +1,88 @@
+= Antora support
+:description: Author Antora documentation sites with resource id completion, navigation, and preview.
+:url-antora: https://antora.org
+
+The extension offers built-in support for {url-antora}[Antora] documentation components.
+
+[IMPORTANT]
+====
+Antora support is still a work in progress and does not cover the whole Antora model yet.
+This page documents what already works.
+See xref:#limitations[] for the known gaps.
+====
+
+== Enable Antora support
+
+Antora support is enabled per workspace and is off by default.
+
+When the extension detects an `antora.yml` file while you open an AsciiDoc document, it prompts you to enable Antora support for the workspace.
+You can dismiss the prompt to keep it disabled.
+
+You can also toggle support at any time from the Command Palette:
+
+* *Enable Antora support in this workspace*
+* *Disable Antora support in this workspace*
+
+The choice is stored in the workspace state, so each workspace keeps its own setting.
+
+To stop the extension from prompting you when an `antora.yml` file is detected, set `asciidoc.antora.showEnableAntoraPrompt` to `false`.
+
+For Antora support to apply to a document, the document must live in a standard Antora content source layout, that is below `modules/<module>/pages/`, next to an `antora.yml` file that declares at least a `name` and a `version`.
+
+== Features
+
+Once Antora support is enabled, the following features become available for documents that belong to an Antora component.
+
+=== Resource id completion
+
+Inside the `image:`, `xref:` and `include::` macros, the extension suggests the resource ids available in the content catalog built from the workspace.
+
+Completion covers the `page`, `image`, `partial`, `example` and `attachment` families.
+For each resource, the shortest valid id is offered first, followed by the more qualified variants (module, component and version).
+
+[,asciidoc]
+----
+xref:component:module:page.adoc[]
+
+image:module:diagram.png[]
+
+\include::partial$intro.adoc[]
+----
+
+=== Cross-reference anchors
+
+When an `xref` target points at a page and is followed by `#`, the extension completes the anchors (block ids) declared in the referenced page.
+
+[,asciidoc]
+----
+xref:module:page.adoc#section-id[]
+----
+
+=== Go to definition
+
+Resource ids in `image:`, `xref:` and `include::` macros resolve to the file they point at.
+Use *Go to Definition* or kbd:[Ctrl] / kbd:[Cmd] + click on a resource id to jump to the corresponding file.
+
+=== Attribute completion
+
+The AsciiDoc attributes declared under `asciidoc.attributes` in `antora.yml` are suggested when you type `{` in a document.
+
+=== Preview
+
+The preview resolves Antora resource ids and includes, and applies the AsciiDoc attributes declared in `antora.yml`, so the rendered output reflects the Antora context of the document.
+
+[#limitations]
+== Limitations
+
+Antora support relies on a content catalog built from the files present in the current workspace.
+As a consequence:
+
+* Only content sources available locally in the workspace are taken into account. Remote content sources and the Antora playbook are not processed.
+* Component directories that are symbolic links are ignored.
+* The model is not yet fully covered, so some Antora behaviours may differ from a full Antora build.
+
+[NOTE]
+====
+The `asciidoc.antora.enableAntoraSupport` setting is deprecated and no longer has any effect.
+Use the Command Palette commands or `asciidoc.antora.showEnableAntoraPrompt` instead.
+====
