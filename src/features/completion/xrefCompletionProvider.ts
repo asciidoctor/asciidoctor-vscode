@@ -2,6 +2,7 @@ import * as path from 'node:path'
 import * as vscode from 'vscode'
 import { findFiles } from '../../core/findFiles.js'
 import { Context, createContext } from './createContext.js'
+import { getIdsFromContent } from './xrefIdExtractor.js'
 
 export const xrefProvider = {
   provideCompletionItems,
@@ -36,46 +37,7 @@ function shouldProvide(context: Context, keyword: string): boolean {
 async function getIdsFromFile(file: vscode.Uri) {
   const data = await vscode.workspace.fs.readFile(file)
   const content = Buffer.from(data).toString('utf8')
-  const labelsFromLegacyBlock = await getLabelsFromLegacyBlock(content)
-  const labelsFromShorthandNotation =
-    await getLabelsFromShorthandNotation(content)
-  const labelsFromLonghandNotation =
-    await getLabelsFromLonghandNotation(content)
-  return labelsFromLegacyBlock.concat(
-    labelsFromShorthandNotation,
-    labelsFromLonghandNotation,
-  )
-}
-
-async function getLabelsFromLonghandNotation(
-  content: string,
-): Promise<string[]> {
-  const regex = /\[id=(\w+)\]/g
-  const matched = content.match(regex)
-  if (matched) {
-    return matched.map((result) => result.replace('[id=', '').replace(']', ''))
-  }
-  return []
-}
-
-async function getLabelsFromShorthandNotation(
-  content: string,
-): Promise<string[]> {
-  const regex = /\[#(\w+)\]/g
-  const matched = content.match(regex)
-  if (matched) {
-    return matched.map((result) => result.replace('[#', '').replace(']', ''))
-  }
-  return []
-}
-
-async function getLabelsFromLegacyBlock(content: string): Promise<string[]> {
-  const regex = /\[\[(\w+)\]\]/g
-  const matched = content.match(regex)
-  if (matched) {
-    return matched.map((result) => result.replace('[[', '').replace(']]', ''))
-  }
-  return []
+  return getIdsFromContent(content)
 }
 
 /**
