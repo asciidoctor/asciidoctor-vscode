@@ -645,6 +645,12 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
       baseStyles.push(
         `<link rel="stylesheet" type="text/css" href="${webviewResourceProvider.asMediaWebViewSrc('media', builtinStylesheet)}">`,
       )
+      if (config.useEditorStylesheet) {
+        // Theme-integrated refinements layered on top of the editor stylesheet.
+        baseStyles.push(
+          `<link rel="stylesheet" type="text/css" href="${webviewResourceProvider.asMediaWebViewSrc('media', 'asciidoctor-editor-enhancements.css')}">`,
+        )
+      }
     }
     if (node.isAttribute('icons', 'font')) {
       baseStyles.push(

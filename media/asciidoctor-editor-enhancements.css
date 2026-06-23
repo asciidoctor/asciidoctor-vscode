@@ -1,0 +1,308 @@
+/*
+ * AsciiDoc preview — editor theme enhancements
+ *
+ * Loaded on top of `asciidoctor-editor.css` to give the preview a cleaner,
+ * more modern look that integrates with the active VS Code color theme.
+ * Everything here is derived from `--vscode-*` theme variables (with safe
+ * fallbacks), so it adapts to light, dark and high-contrast themes.
+ */
+
+:root {
+  color-scheme: light dark;
+
+  --adoc-fg: var(--vscode-editor-foreground, var(--vscode-foreground, currentColor));
+  --adoc-muted: var(--vscode-descriptionForeground, color-mix(in srgb, var(--adoc-fg) 62%, transparent));
+  --adoc-border: var(--vscode-widget-border, var(--vscode-panel-border, color-mix(in srgb, var(--adoc-fg) 22%, transparent)));
+  --adoc-link: var(--vscode-textLink-foreground, #3794ff);
+  --adoc-link-active: var(--vscode-textLink-activeForeground, var(--adoc-link));
+  --adoc-code-bg: var(--vscode-textCodeBlock-background, color-mix(in srgb, var(--adoc-fg) 7%, transparent));
+
+  /* Translucent fg overlays — work over any theme background. */
+  --adoc-surface-1: color-mix(in srgb, var(--adoc-fg) 4%, transparent);
+  --adoc-surface-2: color-mix(in srgb, var(--adoc-fg) 7%, transparent);
+
+  --adoc-radius: 6px;
+
+  /* Admonition accents, mapped to the theme's chart palette. */
+  --adoc-note: var(--vscode-charts-blue, #4daafc);
+  --adoc-tip: var(--vscode-charts-green, #4bb543);
+  --adoc-important: var(--vscode-charts-purple, #b180d7);
+  --adoc-warning: var(--vscode-charts-yellow, #d9a400);
+  --adoc-caution: var(--vscode-charts-orange, #d18616);
+}
+
+/* ----------------------------------------------------------------------
+ * Typography & rhythm
+ * -------------------------------------------------------------------- */
+
+h1, h2, h3, h4, h5, h6,
+#toctitle,
+.sidebarblock > .content > .title {
+  font-family: var(--asciidoc-font-family, inherit);
+  font-weight: 600;
+  color: var(--adoc-fg);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+
+h1 { letter-spacing: -0.02em; }
+
+/* Give the top-level structural headings a quiet underline for hierarchy. */
+.sect1 > h2,
+h1.sect0 {
+  padding-bottom: 0.3em;
+  border-bottom: 1px solid var(--adoc-border);
+}
+
+a {
+  color: var(--adoc-link);
+  text-decoration: none;
+}
+
+a:hover,
+a:focus {
+  color: var(--adoc-link-active);
+  text-decoration: underline;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--adoc-border);
+}
+
+/* Muted captions/metadata. */
+.title,
+caption.title,
+figcaption,
+#footer-text,
+.colist > table td:last-child {
+  color: var(--adoc-muted);
+}
+
+#header .details {
+  color: var(--adoc-muted);
+  border-bottom: 1px solid var(--adoc-border);
+  padding-bottom: 0.6em;
+}
+
+/* ----------------------------------------------------------------------
+ * Inline code & code blocks
+ * -------------------------------------------------------------------- */
+
+:not(pre):not([class^="L"]) > code {
+  background: var(--adoc-code-bg);
+  color: var(--vscode-textPreformat-foreground, inherit);
+  border: 1px solid color-mix(in srgb, var(--adoc-fg) 10%, transparent);
+  padding: 0.12em 0.4em;
+}
+
+.listingblock > .content,
+.literalblock > .content {
+  position: relative;
+}
+
+.listingblock > .content > pre,
+.literalblock > .content > pre {
+  background: var(--adoc-code-bg);
+  border: 1px solid var(--adoc-border);
+  border-radius: var(--adoc-radius);
+  padding: 0.85em 1em;
+  overflow: auto;
+}
+
+/* Let the (theme-aware) highlight.js tokens sit on the unified code surface. */
+.listingblock pre.highlight > code.hljs,
+.listingblock pre > code.hljs {
+  background: transparent;
+  padding: 0;
+}
+
+/* Callout numbers — use the theme's badge colors. */
+.conum[data-value] {
+  background: var(--vscode-badge-background, var(--adoc-link));
+  color: var(--vscode-badge-foreground, #fff) !important;
+  font-weight: 600;
+}
+
+.conum[data-value] + b {
+  color: var(--vscode-badge-background, var(--adoc-link));
+}
+
+/* ----------------------------------------------------------------------
+ * Admonitions (NOTE / TIP / IMPORTANT / WARNING / CAUTION)
+ * -------------------------------------------------------------------- */
+
+.admonitionblock > table {
+  background: color-mix(in srgb, var(--adoc-accent, var(--adoc-fg)) 8%, transparent);
+  border-left: 3px solid var(--adoc-accent, var(--adoc-border));
+  border-radius: 0 var(--adoc-radius) var(--adoc-radius) 0;
+}
+
+.admonitionblock > table td.icon {
+  width: 56px;
+  padding-left: 0.4em;
+}
+
+.admonitionblock > table td.content {
+  border-left: 0;
+  padding: 0.55em 1.15em;
+}
+
+.admonitionblock.note { --adoc-accent: var(--adoc-note); }
+.admonitionblock.tip { --adoc-accent: var(--adoc-tip); }
+.admonitionblock.important { --adoc-accent: var(--adoc-important); }
+.admonitionblock.warning { --adoc-accent: var(--adoc-warning); }
+.admonitionblock.caution { --adoc-accent: var(--adoc-caution); }
+
+/* Font-based icons (`:icons: font`) and the text label fallback. */
+.admonitionblock td.icon [class^="fa icon-"] {
+  font-size: 1.9em;
+  text-shadow: none;
+}
+
+.admonitionblock td.icon [class^="fa icon-"]::before {
+  color: var(--adoc-accent, var(--adoc-muted)) !important;
+  text-shadow: none !important;
+}
+
+.admonitionblock td.icon .title {
+  color: var(--adoc-accent, var(--adoc-muted));
+  font-weight: 600;
+}
+
+/* ----------------------------------------------------------------------
+ * Tables
+ * -------------------------------------------------------------------- */
+
+table.tableblock,
+th.tableblock,
+td.tableblock {
+  border-color: var(--adoc-border);
+}
+
+table.tableblock {
+  border-radius: var(--adoc-radius);
+  overflow: hidden;
+}
+
+table.tableblock > thead > tr > th,
+table.tableblock > tfoot > tr > th,
+table.tableblock > tfoot > tr > td {
+  background: var(--adoc-surface-2);
+  font-weight: 600;
+}
+
+table.tableblock > thead > tr > th {
+  border-bottom: 2px solid var(--adoc-border);
+}
+
+/* Zebra striping for readability (re-enables the disabled default). */
+table.tableblock > tbody > tr:nth-of-type(even) {
+  background: var(--adoc-surface-1);
+}
+
+table.stripes-all > tbody > tr,
+table.stripes-odd > tbody > tr:nth-of-type(odd),
+table.stripes-even > tbody > tr:nth-of-type(even),
+table.stripes-hover > tbody > tr:hover {
+  background: var(--adoc-surface-2);
+}
+
+/* ----------------------------------------------------------------------
+ * Quotes, sidebars, examples, collapsible blocks
+ * -------------------------------------------------------------------- */
+
+.quoteblock,
+.verseblock {
+  display: block;
+  margin: 0 0 1.25em;
+  border-left: 3px solid var(--vscode-textBlockQuote-border, var(--adoc-link));
+  background: var(--vscode-textBlockQuote-background, var(--adoc-surface-1));
+  border-radius: 0 var(--adoc-radius) var(--adoc-radius) 0;
+  padding: 0.75em 1.25em;
+}
+
+.quoteblock > .title {
+  margin-left: 0;
+}
+
+.quoteblock blockquote {
+  border: 0;
+}
+
+/* Drop the default hanging quotation mark for a cleaner left-bar quote. */
+.quoteblock blockquote::before {
+  content: none;
+}
+
+.quoteblock blockquote,
+.quoteblock p {
+  text-align: left;
+}
+
+.quoteblock > .attribution,
+.verseblock > .attribution {
+  color: var(--adoc-muted);
+}
+
+.sidebarblock {
+  background: var(--adoc-surface-2);
+  border: 1px solid var(--adoc-border);
+  border-radius: var(--adoc-radius);
+}
+
+.exampleblock > .content {
+  background: var(--adoc-surface-1);
+  border: 1px solid var(--adoc-border);
+  border-radius: var(--adoc-radius);
+}
+
+details {
+  border: 1px solid var(--adoc-border);
+  border-radius: var(--adoc-radius);
+  padding: 0.4em 1em;
+  background: var(--adoc-surface-1);
+}
+
+details > summary {
+  color: var(--adoc-link);
+  cursor: pointer;
+}
+
+/* ----------------------------------------------------------------------
+ * Table of contents & UI macros
+ * -------------------------------------------------------------------- */
+
+#toc.toc {
+  border: 1px solid var(--adoc-border);
+  border-radius: var(--adoc-radius);
+  background: var(--adoc-surface-1);
+  padding: 0.75em 1.25em;
+}
+
+#toctitle {
+  margin-top: 0.25em;
+}
+
+#toc a {
+  color: var(--adoc-fg);
+}
+
+#toc a:hover {
+  color: var(--adoc-link-active);
+}
+
+kbd {
+  background: var(--vscode-keybindingLabel-background, var(--adoc-surface-2));
+  color: var(--vscode-keybindingLabel-foreground, var(--adoc-fg));
+  border: 1px solid var(--vscode-keybindingLabel-border, var(--adoc-border));
+  border-bottom-width: 2px;
+  border-radius: 4px;
+}
+
+/* Respect users who prefer reduced motion. */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}
