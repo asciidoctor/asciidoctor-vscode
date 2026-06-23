@@ -22,11 +22,13 @@
 * On Antora pages, stop the workspace-wide `xref:` file-path completion (e.g. `../../../../full.adoc#…`) that competed with the Antora resource id completion, leaving the Antora-aware provider as the sole contributor (#434)
 * Complete the anchors of the referenced page after `xref:<page>#` on Antora pages, sourced from the block ids declared in the target page (e.g. `xref:api:auth:page3.adoc#oauth`) (#434)
 * Resolve Antora `xref:` resource ids in the preview so cross-component/cross-module links (and their `#anchor`) navigate to the referenced page instead of producing a broken link (#434)
+* Re-enable Kroki diagrams: upgrade `asciidoctor-kroki` to `1.0.0-beta.1`, which is compatible with Asciidoctor.js 4.0. The new release also drops the `unxhr` dependency in favor of native `fetch`, so `:kroki-fetch-diagram:` now works in VS Code
 
 ### Documentation
 
 * Migrate the README content into the Antora documentation (`docs/`): one page per topic (install, quick start, preview, export as PDF/HTML/DocBook, paste image, snippets, diagram integration, Asciidoctor.js extensions, Asciidoctor config file, VS Code environment, settings, build from source, contributing, get help) wired into the navigation, and slim the README down to an overview that links to the documentation
 * Add an Antora support page documenting how to enable it and the features available (resource id completion, cross-reference anchor completion, go-to-definition, attribute completion, preview), along with the current limitations
+* Remove the obsolete `unxhr` limitation note about `:kroki-fetch-diagram:` from the diagram integration page, since `asciidoctor-kroki` no longer depends on `unxhr`
 
 ### Infrastructure
 

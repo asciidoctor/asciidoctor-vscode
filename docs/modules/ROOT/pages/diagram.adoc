@@ -18,9 +18,3 @@ By default, diagram source is sent to {url-kroki} to be rendered.
 If this is a concern, you can run your own Kroki instance and point the extension to it.
 See the {url-asciidoctor-kroki}#using-your-own-kroki[asciidoctor-kroki instructions] for details.
 ====
-
-[IMPORTANT]
-====
-`:kroki-fetch-diagram:` is currently not supported.
-It relies on `unxhr`, which does not work in VS Code (see https://github.com/ggrossetie/unxhr/issues/98[unxhr#98]).
-====
