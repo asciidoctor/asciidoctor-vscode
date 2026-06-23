@@ -1,0 +1,13 @@
+= Identify the VS Code environment
+:description: Detect that a document is rendered by the VS Code extension with the env-vscode attribute.
+
+The `env-vscode` attribute is set on all documents rendered by the extension.
+
+To conditionally include content when rendering inside VS Code, use an `ifdef` block:
+
+[source,asciidoc]
+----
+ifdef::env-vscode[]
+This is for VS Code only
+endif::[]
+----

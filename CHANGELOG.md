@@ -23,6 +23,10 @@
 * Complete the anchors of the referenced page after `xref:<page>#` on Antora pages, sourced from the block ids declared in the target page (e.g. `xref:api:auth:page3.adoc#oauth`) (#434)
 * Resolve Antora `xref:` resource ids in the preview so cross-component/cross-module links (and their `#anchor`) navigate to the referenced page instead of producing a broken link (#434)
 
+### Documentation
+
+* Migrate the README content into the Antora documentation (`docs/`): one page per topic (install, quick start, preview, export as PDF/HTML/DocBook, paste image, snippets, diagram integration, Asciidoctor.js extensions, Asciidoctor config file, VS Code environment, settings, build from source, contributing, get help) wired into the navigation, and slim the README down to an overview that links to the documentation
+
 ### Infrastructure
 
 * Extract the pure completion logic (Antora resource id forms, Antora resource macro matching, xref/`<<` anchor id extraction) into `vscode`-free modules and cover it with fast Node `test:unit` unit tests instead of the extension-host suite (#434)

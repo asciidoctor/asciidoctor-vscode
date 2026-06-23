@@ -1,8 +1,25 @@
 = {project-name} Documentation
 :navtitle: Introduction
-:description: A brief introduction to the Visual Code Studio Extension.
+:description: Live preview, syntax highlighting, and snippets for AsciiDoc in Visual Studio Code, powered by Asciidoctor.
 
+The {project-name} brings live preview, syntax highlighting, and snippets for the AsciiDoc format to Visual Studio Code, powered by https://asciidoctor.org[Asciidoctor].
 
-Write documentation without leaving your IDE. Preview your docs locally before publishing them. Collaborate using a version control system. Publish with confidence using automated builds.
+Write documentation without leaving your IDE.
+Preview your docs locally before publishing them.
+Collaborate using a version control system.
+Publish with confidence using automated builds.
 
-Besides VS Code's basic editing, there are a number of AsciiDoc specific features that will help you be more productive.
+image::simple.gif[Live preview of an AsciiDoc document,align=center]
+
+Besides VS Code's basic editing, a number of AsciiDoc-specific features will help you be more productive:
+
+* A xref:preview.adoc[live preview] that updates as you type.
+* xref:export-pdf.adoc[Export to PDF], xref:save-html.adoc[HTML], and xref:save-docbook.adoc[DocBook].
+* xref:diagram.adoc[Diagram integration] through Kroki.
+* xref:snippets.adoc[Snippets], xref:paste-image.adoc[image pasting], and more.
+
+[TIP]
+====
+New to the extension?
+Start with the xref:install.adoc[installation guide], then follow the xref:quick-start.adoc[quick start].
+====

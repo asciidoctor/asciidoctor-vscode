@@ -1,0 +1,6 @@
+= Snippets
+:description: Insert common AsciiDoc constructs with built-in snippets.
+
+The extension ships with code snippets for common AsciiDoc constructs, including (but not limited to) include statements, images, links, the document header, headings, lists, and blocks.
+
+To browse the full list, open the command palette and select *Insert Snippet*.

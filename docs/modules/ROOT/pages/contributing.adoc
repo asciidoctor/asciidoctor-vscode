@@ -1,0 +1,25 @@
+= Contributing
+:description: How to contribute to the AsciiDoc extension.
+
+Contributions are welcome.
+Clone the repository, commit your changes, and open a pull request.
+In the pull request description, clearly highlight what you changed.
+
+[NOTE]
+====
+Do not update the extension version -- maintainers do this when a new version is released.
+====
+
+== Documentation changes
+
+You are free to fix typos and errors, and to add or improve descriptions.
+If you have a larger style change in mind, please open an issue (or a dedicated pull request) first so it can be discussed.
+
+== Credits
+
+* http://asciidoc.org/[AsciiDoc] by Stuart Rackham
+* The https://asciidoctor.org/[Asciidoctor] organization for the language flavor
+* https://asciidoctor.org/docs/asciidoctor.js/[Asciidoctor.js] for the preview
+* https://asciidoctor.org/docs/asciidoctor-pdf/[Asciidoctor PDF] for the _Export to PDF_ function
+* https://wkhtmltopdf.org/[wkhtmltopdf] for the _Export to PDF_ function
+* {url-repo}/graphs/contributors[Each and every contributor] to this extension

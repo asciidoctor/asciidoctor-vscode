@@ -1,0 +1,13 @@
+= Save as HTML
+:description: Export an AsciiDoc document to HTML using the default Asciidoctor stylesheet.
+
+The extension provides a command to export the current AsciiDoc file as HTML using the default Asciidoctor stylesheet.
+
+. Open the command palette -- kbd:[Ctrl+Shift+P] or kbd:[F1] (Mac: kbd:[Cmd+Shift+P]).
+. Select *AsciiDoc: Save HTML document*.
+. The file is generated in the same folder as the source document.
+
+[TIP]
+====
+The shortcut kbd:[Ctrl+Alt+S] (Mac: kbd:[Cmd+Alt+S]) also saves the document as HTML.
+====

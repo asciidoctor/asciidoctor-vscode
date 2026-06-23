@@ -1,0 +1,13 @@
+= Save as DocBook
+:description: Export an AsciiDoc document to DocBook.
+
+The extension provides a command to export the current AsciiDoc file as DocBook.
+
+. Open the command palette -- kbd:[Ctrl+Shift+P] or kbd:[F1] (Mac: kbd:[Cmd+Shift+P]).
+. Select *AsciiDoc: Save to DocBook*.
+. The file is generated in the same folder as the source document.
+
+[NOTE]
+====
+Only DocBook 5 is supported.
+====

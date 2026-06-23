@@ -1,0 +1,9 @@
+= Paste an image
+:description: Paste an image from the clipboard directly into your AsciiDoc document.
+
+The extension provides a command to paste an image from the clipboard into your document.
+
+. Copy an image to your clipboard.
+. Open the command palette -- kbd:[Ctrl+Shift+P] or kbd:[F1] (Mac: kbd:[Cmd+Shift+P]) -- and select *AsciiDoc: Paste Image*, or use the shortcut kbd:[Ctrl+Alt+V] (Mac: kbd:[Option+Cmd+V]).
+. An image file named with the current timestamp is created in the same folder as the document.
+. An `image` macro pointing to the new file is inserted at the cursor.

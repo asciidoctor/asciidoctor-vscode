@@ -1,4 +1,7 @@
 = Install and Update
+:description: Install the AsciiDoc extension on VS Code Desktop or VS Code for the Web.
+
+== Install from VS Code
 
 Launch Visual Studio Code "Quick Open" (kbd:[Ctrl+P]), paste the following command, and press kbd:[Enter]:
 
@@ -7,6 +10,34 @@ Launch Visual Studio Code "Quick Open" (kbd:[Ctrl+P]), paste the following comma
 ext install asciidoctor.asciidoctor-vscode
 ----
 
-Alternatively, you can use the built-in extension browser to find the {url-marketplace}[_AsciiDoc_ extension] by _asciidoctor_ and install it.
+Alternatively, open the built-in Extensions browser, search for the {url-marketplace}[_AsciiDoc_ extension] by _asciidoctor_, and install it.
 
-This extension is also available as a pre-version (alpha) in Visual Studio Code for the Web and can be installed using the same procedure.
+== VS Code for the Web
+
+This extension is also available as a pre-release (alpha) in {url-vscode-web}[Visual Studio Code for the Web] and can be installed using the same procedure.
+
+Not every feature is available in the browser.
+The table below summarizes what each environment supports.
+
+[cols="2,^1,^1",options="header"]
+|===
+|Feature |Desktop |Web
+
+|Document outline and symbols |✔️ |✔️
+|Equations (via MathJax) |✔️ |✔️ (requires security to be disabled)
+|xref:export-pdf.adoc[Export as PDF] |✔️ |⛔
+|xref:diagram.adoc[Kroki integration for diagrams] |✔️ |✔️
+|xref:paste-image.adoc[Paste image] |✔️ |⛔
+|xref:save-html.adoc[Save as HTML] |✔️ |⛔
+|xref:save-docbook.adoc[Save as DocBook] |✔️ |⛔
+|xref:snippets.adoc[Snippets] |✔️ |✔️
+|Syntax highlighting |✔️ |✔️ (requires security to be disabled)
+|xref:preview.adoc[Sync scrolling between editor and preview] |✔️ |✔️
+|===
+
+== Update
+
+Updates are installed automatically by VS Code.
+
+To roll back to a previous release, open the Extensions browser, click the gear icon next to the AsciiDoc extension, and select _Install Another Version..._.
+A menu lets you choose which version to install.

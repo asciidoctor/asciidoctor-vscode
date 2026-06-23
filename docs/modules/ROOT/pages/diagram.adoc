@@ -1,0 +1,26 @@
+= Diagram integration
+:description: Render diagrams in the preview through Kroki and asciidoctor-kroki.
+
+The extension supports a wide range of diagrams -- from BPMN to Graphviz, PlantUML, and Vega -- through {url-kroki}[Kroki] and {url-asciidoctor-kroki}[asciidoctor-kroki].
+
+You can see the full range of supported diagram types on the https://kroki.io/#support[Kroki website].
+
+== Enable diagrams
+
+Set the `asciidoc.extensions.enableKroki` setting to `true`.
+
+== Privacy
+
+[WARNING]
+====
+By default, diagram source is sent to {url-kroki} to be rendered.
+
+If this is a concern, you can run your own Kroki instance and point the extension to it.
+See the {url-asciidoctor-kroki}#using-your-own-kroki[asciidoctor-kroki instructions] for details.
+====
+
+[IMPORTANT]
+====
+`:kroki-fetch-diagram:` is currently not supported.
+It relies on `unxhr`, which does not work in VS Code (see https://github.com/ggrossetie/unxhr/issues/98[unxhr#98]).
+====

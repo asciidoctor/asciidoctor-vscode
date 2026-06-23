@@ -1,0 +1,33 @@
+= Preview
+:description: Live preview of AsciiDoc documents, with theming and custom styles.
+
+The extension renders a live preview of your document using Asciidoctor.js.
+
+== Open the preview
+
+The same commands as the Markdown extension are available:
+
+* *Toggle Preview* -- kbd:[Ctrl+Shift+V] (Mac: kbd:[Cmd+Shift+V])
+* *Open Preview to the Side* -- kbd:[Ctrl+K] kbd:[V] (Mac: kbd:[Cmd+K] kbd:[V])
+
+The preview updates automatically as you type.
+You can also force a refresh with the *AsciiDoc: Refresh Preview* command.
+
+== AsciiDoc attributes
+
+Set AsciiDoc attributes used to render the preview through the `asciidoc.preview.asciidoctorAttributes` setting.
+
+== Styling
+
+By default, the preview uses the VS Code editor theme (`workbench.colorTheme`).
+
+* To use the default Asciidoctor style instead, set `asciidoc.preview.useEditorStyle` to `false`.
+* To apply your own stylesheet, set `asciidoc.preview.style`.
+* To define custom templates, set `asciidoc.preview.templates`.
+
+See xref:settings.adoc#preview[the preview settings] for the full list of options.
+
+== Sync scrolling
+
+The editor and the preview stay in sync as you scroll, and the current selection is highlighted in the preview.
+This behaviour is configurable -- see xref:settings.adoc#preview[the preview settings].
