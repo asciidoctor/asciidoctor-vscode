@@ -1,26 +1,42 @@
-= Heading level 1
+= My First AsciiDoc Document
 :showtitle:
 
-This is a short presentation on AsciiDoc's core capabilities.
-Preview as you type, including formatting like *this*, or _this_.
+This is a short introduction to AsciiDoc's core capabilities.
+The preview updates as you type, including inline formatting like *bold*, _italic_, and `monospaced` text.
 
-== You can also add your custom CSS style
-It will automatically refresh, just as you type
+== Headings
 
-== Heading level 2
-Different heading levels are easily found with the # symbol .
-You can also do _italic_ or *bold* like in the more common mark down.
+Section titles start with one or more `=` signs.
+Each extra `=` goes one level deeper, so this section is a level-2 heading.
 
-AsciiDoc supports tables and much more.
-[width="15%"]
-|=======
-|1 |2 |A
-|3 |4 |B
-|5 |6 |C
-|=======
+=== A subsection
 
-.Bulleted List
+And this is a level-3 heading.
+
+== Lists
+
+.A bulleted list
 * item 1
 * More items
-    - One more
-    - And again
+** One more
+** And again
+
+== Tables
+
+AsciiDoc supports tables and much more:
+
+[width="40%", options="header"]
+|=======
+| Column A | Column B | Column C
+| 1        | 2        | A
+| 3        | 4        | B
+| 5        | 6        | C
+|=======
+
+== Custom styling
+
+You can point the preview at your own CSS stylesheet with the
+`asciidoc.preview.style` setting. This folder already does so in
+`.vscode/settings.json`, pointing at `css/custom-preview.css` — open the
+preview to see the accent color, styled headings, and tinted code blocks.
+The preview refreshes automatically, just as you type.

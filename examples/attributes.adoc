@@ -1,1 +1,24 @@
-= {application-name}
+= Working with Attributes
+:author-name: Jane Editor
+:product: Asciidoctor
+:version: 4.0
+:url-docs: https://docs.asciidoctor.org
+
+Attributes are named values you define once and reuse throughout a document.
+
+This guide was written by {author-name} and targets {product} {version}.
+
+== Built-in attributes
+
+Asciidoctor sets many attributes for you, such as the current date
+({docdate}) and time ({doctime}).
+
+== Custom attributes
+
+Define your own with `:name: value` in the header, then reference them
+with curly braces. For example, the documentation lives at {url-docs}.
+
+== Attributes from the extension
+
+Attributes configured through the `asciidoc.preview.attributes` setting are also
+resolved in the preview. This one comes from your settings: {application-name}.
