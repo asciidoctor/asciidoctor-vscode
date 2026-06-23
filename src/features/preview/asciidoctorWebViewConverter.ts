@@ -224,7 +224,7 @@ export class AsciidoctorWebViewConverter {
       </head>
       <body${node.getId() ? ` id="${node.getId()}"` : ''} class="${this.getBodyCssClasses(node)}">
         ${headerDocinfo}
-        ${this.getDocumentHeader(node)}
+        ${await this.getDocumentHeader(node)}
         <div id="content"${this.antoraDocumentContext ? ' class="doc"' : ''}>
           ${content}
         </div>
@@ -455,7 +455,7 @@ ${footerInfos.join('\n')}
 </div>`
   }
 
-  private getDocumentHeader(node) {
+  private async getDocumentHeader(node) {
     if (node.getNoheader()) {
       return ''
     }
@@ -465,14 +465,14 @@ ${footerInfos.join('\n')}
     const doctype = node.getDoctype()
     const headerContent =
       doctype === 'manpage'
-        ? this.generateManPageHeader(node)
-        : this.generateArticleHeader(node)
+        ? await this.generateManPageHeader(node)
+        : await this.generateArticleHeader(node)
     return `<div id="header"${maxWidthAttr}>
 ${headerContent}
 </div>`
   }
 
-  private generateArticleHeader(node) {
+  private async generateArticleHeader(node) {
     const content = []
     if (node.hasHeader()) {
       if (!node.getNotitle()) {
@@ -481,7 +481,7 @@ ${headerContent}
           `<h1>${doctitle.getMain()}${doctitle.hasSubtitle() ? ` <small class="subtitle">${doctitle.getSubtitle()}</small>` : ''}</h1>`,
         )
       }
-      const details = this.generateHeaderDetails(node)
+      const details = await this.generateHeaderDetails(node)
       if (details) {
         content.push(details)
       }
@@ -491,27 +491,33 @@ ${headerContent}
       node.hasAttribute('toc') &&
       node.isAttribute('toc-placement', 'auto')
     ) {
+      const outline = await node.getConverter().convert(node, 'outline')
       content.push(`<div id="toc" class="${node.getAttribute('toc-class', 'toc')}">
   <div id="toctitle">${node.getAttribute('toc-title')}</div>
-  ${node.getConverter().convert(node, 'outline')}
+  ${outline}
 </div>`)
     }
     return content.join('\n')
   }
 
-  private generateHeaderDetails(node) {
+  private async generateHeaderDetails(node) {
     const details = []
-    node.getAuthors().forEach((author, idx) => {
+    const authors = node.getAuthors()
+    for (let idx = 0; idx < authors.length; idx++) {
+      const author = authors[idx]
       details.push(
         `<span id="author${idx > 0 ? idx + 1 : ''}" class="author">${(node as any).subReplacements(author.getName())}</span><br/>`,
       )
       const authorEmail = author.getEmail()
       if (authorEmail) {
+        // `subMacros` is declared to return a string but actually resolves a
+        // Promise in Asciidoctor.js 4.0, so it must be awaited.
+        const email = await (node as any).subMacros(authorEmail)
         details.push(
-          `<span id="email${idx > 0 ? idx + 1 : ''}" class="email">${(node as any).subMacros(authorEmail)}</span><br/>`,
+          `<span id="email${idx > 0 ? idx + 1 : ''}" class="email">${email}</span><br/>`,
         )
       }
-    })
+    }
     if (node.hasAttribute('revnumber')) {
       const versionLabel = (
         node.getAttribute('version-label') || ''
@@ -536,16 +542,19 @@ ${details.join('\n')}
     return ''
   }
 
-  private generateManPageHeader(node) {
-    const tocContent =
+  private async generateManPageHeader(node) {
+    let tocContent = ''
+    if (
       node.hasSections() &&
       node.hasAttribute('toc') &&
       node.hasAttribute('toc-placement', 'auto')
-        ? `<div id="toc" class="${node.getAttribute('toc-class', 'toc')}">
+    ) {
+      const outline = await node.getConverter().convert(node, 'outline')
+      tocContent = `<div id="toc" class="${node.getAttribute('toc-class', 'toc')}">
 <div id="toctitle">${node.getAttribute('toc-title')}</div>
-${node.getConverter().convert(node, 'outline')}
+${outline}
 </div>`
-        : ''
+    }
     return `<h1>${node.getDoctitle()} Manual Page</h1>
 ${tocContent}
 ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
