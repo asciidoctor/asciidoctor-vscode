@@ -1,0 +1,24 @@
+= Get help
+:description: Report problems and ask for help with the AsciiDoc extension.
+
+If you run into a problem you cannot solve, open an issue on the {url-issues}[issue tracker].
+
+Before opening an issue, search the {url-issues}?q=[existing issues] -- your problem may already have been reported and solved.
+
+When you open an issue, include the following information:
+
+. A description of the issue.
+. Your VS Code version, OS (_Help -> About_), and extension version.
+. Steps to reproduce the issue.
++
+[IMPORTANT]
+====
+We cannot solve the issue if you do not explain how you encountered it.
+====
+. If the problem occurs only with a specific file, attach it, along with any screenshot that helps illustrate the issue.
+
+[TIP]
+====
+If a problem appeared right after an update, you can roll back to a previous version.
+See xref:install.adoc#update[Update].
+====

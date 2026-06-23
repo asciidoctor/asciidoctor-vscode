@@ -1,2 +1,21 @@
 = Edit AsciiDoc files
+:description: Authoring helpers available while editing AsciiDoc in VS Code.
 
+The extension enhances the editor with AsciiDoc-aware features.
+
+Syntax highlighting::
+AsciiDoc syntax is highlighted as you type, making documents easier to read and structure.
+
+Document outline and symbols::
+The structure of your document (sections, blocks) is exposed through the VS Code outline and the _Go to Symbol_ command (kbd:[Ctrl+Shift+O], Mac: kbd:[Cmd+Shift+O]).
+
+Snippets::
+Insert common AsciiDoc constructs in a few keystrokes. See xref:snippets.adoc[].
+
+Paste an image::
+Paste an image straight from the clipboard into your document. See xref:paste-image.adoc[].
+
+[TIP]
+====
+You can also preview your changes live as you edit. See xref:preview.adoc[].
+====

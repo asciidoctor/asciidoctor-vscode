@@ -1,0 +1,13 @@
+= Build from source
+:description: Build and install the AsciiDoc extension from its source code.
+
+To build and install the extension from source:
+
+[source,shell,subs=attributes+]
+----
+git clone {url-repo}
+cd asciidoctor-vscode
+npm install
+npm run package
+code --install-extension *.vsix
+----

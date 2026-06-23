@@ -1,0 +1,137 @@
+= Settings
+:description: Reference of every setting contributed by the AsciiDoc extension.
+
+This extension contributes the settings below.
+You can edit them from the VS Code Settings UI or directly in `settings.json`.
+
+[#preview]
+== Preview
+
+[cols="2,3,2",options="header"]
+|===
+|Name |Description |Default
+
+|`asciidoc.preview.asciidoctorAttributes`
+|Asciidoctor attributes used in the preview (object of `{string: string}`).
+|`{}`
+
+|`asciidoc.preview.refreshInterval`
+|Interval in milliseconds between two consecutive preview updates. The value `0` updates the preview only on save.
+|`2000`
+
+|`asciidoc.preview.style`
+|A URL or local path to CSS stylesheets used by the preview.
+|
+
+|`asciidoc.preview.useEditorStyle`
+|Use the VS Code editor style instead of the default Asciidoctor style.
+|
+
+|`asciidoc.preview.fontFamily`
+|Font family used in the preview.
+|`-apple-system, BlinkMacSystemFont, 'Segoe WPC', 'Segoe UI', 'HelveticaNeue-Light', 'Ubuntu', 'Droid Sans', sans-serif`
+
+|`asciidoc.preview.fontSize`
+|Font size, in pixels, used in the preview.
+|`14`
+
+|`asciidoc.preview.lineHeight`
+|Line height used in the preview.
+|`1.6`
+
+|`asciidoc.preview.scrollPreviewWithEditor`
+|When the preview is scrolled, update the editor view.
+|`true`
+
+|`asciidoc.preview.scrollEditorWithPreview`
+|When the editor is scrolled, update the preview view.
+|`true`
+
+|`asciidoc.preview.markEditorSelection`
+|Mark the current editor selection in the preview.
+|`true`
+
+|`asciidoc.preview.doubleClickToSwitchToEditor`
+|Double-click in the preview to switch to the editor.
+|`true`
+
+|`asciidoc.preview.preservePreviewWhenHidden`
+|Keep the preview in memory while it is hidden so it reloads faster, at the cost of increased memory use.
+|`false`
+
+|`asciidoc.preview.openLinksToAsciidocFiles`
+|How links to other AsciiDoc files open in the preview. Possible values: `inPreview`, `inEditor`.
+|`inPreview`
+|===
+
+[#pdf]
+== PDF
+
+[cols="2,3,2",options="header"]
+|===
+|Name |Description |Default
+
+|`asciidoc.pdf.engine`
+|PDF engine used to export as PDF. Possible values: `asciidoctor-pdf`, `wkhtmltopdf`.
+|`asciidoctor-pdf`
+
+|`asciidoc.pdf.asciidoctorPdfCommandPath`
+|External `asciidoctor-pdf` command to run. Accepts a full path to the binary, for instance `/path/to/asciidoctor-pdf`.
+|`bundle exec asciidoctor-pdf`
+
+|`asciidoc.pdf.asciidoctorPdfCommandArgs`
+|List of arguments, for instance `-a`, `pdf-themesdir=resources/themes`, `-a`, `pdf-theme=basic`. The key and value must be added as separate items. By default, the extension passes `--quiet` and `--base-dir` with the full directory path to the document.
+|`[]`
+
+|`asciidoc.pdf.wkhtmltopdfCommandPath`
+|External `wkhtmltopdf` command to run. Accepts a full path to the binary. When empty, uses `wkhtmltopdf` on Linux/macOS or `wkhtmltopdf.exe` on Windows.
+|`""`
+
+|`asciidoc.pdf.wkhtmltopdfCommandArgs`
+|List of arguments, for instance `--orientation`, `Landscape`. The key and value must be added as separate items. By default, the extension passes `--enable-local-file-access`, `--encoding`, `utf-8`, `--javascript-delay`, `1000`, `--footer-center` (if enabled), and `cover` (if a cover page is present).
+|`[]`
+|===
+
+[#extensions]
+== Extensions
+
+[cols="2,3,1",options="header"]
+|===
+|Name |Description |Default
+
+|`asciidoc.extensions.enableKroki`
+|Enable the Kroki extension to generate diagrams.
+|`false`
+
+|`asciidoc.extensions.registerWorkspaceExtensions`
+|Enable registration of Asciidoctor.js extensions from the workspace directory `.asciidoctor/lib`.
+|`false`
+|===
+
+[#general]
+== General
+
+[cols="2,3,1",options="header"]
+|===
+|Name |Description |Default
+
+|`asciidoc.useWorkspaceRootAsBaseDirectory`
+|When in a workspace, use the workspace root path as the base directory.
+|`false`
+|===
+
+[#debug]
+== Debug
+
+[cols="2,3,1",options="header"]
+|===
+|Name |Description |Default
+
+|`asciidoc.debug.trace`
+|Enable debug logging for the extension. Possible values: `off`, `verbose`.
+|`off`
+
+|`asciidoc.debug.enableErrorDiagnostics`
+|Provide error diagnostics.
+|`true`
+|===

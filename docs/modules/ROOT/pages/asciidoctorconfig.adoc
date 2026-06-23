@@ -1,0 +1,8 @@
+= Asciidoctor configuration file
+:description: Provide a shared set of attributes to the preview with an .asciidoctorconfig file.
+
+To provide a common set of attributes when rendering the preview, the extension reads an `.asciidoctorconfig` or `.asciidoctorconfig.adoc` configuration file.
+
+This is useful to optimize the preview when a project contains a document split across multiple include files: define the attributes those includes rely on once, and the preview resolves them consistently.
+
+This feature is inspired by the implementation in the https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/features/advanced/asciidoctorconfig-file.html[IntelliJ AsciiDoc plugin], also reused in the https://github.com/de-jcup/eclipse-asciidoctor-editor/wiki/Asciidoctor-configfiles[Eclipse AsciiDoc plugin].

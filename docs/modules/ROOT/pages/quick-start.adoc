@@ -1,3 +1,17 @@
 = Quick Start
+:description: Open your first AsciiDoc file and preview it in seconds.
 
-The extension activates automatically when opening an AsciiDoc file (.adoc, .ad, .asc, .asciidoc).
+The extension activates automatically when you open an AsciiDoc file (`.adoc`, `.ad`, `.asc`, `.asciidoc`).
+
+== Your first preview
+
+. Open an AsciiDoc file, or create a new one and save it with a `.adoc` extension.
+. Press kbd:[Ctrl+Shift+V] (Mac: kbd:[Cmd+Shift+V]) to toggle the preview, or kbd:[Ctrl+K] kbd:[V] (Mac: kbd:[Cmd+K] kbd:[V]) to open it side by side.
+. Start typing. The preview updates as you write.
+
+== Where to go next
+
+* Tweak how the preview looks and behaves: xref:preview.adoc[].
+* Export your document: xref:export-pdf.adoc[], xref:save-html.adoc[], or xref:save-docbook.adoc[].
+* Speed up authoring with xref:snippets.adoc[] and xref:paste-image.adoc[].
+* Browse every available option in xref:settings.adoc[].

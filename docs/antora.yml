@@ -6,5 +6,10 @@ asciidoc:
     project-name: VS Code Extension
     experimental: ''
     url-marketplace: https://marketplace.visualstudio.com/items?itemName=asciidoctor.asciidoctor-vscode
+    url-repo: https://github.com/asciidoctor/asciidoctor-vscode
+    url-issues: https://github.com/asciidoctor/asciidoctor-vscode/issues
+    url-kroki: https://kroki.io
+    url-asciidoctor-kroki: https://github.com/Mogztter/asciidoctor-kroki
+    url-vscode-web: https://code.visualstudio.com/docs/editor/vscode-web
 nav:
 - modules/ROOT/nav.adoc

@@ -1,0 +1,16 @@
+= Export as PDF
+:description: Export an AsciiDoc document to PDF from VS Code.
+
+The extension provides a command to export the current AsciiDoc file as PDF.
+
+. Open the command palette -- kbd:[Ctrl+Shift+P] or kbd:[F1] (Mac: kbd:[Cmd+Shift+P]).
+. Select *AsciiDoc: Export document as PDF*.
+. Choose the folder and filename for the generated PDF.
+
+== PDF engine
+
+By default, PDF export relies on `asciidoctor-pdf`.
+
+To use `wkhtmltopdf` instead, set `asciidoc.pdf.engine` to `wkhtmltopdf`, and configure `asciidoc.pdf.wkhtmltopdfCommandPath` if needed.
+
+See xref:settings.adoc#pdf[the PDF settings] for all related options.

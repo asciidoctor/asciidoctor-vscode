@@ -1,0 +1,56 @@
+= Asciidoctor.js extensions
+:description: Load and register your own Asciidoctor.js extensions in the preview.
+
+When rendering the preview, the extension can load and register your own Asciidoctor.js extensions.
+
+== Where extensions live
+
+By convention, extensions are located in `.asciidoctor/lib`, at the root of your workspace.
+The extension recursively loads every `.js` file found there as an Asciidoctor.js extension.
+
+For example, the following files are all loaded:
+
+* `.asciidoctor/lib/emoji.js`
+* `.asciidoctor/lib/emoji/index.js`
+* `.asciidoctor/lib/foo/bar/baz.js`
+
+== Enable extension registration
+
+. In the extension settings, check *Enable Asciidoctor.js extensions registration* (`asciidoc.extensions.registerWorkspaceExtensions`).
+. The first time, confirm that you trust the authors of the extensions located in `.asciidoctor/lib`.
+
+image::asciidoctor-vscode-trust-exts.png[Asciidoctor.js extensions trust confirmation message]
+
+[WARNING]
+====
+This feature executes JavaScript code.
+Do not enable it unless you fully trust the authors of the Asciidoctor.js extensions in your workspace.
+====
+
+[TIP]
+====
+You can update the trust mode at any time with the *Manage Asciidoctor.js Extensions Trust Mode* command.
+====
+
+== Example: asciidoctor-emoji
+
+You can write your own extension, or reuse an existing one.
+Here is how to use the https://github.com/mogztter/asciidoctor-emoji[asciidoctor-emoji] extension:
+
+. Install the npm package in the workspace directory:
++
+[source,shell]
+----
+npm i asciidoctor-emoji
+----
+
+. Create a JavaScript file in `.asciidoctor/lib` with the following content:
++
+[source,javascript]
+----
+module.exports = require('asciidoctor-emoji')
+----
+
+. Enjoy :tada:
+
+image::asciidoctor-vscode-emoji-ext.png[Asciidoctor.js Emoji extension enabled]
