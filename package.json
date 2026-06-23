@@ -663,7 +663,7 @@
     "@asciidoctor/core": "^4.0.0-alpha.1",
     "@orcid/bibtex-parse-js": "0.0.25",
     "html-entities": "^2.4.0",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^5.0.0",
     "os-browserify": "^0.3.0",
     "querystring": "^0.2.1",
     "tty-browserify": "^0.0.1",
