@@ -1,14 +1,20 @@
 /*
  * A small custom stylesheet for the AsciiDoc preview.
  *
- * It is applied on top of the default theme via `asciidoc.preview.style`
- * (see examples/.vscode/settings.json). Open any document in this folder
- * and toggle the preview to see these overrides take effect.
+ * It is applied on top of the active VS Code theme via `asciidoc.preview.style`
+ * (see examples/.vscode/settings.json). Open any document in this folder and
+ * toggle the preview to see these overrides take effect.
+ *
+ * The soft backgrounds are derived from the accent with transparency (via
+ * `color-mix`) instead of a fixed light color, so the sheet blends with both
+ * light and dark themes.
  */
 
 :root {
-  --accent: #6b4fbb;
-  --accent-soft: #f0ecfa;
+  /* A balanced purple that stays legible on both light and dark themes. */
+  --accent: #8b6ae8;
+  --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
+  --accent-line: color-mix(in srgb, var(--accent) 55%, transparent);
 }
 
 /* Headings get the accent color and a subtle underline on the title. */
@@ -17,7 +23,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  border-bottom: 3px solid var(--accent);
+  border-bottom: 2px solid var(--accent-line);
   padding-bottom: 0.2em;
 }
 
@@ -31,13 +37,13 @@ a:hover {
   text-decoration: underline;
 }
 
-/* Inline code and listings get a tinted background. */
+/* Inline code and listings get a translucent tinted background. */
 code, pre {
   background: var(--accent-soft);
   border-radius: 4px;
 }
 
-/* Block quotes get an accent bar. */
+/* Block quotes get an accent bar over a translucent tint. */
 .quoteblock blockquote,
 blockquote {
   border-left: 4px solid var(--accent);
@@ -45,7 +51,7 @@ blockquote {
   padding: 0.5em 1em;
 }
 
-/* Tables: accent header row. */
+/* Tables: accent header row (solid accent reads on any theme). */
 table thead th {
   background: var(--accent);
   color: #fff;
