@@ -1,5 +1,5 @@
 name: vscode-extension
-title: Visual Studio Code Extension
+title: VS Code Extension
 version: ~
 asciidoc:
   attributes:
