@@ -4,6 +4,7 @@
 
 ### Bug fixes
 
+* Fix Mermaid diagrams failing to render with "reader.$read is not a function" — replace the removed Opal `reader.$read()` call with the `reader.getString()` JS API, compatible with Asciidoctor.js 4.0
 * Fix web extension: highlight.js (`hljs`) not defined due to missing `cspSource` in the preview `script-src` CSP directive
 * Fix web extension: l10n keys shown as-is instead of translated strings — embed `bundle.l10n.json` at build time as a fallback when VS Code web does not load the bundle
 * Fix web extension: `global is not defined` — replace `global` with `globalThis` for cross-environment compatibility
