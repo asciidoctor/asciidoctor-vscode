@@ -1,8 +1,21 @@
-= Image
+= Embedding Images and Video
 :imagesdir: images
 
-image:web-console.png[Couchbase Web Console login]
+== Block image
 
-+++
+A block image sits on its own line and can have a caption, size, and alignment:
+
+.A document
+image::document.svg[A stylized document,360,align=center]
+
+== Inline image
+
+An inline image flows with the text, like this image:document.svg[doc,24] little icon.
+
+== Embedded video
+
+You can drop in raw HTML with a passthrough block, for example to embed a video:
+
+++++
 <iframe width="560" height="315" src="https://www.youtube.com/embed/mor2p0UqZ14" frameborder="0" allowfullscreen></iframe>
-+++
+++++

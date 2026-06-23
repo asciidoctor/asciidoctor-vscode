@@ -1,1 +1,3 @@
-{}
+{
+  "asciidoc.preview.style": "css/custom-preview.css"
+}

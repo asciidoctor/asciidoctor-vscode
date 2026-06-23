@@ -1,0 +1,386 @@
+= AsciiDoc Feature Showcase
+Doc Writer <doc.writer@example.com>; Jane Editor <jane@example.com>
+v2.1.0, 2026-06-24: A comprehensive sample to exercise the preview renderer
+:description: An exhaustive AsciiDoc document used to visually test every feature of the VS Code preview.
+:keywords: asciidoc, showcase, preview, test
+:toc: left
+:toclevels: 3
+:sectnums:
+:sectanchors:
+:icons: font
+:experimental:
+:stem:
+:source-highlighter: highlight.js
+:imagesdir: images
+
+This document renders (rather than describes) as many AsciiDoc features as possible.
+Open it in the preview to verify how each element looks: typography, lists, tables,
+admonitions, code highlighting, math, diagrams, and more.
+
+TIP: Use the table of contents on the left to jump between sections.
+
+== Inline text formatting
+
+Plain text can be made *bold*, _italic_, *_bold italic_*, `monospaced`,
+`*bold monospaced*`, and `_italic monospaced_`.
+
+You can also write ^superscript^ and ~subscript~, mark text with #highlight#,
+and apply a role like [.underline]#underlined# or [.line-through]#struck through#.
+
+Smart quotes turn "`double quoted`" and '`single quoted`' text into curly quotes,
+and an apostrophe becomes typographic, as in Sarah's book.
+
+Constrained vs unconstrained: the letters b**ol**d and i__tal__ic inside a word
+require the doubled markup.
+
+Special characters are escaped automatically: 1 < 2, 3 > 2, AT&T, and a literal
+asterisk \*not bold*.
+
+[.lead]
+This paragraph uses the `lead` role, so it should appear larger than the body text.
+
+== Sections and paragraphs
+
+=== A second-level section
+
+==== A third-level section
+
+===== A fourth-level section
+
+====== A fifth-level section
+
+Paragraphs are separated by a blank line.
+A single newline inside a paragraph is rendered as a space, so these two lines
+become one flowing sentence.
+
+To force a line break, +
+add a trailing plus sign. +
+Like this.
+
+[%hardbreaks]
+Or set the hardbreaks option on the block.
+Every newline is then preserved.
+No plus signs required.
+
+== Admonitions
+
+NOTE: This is an inline note admonition.
+
+TIP: Here is a helpful tip.
+
+IMPORTANT: Do not ignore this important message.
+
+WARNING: Proceed with caution.
+
+CAUTION: This action cannot be undone.
+
+[NOTE]
+====
+This is a *block* admonition.
+It can contain multiple paragraphs, lists, and other blocks:
+
+* First point
+* Second point
+
+[source,bash]
+----
+echo "even code blocks"
+----
+====
+
+== Lists
+
+=== Unordered list
+
+* Level 1
+** Level 2
+*** Level 3
+**** Level 4
+***** Level 5
+* Back to level 1
+
+=== Ordered list
+
+. Step one
+. Step two
+.. Sub-step a
+.. Sub-step b
+... Deeper still
+. Step three
+
+[%reversed]
+.A reversed, numbered list
+. Third
+. Second
+. First
+
+=== Mixed and styled lists
+
+[lowerroman, start=5]
+. Roman five
+. Roman six
+
+=== Description list
+
+CPU:: The brain of the computer.
+RAM:: Temporary working memory.
+Hard drive::
+  Persistent storage for your files and programs.
+  It keeps data even when the power is off.
+
+=== Question and answer
+
+[qanda]
+What is AsciiDoc?::
+  A lightweight markup language for writing documentation.
+Why use it?::
+  It is readable as plain text and converts to many formats.
+
+=== Checklist
+
+* [x] Write the example
+* [x] Render it in the preview
+* [ ] Ship it
+* [ ] Celebrate
+
+== Links, anchors, and footnotes
+
+A plain URL such as https://asciidoctor.org is auto-detected.
+A labelled link looks like https://asciidoctor.org[the Asciidoctor site],
+and one that opens in a new tab uses
+https://docs.asciidoctor.org[the docs^].
+
+An email link: mailto:doc.writer@example.com[email the author].
+
+This sentence has a footnote.footnote:[Footnotes appear at the bottom of the document.]
+And a named footnote can be reused.footnote:reuse[This note is referenced twice.]
+Here it is again.footnote:reuse[]
+
+[#anchor-target]
+This paragraph has an inline anchor, so you can <<anchor-target,jump back to it>>.
+
+== Images
+
+Block image with a caption:
+
+.A stylized document
+image::document.svg[Document,480,align=center]
+
+An inline image sits in the text flow image:document.svg[doc,24] like an icon.
+
+== Source code and callouts
+
+[source,javascript]
+----
+function greet(name) { // <1>
+  const message = `Hello, ${name}!`; // <2>
+  console.log(message);
+  return message;
+}
+
+greet('AsciiDoc'); // <3>
+----
+<1> Declare a function taking one argument.
+<2> Build the greeting with a template literal.
+<3> Call the function.
+
+[source,python]
+----
+import math
+
+
+def circle_area(radius: float) -> float:
+    """Return the area of a circle."""
+    return math.pi * radius ** 2
+
+
+print(circle_area(2.0))
+----
+
+A listing block without highlighting:
+
+----
+$ npm install
+added 482 packages in 6s
+----
+
+A literal block keeps   whitespace   exactly   as   typed:
+
+....
+  line one
+    line two (indented)
+  line three
+....
+
+== Quotes, verses, and sidebars
+
+[quote,Albert Einstein]
+Everything should be made as simple as possible, but not simpler.
+
+[quote,Abraham Lincoln,Gettysburg Address]
+____
+Four score and seven years ago our fathers brought forth on this continent,
+a new nation, conceived in Liberty, and dedicated to the proposition that
+all men are created equal.
+____
+
+[verse,Carl Sandburg,Fog]
+____
+The fog comes
+on little cat feet.
+____
+
+.A sidebar
+****
+Sidebars hold tangential information that supports the main text without
+interrupting its flow.
+****
+
+== Example and collapsible blocks
+
+.A named example block
+====
+Example blocks group an illustration with an optional caption.
+====
+
+.Click to expand
+[%collapsible]
+====
+This content is hidden until the reader expands the block.
+Great for spoilers, solutions, or verbose output.
+====
+
+== Tables
+
+.A basic table with a header
+[cols="1,1,2", options="header"]
+|===
+| Name | Type | Description
+
+| `id`
+| integer
+| Unique identifier for the record.
+
+| `name`
+| string
+| Human-readable label.
+
+| `active`
+| boolean
+| Whether the record is enabled.
+|===
+
+.Formatting, alignment, and spans
+[cols="^1,>1,2", options="header,footer"]
+|===
+| Centered | Right | Notes
+
+| A
+| 100
+| Plain cell
+
+2+| A cell spanning two columns
+| Spanned
+
+h| Header-style cell
+s| Strong cell
+e| _Emphasized_ cell
+
+| Total
+| 100
+| Footer row
+|===
+
+.A CSV-formatted table
+[%header,format=csv]
+|===
+Framework,Language,Stars
+Asciidoctor,Ruby,4000
+AsciiDoc.py,Python,1200
+Antora,JavaScript,900
+|===
+
+== Math (STEM)
+
+Inline math with latexmath: stem:[\sqrt{a^2 + b^2}].
+
+A block equation:
+
+[stem]
+++++
+\int_{-\infty}^{\infty} e^{-x^2} \, dx = \sqrt{\pi}
+++++
+
+An asciimath expression: asciimath:[sum_(i=1)^n i^3 = ((n(n+1))/2)^2].
+
+== UI macros
+
+Press kbd:[Ctrl+S] to save, or kbd:[Cmd+Shift+P] to open the command palette.
+
+Click the btn:[Preview] button.
+
+Select menu:File[Open > Recent Files] from the menu bar.
+
+== Icons
+
+icon:heart[role=red] Built with AsciiDoc.
+
+icon:check[] Done +
+icon:times[] Not done +
+icon:spinner[] In progress
+
+== Diagrams
+
+A Mermaid flowchart rendered by the preview:
+
+[mermaid]
+....
+graph TD
+  A[Write AsciiDoc] --> B{Preview looks right?}
+  B -- Yes --> C[Ship it]
+  B -- No --> D[Tweak] --> A
+....
+
+A Mermaid sequence diagram:
+
+[mermaid]
+....
+sequenceDiagram
+  Alice->>Bob: Hello Bob, how are you?
+  Bob-->>Alice: I am good thanks!
+....
+
+== Attributes and substitutions
+
+This document version is {revnumber}, last updated {revdate}.
+The author is {author} ({email}).
+
+:product: Asciidoctor
+:version: 4.0
+
+You can reference custom attributes inline: {product} {version}.
+
+Counters increment automatically: figure {counter:fig}, figure {counter:fig}, figure {counter:fig}.
+
+== Thematic break and page break
+
+The next line is a thematic break (horizontal rule):
+
+'''
+
+(There is also a page break, which only affects paginated output like PDF.)
+
+== Passthrough
+
+Raw HTML can be injected with a passthrough block:
+
+++++
+<div style="padding:0.5em;border:2px dashed #888;border-radius:6px">
+  This box is raw HTML rendered directly in the preview.
+</div>
+++++
+
+== The end
+
+That covers the most commonly used AsciiDoc features.
+If everything above renders correctly, the preview is in good shape. icon:thumbs-up[]

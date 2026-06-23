@@ -1,0 +1,52 @@
+/*
+ * A small custom stylesheet for the AsciiDoc preview.
+ *
+ * It is applied on top of the default theme via `asciidoc.preview.style`
+ * (see examples/.vscode/settings.json). Open any document in this folder
+ * and toggle the preview to see these overrides take effect.
+ */
+
+:root {
+  --accent: #6b4fbb;
+  --accent-soft: #f0ecfa;
+}
+
+/* Headings get the accent color and a subtle underline on the title. */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--accent);
+}
+
+h1 {
+  border-bottom: 3px solid var(--accent);
+  padding-bottom: 0.2em;
+}
+
+/* Links pick up the accent and underline only on hover. */
+a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Inline code and listings get a tinted background. */
+code, pre {
+  background: var(--accent-soft);
+  border-radius: 4px;
+}
+
+/* Block quotes get an accent bar. */
+.quoteblock blockquote,
+blockquote {
+  border-left: 4px solid var(--accent);
+  background: var(--accent-soft);
+  padding: 0.5em 1em;
+}
+
+/* Tables: accent header row. */
+table thead th {
+  background: var(--accent);
+  color: #fff;
+}

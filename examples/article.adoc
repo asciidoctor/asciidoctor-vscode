@@ -1,0 +1,99 @@
+= Getting Started with AsciiDoc in VS Code
+Doc Writer <doc.writer@example.com>
+v1.0, 2026-06-24
+:description: A short, realistic tutorial showing how AsciiDoc reads in a real document.
+:toc: macro
+:icons: font
+:source-highlighter: highlight.js
+:imagesdir: images
+
+AsciiDoc is a plain-text writing format that produces rich, structured documents.
+This short guide walks through a realistic example so you can see how the syntax
+feels in practice — not as a reference card, but as something you would actually write.
+
+toc::[]
+
+[#why-asciidoc]
+== Why AsciiDoc?
+
+If you have used Markdown, AsciiDoc will feel familiar, but it goes further where
+Markdown stops: it has first-class support for tables, admonitions, cross-references,
+includes, and attributes — without resorting to raw HTML.
+
+[NOTE]
+====
+Everything in this document is standard AsciiDoc.
+Open the *preview* (kbd:[Ctrl+Shift+V]) to see it rendered side by side.
+====
+
+== Installing the toolchain
+
+Install Asciidoctor with your package manager of choice:
+
+[source,bash]
+----
+# macOS
+brew install asciidoctor
+
+# Ruby
+gem install asciidoctor
+
+# Node.js
+npm install @asciidoctor/core
+----
+
+Then convert a document to HTML:
+
+[source,bash]
+----
+asciidoctor article.adoc      # produces article.html
+----
+
+== A worked example
+
+Suppose you are documenting a small HTTP API. You can describe an endpoint with a
+table, show a request as a code block, and call out the important parts.
+
+.`GET /api/users/{id}` — query parameters
+[cols="1,1,3", options="header"]
+|===
+| Parameter | Type | Description
+
+| `id`
+| integer
+| The user's unique identifier. *Required.*
+
+| `expand`
+| string
+| Comma-separated list of related resources to inline.
+|===
+
+Here is a sample request:
+
+[source,http]
+----
+GET /api/users/42?expand=orders HTTP/1.1
+Host: api.example.com
+Authorization: Bearer <token>     # <1>
+Accept: application/json          # <2>
+----
+<1> Never commit this token to version control.
+<2> Always send an `Accept` header so the server returns JSON.
+
+WARNING: Treat access tokens like passwords.
+
+== Linking things together
+
+AsciiDoc shines when documents grow. You can:
+
+. Split content into files and pull them together with `include::[]`.
+. Reference other sections with cross-references like <<why-asciidoc,the intro>>.
+. Reuse values with attributes — for example, this guide targets API version {api-version}.
+
+:api-version: 2.3
+
+== Next steps
+
+* Read the https://docs.asciidoctor.org[official documentation^].
+* Explore `showcase.adoc` in this folder to see every feature at once.
+* Start writing — the preview updates as you type. icon:rocket[]
