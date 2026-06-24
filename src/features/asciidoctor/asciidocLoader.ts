@@ -35,15 +35,36 @@ export class AsciidocLoader {
   public async load(
     textDocument: SkinnyTextDocument,
   ): Promise<AsciidoctorDocument> {
-    const { memoryLogger, registry } = await this.prepare(textDocument)
+    // A plain parse used by language features (document symbols, folding,
+    // completion, links, …). It must NOT publish diagnostics: diagnostics are
+    // owned by `AsciidocDiagnosticManager` and refreshed only when a document is
+    // opened or its text changes, so that merely invoking a provider — or
+    // opening/closing the preview — never recomputes or clears them.
+    const { registry } = await this.prepare(textDocument, false)
     const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).baseDir
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
-    const doc = await load(
+    return load(
+      textDocument.getText(),
+      this.getOptions(attributes, registry, baseDir),
+    )
+  }
+
+  /**
+   * Parse the document and publish its Asciidoctor log messages as diagnostics.
+   * This is the single source of diagnostics; it is driven by
+   * `AsciidocDiagnosticManager` on document open/change only.
+   */
+  public async reportDiagnostics(
+    textDocument: SkinnyTextDocument,
+  ): Promise<void> {
+    const { memoryLogger, registry } = await this.prepare(textDocument, true)
+    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).baseDir
+    const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
+    await load(
       textDocument.getText(),
       this.getOptions(attributes, registry, baseDir),
     )
     this.asciidoctorDiagnosticProvider.reportErrors(memoryLogger, textDocument)
-    return doc
   }
 
   protected getOptions(attributes: {}, registry: Registry, baseDir: string) {

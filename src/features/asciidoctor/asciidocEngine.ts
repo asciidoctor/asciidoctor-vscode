@@ -45,9 +45,11 @@ export class AsciidocEngine {
     backend: AsciidoctorBuiltInBackends,
     asciidoctorAttributes = {},
   ): Promise<{ output: string; document: AsciidoctorDocument }> {
-    this.asciidoctorDiagnosticProvider.delete(textDocument.uri)
     const asciidoctorProcessor = AsciidoctorProcessor.getInstance()
-    const memoryLogger = asciidoctorProcessor.activateMemoryLogger()
+    // Capture Asciidoctor log messages so they do not leak to the console.
+    // Diagnostics are owned by AsciidocDiagnosticManager (driven by document
+    // open/change), so neither exporting nor previewing reports them here.
+    asciidoctorProcessor.activateMemoryLogger()
 
     const registry = Extensions.create()
     await this.asciidoctorExtensionsProvider.activate(registry)
@@ -74,7 +76,6 @@ export class AsciidocEngine {
     }
     const document = await load(textDocument.getText(), options)
     const output = await document.convert(options)
-    this.asciidoctorDiagnosticProvider.reportErrors(memoryLogger, textDocument)
     return {
       output,
       document,
@@ -108,9 +109,12 @@ export class AsciidocEngine {
     editor: WebviewResourceProvider,
     line?: number,
   ): Promise<{ html: string; document: AsciidoctorDocument }> {
-    this.asciidoctorDiagnosticProvider.delete(textDocument.uri)
     const asciidoctorProcessor = AsciidoctorProcessor.getInstance()
-    const memoryLogger = asciidoctorProcessor.activateMemoryLogger()
+    // Capture Asciidoctor log messages so they do not leak to the console.
+    // The preview never reports diagnostics: that is owned by
+    // AsciidocDiagnosticManager and refreshed on document open/change only, so
+    // opening or closing the preview does not (re)compute or clear them.
+    asciidoctorProcessor.activateMemoryLogger()
 
     // load the Asciidoc header only to get kroki-server-url attribute
     const text = textDocument.getText()
@@ -229,10 +233,6 @@ export class AsciidocEngine {
         block.addRole('data-line-' + block.getLineNumber())
       })
       const html = await document.convert(options)
-      this.asciidoctorDiagnosticProvider.reportErrors(
-        memoryLogger,
-        textDocument,
-      )
       return {
         html,
         document,
