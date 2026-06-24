@@ -26,7 +26,24 @@ export class AsciidoctorAttributesConfig {
       'env-vscode': '',
       env: 'vscode',
       'relfilesuffix@': '.adoc',
+      ...AsciidoctorAttributesConfig.defaultSourceHighlighter(attributes),
       ...attributes,
     }
+  }
+
+  /**
+   * Enable Highlight.js source highlighting out of the box, so code blocks are
+   * highlighted in the preview and in HTML-based exports without any
+   * configuration. This is a soft default (the `@` suffix), so a document's own
+   * `:source-highlighter:` still wins.
+   *
+   * Returns an empty object when the user already configured a source
+   * highlighter, to avoid sending conflicting hard/soft values for the same
+   * attribute (set `source-highlighter` to an empty string to opt out).
+   */
+  public static defaultSourceHighlighter(userAttributes: {}): {} {
+    return 'source-highlighter' in userAttributes
+      ? {}
+      : { 'source-highlighter@': 'highlight.js' }
   }
 }

@@ -60,6 +60,9 @@ export class AsciidocEngine {
       attributes: {
         'env-vscode': '',
         env: 'vscode',
+        ...AsciidoctorAttributesConfig.defaultSourceHighlighter(
+          asciidoctorAttributes,
+        ),
         ...asciidoctorAttributes,
       },
       backend,
