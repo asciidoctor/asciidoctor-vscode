@@ -62,8 +62,6 @@ function getCspForResource(
     return '<meta http-equiv="Content-Security-Policy" content="">'
   }
   const rule = webviewResourceProvider.cspSource
-  const highlightjsInlineScriptHash =
-    'sha256-ZrDBcrmObbqhVV/Mag2fT/y08UJGejdW7UWyEsi4DXw='
   const rules = {
     'default-src': ["'none'"],
     'img-src': ["'self'", rule, 'https:', 'data:', krokiServerUrl],
@@ -73,7 +71,6 @@ function getCspForResource(
       rule,
       'https:',
       `'nonce-${nonce}'`,
-      `'${highlightjsInlineScriptHash}'`,
       'https://*.vscode-cdn.net/',
     ],
     'style-src': ["'self'", rule, 'https:', "'unsafe-inline'", 'data:'],

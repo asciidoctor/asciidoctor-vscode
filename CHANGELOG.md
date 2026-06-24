@@ -4,6 +4,7 @@
 
 ### Bug fixes
 
+* Fix callout numbers disappearing from highlighted code blocks in the preview — register a highlight.js "merge HTML" plugin that preserves the conum markup through client-side highlighting, so syntax colors and callouts coexist ([highlight.js#2889](https://github.com/highlightjs/highlight.js/issues/2889))
 * Fix preview document header and table of contents rendering as `[object Promise]` — await the now-asynchronous Asciidoctor.js 4.0 calls in the header chain (`subMacros` for author emails and the `outline` conversion for the TOC)
 * Fix Mermaid diagrams failing to render with "reader.$read is not a function" — replace the removed Opal `reader.$read()` call with the `reader.getString()` JS API, compatible with Asciidoctor.js 4.0
 * Fix web extension: highlight.js (`hljs`) not defined due to missing `cspSource` in the preview `script-src` CSP directive
