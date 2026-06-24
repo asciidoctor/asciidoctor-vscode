@@ -4,7 +4,6 @@ import * as vscode from 'vscode'
 import { WebviewResourceProvider } from '../core/resources.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
 import { AsciidoctorConfig } from '../features/asciidoctor/asciidoctorConfig.js'
-import { AsciidoctorDiagnostic } from '../features/asciidoctor/asciidoctorDiagnostic.js'
 import { AsciidoctorExtensions } from '../features/asciidoctor/asciidoctorExtensions.js'
 import {
   AsciidocContributionProvider,
@@ -88,7 +87,6 @@ asciidoc:
         new AsciidoctorExtensions(
           AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
         ),
-        new AsciidoctorDiagnostic('test'),
       )
       const result = await asciidocParser.convertFromTextDocument(
         new InMemoryDocument(
