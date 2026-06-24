@@ -8,6 +8,7 @@ import { AntoraSupportManager } from './features/antora/antoraContext.js'
 import { registerAntoraCacheInvalidation } from './features/antora/antoraDocument.js'
 import { AntoraResourceCompletionProvider } from './features/antora/antoraResourceCompletionProvider.js'
 import { AntoraResourceDefinitionProvider } from './features/antora/antoraResourceDefinitionProvider.js'
+import { AsciidocDiagnosticManager } from './features/asciidoctor/asciidocDiagnosticManager.js'
 import { AsciidocEngine } from './features/asciidoctor/asciidocEngine.js'
 import {
   AsciidocIncludeItemsLoader,
@@ -72,6 +73,15 @@ export async function activate(context: vscode.ExtensionContext) {
     asciidocIncludeDiagnostic,
     context,
   )
+  // Diagnostics are computed from a single fully-resolved parse and refreshed
+  // only on document open/change (and cleared on close), decoupled from the
+  // preview and from language-feature providers.
+  const diagnosticManager = new AsciidocDiagnosticManager(
+    asciidocLoader,
+    asciidocLoaderDiagnostic,
+  )
+  context.subscriptions.push(diagnosticManager.register())
+
   const logger = new Logger()
   logger.log('Extension was started')
 
@@ -196,14 +206,6 @@ export async function activate(context: vscode.ExtensionContext) {
       }
       logger.updateConfiguration()
       previewManager.updateConfiguration()
-    }),
-  )
-
-  context.subscriptions.push(
-    vscode.window.onDidChangeActiveTextEditor(() => {
-      asciidocEngineDiagnostic.clearAll()
-      asciidocLoaderDiagnostic.clearAll()
-      asciidocIncludeDiagnostic.clearAll()
     }),
   )
 
