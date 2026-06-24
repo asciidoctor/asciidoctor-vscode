@@ -49,28 +49,26 @@ export async function activate(context: vscode.ExtensionContext) {
   const asciidoctorExtensionsTrustModeSelector =
     new AsciidoctorExtensionsTrustModeSelector()
 
-  const asciidocEngineDiagnostic = new AsciidoctorDiagnostic('asciidoc-engine')
   const asciidocEngine = new AsciidocEngine(
     contributionProvider,
     new AsciidoctorConfig(),
     new AsciidoctorExtensions(asciidoctorExtensionsSecurityPolicy),
-    asciidocEngineDiagnostic,
   )
-  const asciidocLoaderDiagnostic = new AsciidoctorDiagnostic('asciidoc-loader')
+  // Single diagnostics collection, owned by AsciidocDiagnosticManager. The
+  // include-items loader never reports diagnostics, so it shares the same
+  // collection (it is only required by the AsciidocLoader base constructor).
+  const asciidocDiagnostic = new AsciidoctorDiagnostic('asciidoc')
   const asciidocLoader = new AsciidocLoader(
     new AsciidoctorConfig(),
     new AsciidoctorExtensions(asciidoctorExtensionsSecurityPolicy),
-    asciidocLoaderDiagnostic,
+    asciidocDiagnostic,
     context,
-  )
-  const asciidocIncludeDiagnostic = new AsciidoctorDiagnostic(
-    'asciidoc-include',
   )
   const asciidocIncludeItemsLoader = new AsciidocIncludeItemsLoader(
     new AsciidoctorIncludeItems(),
     new AsciidoctorConfig(),
     new AsciidoctorExtensions(asciidoctorExtensionsSecurityPolicy),
-    asciidocIncludeDiagnostic,
+    asciidocDiagnostic,
     context,
   )
   // Diagnostics are computed from a single fully-resolved parse and refreshed
@@ -78,7 +76,7 @@ export async function activate(context: vscode.ExtensionContext) {
   // preview and from language-feature providers.
   const diagnosticManager = new AsciidocDiagnosticManager(
     asciidocLoader,
-    asciidocLoaderDiagnostic,
+    asciidocDiagnostic,
   )
   context.subscriptions.push(diagnosticManager.register())
 

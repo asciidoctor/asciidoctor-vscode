@@ -22,7 +22,6 @@ import { ExtensionContentSecurityPolicyArbiter } from '../security.js'
 import { AsciidocTextDocument } from './asciidocTextDocument.js'
 import { AsciidoctorAttributesConfig } from './asciidoctorAttributesConfig.js'
 import { AsciidoctorConfigProvider } from './asciidoctorConfig.js'
-import { AsciidoctorDiagnosticProvider } from './asciidoctorDiagnostic.js'
 import { AsciidoctorExtensionsProvider } from './asciidoctorExtensions.js'
 import { AsciidoctorProcessor } from './asciidoctorProcessor.js'
 
@@ -35,7 +34,6 @@ export class AsciidocEngine {
     readonly contributionProvider: AsciidocContributionProvider,
     readonly asciidoctorConfigProvider: AsciidoctorConfigProvider,
     readonly asciidoctorExtensionsProvider: AsciidoctorExtensionsProvider,
-    readonly asciidoctorDiagnosticProvider: AsciidoctorDiagnosticProvider,
   ) {}
 
   // Export

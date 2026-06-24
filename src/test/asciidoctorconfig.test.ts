@@ -5,7 +5,6 @@ import { WebviewResourceProvider } from '../core/resources.js'
 import { getDefaultWorkspaceFolderUri } from '../core/workspace.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
 import { AsciidoctorConfig } from '../features/asciidoctor/asciidoctorConfig.js'
-import { AsciidoctorDiagnostic } from '../features/asciidoctor/asciidoctorDiagnostic.js'
 import { AsciidoctorExtensions } from '../features/asciidoctor/asciidoctorExtensions.js'
 import {
   AsciidocContributionProvider,
@@ -74,7 +73,6 @@ describe('asciidoc.Asciidoctorconfig', () => {
         new AsciidoctorExtensions(
           AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
         ),
-        new AsciidoctorDiagnostic('test'),
       )
       const { html } = await asciidocParser.convertFromUri(
         textDocument,
@@ -124,7 +122,6 @@ describe('asciidoc.Asciidoctorconfig', () => {
         new AsciidoctorExtensions(
           AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
         ),
-        new AsciidoctorDiagnostic('test'),
       )
       html = (
         await asciidocParser.convertFromTextDocument(
@@ -220,7 +217,6 @@ describe('asciidoc.Asciidoctorconfig', () => {
         new AsciidoctorExtensions(
           AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
         ),
-        new AsciidoctorDiagnostic('test'),
       )
       html = (
         await asciidocParser.convertFromTextDocument(
