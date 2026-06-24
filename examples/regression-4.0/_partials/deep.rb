@@ -1,0 +1,1 @@
+puts 'I am a deeply nested include (fragment.adoc -> deep.rb).'
