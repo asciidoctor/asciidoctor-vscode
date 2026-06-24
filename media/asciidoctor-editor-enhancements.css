@@ -117,15 +117,14 @@ figcaption,
   padding: 0;
 }
 
-/* Callout numbers — use the theme's badge colors. */
+/* Callout numbers — a vivid badge that stays legible on the dark code
+   block background (the muted badge color blends into it) as well as on the
+   page. A thin halo separates it from whatever sits behind it. */
 .conum[data-value] {
-  background: var(--vscode-badge-background, var(--adoc-link));
-  color: var(--vscode-badge-foreground, #fff) !important;
+  background: var(--vscode-button-background, var(--adoc-link));
+  color: var(--vscode-button-foreground, #fff) !important;
   font-weight: 600;
-}
-
-.conum[data-value] + b {
-  color: var(--vscode-badge-background, var(--adoc-link));
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--vscode-button-foreground, #fff) 35%, transparent);
 }
 
 /* ----------------------------------------------------------------------
