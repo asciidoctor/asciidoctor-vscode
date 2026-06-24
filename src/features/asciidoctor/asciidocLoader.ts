@@ -57,7 +57,10 @@ export class AsciidocLoader {
     }
   }
 
-  protected async prepare(textDocument: SkinnyTextDocument) {
+  protected async prepare(
+    textDocument: SkinnyTextDocument,
+    manageDiagnostics = true,
+  ) {
     const memoryLogger = MemoryLogger.create()
     LoggerManager.setLogger(memoryLogger)
 
@@ -85,7 +88,9 @@ export class AsciidocLoader {
         ),
       )
     }
-    this.asciidoctorDiagnosticProvider.delete(textDocumentUri)
+    if (manageDiagnostics) {
+      this.asciidoctorDiagnosticProvider.delete(textDocumentUri)
+    }
     return {
       memoryLogger,
       registry,
@@ -112,7 +117,16 @@ export class AsciidocIncludeItemsLoader extends AsciidocLoader {
   public async getIncludeItems(
     textDocument: SkinnyTextDocument,
   ): Promise<IncludeItems> {
-    const { memoryLogger, registry } = await this.prepare(textDocument)
+    // This loader only enumerates `include::` directives (for document links).
+    // It registers an include processor that replaces every include with a
+    // `nothing` placeholder, so the parsed document is intentionally degraded
+    // (e.g. a source block loses the callout markers carried by the included
+    // file). Reporting diagnostics from this parse would surface false
+    // positives such as "no callout found for <1>" (#971), so this path must
+    // not touch the diagnostic collection at all — neither clearing it nor
+    // publishing to it. Diagnostics come from the fully-resolved parse in
+    // `AsciidocLoader.load()` and the preview conversion.
+    const { registry } = await this.prepare(textDocument, false)
     this.asciidoctorIncludeItemsProvider.activate(registry)
     const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).baseDir
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
@@ -121,7 +135,6 @@ export class AsciidocIncludeItemsLoader extends AsciidocLoader {
       textDocument.getText(),
       this.getOptions(attributes, registry, baseDir),
     )
-    this.asciidoctorDiagnosticProvider.reportErrors(memoryLogger, textDocument)
     return this.asciidoctorIncludeItemsProvider.get()
   }
 }

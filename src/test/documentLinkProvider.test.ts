@@ -42,6 +42,18 @@ async function getLinksForFile(
   return provider.provideDocumentLinks(doc, noopToken)
 }
 
+function createIncludeItemsLoader() {
+  return new AsciidocIncludeItemsLoader(
+    new AsciidoctorIncludeItems(),
+    new AsciidoctorConfig(),
+    new AsciidoctorExtensions(
+      AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+    ),
+    new AsciidoctorDiagnostic('test-include-items'),
+    extensionContext,
+  )
+}
+
 function assertRangeEqual(expected: vscode.Range, actual: vscode.Range) {
   assert.strictEqual(expected.start.line, actual.start.line)
   assert.strictEqual(expected.start.character, actual.start.character)
@@ -192,5 +204,38 @@ Asciidoctor.js is published as a npm package at <https://www.npmjs.com/package/@
       'https://www.npmjs.com/package/@asciidoctor/core',
     )
     assertRangeEqual(link.range, new vscode.Range(2, 49, 2, 96))
+  })
+
+  // Enumerating includes for document links stubs every include with a
+  // `nothing` placeholder, which strips the callout markers from a source
+  // block and makes Asciidoctor log "no callout found for <n>". That degraded
+  // parse must not publish diagnostics, otherwise it surfaces false positives
+  // (#971) and clears the legitimate diagnostics produced by the preview (#944).
+  test('Should not publish diagnostics when enumerating includes (callouts in an included source block)', async () => {
+    const uri = vscode.Uri.file('include-callouts.adoc')
+    const doc = new InMemoryDocument(
+      uri,
+      `= Title
+
+[source,ruby]
+----
+include::code-with-callouts.rb[]
+----
+<1> one
+<2> two
+<3> three
+`,
+    )
+    const loader = createIncludeItemsLoader()
+    // sanity check: the include is still detected for the link provider
+    const items = await loader.getIncludeItems(doc)
+    assert.strictEqual(items.length, 1)
+    // the degraded parse must not have published any diagnostic
+    const diagnostics = vscode.languages.getDiagnostics(uri)
+    assert.deepStrictEqual(
+      diagnostics,
+      [],
+      `expected no diagnostics, got: ${diagnostics.map((d) => d.message).join(', ')}`,
+    )
   })
 })
