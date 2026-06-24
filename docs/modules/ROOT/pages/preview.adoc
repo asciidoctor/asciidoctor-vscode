@@ -17,6 +17,60 @@ You can also force a refresh with the *AsciiDoc: Refresh Preview* command.
 
 Set AsciiDoc attributes used to render the preview through the `asciidoc.preview.asciidoctorAttributes` setting.
 
+== Source code highlighting
+
+Source blocks are highlighted out of the box using the bundled https://highlightjs.org[Highlight.js] highlighter -- you don't need to set `:source-highlighter:` for the preview.
+
+[source,asciidoc]
+------
+[source,ruby]
+----
+puts 'Hello, World!'
+----
+------
+
+This also applies to HTML-based exports (xref:save-html.adoc[HTML] and the `wkhtmltopdf` engine of xref:export-pdf.adoc[Export as PDF]).
+xref:save-docbook.adoc[DocBook] export is not affected: DocBook is a semantic format, so source highlighting is left to the DocBook publishing toolchain.
+Likewise, PDFs generated with the `asciidoctor-pdf` engine rely on the Ruby toolchain's own highlighters (for example Rouge).
+
+The built-in highlighter is a *soft default*: a document that declares its own `:source-highlighter:` keeps it.
+To change or disable the highlighter globally, use the `asciidoc.preview.asciidoctorAttributes` setting:
+
+* pick another highlighter, for example:
++
+[source,json]
+----
+"asciidoc.preview.asciidoctorAttributes": {
+  "source-highlighter": "highlight.js"
+}
+----
+* disable highlighting by setting an empty value:
++
+[source,json]
+----
+"asciidoc.preview.asciidoctorAttributes": {
+  "source-highlighter": ""
+}
+----
+
+=== Supported languages
+
+The preview detects the languages used in your source blocks and loads the matching Highlight.js grammar automatically, so any of the https://highlightjs.org/download[languages supported by Highlight.js] works without configuration -- you don't need `:highlightjs-languages:`.
+
+[NOTE]
+====
+Use the canonical Highlight.js language name.
+For example, Highlight.js has no `zsh` grammar; use `bash` instead.
+====
+
+For *HTML-based exports* the detection does not apply: list the extra languages you need with the `highlightjs-languages` attribute (a comma-separated list), either in the document header or through the `asciidoc.preview.asciidoctorAttributes` setting.
+
+[source,asciidoc]
+----
+:source-highlighter: highlight.js
+:highlightjs-languages: dockerfile, powershell
+----
+
 == Styling
 
 By default, the preview uses the VS Code editor theme (`workbench.colorTheme`).
