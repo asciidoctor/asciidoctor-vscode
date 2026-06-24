@@ -10,12 +10,27 @@
 :root {
   color-scheme: light dark;
 
-  --adoc-fg: var(--vscode-editor-foreground, var(--vscode-foreground, currentColor));
-  --adoc-muted: var(--vscode-descriptionForeground, color-mix(in srgb, var(--adoc-fg) 62%, transparent));
-  --adoc-border: var(--vscode-widget-border, var(--vscode-panel-border, color-mix(in srgb, var(--adoc-fg) 22%, transparent)));
+  --adoc-fg: var(
+    --vscode-editor-foreground,
+    var(--vscode-foreground, currentColor)
+  );
+  --adoc-muted: var(
+    --vscode-descriptionForeground,
+    color-mix(in srgb, var(--adoc-fg) 62%, transparent)
+  );
+  --adoc-border: var(
+    --vscode-widget-border,
+    var(
+      --vscode-panel-border,
+      color-mix(in srgb, var(--adoc-fg) 22%, transparent)
+    )
+  );
   --adoc-link: var(--vscode-textLink-foreground, #3794ff);
   --adoc-link-active: var(--vscode-textLink-activeForeground, var(--adoc-link));
-  --adoc-code-bg: var(--vscode-textCodeBlock-background, color-mix(in srgb, var(--adoc-fg) 7%, transparent));
+  --adoc-code-bg: var(
+    --vscode-textCodeBlock-background,
+    color-mix(in srgb, var(--adoc-fg) 7%, transparent)
+  );
 
   /* Translucent fg overlays — work over any theme background. */
   --adoc-surface-1: color-mix(in srgb, var(--adoc-fg) 4%, transparent);
@@ -35,17 +50,24 @@
  * Typography & rhythm
  * -------------------------------------------------------------------- */
 
-h1, h2, h3, h4, h5, h6,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
 #toctitle,
 .sidebarblock > .content > .title {
-  font-family: var(--asciidoc-font-family, inherit);
+  font-family: var(--asciidoc-font-family, serif), serif;
   font-weight: 600;
   color: var(--adoc-fg);
   letter-spacing: -0.01em;
   line-height: 1.25;
 }
 
-h1 { letter-spacing: -0.02em; }
+h1 {
+  letter-spacing: -0.02em;
+}
 
 /* Give the top-level structural headings a quiet underline for hierarchy. */
 .sect1 > h2,
@@ -124,7 +146,8 @@ figcaption,
   background: var(--vscode-button-background, var(--adoc-link));
   color: var(--vscode-button-foreground, #fff) !important;
   font-weight: 600;
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--vscode-button-foreground, #fff) 35%, transparent);
+  box-shadow: 0 0 0 1px
+    color-mix(in srgb, var(--vscode-button-foreground, #fff) 35%, transparent);
 }
 
 /* ----------------------------------------------------------------------
@@ -132,7 +155,11 @@ figcaption,
  * -------------------------------------------------------------------- */
 
 .admonitionblock > table {
-  background: color-mix(in srgb, var(--adoc-accent, var(--adoc-fg)) 8%, transparent);
+  background: color-mix(
+    in srgb,
+    var(--adoc-accent, var(--adoc-fg)) 8%,
+    transparent
+  );
   border-left: 3px solid var(--adoc-accent, var(--adoc-border));
   border-radius: 0 var(--adoc-radius) var(--adoc-radius) 0;
 }
@@ -147,11 +174,21 @@ figcaption,
   padding: 0.55em 1.15em;
 }
 
-.admonitionblock.note { --adoc-accent: var(--adoc-note); }
-.admonitionblock.tip { --adoc-accent: var(--adoc-tip); }
-.admonitionblock.important { --adoc-accent: var(--adoc-important); }
-.admonitionblock.warning { --adoc-accent: var(--adoc-warning); }
-.admonitionblock.caution { --adoc-accent: var(--adoc-caution); }
+.admonitionblock.note {
+  --adoc-accent: var(--adoc-note);
+}
+.admonitionblock.tip {
+  --adoc-accent: var(--adoc-tip);
+}
+.admonitionblock.important {
+  --adoc-accent: var(--adoc-important);
+}
+.admonitionblock.warning {
+  --adoc-accent: var(--adoc-warning);
+}
+.admonitionblock.caution {
+  --adoc-accent: var(--adoc-caution);
+}
 
 /* Font-based icons (`:icons: font`) and the text label fallback. */
 .admonitionblock td.icon [class^="fa icon-"] {

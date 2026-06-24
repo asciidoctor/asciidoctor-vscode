@@ -1,0 +1,55 @@
+/*
+ * IDE-only declarations for externally injected CSS custom properties.
+ *
+ * The preview stylesheets in media/ reference custom properties that are NOT
+ * declared in any CSS file but are injected at runtime:
+ *
+ *   - `--vscode-*`     : provided by the VS Code webview from the active color
+ *                        theme (https://code.visualstudio.com/api/references/theme-color).
+ *   - `--asciidoc-*`   : injected by the extension as an inline style, see
+ *                        `src/features/preview/asciidoctorWebViewConverter.ts`.
+ *
+ * Because they are never declared in CSS, IDEs (e.g. JetBrains' "Unresolved CSS
+ * custom property" inspection) flag every `var(--vscode-…)` / `var(--asciidoc-…)`.
+ * Declaring them here lets the IDE resolve those references project-wide while
+ * still catching genuine typos in our own `--adoc-*` / `--accent-*` variables.
+ *
+ * This file is intentionally NOT bundled (excluded by .vscodeignore), NOT linted
+ * by Biome (outside its `includes`), and NOT loaded by the webview. The `initial`
+ * values are placeholders only — the real values come from the runtime injection.
+ *
+ * When you reference a new external custom property, add it below.
+ */
+:root {
+  /* Injected by the extension (asciidoctorWebViewConverter.ts) */
+  --asciidoc-font-family: initial;
+  --asciidoc-font-size: initial;
+  --asciidoc-line-height: initial;
+
+  /* Provided by the VS Code webview theme */
+  --vscode-foreground: initial;
+  --vscode-descriptionForeground: initial;
+  --vscode-editor-background: initial;
+  --vscode-editor-foreground: initial;
+  --vscode-editor-lineHighlightBackground: initial;
+  --vscode-button-background: initial;
+  --vscode-button-foreground: initial;
+  --vscode-charts-blue: initial;
+  --vscode-charts-green: initial;
+  --vscode-charts-orange: initial;
+  --vscode-charts-purple: initial;
+  --vscode-charts-yellow: initial;
+  --vscode-diffEditor-insertedTextBackground: initial;
+  --vscode-diffEditor-removedTextBackground: initial;
+  --vscode-keybindingLabel-background: initial;
+  --vscode-keybindingLabel-border: initial;
+  --vscode-keybindingLabel-foreground: initial;
+  --vscode-panel-border: initial;
+  --vscode-widget-border: initial;
+  --vscode-textBlockQuote-background: initial;
+  --vscode-textBlockQuote-border: initial;
+  --vscode-textCodeBlock-background: initial;
+  --vscode-textLink-activeForeground: initial;
+  --vscode-textLink-foreground: initial;
+  --vscode-textPreformat-foreground: initial;
+}
