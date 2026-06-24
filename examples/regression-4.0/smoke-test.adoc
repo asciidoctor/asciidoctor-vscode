@@ -1,0 +1,250 @@
+= AsciiDoctor 4.0 Preview Regression Smoke Test: A Subtitle
+John Doe <john@example.com>; Jane Roe <jane@example.com>
+v4.0.0, 2026-06-24: first 4.0 release candidate
+:toc: macro
+:icons: font
+:stem:
+:source-highlighter: highlight.js
+:sectnums:
+:experimental:
+
+// ============================================================================
+// HOW TO USE
+// ----------------------------------------------------------------------------
+// Open this file and run "AsciiDoc: Open Preview to the Side".
+// Each section has an "EXPECTED:" note describing what a correct render shows.
+// Anything rendering as `[object Promise]`, a raw macro, a broken link, an
+// empty diagram, or a missing element is a regression from the Asciidoctor.js
+// 4.0 migration. Issue numbers point at the original report.
+//
+// Network note: diagram sections need a reachable Kroki server (and the Kroki
+// integration enabled). They are grouped at the end and clearly marked.
+// ============================================================================
+
+toc::[]
+
+== Document header & TOC
+
+// EXPECTED: the title shows "...Smoke Test" with " A Subtitle" as a smaller
+// subtitle; two authors with clickable mailto links (NOT `[object Promise]`,
+// regression of subMacros being async, #async-header); the revision line shows
+// "v4.0.0, 2026-06-24: first 4.0 release candidate"; the macro TOC above renders
+// as a real list of links (NOT `[object Promise]`, regression of the async
+// `outline` conversion).
+
+This is the body. It should appear below a fully rendered header.
+
+== STEM / Math (MathJax + CSP) — #314
+
+Inline asciimath: stem:[sqrt(4) = 2] and inline latexmath: latexmath:[E = mc^2].
+
+[stem]
+++++
+\sqrt{n!} \approx \sqrt{2 \pi n}\left(\frac{n}{e}\right)^n
+++++
+
+// EXPECTED: both inline expressions and the block equation render as typeset
+// math. If they show as raw `\sqrt{...}` text, MathJax failed to load (often a
+// Content-Security-Policy regression, #314).
+
+== Footnotes — #384, #945
+
+A statement needing a citation.footnote:[A simple footnote.]
+A reused, named footnote.footnote:disclaimer[See the disclaimer below.]
+The same named footnote again.footnote:disclaimer[]
+
+// EXPECTED: a single "footnotes" block at the bottom; the named footnote appears
+// exactly once and is NOT rendered twice (#384); footnote markers link to it.
+
+== Cross references
+
+See <<Document header & TOC>> and the xref:#callouts-via-include[callout section].
+
+[#anchor-target]
+This paragraph is an anchor target.
+
+Jump to <<anchor-target,this custom text>>.
+
+// EXPECTED: all three links are clickable and navigate within the preview; the
+// custom link text "this custom text" is used (xreftext is async in 4.0 —
+// regression would show `[object Promise]` or the raw id).
+
+[#callouts-via-include]
+== Callouts in an included code block — #971, dfcb1b8
+
+[source,ruby]
+----
+include::_partials/code-with-callouts.rb[]
+----
+<1> Require the library.
+<2> Convert a file.
+<3> Print a completion message.
+
+// EXPECTED: the code is syntax-highlighted AND the three callout badges (1,2,3)
+// remain visible on the right of their lines, with a matching colist below
+// (#dfcb1b8 / highlight.js conum merge). No "no callout found for <n>" warning
+// in the editor (false positive, #971).
+
+== Nested includes
+
+include::_partials/fragment.adoc[]
+
+// EXPECTED: the fragment paragraph renders, and the deeply nested `deep.rb`
+// include resolves inside the source block (no "include file not found").
+
+== Tables, including math inside cells — #169
+
+[cols="1,1",options="header"]
+|===
+| Expression | Value
+
+| stem:[x^2 + y^2] | a number
+| stem:[\int_0^1 x\,dx] | stem:[1/2]
+|===
+
+// EXPECTED: the table renders with header shading/zebra striping; the math in
+// the cells is typeset. (Scroll-sync jumpiness around math tables is tracked
+// separately in #169 — here only check the render itself.)
+
+== Admonitions, blocks, quotes (theme-aware)
+
+NOTE: This is a note.
+
+[WARNING]
+====
+A complex warning with a nested
+
+* list
+* of items
+====
+
+.A collapsible block
+[%collapsible]
+====
+Hidden content revealed on click.
+====
+
+[quote,Albert Einstein]
+____
+Everything should be made as simple as possible, but not simpler.
+____
+
+****
+A sidebar block.
+****
+
+// EXPECTED: each admonition uses its theme-aware accent color; the collapsible
+// block toggles; quote and sidebar are styled. Verify in BOTH light and dark
+// VS Code themes.
+
+== Inline formatting & replacements — #940
+
+*bold*, _italic_, `monospace`, ^super^, ~sub~, (C) (R) (TM), -- em dash.
+
+Inline code with    multiple    spaces: `a    b    c`.
+
+Keyboard: kbd:[Ctrl+S]. Button: btn:[OK]. Menu: menu:File[Save As].
+
+// EXPECTED: replacements become ©®™; the em dash renders; the spacing inside
+// the inline code is preserved, NOT collapsed to a single space (#940).
+
+== Lists
+
+. First
+. Second
+.. Nested
+
+* Bullet
+* Bullet
+
+Term:: Definition
+Other term:: Other definition
+
+- [ ] todo
+- [x] done
+
+== Images & roles — #1031
+
+[.text-center]
+.A centered caption
+image::../images/document.svg[Document,120]
+
+// EXPECTED: the image is centered AND its caption "Figure N. A centered caption"
+// is centered too (the `[.text-center]` role applies to the title, #1031).
+// (Path is relative to this file; adjust if you move the document.)
+
+== Source highlighting coverage — #969
+
+[source,python]
+----
+def greet(name: str) -> str:
+    return f"Hello, {name}!"
+----
+
+[source,rust]
+----
+fn main() {
+    println!("Hello");
+}
+----
+
+[source,hcl]
+----
+resource "aws_s3_bucket" "b" {
+  bucket = "my-bucket"
+}
+----
+
+// EXPECTED: python and rust are highlighted; hcl/terraform may not be bundled
+// (#969). Note which languages fail to color.
+
+// ############################################################################
+// NETWORK-DEPENDENT: DIAGRAMS (need a reachable Kroki server + Kroki enabled)
+// ############################################################################
+
+== Mermaid — #947 (ZenUML)
+
+[mermaid]
+....
+sequenceDiagram
+    Alice->>Bob: Hello Bob
+    Bob-->>Alice: Hi Alice
+....
+
+// EXPECTED: a rendered sequence diagram (dark-theme aware). Then try a ZenUML
+// diagram if you use one (#947) and confirm it renders rather than erroring.
+
+== PlantUML & Graphviz via Kroki
+
+[plantuml]
+....
+@startuml
+Alice -> Bob: Authenticate
+Bob --> Alice: OK
+@enduml
+....
+
+[graphviz]
+....
+digraph G { a -> b -> c; a -> c; }
+....
+
+// EXPECTED: both diagrams render as images. Offline PlantUML rendering is
+// tracked in #965; clickable links inside PlantUML in the preview in #617.
+
+== TikZ via Kroki — #956
+
+[tikz]
+....
+\begin{tikzpicture}
+  \draw (0,0) circle (1cm);
+\end{tikzpicture}
+....
+
+// EXPECTED: a rendered circle. If it fails, confirm whether the bundled
+// asciidoctor-kroki version supports tikz (#956).
+
+// ============================================================================
+// END — record any section that did not match its EXPECTED note as a release
+// blocker with the referenced issue number.
+// ============================================================================

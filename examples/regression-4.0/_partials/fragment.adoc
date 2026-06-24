@@ -1,0 +1,8 @@
+This paragraph comes from an included fragment (`_partials/fragment.adoc`).
+
+It also pulls in a nested include below, to exercise include-within-include resolution.
+
+[source,ruby]
+----
+include::deep.rb[]
+----
