@@ -15,6 +15,8 @@
 * Fix Windows path generation by using `fsPath` (#998) - thanks @anoymouserver
 * Fix TextMate grammar: support dots as delimiter in listing paragraph (#1004)
 * Only provide attribute reference completion when typing inside `{ ... }`, instead of on every word, to reduce noise (notably inside macro targets such as `image::`)
+* Fix the docked table of contents (`toc2`) text color referencing a non-existent `--vscode-editor-color` theme variable, which left the text without an explicit color; use `--vscode-editor-foreground`
+* Fix the bundled "Noto Serif" preview font never loading because its `@font-face` rules used `src: local('./fonts/…woff') format('woff')` — `local()` resolves an installed font by name, not a file, and `format()` is invalid after it; load the files with `url()` so the preview uses the bundled Noto Serif instead of falling back to a generic serif
 
 ### Improvements
 
@@ -46,6 +48,8 @@
 * Source the CI Node.js version from `package.json` (`volta.node`) and bump `actions/checkout` to v7 and `actions/setup-node` to v6
 * Replace `vscode-tmgrammar-test` with the more actively maintained `textmate-grammar-test` fork for grammar snapshot tests
 * Force LF line endings on grammar snapshot fixtures via `.gitattributes` so the snapshot tests pass on Windows CI
+* Add `ide-external-custom-properties.css`, a non-bundled stub declaring the custom properties injected at runtime (`--vscode-*` from the webview theme, `--asciidoc-*` from the extension), so IDEs resolve `var(--…)` references in the preview stylesheets while still flagging typos in our own variables
+* Lint the preview stylesheets with Biome (CSS) and drop browser hacks that are dead weight in the Chromium-based webview: remove the `-moz-`/`-ms-`/`-o-` vendor prefixes and the redundant `-webkit-` ones that already have a standard equivalent (`border-radius`, `box-shadow`, `appearance`, old flexbox, `box-sizing`), along with the IE `*zoom` hasLayout hacks, while keeping the webkit-only properties that still apply (`-webkit-font-smoothing`, `-webkit-tap-highlight-color`, `-webkit-text-size-adjust`, `::-webkit-details-marker`)
 
 ## 3.4.5  (2025-09-16)
 

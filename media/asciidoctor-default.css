@@ -44,28 +44,28 @@ body {
 
 @font-face {
     font-family: 'Noto Serif';
-    src: local('./fonts/noto-serif-all-400-normal.woff') format('woff');
+    src: url('./fonts/noto-serif-all-400-normal.woff') format('woff');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'Noto Serif';
-    src: local('./fonts/noto-serif-all-400-italic.woff') format('woff');
+    src: url('./fonts/noto-serif-all-400-italic.woff') format('woff');
     font-weight: normal;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Noto Serif';
-    src: local('./fonts/noto-serif-all-700-italic.woff') format('woff');
+    src: url('./fonts/noto-serif-all-700-italic.woff') format('woff');
     font-weight: bold;
     font-style: italic;
 }
 
 @font-face {
     font-family: 'Noto Serif';
-    src: local('./fonts/noto-serif-all-700-normal.woff') format('woff');
+    src: url('./fonts/noto-serif-all-700-normal.woff') format('woff');
     font-weight: bold;
     font-style: normal;
 }
@@ -198,7 +198,7 @@ button, select {
 }
 
 button, html input[type=button], input[type=reset], input[type=submit] {
-    -webkit-appearance: button;
+    appearance: button;
     cursor: pointer
 }
 
@@ -207,11 +207,6 @@ button[disabled], html input[disabled] {
 }
 
 input[type=checkbox], input[type=radio] {
-    padding: 0
-}
-
-button::-moz-focus-inner, input::-moz-focus-inner {
-    border: 0;
     padding: 0
 }
 
@@ -238,16 +233,13 @@ body {
     color: rgba(0, 0, 0, .8);
     padding: 0 26px;
     margin: 0;
-    font-family: var(--asciidoc-font-family, "Noto Serif", "DejaVu Serif", serif);
+    font-family: var(--asciidoc-font-family, "Noto Serif", "DejaVu Serif", serif), serif;
     font-size: var(--asciidoc-font-size, 14px);
     line-height: var(--asciidoc-line-height, 1.6);
     position: relative;
     cursor: auto;
-    -moz-tab-size: 4;
-    -o-tab-size: 4;
     tab-size: 4;
     word-wrap: anywhere;
-    -moz-osx-font-smoothing: grayscale;
     -webkit-font-smoothing: antialiased
 }
 
@@ -262,10 +254,6 @@ img, object, embed {
 
 object, embed {
     height: 100%
-}
-
-img {
-    -ms-interpolation-mode: bicubic
 }
 
 .left {
@@ -682,7 +670,6 @@ p a > code:hover {
     width: 100%;
     margin: 0 auto;
     max-width: 62.5em;
-    *zoom: 1;
     position: relative;
     padding-left: .9375em;
     padding-right: .9375em
@@ -1251,9 +1238,6 @@ table.linenotable td.linenos, pre.pygments .linenos {
     border-right: 1px solid;
     opacity: .35;
     padding-right: .5em;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none
 }
 

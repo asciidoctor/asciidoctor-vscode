@@ -13,7 +13,12 @@
       "tasks/**",
       "syntaxes/**",
       "snippets/**",
-      "i18n/**"
+      "i18n/**",
+      "media/**/*.css",
+      "examples/**/*.css",
+      "!media/highlight.css",
+      "!media/highlightjs/**",
+      "!media/font-awesome/**"
     ]
   },
   "formatter": {
@@ -98,8 +103,20 @@
         "noUnsafeNegation": "error",
         "noVar": "warn",
         "noWith": "error",
-        "useDefaultSwitchClauseLast": "error"
+        "useDefaultSwitchClauseLast": "error",
+        "noDuplicateAtImportRules": "error",
+        "noDuplicateFontNames": "error",
+        "noDuplicateProperties": "error",
+        "noDuplicateSelectorsKeyframeBlock": "error",
+        "noEmptyBlock": "error",
+        "noImportantInKeyframe": "error",
+        "noShorthandPropertyOverrides": "error"
       }
+    }
+  },
+  "css": {
+    "linter": {
+      "enabled": true
     }
   },
   "javascript": {
@@ -122,6 +139,15 @@
   "overrides": [
     {
       "includes": ["syntaxes/asciidoc.tmLanguage.json"],
+      "formatter": {
+        "enabled": false
+      }
+    },
+    {
+      "includes": [
+        "media/asciidoctor-default.css",
+        "media/asciidoctor-editor.css"
+      ],
       "formatter": {
         "enabled": false
       }

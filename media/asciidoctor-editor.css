@@ -27,7 +27,6 @@ audio:not([controls]) {
 
 html {
   /* DISABLED font-family: sans-serif; */
-  -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%
 }
 
@@ -63,7 +62,6 @@ dfn {
 }
 
 hr {
-  -moz-box-sizing: content-box;
   box-sizing: content-box;
   height: 0
 }
@@ -155,7 +153,7 @@ button,
 html input[type="button"],
 input[type="reset"],
 input[type="submit"] {
-  -webkit-appearance: button;
+  appearance: button;
   cursor: pointer
 }
 
@@ -167,12 +165,6 @@ html input[disabled] {
 input[type="checkbox"],
 input[type="radio"] {
   box-sizing: border-box;
-  padding: 0
-}
-
-button::-moz-focus-inner,
-input::-moz-focus-inner {
-  border: 0;
   padding: 0
 }
 
@@ -189,8 +181,6 @@ table {
 *,
 *::before,
 *::after {
-  -moz-box-sizing: border-box;
-  -webkit-box-sizing: border-box;
   box-sizing: border-box
 }
 
@@ -200,7 +190,7 @@ body {
 }
 
 body {
-  font-family: var(--asciidoc-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", system-ui, "Ubuntu", "Droid Sans", sans-serif);
+  font-family: var(--asciidoc-font-family, -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", system-ui, "Ubuntu", "Droid Sans", sans-serif), sans-serif;
   font-size: var(--asciidoc-font-size, 14px);
   padding: 0 26px;
   line-height: var(--asciidoc-line-height, 1.6);
@@ -211,7 +201,6 @@ body {
   position: relative;
   cursor: auto;
   tab-size: 4;
-  -moz-osx-font-smoothing: grayscale;
   -webkit-font-smoothing: antialiased
 }
 
@@ -229,10 +218,6 @@ embed {
 object,
 embed {
   height: 100%
-}
-
-img {
-  -ms-interpolation-mode: bicubic
 }
 
 .left {
@@ -671,7 +656,6 @@ h6 strong {
   padding: .1em .5ex;
   word-spacing: -.15em;
   /* DISABLED background: #f7f7f8; */
-  -webkit-border-radius: 4px;
   border-radius: 4px;
   line-height: calc(var(--asciidoc-line-height, 1.6) * 0.9);
   text-rendering: optimizeSpeed;
@@ -733,10 +717,8 @@ kbd {
   /* DISABLED background: #f7f7f7; */
   /* DISABLED border: 1px solid #ccc; */
   border: 1px solid;
-  -webkit-border-radius: 3px;
   border-radius: 3px;
   /* DISABLED -webkit-box-shadow: 0 1px 0 rgba(0, 0, 0, .2), 0 0 0 .1em white inset; */
-  -webkit-box-shadow: 0 1px 0, 0 0 0 .1em inset;
   /* DISABLED box-shadow: 0 1px 0 rgba(0, 0, 0, .2), 0 0 0 .1em #fff inset; */
   box-shadow: 0 1px 0, 0 0 0 .1em inset;
   margin: 0 .15em;
@@ -812,7 +794,6 @@ p a>code:hover {
   margin-top: 0;
   margin-bottom: 0;
   max-width: 62.5em;
-  *zoom: 1;
   position: relative;
   padding-left: .9375em;
   padding-right: .9375em
@@ -872,11 +853,7 @@ body.toc2 #header>h1:nth-last-child(2) {
   padding-bottom: .25em;
   padding-left: .25em;
   /* DISABLED color: rgba(0, 0, 0, .6); */
-  display: -ms-flexbox;
-  display: -webkit-flex;
   display: flex;
-  -ms-flex-flow: row wrap;
-  -webkit-flex-flow: row wrap;
   flex-flow: row wrap
 }
 
@@ -979,7 +956,7 @@ body.toc2 #header>h1:nth-last-child(2) {
     margin-top: 0 !important;
     /* DISABLED background: #f8f8f7; */
     background: var(--vscode-editor-background);
-    color: var(--vscode-editor-color);
+    color: var(--vscode-editor-foreground);
     position: fixed;
     width: 15em;
     left: 0;
@@ -1069,7 +1046,6 @@ body.toc2 #header>h1:nth-last-child(2) {
    * Colors are defined here: https://code.visualstudio.com/api/references/theme-color#editor-colors
    */
   background: var(--vscode-editor-lineHighlightBackground);
-  -webkit-border-radius: 4px;
   border-radius: 4px
 }
 
@@ -1297,7 +1273,6 @@ table.tableblock #preamble>.sectionbody>[class="paragraph"]:first-of-type p {
   margin-bottom: 1.25em;
   padding: 1.25em;
   /* DISABLED background: #fff; */
-  -webkit-border-radius: 4px;
   border-radius: 4px
 }
 
@@ -1316,7 +1291,6 @@ table.tableblock #preamble>.sectionbody>[class="paragraph"]:first-of-type p {
   margin-bottom: 1.25em;
   padding: 1.25em;
   /* DISABLED background: #f3f3f2; */
-  -webkit-border-radius: 4px;
   border-radius: 4px
 }
 
@@ -1347,7 +1321,6 @@ table.tableblock #preamble>.sectionbody>[class="paragraph"]:first-of-type p {
 
 .literalblock pre,
 .listingblock>.content>pre {
-  -webkit-border-radius: 4px;
   border-radius: 4px;
   word-wrap: break-word;
   overflow-x: auto;
@@ -1421,7 +1394,6 @@ table.tableblock #preamble>.sectionbody>[class="paragraph"]:first-of-type p {
 
 .listingblock pre.highlightjs>code {
   padding: 1em;
-  -webkit-border-radius: 4px;
   border-radius: 4px
 }
 
@@ -1544,7 +1516,7 @@ pre.pygments .lineno::before {
 
 .verseblock pre {
   /* DISABLED font-family: "Open Sans", "DejaVu Sans", sans; */
-  font-family: sans;
+  font-family: sans, sans-serif;
   font-size: 1.15rem;
   /* DISABLED color: rgba(0, 0, 0, .85); */
   font-weight: 300;
@@ -1828,11 +1800,7 @@ ul.checklist li>p:first-child>input[type="checkbox"]:first-child {
 }
 
 ul.inline {
-  display: -ms-flexbox;
-  display: -webkit-box;
   display: flex;
-  -ms-flex-flow: row wrap;
-  -webkit-flex-flow: row wrap;
   flex-flow: row wrap;
   list-style: none;
   margin: 0 0 .625em -1.25em
@@ -1924,7 +1892,6 @@ td.hdlist1 {
   /* DISABLED -webkit-box-shadow: 0 0 0 1px #ddd; */
   /* DISABLED box-shadow: 0 0 0 1px #ddd */
   border: solid 4px;
-  -webkit-box-shadow: 0 0 0 1px;
   box-shadow: 0 0 0 1px;
 }
 
@@ -2236,7 +2203,6 @@ a span.icon>.fa {
   display: inline-block;
   /* DISABLED color: #fff !important; */
   /* DISABLED background: rgba(0, 0, 0, .8); */
-  -webkit-border-radius: 100px;
   border-radius: 100px;
   text-align: center;
   font-size: .75em;
@@ -2319,7 +2285,6 @@ p.tableblock {
   /* DISABLED border-color: #e0e0dc; */
   /* DISABLED -webkit-box-shadow: 0 1px 4px #e0e0dc; */
   /* DISABLED box-shadow: 0 1px 4px #e0e0dc */
-  -webkit-box-shadow: 0 1px 4px;
   box-shadow: 0 1px 4px;
 }
 
@@ -2333,7 +2298,6 @@ p.tableblock {
 
 @media print {
   * {
-    -webkit-box-shadow: none !important;
     box-shadow: none !important;
     text-shadow: none !important
   }

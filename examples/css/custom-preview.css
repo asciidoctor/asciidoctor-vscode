@@ -18,7 +18,12 @@
 }
 
 /* Headings get the accent color and a subtle underline on the title. */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--accent);
 }
 
@@ -38,7 +43,8 @@ a:hover {
 }
 
 /* Inline code and listings get a translucent tinted background. */
-code, pre {
+code,
+pre {
   background: var(--accent-soft);
   border-radius: 4px;
 }
