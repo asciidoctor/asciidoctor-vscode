@@ -21,6 +21,8 @@
 * Fix the docked table of contents (`toc2`) text color referencing a non-existent `--vscode-editor-color` theme variable, which left the text without an explicit color; use `--vscode-editor-foreground`
 * Fix the `[.text-center]` role not centering a block's caption/title in the preview (e.g. an image caption stayed left-aligned): the default `.imageblock > .title` rule pinned the title to the left, overriding the centering inherited from the role; add a `.text-center > .title` override (#1031)
 * Fix the bundled "Noto Serif" preview font never loading because its `@font-face` rules used `src: local('./fonts/…woff') format('woff')` — `local()` resolves an installed font by name, not a file, and `format()` is invalid after it; load the files with `url()` so the preview uses the bundled Noto Serif instead of falling back to a generic serif
+* Fix `antora.yml` detection failing for AsciiDoc documents that live under `partials/` or `examples/` rather than `pages/` (#958): the detection was hardcoded to `modules/<module>/pages/…`, so partials and examples had no Antora context and their resource ids (images, includes) could not resolve. It now recognizes the `pages`, `partials` and `examples` content families
+* Fix `antora.yml` detection failing on Windows when the workspace scan and the open document disagree on the drive-letter case (e.g. `/e:/…` vs `/E:/…`), which defeated the path prefix comparison and broke features such as image preview (#957)
 
 ### Improvements
 

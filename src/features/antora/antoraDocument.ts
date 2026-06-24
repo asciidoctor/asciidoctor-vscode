@@ -7,6 +7,7 @@ import { FileType, Memento, Uri } from 'vscode'
 import { dir, exists } from '../../core/file.js'
 import { findFiles } from '../../core/findFiles.js'
 import { getWorkspaceFolder } from '../../core/workspace.js'
+import { findApplicableAntoraConfigPath } from './antoraConfigMatcher.js'
 import {
   AntoraConfig,
   AntoraContext,
@@ -85,32 +86,25 @@ function getAntoraConfigUris(): Promise<Uri[]> {
 export async function findAntoraConfigFile(
   textDocumentUri: Uri,
 ): Promise<Uri | undefined> {
-  const asciidocFilePath = posixpath.normalize(textDocumentUri.path)
   const antoraConfigUris = await getAntoraConfigUris()
-  // check for Antora configuration
-  for (const antoraConfigUri of antoraConfigUris) {
-    const antoraConfigParentDirPath = antoraConfigUri.path.slice(
-      0,
-      antoraConfigUri.path.lastIndexOf('/'),
-    )
-    const modulesDirPath = posixpath.normalize(
-      `${antoraConfigParentDirPath}/modules`,
-    )
-    if (
-      asciidocFilePath.startsWith(modulesDirPath) &&
-      asciidocFilePath.slice(modulesDirPath.length).match(/^\/[^/]+\/pages\/.*/)
-    ) {
-      console.log(
-        `Found an Antora configuration file at ${antoraConfigUri.path} for the AsciiDoc document ${asciidocFilePath}`,
-      )
-      return antoraConfigUri
-    }
-  }
-  const antoraConfigPaths = antoraConfigUris.map((uri) => uri.path)
-  console.log(
-    `Unable to find an applicable Antora configuration file in [${antoraConfigPaths.join(', ')}] for the AsciiDoc document ${asciidocFilePath}`,
+  const matchedConfigPath = findApplicableAntoraConfigPath(
+    textDocumentUri.path,
+    antoraConfigUris.map((uri) => uri.path),
   )
-  return undefined
+  if (matchedConfigPath === undefined) {
+    const antoraConfigPaths = antoraConfigUris.map((uri) => uri.path)
+    console.log(
+      `Unable to find an applicable Antora configuration file in [${antoraConfigPaths.join(', ')}] for the AsciiDoc document ${textDocumentUri.path}`,
+    )
+    return undefined
+  }
+  const matchedConfigUri = antoraConfigUris.find(
+    (uri) => uri.path === matchedConfigPath,
+  )
+  console.log(
+    `Found an Antora configuration file at ${matchedConfigUri.path} for the AsciiDoc document ${textDocumentUri.path}`,
+  )
+  return matchedConfigUri
 }
 
 export async function antoraConfigFileExists(

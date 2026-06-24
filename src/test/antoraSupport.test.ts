@@ -106,6 +106,35 @@ describe('Antora support with multi-documentation components', () => {
       antoraConfigExpectedPathSegments: apiAntoraPaths,
     })
 
+    const partialPaths = [
+      ...apiDocumentationComponentPaths,
+      'modules',
+      'auth',
+      'partials',
+      'login.adoc',
+    ]
+    await createFile('Reusable login steps', ...partialPaths)
+    testCases.push({
+      title:
+        'Should return Antora config for document inside "partials" directory',
+      asciidocPathSegments: partialPaths,
+      antoraConfigExpectedPathSegments: apiAntoraPaths,
+    })
+    const examplePaths = [
+      ...apiDocumentationComponentPaths,
+      'modules',
+      'auth',
+      'examples',
+      'sample.adoc',
+    ]
+    await createFile('= Example', ...examplePaths)
+    testCases.push({
+      title:
+        'Should return Antora config for document inside "examples" directory',
+      asciidocPathSegments: examplePaths,
+      antoraConfigExpectedPathSegments: apiAntoraPaths,
+    })
+
     const cliDocumentationComponentPaths = ['docs', 'multiComponents', 'cli']
     const cliAntoraPaths = [...cliDocumentationComponentPaths, 'antora.yml']
     await createFile(`name: "cli"\nversion: "2.0"\n`, ...cliAntoraPaths)
