@@ -51,6 +51,7 @@
 * Force LF line endings on grammar snapshot fixtures via `.gitattributes` so the snapshot tests pass on Windows CI
 * Add `ide-external-custom-properties.css`, a non-bundled stub declaring the custom properties injected at runtime (`--vscode-*` from the webview theme, `--asciidoc-*` from the extension), so IDEs resolve `var(--…)` references in the preview stylesheets while still flagging typos in our own variables
 * Lint the preview stylesheets with Biome (CSS) and drop browser hacks that are dead weight in the Chromium-based webview: remove the `-moz-`/`-ms-`/`-o-` vendor prefixes and the redundant `-webkit-` ones that already have a standard equivalent (`border-radius`, `box-shadow`, `appearance`, old flexbox, `box-sizing`), along with the IE `*zoom` hasLayout hacks, while keeping the webkit-only properties that still apply (`-webkit-font-smoothing`, `-webkit-tap-highlight-color`, `-webkit-text-size-adjust`, `::-webkit-details-marker`)
+* Publish the extension to the [Open VSX Registry](https://open-vsx.org) during release (in addition to the VS Code Marketplace), making it installable from VSCodium, Cursor, Gitpod, code-server and other VS Code-compatible editors: the release publishes the same `.vsix` via `ovsx`, gated on an `OVSX_TOKEN` secret so it is skipped (without failing the release) until the token is configured (#285)
 
 ## 3.4.5  (2025-09-16)
 
