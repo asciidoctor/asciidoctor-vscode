@@ -1215,6 +1215,12 @@ table.tableblock>.title,
   font-style: italic
 }
 
+/* Let the `[.text-center]` role center a block's caption/title, not just its
+   content; the rule above otherwise pins the title to the left. */
+.text-center > .title {
+  text-align: center
+}
+
 table.tableblock.fit-content>caption.title {
   white-space: nowrap;
   width: 0
