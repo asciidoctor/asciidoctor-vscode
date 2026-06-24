@@ -652,6 +652,7 @@
     "lodash.throttle": "4.1.1",
     "mathjax": "^2.7.9",
     "mermaid": "^11.15.0",
+    "ovsx": "1.0.2",
     "path-browserify": "1.0.1",
     "semver": "^7.3.7",
     "sinon": "^22.0.0",

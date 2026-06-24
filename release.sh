@@ -33,6 +33,13 @@ git config --local user.email "$RELEASE_GIT_EMAIL"
   npm run package
   RELEASE_VSCE_PRERELEASE_OPT=$([[ "$PRERELEASE_VERSION" == "true" ]] && echo "--pre-release" || echo "")
   npx vsce publish -p $RELEASE_VSCE_TOKEN $RELEASE_VSCE_PRERELEASE_OPT
+  # publish the same .vsix to Open VSX (used by VSCodium, Cursor, Gitpod, code-server, …)
+  # optional: skip if no token is configured so it never blocks the VS Code release
+  if [ -n "$RELEASE_OVSX_TOKEN" ]; then
+    npx ovsx publish asciidoctor-vscode-$RELEASE_VERSION_WITHOUT_PRERELEASE.vsix -p $RELEASE_OVSX_TOKEN $RELEASE_VSCE_PRERELEASE_OPT
+  else
+    echo No Open VSX token specified, skipping publication to open-vsx.org.
+  fi
   git push origin $RELEASE_BRANCH
   node tasks/release-notes.js
   RELEASE_GH_PRERELEASE_OPT=$([[ "$PRERELEASE_VERSION" == "true" ]] && echo "--prerelease" || echo "")
