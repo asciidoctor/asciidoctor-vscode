@@ -238,4 +238,29 @@ include::code-with-callouts.rb[]
       `expected no diagnostics, got: ${diagnostics.map((d) => d.message).join(', ')}`,
     )
   })
+
+  // An include placed before the document title must not be replaced by a
+  // placeholder paragraph: that would push `= Document Title` into the body and
+  // produce a spurious "level 0 sections can only be used when doctype is book"
+  // (#987). The include is replaced by an empty line, and this enumeration path
+  // does not publish diagnostics anyway.
+  test('Should not publish diagnostics for an include placed before the document title (#987)', async () => {
+    const uri = vscode.Uri.file('include-before-title.adoc')
+    const doc = new InMemoryDocument(
+      uri,
+      `include::before-title.adoc[]
+
+= Document Title
+`,
+    )
+    const loader = createIncludeItemsLoader()
+    const items = await loader.getIncludeItems(doc)
+    assert.strictEqual(items.length, 1)
+    const diagnostics = vscode.languages.getDiagnostics(uri)
+    assert.deepStrictEqual(
+      diagnostics,
+      [],
+      `expected no diagnostics, got: ${diagnostics.map((d) => d.message).join(', ')}`,
+    )
+  })
 })

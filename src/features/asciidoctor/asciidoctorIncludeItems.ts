@@ -49,7 +49,13 @@ export class AsciidoctorIncludeItems
             })
             this.includeIndex += 1
           }
-          return reader.pushInclude(['nothing'], target, target, 1, attrs)
+          // Replace the include with an empty line rather than a placeholder
+          // word: a placeholder paragraph distorts the document structure (e.g.
+          // it inserts a block before a `= Document Title`, which then triggers
+          // a spurious "level 0 sections can only be used when doctype is book"
+          // (#987)). An empty line keeps the surrounding structure intact while
+          // still letting us record the include's position above.
+          return reader.pushInclude([''], target, target, 1, attrs)
         },
       },
     )

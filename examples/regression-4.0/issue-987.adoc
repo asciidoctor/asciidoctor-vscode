@@ -1,0 +1,3 @@
+include::issue-987-include.adoc[]
+
+= Document Title
