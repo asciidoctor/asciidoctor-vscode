@@ -68,14 +68,14 @@ export function register(
         'highlightjs',
         'highlight.min.js',
       )
+      const highlightjsInitResource = vscode.Uri.joinPath(
+        context.extensionUri,
+        'dist',
+        'highlightjs-init.js',
+      )
       return `<script src="${webviewPanel.asWebviewUri(highlightjsScriptResource)}"></script>
 ${languageScripts}
-<script>
-if (!hljs.initHighlighting.called) {
-  hljs.initHighlighting.called = true
-  ;[].slice.call(document.querySelectorAll("pre.highlight > code")).forEach(function (el) { hljs.highlightElement(el) })
-}
-</script>`
+<script src="${webviewPanel.asWebviewUri(highlightjsInitResource)}"></script>`
     }
   }
 
