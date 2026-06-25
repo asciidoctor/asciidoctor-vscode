@@ -5,6 +5,7 @@ v4.0.0, 2026-06-24: first 4.0 release candidate
 :icons: font
 :stem:
 :source-highlighter: highlight.js
+:highlightjs-languages: dockerfile
 :sectnums:
 :experimental:
 
@@ -188,21 +189,27 @@ fn main() {
 }
 ----
 
-[source,hcl]
+[source,dockerfile]
 ----
-resource "aws_s3_bucket" "b" {
-  bucket = "my-bucket"
-}
+FROM node:20-alpine
+WORKDIR /app
+COPY package.json .
+RUN npm ci --omit=dev
+CMD ["node", "server.js"]
 ----
 
-// EXPECTED: python and rust are highlighted; hcl/terraform may not be bundled
-// (#969). Note which languages fail to color.
+// EXPECTED: all three blocks are highlighted. python and rust ship in the common
+// Highlight.js bundle, so they color out of the box. `dockerfile` is NOT in the
+// common bundle — it colors only because `:highlightjs-languages: dockerfile`
+// (set in the header) loads the extra grammar on demand (#969). If the
+// dockerfile block renders as plain monochrome text, the on-demand language
+// loading regressed; if python/rust also fail, the base highlighter is broken.
 
 // ############################################################################
 // NETWORK-DEPENDENT: DIAGRAMS (need a reachable Kroki server + Kroki enabled)
 // ############################################################################
 
-== Mermaid — #947 (ZenUML)
+== Mermaid
 
 [mermaid]
 ....
@@ -211,8 +218,45 @@ sequenceDiagram
     Bob-->>Alice: Hi Alice
 ....
 
-// EXPECTED: a rendered sequence diagram (dark-theme aware). Then try a ZenUML
-// diagram if you use one (#947) and confirm it renders rather than erroring.
+// EXPECTED: a rendered sequence diagram (dark-theme aware). Core Mermaid
+// diagrams are rendered client-side by the bundled mermaid.esm.min.mjs (NOT via
+// Kroki — the native [mermaid] processor overrides Kroki's).
+
+=== Mermaid ELK layout
+
+[mermaid]
+....
+---
+config:
+  layout: elk
+---
+flowchart LR
+  A[Start] --> B{Decision}
+  B -->|yes| C[Do thing]
+  B -->|no| D[Skip]
+  C --> E[End]
+  D --> E
+....
+
+// EXPECTED: a flowchart laid out by the ELK engine. The layout loader lives in
+// @mermaid-js/layout-elk, now bundled and registered via registerLayoutLoaders;
+// without it, `layout: elk` silently falls back to the default dagre layout.
+
+=== Mermaid ZenUML
+
+[mermaid]
+....
+zenuml
+    Alice->Bob: "Hello Bob"
+    Bob->Alice: "Hi Alice"
+....
+
+// EXPECTED: a ZenUML sequence diagram. ZenUML is NOT a core Mermaid diagram; it
+// comes from @mermaid-js/mermaid-zenuml, now bundled and registered via
+// registerExternalDiagrams. Without it the block errors with an unknown diagram
+// type (#947). This is the only supported ZenUML path — Kroki has no zenuml
+// backend. KNOWN LIMITATION: ZenUML draws its own opaque white canvas and does
+// not follow mermaid's `theme: dark`, so it stays light in the dark preview.
 
 == PlantUML & Graphviz via Kroki
 
@@ -229,21 +273,61 @@ Bob --> Alice: OK
 digraph G { a -> b -> c; a -> c; }
 ....
 
-// EXPECTED: both diagrams render as images. Offline PlantUML rendering is
-// tracked in #965; clickable links inside PlantUML in the preview in #617.
+// EXPECTED: both diagrams render as <img> from the Kroki server. PlantUML and
+// Graphviz emit an opaque (white) background, so they stay legible on the dark
+// theme as-is. Offline PlantUML rendering is tracked in #965; clickable links
+// inside PlantUML in #617.
+//
+// NOTE: `opts=inline` (true inline <svg>, themeable, no file/server at view
+// time) is intentionally NOT used yet — it needs the next asciidoctor.js +
+// asciidoctor-kroki release (data-URI inline SVG support) bumped here. Re-add
+// `opts=inline` to these blocks once those versions land.
 
 == TikZ via Kroki — #956
 
 [tikz]
 ....
+\documentclass[border=4pt]{standalone}
+\usepackage{tikz}
+\begin{document}
 \begin{tikzpicture}
-  \draw (0,0) circle (1cm);
+  \filldraw[draw=purple, fill=purple!30, line width=1.5pt] (0,0) circle (1cm);
 \end{tikzpicture}
+\end{document}
 ....
 
-// EXPECTED: a rendered circle. If it fails, confirm whether the bundled
-// asciidoctor-kroki version supports tikz (#956).
+// EXPECTED: a purple circle, rendered as <img>. Things to verify:
+//   1. Kroki's TikZ backend needs a complete LaTeX document (\documentclass …
+//      \begin{document} … \end{document}); a bare tikzpicture fails to compile
+//      (#956).
+//   2. TikZ output has a transparent background, so a default black stroke is
+//      invisible in the dark-theme preview. We draw the circle in purple (with a
+//      light purple fill) so it stays legible on both light and dark themes
+//      without depending on a background.
+//
+// NOTE: ZenUML is intentionally NOT tested via Kroki — Kroki has no zenuml
+// backend. The supported path is the native Mermaid ZenUML diagram in the
+// "Mermaid ZenUML" section above (#947).
 
+// ----------------------------------------------------------------------------
+// DARK-THEME DIAGRAM BACKGROUNDS
+// Kroki backends disagree on background: PlantUML and Graphviz render opaque
+// white, while TikZ renders transparent. The preview CSS normalises this by
+// giving Kroki image blocks a light background card in dark/high-contrast
+// themes; the purple TikZ stroke above is a belt-and-braces check that survives
+// even without that card. Once `opts=inline` is re-enabled (next asciidoctor.js
+// + kroki release), the inline <svg> can additionally be restyled for dark mode.
+//
+// MERMAID DIAGRAM SUPPORT (client-side, generateMermaid)
+// Core v11 diagrams work out of the box (flowchart, sequence, class, state, er,
+// gantt, pie, gitGraph, journey, mindmap, timeline, quadrant, requirement, c4,
+// sankey, xychart, block, packet, kanban, radar, treemap; KaTeX math bundled).
+// Bundled add-ons, registered before mermaid.run():
+//   - ELK layout (layout: elk)  -> @mermaid-js/layout-elk     -> registerLayoutLoaders
+//   - ZenUML (zenuml diagram)   -> @mermaid-js/mermaid-zenuml -> registerExternalDiagrams
+// Still NOT bundled (follow-up): architecture-beta icon packs, which need an
+// @iconify-json/<set> registered via registerIconPacks — deferred because each
+// set is multi-MB and architecture-beta is still experimental upstream.
 // ============================================================================
 // END — record any section that did not match its EXPECTED note as a release
 // blocker with the referenced issue number.
