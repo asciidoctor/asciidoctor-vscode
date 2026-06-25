@@ -423,9 +423,45 @@ ${footnoteItems.join('\n')}
   }
 
   private generateMermaid(webviewResourceProvider, nonce) {
+    const mermaidSrc = webviewResourceProvider.asMediaWebViewSrc(
+      'media',
+      'mermaid',
+      'dist',
+      'mermaid.esm.min.mjs',
+    )
+    const elkLayoutSrc = webviewResourceProvider.asMediaWebViewSrc(
+      'media',
+      '@mermaid-js',
+      'layout-elk',
+      'dist',
+      'mermaid-layout-elk.esm.min.mjs',
+    )
+    const zenumlSrc = webviewResourceProvider.asMediaWebViewSrc(
+      'media',
+      '@mermaid-js',
+      'mermaid-zenuml',
+      'dist',
+      'mermaid-zenuml.esm.min.mjs',
+    )
+    // Core Mermaid diagrams ship in mermaid.esm.min.mjs, but a few render paths
+    // live in separate packages that must be registered before mermaid runs:
+    //   - the ELK layout engine (`layout: elk`) via registerLayoutLoaders
+    //   - the ZenUML diagram (`zenuml`) via registerExternalDiagrams
+    // We disable startOnLoad and call run() ourselves so the registrations are
+    // guaranteed to complete before any diagram is detected and rendered.
     return `<script type="module" nonce="${nonce}">
-    import mermaid from '${webviewResourceProvider.asMediaWebViewSrc('media', 'mermaid', 'dist', 'mermaid.esm.min.mjs')}';
-    mermaid.initialize({startOnLoad:true, theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast') ? 'dark' : 'default'});
+    import mermaid from '${mermaidSrc}';
+    import elkLayouts from '${elkLayoutSrc}';
+    import zenuml from '${zenumlSrc}';
+    const dark = document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast');
+    mermaid.registerLayoutLoaders(elkLayouts);
+    await mermaid.registerExternalDiagrams([zenuml]);
+    mermaid.initialize({startOnLoad: false, theme: dark ? 'dark' : 'default'});
+    try {
+      await mermaid.run();
+    } catch (e) {
+      console.error('Mermaid rendering failed', e);
+    }
   </script>`
   }
 
