@@ -85,3 +85,20 @@ See xref:settings.adoc#preview[the preview settings] for the full list of option
 
 The editor and the preview stay in sync as you scroll, and the current selection is highlighted in the preview.
 This behaviour is configurable -- see xref:settings.adoc#preview[the preview settings].
+
+Two VS Code editor settings make the synchronization smoother:
+
+`editor.smoothScrolling`:: Turn it *on*.
+The editor can only be scrolled to whole lines, so when it follows the preview it advances one line at a time.
+Smooth scrolling animates the transition between those positions, so the follow looks gradual instead of stepwise.
+
+`editor.stickyScroll.enabled`:: Turn it *off* while you rely on scroll sync.
+Sticky scroll overlays the ancestor headings on top of the editor viewport, hiding the first lines, so the line at the top of the editor looks a few lines off from the top of the preview even though the mapping is correct.
+
+[source,json]
+----
+{
+  "editor.smoothScrolling": true,
+  "editor.stickyScroll.enabled": false
+}
+----

@@ -1,0 +1,304 @@
+= Editor ⇄ Preview Scroll Synchronization — Manual Test Bench (#1062)
+:toc: macro
+:icons: font
+:stem:
+:source-highlighter: highlight.js
+:highlightjs-languages: dockerfile
+:sectnums:
+
+// ============================================================================
+// WHAT THIS FILE IS FOR
+// ----------------------------------------------------------------------------
+// Meta-issue #1062 groups every report about scroll sync between the source
+// editor and the preview. This single self-contained file reproduces those
+// reports so you can test them by hand, BEFORE and AFTER the incremental-update
+// / re-anchoring work. It is intentionally long and packed with the heavy,
+// async-rendering content that exposes the bugs: math (MathJax), tables, code
+// highlighting, Mermaid diagrams and images.
+//
+// Symptom clusters covered here:
+//   1. Unwanted jumps while typing / saving ........ #169 #709 #776
+//   2. Feedback loop between the two scroll dirs .... #638
+//   3. Wrong scroll offset / source-line mapping .... #873 #991
+//   + Incremental update wins (no full reload) ..... this PR
+//
+// NOTE: includes (#59 / #869) are deliberately NOT exercised here — the
+// include-aware mapping is still to be done, so this file stays single-file.
+//
+// HOW TO RUN
+//   1. Open this file, then "AsciiDoc: Open Preview to the Side".
+//   2. Make the window TALL; the document is long enough to scroll a lot.
+//   3. Each "== Scenario" has a TEST (what you do) and EXPECTED (what a fixed
+//      build shows). "REGRESSION" describes the old broken behavior so you can
+//      tell a pass from a fail.
+//
+// SETTINGS THAT MATTER (Settings UI -> search "asciidoc.preview"):
+//   - scrollPreviewWithEditor : editor scroll/caret drives the preview
+//   - scrollEditorWithPreview : preview scroll drives the editor
+//   - refreshInterval         : ms debounce before re-render (try 0 and 500)
+//   Toggle these per scenario as instructed.
+//
+// STICKY SCROLL: turn OFF `editor.stickyScroll.enabled` while comparing the top
+// line of the editor with the top of the preview. Sticky scroll overlays the
+// ancestor headings on top of the editor viewport, hiding the first lines, so
+// the *visible* top line looks a few lines off from the synced one even though
+// the mapping is correct.
+//
+// SMOOTH SCROLLING: the editor can only be scrolled to whole lines (no pixel
+// API), so editor-follows-preview advances one line at a time. Turn ON
+// `editor.smoothScrolling` so VS Code animates the transition between those
+// positions and the follow looks gradual rather than stepwise.
+// ============================================================================
+
+toc::[]
+
+== Scenario A — Typing in math far down should NOT jump the preview (#169, #709)
+
+TEST: Scroll BOTH editor and preview down to this section. Put the caret in the
+block equation below and type a few characters (e.g. add `+ 1`), then delete
+them. Keep watching the preview viewport.
+
+[stem]
+++++
+f(x) = \int_{-\infty}^{\infty} \hat{f}(\xi)\, e^{2 \pi i \xi x} \, d\xi
+++++
+
+EXPECTED: the equation re-typesets in place; the preview stays put (the line you
+are editing does not fly to the top, the cursor area stays visible). Equations
+ABOVE this point do NOT flash/re-render.
+
+REGRESSION (old build): every keystroke replaced the whole webview, re-rendered
+*all* MathJax from scratch, and the preview jumped — usually slamming the edited
+block to the top of the view.
+
+== Scenario B — Editing a table with math cells (#169, #873)
+
+TEST: With the caret inside a cell below, edit a cell's expression. The cell (and
+the whole table) changes height as MathJax re-lays-out.
+
+[cols="1,1,1",options="header"]
+|===
+| Expression | Derivative | Value at 1
+
+| stem:[x^2]            | stem:[2x]                 | stem:[2]
+| stem:[\sin(x)]        | stem:[\cos(x)]            | stem:[\cos 1]
+| stem:[e^{x}]          | stem:[e^{x}]              | stem:[e]
+| stem:[\ln(x)]         | stem:[1/x]                | stem:[1]
+| stem:[\int_0^1 x\,dx] | stem:[\tfrac{1}{2}x^2]    | stem:[\tfrac{1}{2}]
+|===
+
+EXPECTED: only the edited cell re-typesets; the preview viewport is re-anchored
+so the table does not jump away from you as its height changes.
+
+REGRESSION: the table height change + full reload made the preview bounce, and
+the offset around tables was wrong (#873).
+
+== Scenario C — Saving with refreshInterval = 0 (#776)
+
+TEST: Set `asciidoc.preview.refreshInterval` to `0` AND enable
+`scrollPreviewWithEditor`. Scroll here, put the caret in the paragraph below,
+type something, then press Ctrl/Cmd+S to save.
+
+This paragraph is the save target. Edit me, then save and watch the viewport.
+
+EXPECTED: saving re-renders but does NOT yank the preview to the caret or to the
+top; your scroll position is preserved.
+
+REGRESSION: with refreshInterval 0, live edits did not refresh, but *saving*
+forced a full reload + scroll-to-cursor that fought your current position (#776).
+
+== Scenario D — Scroll feedback loop, both directions enabled (#638)
+
+TEST: Enable BOTH `scrollPreviewWithEditor` and `scrollEditorWithPreview`.
+Slowly drag-scroll the PREVIEW with the mouse, then slowly scroll the EDITOR.
+
+EXPECTED: smooth tracking. The content does not vibrate / bounce back and forth
+between two positions.
+
+REGRESSION: editor → preview → editor echo made the view oscillate (#638). The
+re-anchoring scrolls we trigger are now flagged so they do not echo back.
+
+== Scenario E — Offset accuracy across tall blocks (#873, #991)
+
+TEST: Click individual lines in the editor across the wide image, the code block
+and the example block below, and confirm the highlighted preview block matches
+the clicked line.
+
+image::../images/document.svg[A tall image,200]
+
+[source,python]
+----
+def fib(n: int) -> int:
+    a, b = 0, 1
+    for _ in range(n):
+        a, b = b, a + b
+    return a
+
+print([fib(i) for i in range(15)])
+----
+
+[example]
+====
+A multi-line example block that renders taller than its source.
+
+* item one
+* item two
+* item three
+====
+
+EXPECTED: clicking a source line reveals/highlights the corresponding rendered
+block; the mapping does not drift after the tall image and code block.
+
+REGRESSION: blocks mapped to a single source line, so tall/multi-element blocks
+made the interpolation drift and the preview scrolled to the wrong place.
+
+== Scenario F — Incremental update keeps rendered output (this PR)
+
+TEST: Make sure the Mermaid diagram and the image below are fully rendered. Then
+go edit ONE character in Scenario A's equation (or any paragraph) and come back.
+
+[mermaid]
+....
+flowchart LR
+  A[Edit text] --> B{Same block?}
+  B -->|no| C[Re-render only that block]
+  B -->|yes| D[Keep rendered output]
+  C --> E[Re-anchor scroll]
+  D --> E
+....
+
+image::../images/document.svg[Reused image,160]
+
+EXPECTED: editing an unrelated block does NOT re-render this diagram or reload
+this image (no flicker, no layout jump here). Only the block you changed updates.
+
+REGRESSION: the full-reload model re-ran Mermaid and reloaded every image on
+every keystroke, causing constant flicker on diagram/image-heavy documents.
+
+== Scenario G — Mixed heavy content in one screenful
+
+TEST: Park the viewport on this section and edit the paragraph at the very end of
+the document; nothing here should flicker or shift.
+
+A second Mermaid diagram (different type, so it is its own block):
+
+[mermaid]
+....
+sequenceDiagram
+    Editor->>Preview: postMessage(updateContent)
+    Preview->>Preview: morph #preview-root
+    Preview-->>Editor: stay anchored
+....
+
+A multi-language highlight check:
+
+[source,javascript]
+----
+export function clamp(min, max, value) {
+  return Math.min(max, Math.max(min, value))
+}
+----
+
+[source,dockerfile]
+----
+FROM node:20-alpine
+WORKDIR /app
+COPY package.json .
+RUN npm ci --omit=dev
+CMD ["node", "server.js"]
+----
+
+A second table, plain (no math), to check non-math block stability:
+
+[cols="2,1,1",options="header"]
+|===
+| Renderer | Async? | Reloaded on edit (old build)
+
+| MathJax        | yes | every keystroke
+| Mermaid        | yes | every keystroke
+| highlight.js   | no  | every keystroke
+| images         | yes | every keystroke
+|===
+
+EXPECTED: stable. None of these re-run when you edit an unrelated block.
+
+// ============================================================================
+// LONG MATH FILLER
+// Purpose: make the page tall and MathJax slow enough that jumps and full
+// re-typesets are obvious. Edit anything in the LAST section while watching the
+// FIRST equations — they must not flash or move under a fixed build.
+// ============================================================================
+
+== Long filler with many equations (perf + stability)
+
+Inline references keep the text flowing: stem:[a^2 + b^2 = c^2],
+stem:[\nabla \cdot \vec{E} = \rho/\varepsilon_0], stem:[\sum_{n=1}^{\infty} 1/n^2 = \pi^2/6].
+
+[stem]
+++++
+\frac{\partial u}{\partial t} = \alpha \frac{\partial^2 u}{\partial x^2}
+++++
+
+[stem]
+++++
+i\hbar \frac{\partial}{\partial t}\Psi = \hat{H}\Psi
+++++
+
+[stem]
+++++
+\mathcal{L}\{f\}(s) = \int_0^{\infty} e^{-st} f(t)\, dt
+++++
+
+[stem]
+++++
+\det(A - \lambda I) = 0
+++++
+
+[stem]
+++++
+e^{i\pi} + 1 = 0
+++++
+
+[stem]
+++++
+\binom{n}{k} = \frac{n!}{k!\,(n-k)!}
+++++
+
+[stem]
+++++
+\Gamma(z) = \int_0^{\infty} t^{z-1} e^{-t}\, dt
+++++
+
+[stem]
+++++
+\zeta(s) = \prod_{p \text{ prime}} \frac{1}{1 - p^{-s}}
+++++
+
+[stem]
+++++
+\vec{F} = m\vec{a} = m\frac{d^2 \vec{r}}{dt^2}
+++++
+
+[stem]
+++++
+\oint_{\partial \Omega} \omega = \int_{\Omega} d\omega
+++++
+
+[stem]
+++++
+P(A \mid B) = \frac{P(B \mid A)\,P(A)}{P(B)}
+++++
+
+[stem]
+++++
+\lim_{x \to 0} \frac{\sin x}{x} = 1
+++++
+
+== Bottom anchor — edit here while watching the top
+
+This is the bottom of the document. Type into this paragraph and confirm that
+the equations near the top of the filler section neither flash nor shift, and
+that this paragraph stays under your cursor in the preview.
+
+// END — note any scenario whose result did not match EXPECTED, with the
+// referenced issue number, as a scroll-sync regression.
