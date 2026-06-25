@@ -38,6 +38,7 @@
 * Resolve Antora `xref:` resource ids in the preview so cross-component/cross-module links (and their `#anchor`) navigate to the referenced page instead of producing a broken link (#434)
 * Re-enable Kroki diagrams: upgrade `asciidoctor-kroki` to `1.0.0-beta.1`, which is compatible with Asciidoctor.js 4.0. The new release also drops the `unxhr` dependency in favor of native `fetch`, so `:kroki-fetch-diagram:` now works in VS Code
 * Extend the bundled Mermaid renderer beyond the core diagrams: register the ELK layout engine (`@mermaid-js/layout-elk`, enabling `layout: elk`) and the ZenUML diagram (`@mermaid-js/mermaid-zenuml`, #947). The preview now disables Mermaid's `startOnLoad` and calls `run()` itself, so these external diagrams are registered before any diagram is detected
+* Expose the active VS Code color theme to the preview conversion as a `vscode-theme` document attribute (`dark`/`light`), so documents can branch on it (e.g. `ifeval::["{vscode-theme}" == "dark"]`) and diagram extensions can request a matching theme; the preview re-renders when the color theme changes
 
 ### Documentation
 
