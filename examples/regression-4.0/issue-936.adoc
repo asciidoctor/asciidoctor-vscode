@@ -1,0 +1,49 @@
+= Kubernetes Operator Guide
+
+// ============================================================================
+// ISSUE #936 — "No symbols found in document" when a section precedes an include
+// ----------------------------------------------------------------------------
+// HOW TO TEST (no preview needed, this is about the Outline / "Document Symbols"):
+//
+//   1. Open this file.
+//   2. Open the Outline view (Explorer side bar → "OUTLINE", or run the command
+//      "Outline: Focus on Outline View"). The breadcrumbs bar at the top of the
+//      editor exercises the same provider.
+//
+// EXPECTED (fixed):
+//   The Outline shows the full tree:
+//       Kubernetes Operator Guide
+//        ├─ Overview
+//        ├─ Installation
+//        │   └─ Prerequisites
+//        └─ Configuration
+//   Clicking "Installation" or "Prerequisites" jumps to the `include::` directive
+//   line below (cross-file navigation is NOT possible from the Outline, so the
+//   included sections are anchored to the include that pulls them in).
+//   "Configuration" stays a sibling of "Installation", not a child.
+//
+//   Editing the included file (examples/regression-4.0/issue-936-installation.adoc)
+//   — e.g. turning "Prerequisites" into a `==` — and SAVING it refreshes this
+//   outline (includes are resolved from disk, so a save is required).
+//
+// REGRESSION (before the fix):
+//   The Outline reads "No symbols found in document 'issue-936.adoc'". The
+//   section line numbers coming from the included file produced a negative
+//   range that threw and wiped the whole outline. Commenting out "Overview"
+//   used to hide the symptom.
+// ============================================================================
+
+== Overview
+
+This operator reconciles a `Database` custom resource into a managed
+PostgreSQL deployment, handling provisioning, backups and version upgrades.
+This section sits at the same level as the first included section, which is
+the adjacency that used to trigger the crash.
+
+include::issue-936-installation.adoc[]
+
+== Configuration
+
+A trailing section in the host document, to confirm sections after the include
+are still listed at the correct line and remain siblings of "Installation".
+Configure the operator through the `values.yaml` of the Helm release.

@@ -12,20 +12,7 @@ interface AsciidocSymbol {
 export default class AdocDocumentSymbolProvider
   implements vscode.DocumentSymbolProvider
 {
-  private lastSymbolCall: number
-  private lastRunTime: number = 1000
-  private RunTimeFactor: number = 1.5
-
-  constructor(
-    private root: AsciidocSymbol = {
-      level: -Infinity,
-      children: [],
-      parent: undefined,
-    },
-    private readonly asciidocLoader: AsciidocLoader,
-  ) {
-    this.root = root
-  }
+  constructor(private readonly asciidocLoader: AsciidocLoader) {}
 
   public async provideDocumentSymbolInformation(
     document: SkinnyTextDocument,
@@ -40,28 +27,22 @@ export default class AdocDocumentSymbolProvider
   public async provideDocumentSymbols(
     document: SkinnyTextDocument,
   ): Promise<vscode.DocumentSymbol[]> {
-    const nextOKRunTime =
-      this.lastSymbolCall +
-      Math.max(this.lastRunTime * this.RunTimeFactor, 2000)
-    const startTime = new Date().getTime()
-
-    if (this.lastSymbolCall === undefined || startTime > nextOKRunTime) {
-      const toc = await new TableOfContentsProvider(
-        document,
-        this.asciidocLoader,
-      ).getToc()
-      this.root = {
-        level: -Infinity,
-        children: [],
-        parent: undefined,
-      }
-      this.buildTree(this.root, toc)
-
-      this.lastSymbolCall = new Date().getTime()
-      this.lastRunTime = this.lastSymbolCall - startTime
+    // Recompute on every request: the previous implementation cached the tree
+    // on the (singleton) provider and only refreshed it after a 2s throttle,
+    // which returned a stale — and across documents, wrong — outline. The
+    // `TableOfContentsProvider` already parses once per request, like the
+    // folding and link providers do.
+    const toc = await new TableOfContentsProvider(
+      document,
+      this.asciidocLoader,
+    ).getToc()
+    const root: AsciidocSymbol = {
+      level: -Infinity,
+      children: [],
+      parent: undefined,
     }
-
-    return this.root.children
+    this.buildTree(root, toc)
+    return root.children
   }
 
   private buildTree(parent: AsciidocSymbol, entries: TocEntry[]) {

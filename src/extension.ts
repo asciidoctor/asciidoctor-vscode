@@ -3,6 +3,7 @@ import { antoraSupportEnabledContextKey } from './commands/antoraSupport.js'
 import * as commands from './commands/index.js'
 import { CommandManager } from './core/commandManager.js'
 import { asciidocDocumentSelector } from './core/document.js'
+import { isAsciidocFile } from './core/file.js'
 import { Logger } from './core/logger.js'
 import { AntoraSupportManager } from './features/antora/antoraContext.js'
 import { registerAntoraCacheInvalidation } from './features/antora/antoraDocument.js'
@@ -86,7 +87,7 @@ export async function activate(context: vscode.ExtensionContext) {
   const selector = asciidocDocumentSelector
 
   const contentProvider = new AsciidocContentProvider(asciidocEngine, context)
-  const symbolProvider = new AdocDocumentSymbolProvider(null, asciidocLoader)
+  const symbolProvider = new AdocDocumentSymbolProvider(asciidocLoader)
   const previewManager = new AsciidocPreviewManager(
     contentProvider,
     logger,
@@ -111,8 +112,29 @@ export async function activate(context: vscode.ExtensionContext) {
       ...[':', '$', '@', '/', '#'],
     ),
   )
+  // Editing an included file does not bump the *parent* document's version, so
+  // VS Code keeps serving a stale Outline/breadcrumbs for the parent. There is
+  // no API to invalidate document symbols directly, but re-registering the
+  // provider makes VS Code drop its symbol cache and re-query the visible
+  // editors. Includes are resolved from disk during the parse, so the parent
+  // can only reflect the new content once the include is *saved* — hence we
+  // refresh on save (like the preview) rather than on every keystroke.
+  let symbolProviderRegistration =
+    vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider)
+  context.subscriptions.push({
+    dispose: () => symbolProviderRegistration.dispose(),
+  })
   context.subscriptions.push(
-    vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider),
+    vscode.workspace.onDidSaveTextDocument((document) => {
+      if (isAsciidocFile(document)) {
+        symbolProviderRegistration.dispose()
+        symbolProviderRegistration =
+          vscode.languages.registerDocumentSymbolProvider(
+            selector,
+            symbolProvider,
+          )
+      }
+    }),
   )
   context.subscriptions.push(
     vscode.languages.registerDocumentLinkProvider(

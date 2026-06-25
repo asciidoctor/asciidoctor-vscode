@@ -1,0 +1,9 @@
+== Installation
+
+The operator is distributed as a Helm chart and as a plain set of Kubernetes
+manifests. Pick whichever fits your delivery pipeline.
+
+=== Prerequisites
+
+You need a Kubernetes cluster v1.27 or newer, `kubectl` configured against it,
+and cluster-admin rights to install the custom resource definitions.
