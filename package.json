@@ -668,6 +668,7 @@
     "asciidoctor-kroki": "1.0.0-beta.1",
     "html-entities": "^2.4.0",
     "js-yaml": "^4.1.0",
+    "morphdom": "^2.7.8",
     "os-browserify": "^0.3.0",
     "querystring": "^0.2.1",
     "tty-browserify": "^0.0.1",

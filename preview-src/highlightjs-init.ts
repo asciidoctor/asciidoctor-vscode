@@ -144,16 +144,35 @@ declare const hljs: any
     },
   }
 
+  // Highlight a set of code elements, skipping any that highlight.js has
+  // already processed (it marks them with `data-highlighted`). This lets
+  // incremental preview updates re-highlight only the blocks that changed
+  // while leaving preserved blocks untouched.
+  function highlightElements(elements: any[]): void {
+    elements.forEach((el: any) => {
+      if (el.dataset && el.dataset.highlighted) {
+        return
+      }
+      hljs.highlightElement(el)
+    })
+  }
+  // Re-highlight hook used by incremental preview updates.
+  ;(window as any).__asciidocHighlight = (root?: ParentNode) => {
+    highlightElements(
+      [].slice.call(
+        (root || document).querySelectorAll('pre.highlight > code'),
+      ),
+    )
+  }
+
   if (hljs.initHighlighting.called) {
     return
   }
   hljs.initHighlighting.called = true
   hljs.addPlugin(mergeHtmlPlugin)
-  ;[].slice
-    .call(document.querySelectorAll('pre.highlight > code'))
-    .forEach((el: any) => {
-      hljs.highlightElement(el)
-    })
+  highlightElements(
+    [].slice.call(document.querySelectorAll('pre.highlight > code')),
+  )
 })()
 
 export {}

@@ -220,6 +220,7 @@ export class AsciidoctorWebViewConverter {
         <base href="${webviewResourceProvider.asWebviewUri(this.textDocument.uri)}">
       </head>
       <body${node.getId() ? ` id="${node.getId()}"` : ''} class="${this.getBodyCssClasses(node)}">
+        <div id="preview-root">
         ${headerDocinfo}
         ${await this.getDocumentHeader(node)}
         <div id="content"${this.antoraDocumentContext ? ' class="doc"' : ''}>
@@ -227,7 +228,8 @@ export class AsciidoctorWebViewConverter {
         </div>
         ${this.generateFootnotes(node)}
         ${this.generateFooter(node)}
-        <div class="code-line" data-line="${this.textDocument.lineCount}"></div>
+        <div class="code-line data-line-${this.textDocument.lineCount}" data-line="${this.textDocument.lineCount}"></div>
+        </div>
         ${this.getScripts(webviewResourceProvider, nonce)}
         ${syntaxHighlighterFooterContent}
         ${this.generateMathJax(node, webviewResourceProvider, nonce)}
@@ -457,11 +459,17 @@ ${footnoteItems.join('\n')}
     mermaid.registerLayoutLoaders(elkLayouts);
     await mermaid.registerExternalDiagrams([zenuml]);
     mermaid.initialize({startOnLoad: false, theme: dark ? 'dark' : 'default'});
-    try {
-      await mermaid.run();
-    } catch (e) {
-      console.error('Mermaid rendering failed', e);
-    }
+    // Expose a re-render hook so incremental preview updates can render only the
+    // Mermaid diagrams that were added or changed (run() skips already-processed
+    // nodes), instead of reloading the whole webview.
+    window.__asciidocRenderMermaid = async (nodes) => {
+      try {
+        await mermaid.run(nodes && nodes.length ? { nodes } : undefined);
+      } catch (e) {
+        console.error('Mermaid rendering failed', e);
+      }
+    };
+    await window.__asciidocRenderMermaid();
   </script>`
   }
 
@@ -692,6 +700,7 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
     }
     return `${baseStyles.join('\n')}
   ${this.computeCustomStyleSheetIncludes(webviewResourceProvider, textDocumentUri, config)}
+  ${this.getScrollBeyondLastLineStyles()}
   ${this.getImageStabilizerStyles(state)}`
   }
 
@@ -722,6 +731,19 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
       `<link rel="stylesheet" class="code-user-style" data-source="${escapeAttribute(stylePath)}" href="${escapeAttribute(this.fixHref(webviewResourceProvider, textDocumentUri, stylePath))}" type="text/css" media="screen">`,
     )
     return out.join('\n')
+  }
+
+  // Mirror the editor's `scrollBeyondLastLine`: reserve a viewport's worth of
+  // empty space below the content so the last lines can be scrolled up to the
+  // top of the preview, like the editor lets you scroll past its last line.
+  // This also makes the bottom of both panes line up naturally.
+  private getScrollBeyondLastLineStyles() {
+    if (!this.config.scrollBeyondLastLine) {
+      return ''
+    }
+    return `<style>
+#preview-root { padding-bottom: calc(100vh - 4rem); }
+</style>\n`
   }
 
   private getImageStabilizerStyles(state?: any) {

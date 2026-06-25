@@ -39,11 +39,28 @@ export class AsciidocPreview
   private firstUpdate = true
   private currentVersion?: { resource: vscode.Uri; version: number }
   private forceUpdate = false
-  private isScrolling = false
+  // While the preview is driving the editor (preview scroll -> revealLine ->
+  // editor reveal), the editor's visible-range changes must not be echoed back
+  // as `updateView`, or the preview fights the user's scroll (flicker, #638). A
+  // single boolean only guards one event; a short time window covers the whole
+  // burst, including the animated `revealRange` when `editor.smoothScrolling`
+  // is on.
+  private revealingEditorUntil = 0
   private _disposed: boolean = false
   private imageInfo: { id: string; width: number; height: number }[] = []
   private config: vscode.WorkspaceConfiguration
   private refreshInterval: number
+  // When true, the next content update replaces the whole webview HTML (full
+  // reload). Otherwise the new content is sent to the webview to be morphed in
+  // place, preserving scroll position and already-rendered MathJax / Mermaid /
+  // highlight.js / image output. Reset to true on resource or configuration
+  // changes, and whenever the (non-retained) webview is revealed.
+  private needsFullReload = true
+  // True once an incremental (morphed) update has been applied, meaning the
+  // last HTML assigned to `webview.html` no longer matches what is displayed.
+  // A non-retained webview that gets destroyed while hidden would otherwise
+  // reload that stale HTML when revealed.
+  private webviewHtmlIsStale = false
 
   public static async revive(
     webview: vscode.WebviewPanel,
@@ -153,6 +170,21 @@ export class AsciidocPreview
     this.editor.onDidChangeViewState(
       (e) => {
         this._onDidChangeViewStateEmitter.fire(e)
+        // When the preview is not retained across hiding, VS Code destroys the
+        // webview and reloads it from the last full HTML when it is revealed
+        // again, dropping any incremental (morphed) updates. Force a full
+        // reload on reveal so the content reflects the latest version.
+        const preservePreviewWhenHidden = vscode.workspace
+          .getConfiguration('asciidoc', null)
+          .get<boolean>('preview.preservePreviewWhenHidden', false)
+        if (
+          e.webviewPanel.visible &&
+          !preservePreviewWhenHidden &&
+          this.webviewHtmlIsStale
+        ) {
+          this.needsFullReload = true
+          this.refresh(true)
+        }
       },
       null,
       this.disposables,
@@ -170,7 +202,7 @@ export class AsciidocPreview
             break
 
           case 'revealLine':
-            this.onDidScrollPreview(e.body.line)
+            this.onDidScrollPreview(e.body.line, e.body.atBottom)
             break
 
           case 'clickLink':
@@ -300,6 +332,8 @@ export class AsciidocPreview
     if (isResourceChange) {
       clearTimeout(this.throttleTimer)
       this.throttleTimer = undefined
+      // A different document means a different shell: force a full reload.
+      this.needsFullReload = true
     }
 
     this._resource = resource
@@ -330,6 +364,9 @@ export class AsciidocPreview
     if (this._previewConfigurations.hasConfigurationChanged(this._resource)) {
       this.config = vscode.workspace.getConfiguration('asciidoc', this.resource)
       this.refreshInterval = this.config.get<number>('preview.refreshInterval')
+      // Styles, security level and other shell-level settings live in the
+      // webview <head>, which morphing does not touch: force a full reload.
+      this.needsFullReload = true
       this.refresh()
     }
   }
@@ -403,8 +440,7 @@ export class AsciidocPreview
       return
     }
 
-    if (this.isScrolling) {
-      this.isScrolling = false
+    if (Date.now() < this.revealingEditorUntil) {
       return
     }
 
@@ -471,12 +507,27 @@ export class AsciidocPreview
       this._contributionProvider,
       asciidocPreviewConfiguration,
     )
-    this.editor.webview.html = await this._contentProvider.providePreviewHTML(
+    const html = await this._contentProvider.providePreviewHTML(
       document,
       this._previewConfigurations,
       this,
       this.line,
     )
+    if (this.needsFullReload) {
+      // Full reload: rebuild the entire webview (shell + content).
+      this.editor.webview.html = html
+      this.needsFullReload = false
+      this.webviewHtmlIsStale = false
+    } else {
+      // Incremental update: hand the freshly rendered document to the webview
+      // so it can morph `#preview-root` in place instead of reloading.
+      this.postMessage({
+        type: 'updateContent',
+        html,
+        source: resource.toString(),
+      })
+      this.webviewHtmlIsStale = true
+    }
   }
 
   private static getWebviewOptions(
@@ -522,21 +573,28 @@ export class AsciidocPreview
     return baseRoots
   }
 
-  private onDidScrollPreview(line: number) {
+  private onDidScrollPreview(line: number, atBottom: boolean = false) {
     this.line = line
+    // Suppress the editor -> preview echo for the whole reveal (and its
+    // smooth-scroll animation) so the preview does not bounce back.
+    this.revealingEditorUntil = Date.now() + 250
     for (const editor of vscode.window.visibleTextEditors) {
       if (!this.isPreviewOf(editor.document.uri)) {
         continue
       }
 
-      this.isScrolling = true
       const sourceLine = Math.floor(line)
       const fraction = line - sourceLine
       const text = editor.document.lineAt(sourceLine).text
       const start = Math.floor(fraction * text.length)
       editor.revealRange(
         new vscode.Range(sourceLine, start, sourceLine + 1, 0),
-        vscode.TextEditorRevealType.AtTop,
+        // When the preview is scrolled to the very bottom, just bring the last
+        // line into view (minimal scroll) instead of pinning it to the top,
+        // which would scroll the editor further than necessary.
+        atBottom
+          ? vscode.TextEditorRevealType.Default
+          : vscode.TextEditorRevealType.AtTop,
       )
     }
   }

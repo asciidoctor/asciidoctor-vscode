@@ -29,6 +29,32 @@ export type AsciidoctorBuiltInBackends = 'html5' | 'docbook5'
 
 const previewConfigurationManager = new AsciidocPreviewConfigurationManager()
 
+/**
+ * Compute a short, stable hash of a block's raw AsciiDoc source.
+ *
+ * Used to tag rendered blocks so the preview can morph incrementally and skip
+ * blocks whose source did not change between two renders. Returns `undefined`
+ * when the block exposes no usable source (in which case the block is always
+ * re-rendered, which is safe).
+ */
+function hashBlockSource(block: any): string | undefined {
+  let source: string
+  try {
+    source = typeof block.getSource === 'function' ? block.getSource() : ''
+  } catch {
+    return undefined
+  }
+  if (!source) {
+    return undefined
+  }
+  // djb2
+  let hash = 5381
+  for (let i = 0; i < source.length; i++) {
+    hash = (hash * 33) ^ source.charCodeAt(i)
+  }
+  return (hash >>> 0).toString(36)
+}
+
 export class AsciidocEngine {
   constructor(
     readonly contributionProvider: AsciidocContributionProvider,
@@ -241,6 +267,15 @@ export class AsciidocEngine {
       })
       blocksWithLineNumber.forEach(function (block) {
         block.addRole('data-line-' + block.getLineNumber())
+        // Tag each block with a hash of its source so the preview can morph
+        // incrementally and skip blocks whose content is unchanged (keeping
+        // already-rendered MathJax/Mermaid/highlight output intact). The hash
+        // is encoded as a role/class because the custom converter already emits
+        // roles as classes and they survive client-side post-processing.
+        const contentHash = hashBlockSource(block)
+        if (contentHash !== undefined) {
+          block.addRole('data-h-' + contentHash)
+        }
       })
       const html = await document.convert(options)
       return {
