@@ -17,7 +17,6 @@ describe('asciidoc.WorkspaceSymbolProvider', () => {
 
   before(() => {
     symbolProvider = new AdocDocumentSymbolProvider(
-      null,
       new AsciidocLoader(
         new AsciidoctorConfig(),
         new AsciidoctorExtensions(

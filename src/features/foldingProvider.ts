@@ -246,9 +246,13 @@ export default class AsciidocFoldingRangeProvider
           break
         }
       }
+      const endLine = typeof end === 'number' ? end : document.lineCount - 1
+      // Included sections are anchored to their `include::` directive line, so
+      // consecutive entries can share a line; never fold a range that ends
+      // before it starts.
       return new vscode.FoldingRange(
         start,
-        typeof end === 'number' ? end : document.lineCount - 1,
+        Math.max(start, endLine),
         FoldingRangeKind.Region,
       )
     })
