@@ -199,10 +199,19 @@ export class AsciidocEngine {
     const documentExtensionName = asciidocTextDocument.extensionName
     const documentFilePath = asciidocTextDocument.filePath
     const templateDirs = this.getTemplateDirs()
+    // Expose the active VS Code color theme as a document attribute so authors
+    // can branch on it (e.g. `ifeval::["{vscode-theme}" == "dark"]`) and so
+    // diagram extensions can request a matching theme. Mirrors the dark/light
+    // detection used by the Highlight.js adapter.
+    const themeKind = vscode.window.activeColorTheme.kind
+    const isDarkTheme =
+      themeKind === vscode.ColorThemeKind.Dark ||
+      themeKind === vscode.ColorThemeKind.HighContrast
     const options: { [key: string]: any } = {
       attributes: {
         ...attributes,
         ...antoraAttributes,
+        'vscode-theme': isDarkTheme ? 'dark' : 'light',
         // The following attributes are "intrinsic attributes" but they are not set when the input is a string
         // like we are doing, in that case it is expected that the attributes are set here for the API:
         // https://docs.asciidoctor.org/asciidoc/latest/attributes/document-attributes-ref/#intrinsic-attributes

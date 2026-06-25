@@ -208,6 +208,15 @@ export async function activate(context: vscode.ExtensionContext) {
   )
 
   context.subscriptions.push(
+    vscode.window.onDidChangeActiveColorTheme(() => {
+      // Re-render so the server-side `vscode-theme` attribute (and anything
+      // derived from it, e.g. Highlight.js) reflects the new theme. Client-side
+      // theming (Mermaid, CSS) already updates live via the webview body class.
+      previewManager.refresh(true)
+    }),
+  )
+
+  context.subscriptions.push(
     vscode.workspace.onDidSaveTextDocument((e) => {
       // when the workspace configuration is updated, the file .vscode/settings.json since we are also listening onDidChangeConfiguration we can safely ignore this event
       if (!e.uri.path.endsWith('.vscode/settings.json')) {
