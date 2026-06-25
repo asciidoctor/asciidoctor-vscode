@@ -23,6 +23,7 @@
 * Fix the bundled "Noto Serif" preview font never loading because its `@font-face` rules used `src: local('./fonts/…woff') format('woff')` — `local()` resolves an installed font by name, not a file, and `format()` is invalid after it; load the files with `url()` so the preview uses the bundled Noto Serif instead of falling back to a generic serif
 * Fix `antora.yml` detection failing for AsciiDoc documents that live under `partials/` or `examples/` rather than `pages/` (#958): the detection was hardcoded to `modules/<module>/pages/…`, so partials and examples had no Antora context and their resource ids (images, includes) could not resolve. It now recognizes the `pages`, `partials` and `examples` content families
 * Fix `antora.yml` detection failing on Windows when the workspace scan and the open document disagree on the drive-letter case (e.g. `/e:/…` vs `/E:/…`), which defeated the path prefix comparison and broke features such as image preview (#957)
+* Fix Kroki diagrams with a transparent background (e.g. TikZ) being invisible in the dark/high-contrast preview themes: give Kroki image blocks a light background card so every diagram stays legible, regardless of whether the backend emits a transparent or opaque-white image
 
 ### Improvements
 
