@@ -614,7 +614,7 @@
     "copy-fonts:roboto-mono": "cp -r node_modules/@fontsource/roboto-mono/files/roboto-mono-latin-variable-wghtOnly-italic.woff2 media/fonts && cp -r node_modules/@fontsource/roboto-mono/files/roboto-mono-latin-variable-wghtOnly-normal.woff2 media/fonts",
     "copy-font-awesome": "cp -r node_modules/font-awesome/fonts media/font-awesome && cp -r node_modules/font-awesome/css media/font-awesome",
     "copy-mathjax": "cp -r node_modules/mathjax media",
-    "copy-mermaid": "cp -r node_modules/mermaid media",
+    "copy-mermaid": "node tasks/copy-mermaid.mjs",
     "copy-highlightjs": "cp node_modules/@highlightjs/cdn-assets/highlight.min.js media/highlightjs && cp -r node_modules/@highlightjs/cdn-assets/languages media/highlightjs && cp -r node_modules/@highlightjs/cdn-assets/styles media/highlightjs",
     "copy-assets": "npm run copy-fonts:all && npm run copy-font-awesome && npm run copy-mathjax && npm run copy-mermaid && npm run copy-highlightjs",
     "dev": "npm run build",
@@ -640,6 +640,8 @@
     "@fontsource/open-sans": "4.5.14",
     "@fontsource/roboto-mono": "4.5.10",
     "@highlightjs/cdn-assets": "~11.11.0",
+    "@mermaid-js/layout-elk": "^0.2.1",
+    "@mermaid-js/mermaid-zenuml": "^0.2.3",
     "@playwright/test": "^1.47.2",
     "@types/lodash.throttle": "~4.1",
     "@types/node": "^24.0.0",
@@ -656,8 +658,8 @@
     "path-browserify": "1.0.1",
     "semver": "^7.3.7",
     "sinon": "^22.0.0",
-    "typescript": "^5.9.3",
-    "textmate-grammar-test": "^0.7.0"
+    "textmate-grammar-test": "^0.7.0",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
     "@antora/content-classifier": "3.1.15",
