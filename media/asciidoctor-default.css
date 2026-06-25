@@ -2207,3 +2207,20 @@ p {
 .vscode-high-contrast .prettyprint {
     background: var(--vscode-editor-background, #000);
 }
+
+/* Kroki renders some diagrams (TikZ, Graphviz, …) with a transparent
+   background, so their dark strokes are invisible in dark/high-contrast themes,
+   while PlantUML renders an opaque white background. Normalise both to a
+   readable light card so every diagram stays legible. */
+.vscode-dark .imageblock.kroki img,
+.vscode-dark .imageblock.kroki object,
+.vscode-dark .imageblock.kroki svg,
+.vscode-dark .image.kroki img,
+.vscode-high-contrast .imageblock.kroki img,
+.vscode-high-contrast .imageblock.kroki object,
+.vscode-high-contrast .imageblock.kroki svg,
+.vscode-high-contrast .image.kroki img {
+    background: #fff;
+    border-radius: 4px;
+    padding: 8px;
+}
