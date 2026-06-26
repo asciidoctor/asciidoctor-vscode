@@ -75,6 +75,24 @@ describe('renderMathJax', () => {
     )
   })
 
+  test('turns off processEscapes so AsciiMath keeps its \\$ delimiters', () => {
+    // With processEscapes on (the MathJax 4 default), TeX rewrites Asciidoctor's
+    // `\$…\$` delimiters into `<span>$</span>`, leaving a stray `$` around every
+    // formula.
+    const html = renderMathJax(true, 'none', 'NONCE', resources)
+    assert.ok(html.includes('processEscapes: false'), html)
+  })
+
+  test('disables the SRE speech/braille/enrichment a11y tooling', () => {
+    // The speech web worker is not bundled; leaving it on stalls the document
+    // ready promise and freezes incremental typesetting until a full reload.
+    const html = renderMathJax(true, 'none', 'NONCE', resources)
+    assert.ok(html.includes('enrich: false'), html)
+    assert.ok(html.includes('speech: false'), html)
+    assert.ok(html.includes('braille: false'), html)
+    assert.ok(html.includes('assistiveMml: false'), html)
+  })
+
   test('overrides AsciiMath compile() to render .stemblock math as display', () => {
     const html = renderMathJax(true, 'none', 'NONCE', resources)
     assert.ok(html.includes('MathJax._.input.asciimath_ts'), html)

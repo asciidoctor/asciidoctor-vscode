@@ -55,6 +55,22 @@ MathJax = {
   options: {
     // The MathJax context menu does not work in the sandboxed WebView.
     enableMenu: false,
+    // MathJax 4 enables the accessibility extensions (semantic enrichment,
+    // speech and Braille generation) by default. Speech/Braille run in a web
+    // worker that loads sre/speech-worker.js + the SRE mathmaps, which are not
+    // bundled in \`media/mathjax\`. The missing worker leaves the \`attachSpeech\`
+    // render action pending forever, so the document's ready promise never
+    // resolves and every later \`typesetPromise\` (the incremental updates) hangs
+    // until a full reload. Turn the a11y tooling off through the menu settings —
+    // that also stops the explorer/a11y component from auto-loading.
+    menuOptions: {
+      settings: {
+        enrich: false,
+        speech: false,
+        braille: false,
+        assistiveMml: false
+      }
+    },
     // MathJax 4 has a single document-level ignore class (the per-input
     // ignoreClass of tex2jax/asciimath2jax is gone), so combine both.
     ignoreHtmlClass: 'nostem|nolatexmath|noasciimath'
@@ -62,6 +78,12 @@ MathJax = {
   tex: {
     inlineMath: [['\\\\(', '\\\\)']],
     displayMath: [['\\\\[', '\\\\]']],
+    // Asciidoctor wraps AsciiMath in \`\\$…\\$\` delimiters. MathJax 4 turns
+    // \`processEscapes\` on by default, which rewrites every \`\\$\` in the text into
+    // a literal \`<span>$</span>\` before AsciiMath runs — stealing the opening and
+    // closing delimiters and leaving a stray \`$\` on each side of every formula.
+    // Disable it so the \`\\$\` delimiters reach the AsciiMath input jax intact.
+    processEscapes: false,
     tags: '${tags}'
   },
   asciimath: {
