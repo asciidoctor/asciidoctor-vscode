@@ -102,3 +102,15 @@ Sticky scroll overlays the ancestor headings on top of the editor viewport, hidi
   "editor.stickyScroll.enabled": false
 }
 ----
+
+== Troubleshooting the preview
+
+The preview updates incrementally: when you edit, only the blocks that changed are re-rendered (re-running MathJax, Mermaid and syntax highlighting just for them), and the scroll position is kept stable.
+
+If the preview seems slow to update, gets out of sync, or a block is not re-rendered, enable verbose tracing and inspect the preview console:
+
+. Set `asciidoc.debug.trace` to `verbose`.
+. Reload the window (command *Developer: Reload Window*).
+. Open the preview console with the command *Developer: Open Webview Developer Tools* and look at the `[asciidoc.preview]` messages while you edit.
+
+The messages report each update, how many blocks were re-rendered (and whether they carry a content hash), and the time spent typesetting math -- useful information to include in a bug report.

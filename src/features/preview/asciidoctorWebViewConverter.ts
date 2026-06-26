@@ -165,6 +165,10 @@ export class AsciidoctorWebViewConverter {
       doubleClickToSwitchToEditor: this.config.doubleClickToSwitchToEditor,
       preservePreviewWhenHidden: this.config.preservePreviewWhenHidden,
       disableSecurityWarnings: shouldDisableSecurityWarnings,
+      debug:
+        vscode.workspace
+          .getConfiguration('asciidoc.debug', null)
+          .get<string>('trace', 'off') === 'verbose',
     }
     this.state = state || {}
   }
@@ -394,7 +398,7 @@ MathJax = {
   TeX: {${eqnumsOpt}}
 }
 </script>
-<script src="${webviewResourceProvider.asMediaWebViewSrc('media', 'mathjax', 'MathJax.js')}?config=TeX-MML-AM_HTMLorMML" nonce="${nonce}"></script>
+<script src="${webviewResourceProvider.asMediaWebViewSrc('media', 'mathjax', 'MathJax.js')}?config=TeX-MML-AM_CHTML" nonce="${nonce}"></script>
 <script nonce="${nonce}">
 MathJax.Hub.Register.StartupHook("AsciiMath Jax Ready", function () {
   MathJax.InputJax.AsciiMath.postfilterHooks.Add(function (data, node) {
