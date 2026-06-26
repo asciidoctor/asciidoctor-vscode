@@ -32,11 +32,14 @@ describe('Refresh preview command', () => {
   })
 
   test('forces a re-render even when the document is unchanged', async () => {
-    // Count how many times the preview HTML is actually (re)generated.
+    // Count how many times the preview HTML is actually (re)generated, and tag
+    // each render so we can tell a full reload (which assigns `webview.html`,
+    // rebuilding the shell/<head> where styles live) from an incremental morph
+    // (which leaves `webview.html` untouched).
     const contentProvider = {
       providePreviewHTML: async () => {
         renderCount++
-        return '<html><body>preview</body></html>'
+        return `<html><body>preview ${renderCount}</body></html>`
       },
     } as unknown as AsciidocContentProvider
 
@@ -54,10 +57,21 @@ describe('Refresh preview command', () => {
       getAsciidocExtensionContributions(extensionContext),
     )
 
+    // Reading the (private) webview HTML lets us assert that a forced refresh
+    // does a full reload, not just an incremental morph.
+    const webviewHtml = () =>
+      (preview as unknown as { editor: vscode.WebviewPanel }).editor.webview
+        .html
+
     // Initial render.
     preview.update(fileUri)
     await tick(300)
     assert.equal(renderCount, 1, 'the initial update should render once')
+    assert.match(
+      webviewHtml(),
+      /preview 1/,
+      'the initial render is a full load',
+    )
 
     // A non-forced refresh on an unchanged document must NOT re-render: the
     // update is throttled and then skipped by the unchanged-version
@@ -71,14 +85,23 @@ describe('Refresh preview command', () => {
       'a non-forced refresh on an unchanged document should not re-render',
     )
 
-    // The fix: RefreshPreviewCommand calls refresh(true), which forces a full
-    // re-render regardless of the document version.
+    // The fix: a forced refresh re-renders regardless of the document version
+    // *and* does a full reload, so shell-level settings such as
+    // `asciidoc.preview.style` (which live in the webview <head>, untouched by
+    // an incremental morph) actually take effect. Asserting `webview.html`
+    // picked up the latest render proves the full reload happened — an
+    // incremental morph would have left it at "preview 1".
     preview.refresh(true)
     await tick(500)
     assert.equal(
       renderCount,
       2,
       'a forced refresh must re-render even when the document is unchanged',
+    )
+    assert.match(
+      webviewHtml(),
+      /preview 2/,
+      'a forced refresh must fully reload the webview, not just morph it',
     )
   })
 })
