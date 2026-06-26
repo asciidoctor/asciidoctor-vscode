@@ -7,6 +7,7 @@ export interface PreviewSettings {
   disableSecurityWarnings: boolean
   doubleClickToSwitchToEditor: boolean
   preservePreviewWhenHidden: boolean
+  debug: boolean
 }
 
 let cachedSettings: PreviewSettings | undefined

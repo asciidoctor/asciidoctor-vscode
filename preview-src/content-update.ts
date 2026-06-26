@@ -7,10 +7,37 @@ import {
   scrollToLine,
   suppressScrollEcho,
 } from './scroll-sync.js'
+import { getSettings } from './settings.js'
 
 declare const MathJax: any
 
-const BLOCK_SELECTOR = 'div[class^="data-line-"], div[class*=" data-line-"]'
+// Match any element carrying a `data-line-*` anchor, not only `div`: tables
+// render as `<table>` and must be recognized as leaf blocks so their math is
+// reprocessed (otherwise editing a table cell leaves every equation as raw text).
+const BLOCK_SELECTOR = '[class^="data-line-"], [class*=" data-line-"]'
+
+/**
+ * Diagnostic logging for the incremental update, off by default. Enable it with
+ * `"asciidoc.debug.trace": "verbose"` and reload the preview, then read the
+ * messages in the webview console (command "Developer: Open Webview Developer
+ * Tools"). Useful to troubleshoot reports of slow or missing preview updates.
+ */
+function debugLog(...args: unknown[]) {
+  if (getSettings().debug) {
+    console.log('[asciidoc.preview]', ...args)
+  }
+}
+
+// Counts updateContent invocations (helps spot duplicate updates per edit).
+let updateSeq = 0
+
+// Coalesced MathJax typeset queue. Successive edits add their changed blocks
+// here; a single drain typesets the set and clears it. Because morphdom reuses
+// the same DOM element across updates, editing one equation repeatedly
+// (e.g. typing "12345") dedupes to a single typeset of that element instead of
+// piling up one per keystroke in MathJax's serial queue.
+const pendingMathBlocks = new Set<Element>()
+let mathDrainScheduled = false
 
 /**
  * Return the `data-h-*` content-hash class of a block, if any.
@@ -22,8 +49,25 @@ function blockHash(el: Element): string | undefined {
 }
 
 /**
- * Walk up from a node to the nearest enclosing source block (a `data-line-*`
- * element).
+ * Structural containers carry a `data-line` anchor (the document node's roles
+ * even land on `<body>`) but wrap arbitrary content, including math. They must
+ * never be a reprocessing unit: re-typesetting a whole container re-renders
+ * every equation it contains. Reprocessing must target the leaf content blocks
+ * (paragraphs, stem blocks, tables, listings…) instead.
+ */
+function isContainerWrapper(el: Element): boolean {
+  return (
+    el.tagName === 'BODY' ||
+    el.id === 'preview-root' ||
+    el.id === 'content' ||
+    el.id === 'preamble' ||
+    /(^|\s)sect\d(\s|$)/.test(el.className)
+  )
+}
+
+/**
+ * Walk up from a node to the nearest enclosing *leaf* source block (a
+ * `data-line-*` element that is not a section container).
  */
 function nearestBlock(node: Node | null): Element | null {
   let el: Element | null =
@@ -31,12 +75,32 @@ function nearestBlock(node: Node | null): Element | null {
       ? (node as Element)
       : (node && node.parentElement) || null
   while (el) {
-    if (el.matches && el.matches(BLOCK_SELECTOR)) {
+    if (el.matches && el.matches(BLOCK_SELECTOR) && !isContainerWrapper(el)) {
       return el
     }
     el = el.parentElement
   }
   return null
+}
+
+/**
+ * Collect the leaf source blocks contained in (or equal to) an added node, so a
+ * newly inserted section's math is reprocessed without re-typesetting existing
+ * sections.
+ */
+function collectLeafBlocks(node: Node, into: Set<Element>) {
+  if (node.nodeType !== 1) {
+    return
+  }
+  const el = node as Element
+  if (el.matches(BLOCK_SELECTOR) && !isContainerWrapper(el)) {
+    into.add(el)
+  }
+  el.querySelectorAll(BLOCK_SELECTOR).forEach((leaf) => {
+    if (!isContainerWrapper(leaf)) {
+      into.add(leaf)
+    }
+  })
 }
 
 /**
@@ -99,30 +163,66 @@ function reprocess(blocks: Element[], anchorLine: number | undefined) {
   }
 
   if (typeof MathJax !== 'undefined' && MathJax.Hub) {
-    // MathJax typesets asynchronously and reflows the page once done — possibly
-    // seconds later on a long document. Hold the scroll-echo suppression for the
-    // whole render so the reflow does not bounce the editor, and re-pin once it
-    // completes.
-    beginAsyncRender()
-    let ended = false
-    const finish = () => {
-      if (ended) {
-        return
-      }
-      ended = true
+    for (const block of blocks) {
+      pendingMathBlocks.add(block)
+    }
+    scheduleMathDrain(anchorLine)
+  }
+}
+
+/**
+ * Typeset all blocks queued in `pendingMathBlocks` in a single drain, then clear
+ * them. MathJax typesets asynchronously and reflows the page once done, so the
+ * scroll-echo suppression is held for the whole drain and the preview is re-
+ * pinned at the end. If more blocks accumulate while draining, a follow-up drain
+ * is scheduled.
+ */
+function scheduleMathDrain(anchorLine: number | undefined) {
+  if (mathDrainScheduled) {
+    return
+  }
+  mathDrainScheduled = true
+  beginAsyncRender()
+  let released = false
+  const release = () => {
+    if (released) {
+      return
+    }
+    released = true
+    endAsyncRender()
+  }
+
+  const tQueue = performance.now()
+
+  MathJax.Hub.Queue(() => {
+    const batch = Array.from(pendingMathBlocks)
+    pendingMathBlocks.clear()
+    for (const block of batch) {
+      MathJax.Hub.Queue(['Typeset', MathJax.Hub, block])
+    }
+    MathJax.Hub.Queue(() => {
+      debugLog(
+        `MathJax typeset ${(performance.now() - tQueue).toFixed(0)}ms for ${batch.length} block(s)`,
+      )
+      mathDrainScheduled = false
       resetCodeLineElements()
       if (typeof anchorLine === 'number' && !isNaN(anchorLine)) {
         scrollToLine(anchorLine)
       }
-      endAsyncRender()
+      release()
+      if (pendingMathBlocks.size) {
+        scheduleMathDrain(anchorLine)
+      }
+    })
+  })
+
+  // Safety net: never leave the suppression stuck on if MathJax stalls.
+  setTimeout(() => {
+    if (!released) {
+      mathDrainScheduled = false
+      release()
     }
-    for (const block of blocks) {
-      MathJax.Hub.Queue(['Typeset', MathJax.Hub, block])
-    }
-    MathJax.Hub.Queue(finish)
-    // Safety net: never leave the suppression stuck on if MathJax stalls.
-    setTimeout(finish, 10000)
-  }
+  }, 10000)
 }
 
 /**
@@ -137,6 +237,7 @@ function reprocess(blocks: Element[], anchorLine: number | undefined) {
  * fall back to a full reload.
  */
 export function updatePreviewContent(html: string): boolean {
+  debugLog(`updateContent #${++updateSeq} received`)
   const currentRoot = document.getElementById('preview-root')
   if (!currentRoot) {
     return false
@@ -165,6 +266,8 @@ export function updatePreviewContent(html: string): boolean {
     }
   }
 
+  const tMorph = performance.now()
+
   morphdom(currentRoot, newRoot, {
     onBeforeElUpdated(fromEl: Element, toEl: Element) {
       if (fromEl.isEqualNode(toEl)) {
@@ -184,13 +287,27 @@ export function updatePreviewContent(html: string): boolean {
       record(el)
     },
     onNodeAdded(node: Node) {
-      record(node)
+      collectLeafBlocks(node, changedBlocks)
       return node
     },
   })
 
   resetCodeLineElements()
-  reprocess(outermost(changedBlocks), anchorLine)
+
+  const changed = outermost(changedBlocks)
+  if (getSettings().debug) {
+    debugLog(
+      `morph ${(performance.now() - tMorph).toFixed(0)}ms, ${changed.length} changed block(s):`,
+      changed.map((b) => {
+        const cls = b.getAttribute('class') || ''
+        const line = (cls.match(/data-line-(\d+)/) || [])[1] ?? '?'
+        const hash = blockHash(b) ?? 'NO-HASH'
+        return `${b.tagName.toLowerCase()}#l${line}(${hash})`
+      }),
+    )
+  }
+
+  reprocess(changed, anchorLine)
 
   // Re-pin straight after the synchronous layout has settled.
   if (typeof anchorLine === 'number' && !isNaN(anchorLine)) {

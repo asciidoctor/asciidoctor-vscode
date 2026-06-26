@@ -43,11 +43,6 @@
 // ancestor headings on top of the editor viewport, hiding the first lines, so
 // the *visible* top line looks a few lines off from the synced one even though
 // the mapping is correct.
-//
-// SMOOTH SCROLLING: the editor can only be scrolled to whole lines (no pixel
-// API), so editor-follows-preview advances one line at a time. Turn ON
-// `editor.smoothScrolling` so VS Code animates the transition between those
-// positions and the follow looks gradual rather than stepwise.
 // ============================================================================
 
 toc::[]
