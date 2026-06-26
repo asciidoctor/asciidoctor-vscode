@@ -16,9 +16,31 @@ When you open an issue, include the following information:
 We cannot solve the issue if you do not explain how you encountered it.
 ====
 . If the problem occurs only with a specific file, attach it, along with any screenshot that helps illustrate the issue.
+. The extension logs, which often point straight at the cause (see <<logs>>).
 
 [TIP]
 ====
 If a problem appeared right after an update, you can roll back to a previous version.
 See xref:install.adoc#update[Update].
+====
+
+[#logs]
+== Logs
+
+The extension writes its logs to a dedicated *Asciidoctor* output channel, so you can read them without opening the developer tools.
+
+To view the logs:
+
+. Open the Output panel with _View -> Output_ (or *Output: Focus on Output View* from the Command Palette).
+. Select *Asciidoctor* in the channel dropdown on the right.
+
+By default, only informational messages, warnings, and errors are shown.
+To capture more detail when reproducing a problem, raise the verbosity:
+
+. Run *Developer: Set Log Level...* from the Command Palette.
+. Choose *Asciidoctor* (to change only this extension), then pick *Trace* to capture everything.
+
+[TIP]
+====
+When you open an issue, reproduce the problem with the log level set to *Trace*, then copy the relevant lines from the *Asciidoctor* output channel into the issue.
 ====

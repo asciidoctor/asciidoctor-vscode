@@ -9,6 +9,7 @@
   "asciidoc.debug.enableErrorDiagnostics.desc": "Stellt Daten zur Fehlerdiagnose bereit.",
   "asciidoc.debug.title": "Debug",
   "asciidoc.debug.trace.desc": "Aktiviert Debug Logging für diese Erweiterung.",
+  "asciidoc.debug.trace.deprecationMessage": "Diese Einstellung hat keine Wirkung mehr. Die Erweiterung schreibt ihre Logs jetzt in den Ausgabekanal **Asciidoctor**; die Ausführlichkeit wird über den Befehl **Developer: Set Log Level…** gesteuert.",
   "asciidoc.disableAntoraSupport.title": "Disable Antora support in this workspace",
   "asciidoc.editor.enableDrop.desc": "Ziehen und Ablegen für Bilder aktivieren. Feststelltaste gedrückt halten um Dateien im Editor abzulegen.",
   "asciidoc.editor.title": "Editor",

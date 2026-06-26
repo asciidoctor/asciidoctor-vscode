@@ -1,6 +1,7 @@
 import { decode as htmlEntitiesDecode } from 'html-entities'
 import * as vscode from 'vscode'
 import { SkinnyTextDocument } from '../core/document.js'
+import { logger } from '../core/logger.js'
 import { githubSlugifier, Slug } from '../lib/slugify.js'
 import { AsciidocLoader } from './asciidoctor/asciidocLoader.js'
 
@@ -27,7 +28,7 @@ export class TableOfContentsProvider {
       try {
         this.toc = await this.buildToc(this.document)
       } catch (e) {
-        console.log(
+        logger.error(
           `Unable to build the Table Of Content for: ${this.document.fileName}`,
           e,
         )

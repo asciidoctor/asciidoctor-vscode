@@ -9,6 +9,7 @@
   "asciidoc.debug.enableErrorDiagnostics.desc": "AsciiDocの誤り診断を有効にします。",
   "asciidoc.debug.title": "デバッグ",
   "asciidoc.debug.trace.desc": "本拡張機能のデバッグログを有効にします。",
+  "asciidoc.debug.trace.deprecationMessage": "この設定は無効になりました。本拡張機能のログは **Asciidoctor** 出力チャンネルに記録されます。詳細レベルは **Developer: Set Log Level…** コマンドで変更できます。",
   "asciidoc.disableAntoraSupport.title": "Disable Antora support in this workspace",
   "asciidoc.editor.enableDrop.desc": "ドラッグアンドドロップによる画像挿入を有効にします。シフトキーを押しながら、テキストエディタにドラッグアンドドロップしてください。",
   "asciidoc.editor.title": "エディタ",

@@ -127,11 +127,16 @@ You can edit them from the VS Code Settings UI or directly in `settings.json`.
 |===
 |Name |Description |Default
 
-|`asciidoc.debug.trace`
-|Enable debug logging for the extension. Possible values: `off`, `verbose`.
-|`off`
-
 |`asciidoc.debug.enableErrorDiagnostics`
 |Provide error diagnostics.
 |`true`
 |===
+
+The extension writes its logs to a dedicated *Asciidoctor* output channel.
+See xref:get-help.adoc#logs[Get help -> Logs] to learn how to view them and change their verbosity.
+
+[NOTE]
+====
+The `asciidoc.debug.trace` setting has been removed.
+Logging verbosity is now controlled by VS Code through the *Developer: Set Log Level...* command.
+====

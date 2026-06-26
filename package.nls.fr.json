@@ -9,6 +9,7 @@
   "asciidoc.debug.enableErrorDiagnostics.desc": "Active les diagnostics d'erreurs.",
   "asciidoc.debug.title": "Debug",
   "asciidoc.debug.trace.desc": "Active les traces de debug de cette extension.",
+  "asciidoc.debug.trace.deprecationMessage": "Ce paramètre n'a plus aucun effet. L'extension écrit désormais ses logs dans le canal de sortie **Asciidoctor** ; ajustez le niveau de détail avec la commande **Developer: Set Log Level…**.",
   "asciidoc.disableAntoraSupport.title": "Désactiver le support Antora dans cet espace de travail",
   "asciidoc.editor.enableDrop.desc": "Active le glisser/déposer d'images. Maintenir la touche Shift appuyée afin de déposer un fichier dans l'éditeur de texte.",
   "asciidoc.editor.title": "Éditeur",
