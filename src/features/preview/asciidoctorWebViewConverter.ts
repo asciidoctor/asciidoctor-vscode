@@ -11,6 +11,7 @@ import { getWorkspaceFolder } from '../../core/workspace.js'
 import { AntoraDocumentContext } from '../antora/antoraContext.js'
 import { AsciidocContributions } from '../extensionContributions.js'
 import { AsciidocPreviewSecurityLevel } from '../security.js'
+import { renderMathJax } from './mathjax.js'
 import { AsciidocPreviewConfiguration } from './previewConfig.js'
 
 const BAD_PROTO_RE = /^(vbscript|javascript|data):/i
@@ -375,42 +376,29 @@ export class AsciidoctorWebViewConverter {
   }
 
   private generateMathJax(node, webviewResourceProvider, nonce) {
-    if (node.isAttribute('stem')) {
-      let eqnumsVal = node.getAttribute('eqnums', 'none')
-      if (eqnumsVal && eqnumsVal.trim().length === 0) {
-        eqnumsVal = 'AMS'
-      }
-      const eqnumsOpt = ` equationNumbers: { autoNumber: "${eqnumsVal}" } `
-      return `<script nonce="${nonce}">
-MathJax = {
-  messageStyle: "none",
-  // does not work in a sandbox environment
-  showMathMenu: false,
-  tex2jax: {
-    inlineMath: [['\\\\(', '\\\\)']],
-    displayMath: [['\\\\[', '\\\\]']],
-    ignoreClass: "nostem|nolatexmath"
-  },
-  asciimath2jax: {
-    delimiters: [['\\\\$', '\\\\$']],
-    ignoreClass: "nostem|noasciimath"
-  },
-  TeX: {${eqnumsOpt}}
-}
-</script>
-<script src="${webviewResourceProvider.asMediaWebViewSrc('media', 'mathjax', 'MathJax.js')}?config=TeX-MML-AM_CHTML" nonce="${nonce}"></script>
-<script nonce="${nonce}">
-MathJax.Hub.Register.StartupHook("AsciiMath Jax Ready", function () {
-  MathJax.InputJax.AsciiMath.postfilterHooks.Add(function (data, node) {
-    if ((node = data.script.parentNode) && (node = node.parentNode) && node.classList.contains("stemblock")) {
-      data.math.root.display = "block"
-    }
-    return data
-  })
-})
-</script>`
-    }
-    return ''
+    // `fontBase` serves the CommonHTML font from the bundled copy instead of the
+    // jsdelivr CDN the component defaults to (the WebView is offline and the CDN
+    // is blocked by the Content-Security-Policy). The `%%FONT%%` placeholder is
+    // appended by renderMathJax, so it is not routed through asMediaWebViewSrc
+    // (which would URL-encode it).
+    return renderMathJax(
+      node.isAttribute('stem'),
+      node.getAttribute('eqnums', 'none'),
+      nonce,
+      {
+        scriptSrc: webviewResourceProvider.asMediaWebViewSrc(
+          'media',
+          'mathjax',
+          'tex-mml-chtml-mathjax-newcm.js',
+        ),
+        fontBase: webviewResourceProvider.asMediaWebViewSrc(
+          'media',
+          'mathjax',
+          'output',
+          'fonts',
+        ),
+      },
+    )
   }
 
   private generateFootnotes(node) {
@@ -455,7 +443,8 @@ ${footnoteItems.join('\n')}
     //   - the ZenUML diagram (`zenuml`) via registerExternalDiagrams
     // We disable startOnLoad and call run() ourselves so the registrations are
     // guaranteed to complete before any diagram is detected and rendered.
-    return `<script type="module" nonce="${nonce}">
+    return `<!--suppress JSAnnotator -->
+<script type="module" nonce="${nonce}">
     import mermaid from '${mermaidSrc}';
     import elkLayouts from '${elkLayoutSrc}';
     import zenuml from '${zenumlSrc}';

@@ -35,7 +35,7 @@ let updateSeq = 0
 // here; a single drain typesets the set and clears it. Because morphdom reuses
 // the same DOM element across updates, editing one equation repeatedly
 // (e.g. typing "12345") dedupes to a single typeset of that element instead of
-// piling up one per keystroke in MathJax's serial queue.
+// piling up one per keystroke.
 const pendingMathBlocks = new Set<Element>()
 let mathDrainScheduled = false
 
@@ -162,7 +162,10 @@ function reprocess(blocks: Element[], anchorLine: number | undefined) {
     }
   }
 
-  if (typeof MathJax !== 'undefined' && MathJax.Hub) {
+  if (
+    typeof MathJax !== 'undefined' &&
+    typeof MathJax.typesetPromise === 'function'
+  ) {
     for (const block of blocks) {
       pendingMathBlocks.add(block)
     }
@@ -193,28 +196,36 @@ function scheduleMathDrain(anchorLine: number | undefined) {
   }
 
   const tQueue = performance.now()
+  const batch = Array.from(pendingMathBlocks)
+  pendingMathBlocks.clear()
 
-  MathJax.Hub.Queue(() => {
-    const batch = Array.from(pendingMathBlocks)
-    pendingMathBlocks.clear()
-    for (const block of batch) {
-      MathJax.Hub.Queue(['Typeset', MathJax.Hub, block])
-    }
-    MathJax.Hub.Queue(() => {
+  // morphdom replaced these blocks with freshly rendered HTML carrying raw math
+  // delimiters again, so drop the math items MathJax still tracks for them
+  // before re-typesetting (otherwise it skips the already-known nodes).
+  if (typeof MathJax.typesetClear === 'function') {
+    MathJax.typesetClear(batch)
+  }
+
+  MathJax.typesetPromise(batch)
+    .then(() => {
       debugLog(
         `MathJax typeset ${(performance.now() - tQueue).toFixed(0)}ms for ${batch.length} block(s)`,
       )
-      mathDrainScheduled = false
       resetCodeLineElements()
       if (typeof anchorLine === 'number' && !isNaN(anchorLine)) {
         scrollToLine(anchorLine)
       }
+    })
+    .catch((err) => {
+      debugLog('MathJax typeset failed', err)
+    })
+    .finally(() => {
+      mathDrainScheduled = false
       release()
       if (pendingMathBlocks.size) {
         scheduleMathDrain(anchorLine)
       }
     })
-  })
 
   // Safety net: never leave the suppression stuck on if MathJax stalls.
   setTimeout(() => {
