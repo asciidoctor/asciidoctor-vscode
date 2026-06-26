@@ -2,6 +2,7 @@ import { spawn } from 'node:child_process'
 import * as fs from 'node:fs'
 import * as path from 'node:path'
 import * as vscode from 'vscode'
+import { logger } from '../core/logger.js'
 
 const remoteRegex = /^(?:[a-z]+:)?\/\//i
 
@@ -97,7 +98,7 @@ export namespace Import {
           const child = spawn('osascript', [scriptPath, filename])
           child.stdout.once('data', (e) => resolve(e.toString()))
           child.stderr.once('data', (e) => {
-            console.log(`stderr: ${e}`)
+            logger.debug(`stderr: ${e}`)
             const exception = e.toString().trim()
             if (exception === 'no image') {
               reject(new ScriptArgumentError('no image exception'))

@@ -4,7 +4,7 @@ import * as commands from './commands/index.js'
 import { CommandManager } from './core/commandManager.js'
 import { asciidocDocumentSelector } from './core/document.js'
 import { isAsciidocFile } from './core/file.js'
-import { Logger } from './core/logger.js'
+import { logger } from './core/logger.js'
 import { AntoraSupportManager } from './features/antora/antoraContext.js'
 import { registerAntoraCacheInvalidation } from './features/antora/antoraDocument.js'
 import { AntoraResourceCompletionProvider } from './features/antora/antoraResourceCompletionProvider.js'
@@ -81,8 +81,7 @@ export async function activate(context: vscode.ExtensionContext) {
   )
   context.subscriptions.push(diagnosticManager.register())
 
-  const logger = new Logger()
-  logger.log('Extension was started')
+  logger.info('Extension was started')
 
   const selector = asciidocDocumentSelector
 
@@ -224,7 +223,6 @@ export async function activate(context: vscode.ExtensionContext) {
           )
         }
       }
-      logger.updateConfiguration()
       previewManager.updateConfiguration()
     }),
   )

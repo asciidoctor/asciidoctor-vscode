@@ -553,6 +553,7 @@
             ],
             "default": "off",
             "markdownDescription": "%asciidoc.debug.trace.desc%",
+            "markdownDeprecationMessage": "%asciidoc.debug.trace.deprecationMessage%",
             "order": 1,
             "scope": "window"
           },

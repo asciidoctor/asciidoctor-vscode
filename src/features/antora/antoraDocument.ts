@@ -6,6 +6,7 @@ import * as vscode from 'vscode'
 import { FileType, Memento, Uri } from 'vscode'
 import { dir, exists } from '../../core/file.js'
 import { findFiles } from '../../core/findFiles.js'
+import { logger } from '../../core/logger.js'
 import { getWorkspaceFolder } from '../../core/workspace.js'
 import { findApplicableAntoraConfigPath } from './antoraConfigMatcher.js'
 import {
@@ -42,6 +43,14 @@ let antoraConfigUrisPromise: Promise<Uri[]> | undefined
 let antoraConfigsPromise: Promise<AntoraConfig[]> | undefined
 let contentCatalogPromise: Promise<any> | undefined
 
+// Resolving which `antora.yml` applies to a given document is pure string
+// matching over the (already memoized) config URIs, but it is requested on every
+// render and every completion. Memoize the outcome per document — including the
+// "no applicable config" result — so a document that never matches (e.g. a file
+// outside any module) does not re-run the lookup, and does not re-log, on every
+// keystroke. Keyed by the document path; invalidated alongside the other caches.
+const applicableConfigUriByDocumentPath = new Map<string, Uri | undefined>()
+
 /**
  * Drop every cached Antora artifact. Called by the file system watchers when a
  * configuration or content file changes, and by tests between scenarios.
@@ -50,6 +59,7 @@ export function clearAntoraCache(): void {
   antoraConfigUrisPromise = undefined
   antoraConfigsPromise = undefined
   contentCatalogPromise = undefined
+  applicableConfigUriByDocumentPath.clear()
 }
 
 /**
@@ -86,6 +96,10 @@ function getAntoraConfigUris(): Promise<Uri[]> {
 export async function findAntoraConfigFile(
   textDocumentUri: Uri,
 ): Promise<Uri | undefined> {
+  const cacheKey = textDocumentUri.path
+  if (applicableConfigUriByDocumentPath.has(cacheKey)) {
+    return applicableConfigUriByDocumentPath.get(cacheKey)
+  }
   const antoraConfigUris = await getAntoraConfigUris()
   const matchedConfigPath = findApplicableAntoraConfigPath(
     textDocumentUri.path,
@@ -93,17 +107,19 @@ export async function findAntoraConfigFile(
   )
   if (matchedConfigPath === undefined) {
     const antoraConfigPaths = antoraConfigUris.map((uri) => uri.path)
-    console.log(
+    logger.trace(
       `Unable to find an applicable Antora configuration file in [${antoraConfigPaths.join(', ')}] for the AsciiDoc document ${textDocumentUri.path}`,
     )
+    applicableConfigUriByDocumentPath.set(cacheKey, undefined)
     return undefined
   }
   const matchedConfigUri = antoraConfigUris.find(
     (uri) => uri.path === matchedConfigPath,
   )
-  console.log(
+  logger.trace(
     `Found an Antora configuration file at ${matchedConfigUri.path} for the AsciiDoc document ${textDocumentUri.path}`,
   )
+  applicableConfigUriByDocumentPath.set(cacheKey, matchedConfigUri)
   return matchedConfigUri
 }
 
@@ -181,7 +197,7 @@ async function buildAntoraConfigs(): Promise<AntoraConfig[]> {
         config =
           yaml.load(await vscode.workspace.fs.readFile(antoraConfigUri)) || {}
       } catch (err) {
-        console.log(
+        logger.warn(
           `Unable to parse ${antoraConfigUri}, cause:` + err.toString(),
         )
       }
@@ -202,7 +218,7 @@ export async function getAntoraConfig(
   try {
     config = yaml.load(fs.readFileSync(antoraConfigUri.fsPath, 'utf8')) || {}
   } catch (err) {
-    console.log(
+    logger.warn(
       `Unable to parse ${antoraConfigUri.fsPath}, cause:` + err.toString(),
     )
   }
@@ -321,7 +337,7 @@ export async function getAntoraDocumentContext(
     }
     return new AntoraDocumentContext(antoraContext, antoraResourceContext)
   } catch (err) {
-    console.error(`Unable to get Antora context for ${textDocumentUri}`, err)
+    logger.error(`Unable to get Antora context for ${textDocumentUri}`, err)
     return undefined
   }
 }

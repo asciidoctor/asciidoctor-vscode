@@ -6,6 +6,7 @@ import { Document as AsciidoctorDocument } from '@asciidoctor/core'
 import { v4 as uuidv4 } from 'uuid'
 import * as vscode from 'vscode'
 import { Command } from '../core/commandManager.js'
+import { logger } from '../core/logger.js'
 import { getWorkspaceFolder } from '../core/workspace.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
 import { AsciidocTextDocument } from '../features/asciidoctor/asciidocTextDocument.js'
@@ -48,7 +49,7 @@ export class ExportAsPDF implements Command {
       defaultUri: pdfFilename,
     })
     if (!pdfOutputUri) {
-      console.log('No output directory selected to save the PDF, aborting.')
+      logger.debug('No output directory selected to save the PDF, aborting.')
       return
     }
 
@@ -97,7 +98,7 @@ ${text}`
           '$(pass) PDF has been successfully generated!'
         offerOpen(pdfOutputPath)
       } catch (err) {
-        console.error('Unable to generate a PDF using asciidoctor-pdf: ', err)
+        logger.error('Unable to generate a PDF using asciidoctor-pdf: ', err)
         await vscode.window.showErrorMessage(
           `Unable to generate a PDF using asciidoctor-pdf: ${err}`,
         )
@@ -125,7 +126,7 @@ ${text}`
         })
       } catch (error) {
         // command does not exist!
-        console.error(error)
+        logger.error('wkhtmltopdf command is not available', error)
         const answer = await vscode.window.showInformationMessage(
           'This feature requires wkhtmltopdf. Please download the latest version from https://wkhtmltopdf.org/downloads.html. If wkhtmltopdf is not available on your path, you can configure the path to wkhtmltopdf executable from the extension settings.',
           'Download',
@@ -189,7 +190,7 @@ ${text}`
           '$(pass) PDF has been successfully generated!'
         offerOpen(pdfOutputPath)
       } catch (err) {
-        console.error('Unable to generate a PDF using wkhtmltopdf: ', err)
+        logger.error('Unable to generate a PDF using wkhtmltopdf: ', err)
         await vscode.window.showErrorMessage(
           `Unable to generate a PDF using wkhtmltopdf: ${err}`,
         )
@@ -246,7 +247,7 @@ ${text}`
           command: 'bundle exec asciidoctor-pdf',
         }
       } catch (bundleExecError) {
-        console.info(
+        logger.info(
           `Error while trying to execute 'bundle exec asciidoctor-pdf' from '${installDirectory}', cause: `,
           bundleExecError,
         )
@@ -346,7 +347,7 @@ gem 'asciidoctor-pdf'`,
       return true
     } catch (err) {
       // command does not exist
-      console.warn(err)
+      logger.warn('asciidoctor-pdf command is not available', err)
       return false
     }
   }

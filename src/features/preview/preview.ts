@@ -426,7 +426,7 @@ export class AsciidocPreview
 
   // Do the preview content update
   private async doUpdate(): Promise<void> {
-    this._logger.log('Updating the preview content')
+    this._logger.debug('Updating the preview content')
 
     const resource = this._resource
 
