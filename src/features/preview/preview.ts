@@ -182,7 +182,9 @@ export class AsciidocPreview
           !preservePreviewWhenHidden &&
           this.webviewHtmlIsStale
         ) {
-          this.needsFullReload = true
+          // `refresh(true)` forces a full reload, which is what we need here:
+          // VS Code reloaded the webview from the last full HTML and dropped any
+          // morphed updates.
           this.refresh(true)
         }
       },
@@ -357,6 +359,16 @@ export class AsciidocPreview
 
   public refresh(forceUpdate: boolean = false) {
     this.forceUpdate = forceUpdate
+    // A forced refresh is always triggered by an out-of-band change — an
+    // explicit "Refresh Preview", a settings or theme change, a reveal — rather
+    // than a document edit. Such a change may live in the webview shell/<head>
+    // (styles, security level, the server-side theme attribute), which an
+    // incremental morph of `#preview-root` does not touch, so rebuild the whole
+    // webview. (Plain document edits go through `refresh()` and keep the fast
+    // incremental path.)
+    if (forceUpdate) {
+      this.needsFullReload = true
+    }
     this.update(this._resource)
   }
 
@@ -364,10 +376,12 @@ export class AsciidocPreview
     if (this._previewConfigurations.hasConfigurationChanged(this._resource)) {
       this.config = vscode.workspace.getConfiguration('asciidoc', this.resource)
       this.refreshInterval = this.config.get<number>('preview.refreshInterval')
-      // Styles, security level and other shell-level settings live in the
-      // webview <head>, which morphing does not touch: force a full reload.
-      this.needsFullReload = true
-      this.refresh()
+      // The document text is unchanged, so this must be a *forced* refresh:
+      // otherwise `doUpdate()` throttles it and then skips it on the
+      // unchanged-version early-return, and the new settings never take effect
+      // on an open preview. Forcing also rebuilds the shell/<head> where
+      // styles and other shell-level settings live.
+      this.refresh(true)
     }
   }
 
