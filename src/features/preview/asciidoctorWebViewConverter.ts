@@ -11,6 +11,7 @@ import { getWorkspaceFolder } from '../../core/workspace.js'
 import { AntoraDocumentContext } from '../antora/antoraContext.js'
 import { AsciidocContributions } from '../extensionContributions.js'
 import { AsciidocPreviewSecurityLevel } from '../security.js'
+import { buildCustomStyleSheetLinks } from './customStyles.js'
 import { renderMathJax } from './mathjax.js'
 import { AsciidocPreviewConfiguration } from './previewConfig.js'
 
@@ -715,15 +716,12 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
     textDocumentUri: vscode.Uri,
     config: AsciidocPreviewConfiguration,
   ): string {
-    const stylePath = config.previewStyle
-    if (stylePath === '') {
-      return ''
-    }
-    const out: string[] = []
-    out.push(
-      `<link rel="stylesheet" class="code-user-style" data-source="${escapeAttribute(stylePath)}" href="${escapeAttribute(this.fixHref(webviewResourceProvider, textDocumentUri, stylePath))}" type="text/css" media="screen">`,
+    return buildCustomStyleSheetLinks(
+      config.previewStyle,
+      config.additionalStyles,
+      (stylePath) =>
+        this.fixHref(webviewResourceProvider, textDocumentUri, stylePath),
     )
-    return out.join('\n')
   }
 
   // Mirror the editor's `scrollBeyondLastLine`: reserve a viewport's worth of

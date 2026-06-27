@@ -20,8 +20,12 @@ You can edit them from the VS Code Settings UI or directly in `settings.json`.
 |`2000`
 
 |`asciidoc.preview.style`
-|A URL or local path to CSS stylesheets used by the preview.
+|A URL or local path to a CSS stylesheet that *replaces* the default preview stylesheet.
 |
+
+|`asciidoc.preview.additionalStyles`
+|A list of URLs or local paths to CSS stylesheets *layered on top of* the preview style (default or custom), in order, so they keep the defaults and take precedence.
+|`[]`
 
 |`asciidoc.preview.useEditorStyle`
 |Use the VS Code editor style instead of the default Asciidoctor style.

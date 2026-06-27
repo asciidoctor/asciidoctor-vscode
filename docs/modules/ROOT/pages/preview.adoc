@@ -76,7 +76,8 @@ For *HTML-based exports* the detection does not apply: list the extra languages 
 By default, the preview uses the VS Code editor theme (`workbench.colorTheme`).
 
 * To use the default Asciidoctor style instead, set `asciidoc.preview.useEditorStyle` to `false`.
-* To apply your own stylesheet, set `asciidoc.preview.style`.
+* To *replace* the stylesheet with your own, set `asciidoc.preview.style`.
+* To *extend* the style without losing the defaults, add your stylesheets to `asciidoc.preview.additionalStyles`. They are layered on top of the base style (default or custom), in order, so they take precedence — ideal for tweaking a few rules while keeping the built-in look.
 * To define custom templates, set `asciidoc.preview.templates`.
 
 See xref:settings.adoc#preview[the preview settings] for the full list of options.

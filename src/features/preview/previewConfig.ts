@@ -17,7 +17,7 @@ export class AsciidocPreviewConfiguration {
   public readonly lineHeight: number
   public readonly fontSize: number
   public readonly fontFamily: string | undefined
-  public readonly styles: string[]
+  public readonly additionalStyles: string[]
   public readonly refreshInterval: number
   public readonly useEditorStylesheet: boolean
   public readonly previewStyle: string
@@ -78,7 +78,10 @@ export class AsciidocPreviewConfiguration {
       +asciidocConfig.get<number>('preview.lineHeight', NaN),
     )
 
-    this.styles = asciidocConfig.get<string[]>('styles', []) // REMIND: unused, we should either use it or remove it!
+    this.additionalStyles = asciidocConfig.get<string[]>(
+      'preview.additionalStyles',
+      [],
+    )
     this.useEditorStylesheet = asciidocConfig.get<boolean>(
       'preview.useEditorStyle',
       false,
@@ -97,19 +100,19 @@ export class AsciidocPreviewConfiguration {
   public isEqualTo(otherConfig: AsciidocPreviewConfiguration) {
     // eslint-disable-next-line prefer-const
     for (const key in this) {
-      if (Object.hasOwn(this, key) && key !== 'styles') {
+      if (Object.hasOwn(this, key) && key !== 'additionalStyles') {
         if (this[key] !== otherConfig[key]) {
           return false
         }
       }
     }
 
-    // Check styles
-    if (this.styles.length !== otherConfig.styles.length) {
+    // Check additional styles
+    if (this.additionalStyles.length !== otherConfig.additionalStyles.length) {
       return false
     }
-    for (let i = 0; i < this.styles.length; ++i) {
-      if (this.styles[i] !== otherConfig.styles[i]) {
+    for (let i = 0; i < this.additionalStyles.length; ++i) {
+      if (this.additionalStyles[i] !== otherConfig.additionalStyles[i]) {
         return false
       }
     }
