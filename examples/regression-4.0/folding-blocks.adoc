@@ -1,0 +1,186 @@
+= Editor folding regression: all delimited blocks
+:toc: macro
+
+// ============================================================================
+// HOW TO USE
+// ----------------------------------------------------------------------------
+// Open this file in the EDITOR (this is about source folding, not the preview).
+// A folding control (the chevron in the gutter, between the line number and the
+// text) must appear on the FIRST line of every delimited block below, and
+// collapsing it must hide the whole block down to its closing delimiter.
+//
+// Quick way to check everything at once:
+//   - "View: Fold All"   (Ctrl+K Ctrl+0 / Cmd+K Cmd+0) collapses every block.
+//   - "View: Unfold All" (Ctrl+K Ctrl+J / Cmd+K Cmd+J) restores them.
+//
+// Each section's "EXPECTED:" note says what should fold. Anything that does NOT
+// get a folding control, or folds the wrong range, is a regression.
+// ============================================================================
+
+toc::[]
+
+== Listing block (`----`)
+
+// EXPECTED: a folding control on the `----` line; folding hides the 3 code
+// lines down to the closing `----`. This is the primary use case (long code).
+----
+def hello(name):
+    print(f"Hello, {name}!")
+    return name
+----
+
+== Source block (`[source]` + `----`)
+
+// EXPECTED: same as the listing block — the `----` line folds. The block
+// attribute line `[source,…]` stays visible above the fold.
+[source,python]
+----
+for i in range(10):
+    print(i)
+----
+
+== Literal block (`....`)
+
+// EXPECTED: the `....` line folds, hiding the literal content.
+....
+literal line 1
+literal line 2
+....
+
+== Example block (`====`)
+
+// EXPECTED: the `====` line folds. Example blocks are "compound": nested blocks
+// inside them fold independently (see the dedicated section further down).
+====
+This is an example block.
+
+It can contain multiple paragraphs.
+====
+
+== Sidebar block (`****`)
+
+// EXPECTED: the `****` line folds.
+****
+This is a sidebar.
+It draws attention to tangential information.
+****
+
+== Quote block (`____`)
+
+// EXPECTED: the `____` line folds.
+____
+I think, therefore I am.
+____
+
+== Verse block (`[verse]` + `____`)
+
+// EXPECTED: the `____` line folds (same delimiter as a quote block).
+[verse,Carl Sandburg,Fog]
+____
+The fog comes
+on little cat feet.
+____
+
+== Passthrough block (`++++`)
+
+// EXPECTED: the `++++` line folds.
+++++
+<div class="custom">
+  <p>Raw HTML passthrough.</p>
+</div>
+++++
+
+== Open block (`--`)
+
+// EXPECTED: the opening `--` line folds down to the closing `--`.
+--
+An open block groups content.
+It can wrap several paragraphs.
+--
+
+== Comment block (`////`)
+
+// EXPECTED: the `////` line folds, as a *comment* fold (it follows the
+// "Fold All Block Comments" command and the comment fold styling).
+////
+This whole block is a comment.
+None of it is rendered.
+////
+
+== Table — PSV (`|===`)
+
+// EXPECTED: the `|===` line folds down to the closing `|===`.
+|===
+| Header A | Header B
+
+| a1 | b1
+| a2 | b2
+|===
+
+== Table — CSV (`,===`)
+
+// EXPECTED: the `,===` line folds.
+[%header,format=csv]
+,===
+Name,Role
+Alice,Author
+Bob,Editor
+,===
+
+== Table — DSV (`:===`)
+
+// EXPECTED: the `:===` line folds.
+[%header,format=dsv]
+:===
+Name:Role
+Alice:Author
+Bob:Editor
+:===
+
+== Verbatim awareness — delimiters inside a listing are content
+
+// EXPECTED: ONLY the outer `----` folds. The `====`, `****` and `|===` lines
+// below are verbatim content of the listing, NOT nested blocks, so they must
+// NOT get their own folding controls.
+----
+==== this is not an example
+**** this is not a sidebar
+|=== this is not a table
+plain code line
+----
+
+== Nested blocks inside a compound block
+
+// EXPECTED: the outer `====` folds the whole example; the inner `----` folds
+// independently (you can collapse just the listing while the example stays
+// open). Compound blocks let nested blocks fold; verbatim blocks do not.
+====
+Intro paragraph of the example.
+
+----
+nested listing line 1
+nested listing line 2
+----
+
+Closing paragraph of the example.
+====
+
+== Two consecutive blocks of the same type
+
+// EXPECTED: two separate folds, one per `----` pair — they must not merge into
+// a single range.
+----
+first block
+----
+
+----
+second block
+----
+
+== Unterminated block (edge case)
+
+// EXPECTED: the `----` below has no closing delimiter, so it folds to the end
+// of the document. Keep this section LAST.
+----
+this block is intentionally left open
+to verify the to-end-of-document fold
