@@ -6,6 +6,7 @@ import * as vscode from 'vscode'
 import * as uri from 'vscode-uri'
 import { SkinnyTextDocument } from '../../core/document.js'
 import { t as l10nT } from '../../core/l10n.js'
+import { logger } from '../../core/logger.js'
 import { WebviewResourceProvider } from '../../core/resources.js'
 import { getWorkspaceFolder } from '../../core/workspace.js'
 import { AntoraDocumentContext } from '../antora/antoraContext.js'
@@ -167,10 +168,10 @@ export class AsciidoctorWebViewConverter {
       doubleClickToSwitchToEditor: this.config.doubleClickToSwitchToEditor,
       preservePreviewWhenHidden: this.config.preservePreviewWhenHidden,
       disableSecurityWarnings: shouldDisableSecurityWarnings,
-      debug:
-        vscode.workspace
-          .getConfiguration('asciidoc.debug', null)
-          .get<string>('trace', 'off') === 'verbose',
+      // Verbose preview-console diagnostics follow the *Asciidoctor* output
+      // channel level (raised via "Developer: Set Log Level…"), not a dedicated
+      // setting: at Trace, the webview logs `[asciidoc.preview]` messages.
+      debug: logger.logLevel === vscode.LogLevel.Trace,
     }
     this.state = state || {}
   }

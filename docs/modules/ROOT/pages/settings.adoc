@@ -141,6 +141,6 @@ See xref:get-help.adoc#logs[Get help -> Logs] to learn how to view them and chan
 
 [NOTE]
 ====
-The `asciidoc.debug.trace` setting has been removed.
+The `asciidoc.debug.trace` setting is deprecated and no longer has any effect.
 Logging verbosity is now controlled by VS Code through the *Developer: Set Log Level...* command.
 ====

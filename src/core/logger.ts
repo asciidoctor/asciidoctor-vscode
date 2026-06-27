@@ -18,6 +18,23 @@ const sharedOutputChannel = lazy<vscode.LogOutputChannel>(() =>
 )
 
 export class Logger {
+  /**
+   * The current verbosity of the shared *Asciidoctor* output channel, driven by
+   * the standard "Developer: Set Log Level…" command. Callers that gate verbose
+   * diagnostics elsewhere (e.g. the preview webview console) can read this to
+   * stay in sync with the channel instead of relying on a dedicated setting.
+   */
+  public get logLevel(): vscode.LogLevel {
+    return sharedOutputChannel.value.logLevel
+  }
+
+  /**
+   * Fires when the user changes the log level of the *Asciidoctor* channel.
+   */
+  public get onDidChangeLogLevel(): vscode.Event<vscode.LogLevel> {
+    return sharedOutputChannel.value.onDidChangeLogLevel
+  }
+
   public trace(message: string, ...args: unknown[]): void {
     sharedOutputChannel.value.trace(message, ...args)
   }

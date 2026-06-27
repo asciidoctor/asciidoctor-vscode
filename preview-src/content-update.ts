@@ -17,10 +17,11 @@ declare const MathJax: any
 const BLOCK_SELECTOR = '[class^="data-line-"], [class*=" data-line-"]'
 
 /**
- * Diagnostic logging for the incremental update, off by default. Enable it with
- * `"asciidoc.debug.trace": "verbose"` and reload the preview, then read the
- * messages in the webview console (command "Developer: Open Webview Developer
- * Tools"). Useful to troubleshoot reports of slow or missing preview updates.
+ * Diagnostic logging for the incremental update, off by default. Enable it by
+ * raising the *Asciidoctor* output channel to Trace ("Developer: Set Log
+ * Level…") and reloading the preview, then read the messages in the webview
+ * console (command "Developer: Open Webview Developer Tools"). Useful to
+ * troubleshoot reports of slow or missing preview updates.
  */
 function debugLog(...args: unknown[]) {
   if (getSettings().debug) {
