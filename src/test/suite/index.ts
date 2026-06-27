@@ -15,10 +15,32 @@ export async function run(): Promise<void> {
   await extension?.activate()
   setExtensionContext((globalThis as any).testExtensionContext)
 
+  // Optional file filter, set from the command line via runTest.mjs:
+  // ASCIIDOC_TEST_FILE only runs test files whose name contains this string
+  // (the `.test.ts`/`.test.js`/`.ts`/`.js` suffix is ignored), e.g. "preview".
+  const fileFilter = process.env.ASCIIDOC_TEST_FILE?.trim()
+
+  const normalize = (name: string) =>
+    name.replace(/\.test\.[jt]s$/, '').replace(/\.[jt]s$/, '')
+
   const testDir = path.join(__dirname, '..')
   const testFiles = readdirSync(testDir)
     .filter((f) => f.endsWith('.test.js'))
+    .filter(
+      (f) =>
+        !fileFilter ||
+        normalize(f)
+          .toLowerCase()
+          .includes(normalize(fileFilter).toLowerCase()),
+    )
     .map((f) => path.join(testDir, f))
+
+  if (testFiles.length === 0) {
+    console.error(
+      `No test file matches ASCIIDOC_TEST_FILE="${fileFilter}" in ${testDir}`,
+    )
+    process.exit(1)
+  }
 
   const controller = new AbortController()
   const stream = nodeTestRun({
