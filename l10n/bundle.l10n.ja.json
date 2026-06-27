@@ -7,6 +7,7 @@
   "documentLink.openFile.tooltip": "{0}を開きます",
   "imageInsertion.insertLink": "画像リンクを挿入",
   "imageInsertion.insertAndCopy": "画像を挿入してプロジェクトにコピー",
+  "pasteImage.deprecated": "「イメージの貼り付け」コマンドは非推奨です。画像ファイルやスクリーンショットを Ctrl/Cmd+V でエディタに直接貼り付けてください。",
   "links.navigate.follow": "リンクをたどる",
   "preview.locked.title": "[プレビュー] {0}",
   "preview.securityMessage.label": "コンテンツ無効化のセキュリティ警告",

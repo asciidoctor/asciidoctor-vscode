@@ -7,6 +7,7 @@
   "documentLink.openFile.tooltip": "Ouvrir le fichier {0}",
   "imageInsertion.insertLink": "Insérer un lien vers l'image",
   "imageInsertion.insertAndCopy": "Insérer l'image et la copier dans le projet",
+  "pasteImage.deprecated": "La commande « Coller l'image » est dépréciée. Collez simplement (Ctrl/Cmd+V) un fichier image ou une capture d'écran directement dans l'éditeur.",
   "links.navigate.follow": "Suivre le lien",
   "preview.locked.title": "[Prévisualisation] {0}",
   "preview.securityMessage.label": "Alerte de securité : contenu désactivé",

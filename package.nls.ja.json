@@ -27,7 +27,7 @@
   "asciidoc.extensions.enableKroki.desc": "ダイアグラム生成のKrokiを有効にします。",
   "asciidoc.extensions.registerWorkspaceExtensions.desc": "ワークスペースディレクトリ`.asciidoctor/lib`に格納されたAsciidoctor.js拡張の登録機能を有効にします。",
   "asciidoc.extensions.title": "Asciidoctor拡張",
-  "asciidoc.pasteImage.title": "イメージの貼り付け",
+  "asciidoc.pasteImage.title": "イメージの貼り付け（非推奨）",
   "asciidoc.pdf.asciidoctorPdfCommandArgs.desc": "引数のリストを指定します。例えば、 `-a`, `pdf-themesdir=resources/themes`, `-a`, `pdf-theme=basic`のように指定します。キーバリューの場合は、引数を分けて設定してください(つまり、二つの引数になります。)。デフォルトでは、`--quiet`と`--base-dir`にAsciiDocドキュメントのフルパスディレクトリが指定されます。",
   "asciidoc.pdf.asciidoctorPdfCommandPath.desc": "外部の`asciidoctor-pdf`のコマンドを実行パスを指定します。本設定は、`/path/to/asciidoctor-pdf`のようにフルパスである必要があります。",
   "asciidoc.pdf.engine.asciidoctorPdf.desc": "asciidoctor-pdfコマンドライン",
