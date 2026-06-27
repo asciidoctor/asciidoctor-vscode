@@ -357,16 +357,30 @@ export class AsciidocPreview
     this.firstUpdate = false
   }
 
-  public refresh(forceUpdate: boolean = false) {
+  public refresh(
+    forceUpdate: boolean = false,
+    fullReload: boolean = forceUpdate,
+  ) {
     this.forceUpdate = forceUpdate
-    // A forced refresh is always triggered by an out-of-band change — an
-    // explicit "Refresh Preview", a settings or theme change, a reveal — rather
-    // than a document edit. Such a change may live in the webview shell/<head>
-    // (styles, security level, the server-side theme attribute), which an
-    // incremental morph of `#preview-root` does not touch, so rebuild the whole
-    // webview. (Plain document edits go through `refresh()` and keep the fast
-    // incremental path.)
-    if (forceUpdate) {
+    // `forceUpdate` bypasses the unchanged-version early-return in `doUpdate()`,
+    // re-rendering the content even when `document.version` has not moved.
+    // `fullReload` then decides *how* that render reaches the webview:
+    //
+    // - Most forced refreshes are triggered by an out-of-band shell change — an
+    //   explicit "Refresh Preview", a settings/theme change, a security level
+    //   change — which lives in the webview shell/<head> (styles, the
+    //   server-side theme attribute) that an incremental morph of
+    //   `#preview-root` does not touch. Those rebuild the whole webview, so
+    //   `fullReload` defaults to `forceUpdate`.
+    // - A save is different: it forces a re-render only so an open preview picks
+    //   up `include::`d files changed on disk (a save does not bump
+    //   `document.version`), but the shell is unchanged. Such callers pass
+    //   `fullReload = false` to keep the incremental morph path, which preserves
+    //   the preview (and editor) scroll position instead of resetting it.
+    //
+    // (Plain document edits go through `refresh()` with no arguments and keep
+    // the fast incremental path.)
+    if (fullReload) {
       this.needsFullReload = true
     }
     this.update(this._resource)
