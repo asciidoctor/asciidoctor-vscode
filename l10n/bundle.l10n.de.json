@@ -7,6 +7,7 @@
   "documentLink.openFile.tooltip": "Datei öffnen {0}",
   "imageInsertion.insertLink": "Bildlink einfügen",
   "imageInsertion.insertAndCopy": "Bild einfügen und in das Projekt kopieren",
+  "pasteImage.deprecated": "Der Befehl „Bild einfügen“ ist veraltet. Fügen Sie eine Bilddatei oder einen Screenshot einfach mit Strg/Cmd+V direkt in den Editor ein.",
   "links.navigate.follow": "Link folgen",
   "preview.locked.title": "[Vorschau] {0}",
   "preview.securityMessage.label": "Sicherheitswarnung: Inhalte deaktiviert.",

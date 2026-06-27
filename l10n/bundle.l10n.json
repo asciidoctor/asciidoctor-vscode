@@ -7,6 +7,7 @@
   "documentLink.openFile.tooltip": "Open file {0}",
   "imageInsertion.insertLink": "Insert image link",
   "imageInsertion.insertAndCopy": "Insert image and copy to workspace",
+  "pasteImage.deprecated": "The “Paste Image” command is deprecated. Just paste (Ctrl/Cmd+V) an image file or a screenshot directly into the editor.",
   "links.navigate.follow": "Follow link",
   "preview.locked.title": "[Preview] {0}",
   "preview.securityMessage.label": "Security warning: Content disabled.",

@@ -27,7 +27,7 @@
   "asciidoc.extensions.enableKroki.desc": "Active l'extension Kroki afin de générer des diagrammes.",
   "asciidoc.extensions.registerWorkspaceExtensions.desc": "Active l'enregistrement des extensions Asciidoctor.js déclarés dans le répertoire `.asciidoctor/lib` de l'espace de travail.",
   "asciidoc.extensions.title": "Extensions",
-  "asciidoc.pasteImage.title": "Coller l'image",
+  "asciidoc.pasteImage.title": "Coller l'image (déprécié)",
   "asciidoc.pdf.asciidoctorPdfCommandArgs.desc": "Liste d'arguments pour la ligne de commande `asciidoctor-pdf`, par exemple : `-a`, `pdf-themesdir=resources/themes`, `-a`, `pdf-theme=basic`. À noter que le nom et la valeur de l'argument doivent être ajoutés séparement (c'est-à-dire, deux entrées dans la liste). Par défaut, les arguments suivants sont passés à la ligne de commande : `--quiet` and `--base-dir` avec le chemin complet vers le document AsciiDoc.",
   "asciidoc.pdf.asciidoctorPdfCommandPath.desc": "Ligne de commande `asciidoctor-pdf` à exécuter. Accepte un chemin complet vers le binaire, par exemple : `/path/to/asciidoctor-pdf`.",
   "asciidoc.pdf.engine.asciidoctorPdf.desc": "Ligne de commande asciidoctor-pdf",

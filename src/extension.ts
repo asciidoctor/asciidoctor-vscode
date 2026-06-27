@@ -200,7 +200,7 @@ export async function activate(context: vscode.ExtensionContext) {
   )
   commandManager.register(new commands.OpenDocumentLinkCommand(asciidocLoader))
   commandManager.register(new commands.ExportAsPDF(asciidocEngine, context))
-  commandManager.register(new commands.PasteImage(asciidocLoader))
+  commandManager.register(new commands.PasteImage(context.globalState))
   commandManager.register(new commands.ToggleLockCommand(previewManager))
   commandManager.register(new commands.SaveHTML(asciidocEngine))
   commandManager.register(new commands.SaveDocbook(asciidocEngine))

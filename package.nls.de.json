@@ -27,7 +27,7 @@
   "asciidoc.extensions.enableKroki.desc": "Aktiviert Kroki Erweiterung zur Verarbeitung von Diagrammen.",
   "asciidoc.extensions.registerWorkspaceExtensions.desc": "Aktiviert Asciidoctor.js Erweiterungs-Regisistrierung aus dem Arbeitsbereich Verzeichnis `.asciidoctor/lib`.",
   "asciidoc.extensions.title": "Erweiterungen",
-  "asciidoc.pasteImage.title": "Bild einfügen",
+  "asciidoc.pasteImage.title": "Bild einfügen (veraltet)",
   "asciidoc.pdf.asciidoctorPdfCommandArgs.desc": "Liste der Argumente, z.B.: `-a`, `pdf-themesdir=resources/themes`, `-a`, `pdf-theme=basic`. Bitte beachten: Argument Schlüssel und der eigentliche Wert müssen als zwei Einträge im Feld angegeben werden. Das heisst, hinzufügen von `-a pdf-theme=basic` ist inkorrekt! Es müssen `-a` (Schlüssel), `pdf-theme=basic` (Wert) als getrennte Einträge eingegeben werden. Standardmäßig werden die folgenden Argumente mitgegeben: `--quiet` and `--base-dir` mit dem vollen Pfad zum angezeigten AsciiDoc Dokument.",
   "asciidoc.pdf.asciidoctorPdfCommandPath.desc": "Externes `asciidoctor-pdf` Kommando das ausgeführt werden soll. Hier kann ein absoluter Pfad zur Binärdatei angegeben werden, z.B.: `/Pfad/zu/asciidoctor-pdf`. Wenn der Wert leer ist, verwende `asciidoctor-pdf` oder, falls nicht verfügbar, `bundle exec asciidoctor-pdf` (aus dem globalen Speicher für Erweiterungen).",
   "asciidoc.pdf.engine.asciidoctorPdf.desc": "asciidoctor-pdf CLI",

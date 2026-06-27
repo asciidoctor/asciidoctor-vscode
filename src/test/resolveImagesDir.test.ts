@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 import * as vscode from 'vscode'
-import { getCurrentImagesDir } from '../commands/pasteImage.js'
 import { AsciidocLoader } from '../features/asciidoctor/asciidocLoader.js'
 import { AsciidoctorConfig } from '../features/asciidoctor/asciidoctorConfig.js'
 import { AsciidoctorDiagnostic } from '../features/asciidoctor/asciidoctorDiagnostic.js'
 import { AsciidoctorExtensions } from '../features/asciidoctor/asciidoctorExtensions.js'
+import { resolveImagesDir } from '../features/imageInsertion.js'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../features/security.js'
 import { extensionContext } from './helper.js'
 import { InMemoryDocument } from './inMemoryDocument.js'
@@ -31,15 +31,10 @@ async function imagesDirAtCursor(contents: string): Promise<string> {
   const cursorOffset = contents.indexOf('|')
   assert.notStrictEqual(cursorOffset, -1, 'the fixture must contain a | marker')
   const doc = new InMemoryDocument(testFileName, contents.replace('|', ''))
-  const position = doc.positionAt(cursorOffset)
-  return getCurrentImagesDir(
-    createLoader(),
-    doc,
-    new vscode.Selection(position, position),
-  )
+  return resolveImagesDir(createLoader(), doc, cursorOffset)
 }
 
-describe('asciidoc.pasteImage getCurrentImagesDir', () => {
+describe('asciidoc imageInsertion resolveImagesDir', () => {
   test('Should read the imagesdir defined in the document header', async () => {
     const imagesDir = await imagesDirAtCursor(`= Document Title
 :imagesdir: assets/images
