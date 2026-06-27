@@ -50,6 +50,7 @@
   "asciidoc.preview.scrollEditorWithPreview.desc": "プレビューのスクロールに合わせて、エディターもスクロールします。",
   "asciidoc.preview.scrollPreviewWithEditor.desc": "エディターのスクロールに合わせて、プレビューもスクロールします。",
   "asciidoc.preview.style.desc": "プレビューで使用するCSSスタイルシートのURLまたはローカルパスを指定します。相対パスは、エクスプローラで開いているフォルダからの相対パスとして解釈されます。フォルダーを開いていない場合は、AsciiDocファイルからの相対パスとして解釈されます。'\\\\'は、 '\\\\\\\\'と記述する必要があります。",
+  "asciidoc.preview.additionalStyles.desc": "プレビューのスタイル（デフォルトのAsciidoctorスタイルシート、または`#asciidoc.preview.style#`で設定したスタイル）を置き換えるのではなく、その上に重ねて適用するCSSスタイルシートのURLまたはローカルパスのリストです。スタイルシートはベーススタイルの後に順番に適用されるため優先度が高くなり、デフォルトを保ちながらプレビューを調整できます。相対パスは、エクスプローラで開いているフォルダからの相対パスとして解釈されます。フォルダーを開いていない場合は、AsciiDocファイルからの相対パスとして解釈されます。'\\\\'は、 '\\\\\\\\'と記述する必要があります。",
   "asciidoc.preview.templates.desc": "List of local paths to custom templates to use from the preview. Relative paths are interpreted relative to the folder open in the Explorer. If there is no open folder, they are interpreted relative to the location of the AsciiDoc file. All `\\` need to be written as `\\\\`.",
   "asciidoc.preview.title": "プレビュー",
   "asciidoc.preview.toggleLock.title": "プレビューのロック切り替え",
