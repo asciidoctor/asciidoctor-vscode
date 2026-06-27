@@ -5,7 +5,14 @@ const DBL_SQUARE = '[]'
 const NEWLINE_RX = /\r\n?|\n/
 const TAG_DIRECTIVE_RX = /\b(?:tag|(e)nd)::(\S+?)\[\](?=$|[ \r])/m
 
-export class AntoraIncludeProcessor extends IncludeProcessor {
+/**
+ * A generic Asciidoctor include processor whose only job is the mechanics of an
+ * include — max-depth guard, `lines=`/`tags=` filtering and pushing the content
+ * onto the reader. Locating the include target is delegated to the `resolve`
+ * callback, so the same processor serves both the Antora content catalog and the
+ * browser's `vscode.workspace.fs`-backed resolver.
+ */
+export class ResolverIncludeProcessor extends IncludeProcessor {
   private readonly _callback: (doc: any, target: string, cursor: any) => any
 
   constructor(callback: (doc: any, target: string, cursor: any) => any) {

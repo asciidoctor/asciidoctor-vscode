@@ -12,7 +12,6 @@ import {
   getAntoraConfig,
   getAntoraDocumentContext,
 } from '../antora/antoraDocument.js'
-import { AntoraIncludeProcessor } from '../antora/includeProcessor.js'
 import { resolveIncludeFile } from '../antora/resolveIncludeFile.js'
 import { AsciidocTextDocument } from './asciidocTextDocument.js'
 import { AsciidoctorAttributesConfig } from './asciidoctorAttributesConfig.js'
@@ -24,6 +23,7 @@ import {
   IncludeItems,
 } from './asciidoctorIncludeItems.js'
 import { registerBrowserIncludeProcessor } from './browserIncludeSupport.js'
+import { ResolverIncludeProcessor } from './includeProcessor.js'
 
 export class AsciidocLoader {
   constructor(
@@ -135,7 +135,7 @@ export class AsciidocLoader {
     if (antoraDocumentContext !== undefined) {
       const antoraConfig = await getAntoraConfig(textDocumentUri)
       registry.includeProcessor(
-        new AntoraIncludeProcessor((_, target, cursor) =>
+        new ResolverIncludeProcessor((_, target, cursor) =>
           resolveIncludeFile(
             target,
             {
