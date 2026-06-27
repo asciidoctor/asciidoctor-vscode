@@ -22,8 +22,10 @@
 //   3. Wrong scroll offset / source-line mapping .... #873 #991
 //   + Incremental update wins (no full reload) ..... this PR
 //
-// NOTE: includes (#59 / #869) are deliberately NOT exercised here — the
-// include-aware mapping is still to be done, so this file stays single-file.
+// NOTE: includes (#59 / #869) are exercised in their own bench,
+// issue-869-include-scroll.adoc, to keep this file single-file. The
+// include-aware mapping is implemented: blocks from an included file are
+// anchored to the include:: directive's neighbourhood in the host document.
 //
 // HOW TO RUN
 //   1. Open this file, then "AsciiDoc: Open Preview to the Side".

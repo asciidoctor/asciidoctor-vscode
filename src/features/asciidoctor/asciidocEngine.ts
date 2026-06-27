@@ -24,6 +24,7 @@ import { AsciidoctorAttributesConfig } from './asciidoctorAttributesConfig.js'
 import { AsciidoctorConfigProvider } from './asciidoctorConfig.js'
 import { AsciidoctorExtensionsProvider } from './asciidoctorExtensions.js'
 import { AsciidoctorProcessor } from './asciidoctorProcessor.js'
+import { resolveBlockSourceLines } from './sourceLineMapping.js'
 
 export type AsciidoctorBuiltInBackends = 'html5' | 'docbook5'
 
@@ -308,8 +309,20 @@ export class AsciidocEngine {
       const blocksWithLineNumber = document.findBy(function (b) {
         return typeof b.getLineNumber() !== 'undefined'
       })
-      blocksWithLineNumber.forEach(function (block) {
-        block.addRole('data-line-' + block.getLineNumber())
+      // Resolve the editor line for each block up front so content pulled in via
+      // `include::` is anchored to the directive's neighbourhood in the main
+      // document instead of to its line within the included file. Otherwise the
+      // out-of-order anchors break the preview ⇄ editor scroll synchronization.
+      const mainFile = (document as any).getSourceLocation?.()?.getFile?.()
+      const sourceLines = resolveBlockSourceLines(
+        blocksWithLineNumber.map((block) => ({
+          lineNumber: block.getLineNumber(),
+          file: (block as any).getSourceLocation?.()?.getFile?.(),
+        })),
+        mainFile,
+      )
+      blocksWithLineNumber.forEach(function (block, index) {
+        block.addRole('data-line-' + sourceLines[index])
         // Tag each block with a hash of its source so the preview can morph
         // incrementally and skip blocks whose content is unchanged (keeping
         // already-rendered MathJax/Mermaid/highlight output intact). The hash
