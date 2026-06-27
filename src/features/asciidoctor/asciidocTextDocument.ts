@@ -1,6 +1,7 @@
 import path from 'node:path'
 import * as vscode from 'vscode'
 import { Uri } from 'vscode'
+import { isBrowserEnvironment } from '../../core/environment.js'
 import { getWorkspaceFolder } from '../../core/workspace.js'
 
 interface DocumentWithUri {
@@ -55,7 +56,7 @@ export class AsciidocTextDocument {
   }
 
   private static getDirName(uri: Uri): string | undefined {
-    return 'browser' in process && (process as any).browser === true
+    return isBrowserEnvironment()
       ? undefined
       : path.dirname(path.resolve(uri.fsPath))
   }
@@ -76,7 +77,7 @@ export class AsciidocTextDocument {
    * @private
    */
   public static getFileName(uri: Uri): string | undefined {
-    if ('browser' in process && (process as any).browser === true) {
+    if (isBrowserEnvironment()) {
       return undefined
     }
     return path.parse(uri.fsPath).name
@@ -88,7 +89,7 @@ export class AsciidocTextDocument {
    * @private
    */
   public static getFilePath(uri: Uri): string | undefined {
-    if ('browser' in process && (process as any).browser === true) {
+    if (isBrowserEnvironment()) {
       return undefined
     }
     return uri.fsPath

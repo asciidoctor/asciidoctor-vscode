@@ -17,6 +17,7 @@
 * Fix callout numbers disappearing from highlighted code blocks in the preview — register a highlight.js "merge HTML" plugin that preserves the conum markup through client-side highlighting, so syntax colors and callouts coexist ([highlight.js#2889](https://github.com/highlightjs/highlight.js/issues/2889))
 * Fix preview document header and table of contents rendering as `[object Promise]` — await the now-asynchronous Asciidoctor.js 4.0 calls in the header chain (`subMacros` for author emails and the `outline` conversion for the TOC)
 * Fix Mermaid diagrams failing to render with "reader.$read is not a function" — replace the removed Opal `reader.$read()` call with the `reader.getString()` JS API, compatible with Asciidoctor.js 4.0
+* Fix web extension: `include::` directives left unresolved ("Unresolved directive in &lt;stdin&gt; - include::…") because Asciidoctor.js cannot read include targets from disk in the browser. Relative includes are now pre-loaded recursively through `vscode.workspace.fs` and served by a dedicated include processor during the parse, mirroring how the Antora support resolves files from its in-memory catalog
 * Fix web extension: highlight.js (`hljs`) not defined due to missing `cspSource` in the preview `script-src` CSP directive
 * Fix web extension: l10n keys shown as-is instead of translated strings — embed `bundle.l10n.json` at build time as a fallback when VS Code web does not load the bundle
 * Fix web extension: `global is not defined` — replace `global` with `globalThis` for cross-environment compatibility
