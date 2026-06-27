@@ -1,0 +1,49 @@
+// This partial is pulled in via `include::`. Its FIRST block reports source
+// line 1 (relative to THIS file), which is exactly what used to poison the
+// `data-line-N` ordering in the host document and break scroll sync (#869/#59).
+// It is intentionally tall (many blocks) so the included region spans a good
+// chunk of the preview and scrolling through it is observable.
+
+=== Included section heading
+
+First paragraph of the included chapter. In the editor this is near the top of
+`included-chapter.adoc`, but in the preview it appears wherever the `include::`
+directive sits in the host document.
+
+Second paragraph. Keep scrolling — the editor should stay parked on the
+`include::` directive line in the host file while you move through all of this
+included content.
+
+[source,ruby]
+----
+def included_method(x)
+  # A code block coming from the included file.
+  x * 2 + 1
+end
+----
+
+A list inside the include:
+
+* Included item one
+* Included item two
+* Included item three
+* Included item four
+
+[stem]
+++++
+\int_0^1 x^2 \, dx = \frac{1}{3}
+++++
+
+A table inside the include (renders taller than its source):
+
+[cols="1,1",options="header"]
+|===
+| Key | Value
+
+| alpha | 1
+| beta  | 2
+| gamma | 3
+|===
+
+Last paragraph of the included chapter. After this point the preview returns to
+content from the host document.

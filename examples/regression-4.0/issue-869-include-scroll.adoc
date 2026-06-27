@@ -1,0 +1,122 @@
+= Editor ⇄ Preview Scroll Sync with Includes — Manual Test Bench (#869, #59)
+:toc: macro
+:icons: font
+:stem:
+:source-highlighter: highlight.js
+:sectnums:
+
+// ============================================================================
+// WHAT THIS FILE IS FOR
+// ----------------------------------------------------------------------------
+// Sub-issues #59 (support includes in preview sync) and #869 (preview scroll
+// offset wrong when includes are used) of meta-issue #1062.
+//
+// THE BUG
+//   With `sourcemap` enabled, a block pulled in from an included file reports
+//   its line number RELATIVE TO THAT INCLUDED FILE — e.g. the first paragraph
+//   of an include reports line 1. The preview tags blocks with `data-line-N`
+//   from that number, so an include dropped a small line number into the middle
+//   of the host document's otherwise-ascending anchors:
+//
+//       ... data-line-12, data-line-1 (from the include!), data-line-20 ...
+//
+//   The scroll mapping (binary search + linear interpolation between anchors)
+//   assumes anchors only increase, so this broke editor ⇄ preview tracking
+//   around every include.
+//
+// THE FIX
+//   Blocks coming from an included file are now anchored to the `include::`
+//   directive's neighbourhood in the HOST document, so the anchor list stays
+//   monotonic. The editor only ever shows one line for an include (the
+//   directive itself), so the whole included region maps back to it.
+//
+// HOW TO RUN
+//   1. Open this file, then "AsciiDoc: Open Preview to the Side".
+//   2. Make the window TALL.
+//   3. Turn OFF `editor.stickyScroll.enabled` so the visible top editor line is
+//      the real top line (sticky headings otherwise hide the first lines and
+//      make a correct mapping look off by a few lines).
+//   4. Work through each "== Scenario": TEST = what you do,
+//      EXPECTED = a fixed build, REGRESSION = the old broken behavior.
+// ============================================================================
+
+toc::[]
+
+== Before the first include
+
+This section is plain host-document content. Click a few lines here in the
+editor and confirm the preview highlights/reveals the matching lines — this is
+the baseline that must keep working.
+
+Scroll down so the next section (with the include) is at the top of both panes.
+
+== Scenario A — Editor → preview across an include (#869)
+
+TEST: In the EDITOR, click the `include::` directive line just below. Then click
+the host paragraph right after it.
+
+include::_partials/included-chapter.adoc[]
+
+This host paragraph comes right AFTER the include. Click this line in the editor.
+
+EXPECTED: clicking the `include::` line scrolls the preview to the start of the
+included chapter (its heading / first paragraph). Clicking the host paragraph
+after it reveals THIS paragraph in the preview — no overshoot, no jump to the
+wrong block.
+
+REGRESSION (old build): because the first included block carried `data-line-1`,
+the anchors were out of order here; the preview scrolled to the wrong place
+(often near the top of the document) and the offset stayed wrong for everything
+below the include.
+
+== Scenario B — Preview → editor while scrolling through included content
+
+TEST: Enable `scrollEditorWithPreview`. Slowly scroll the PREVIEW down through
+the included chapter above (the list, the equation, the table) and watch the
+EDITOR.
+
+EXPECTED: as the preview moves through the included content, the editor stays
+parked around the `include::` directive line in Scenario A (the only line that
+exists for the include in this file), then advances to the host paragraph after
+it. The editor never jumps backwards to the top.
+
+REGRESSION: the bad anchor made the editor line estimate jump erratically
+(forwards/backwards) as soon as any included block entered the viewport.
+
+== Scenario C — Nested include (include within an include)
+
+TEST: This pulls in a fragment that itself includes another file. Click the
+`include::` line below, then scroll the preview through the nested content.
+
+include::_partials/fragment.adoc[]
+
+EXPECTED: the same stable tracking as Scenario A/B, even though the rendered
+content comes from two levels of includes. The mapping stays monotonic.
+
+REGRESSION: nested includes added several small, out-of-order line numbers,
+compounding the offset error for the rest of the document.
+
+== Scenario D — Content keeps mapping correctly AFTER includes
+
+TEST: Click lines throughout this final section and confirm the preview still
+matches — the whole point is that the mapping does not stay "poisoned" once an
+include has appeared earlier in the document.
+
+[source,javascript]
+----
+export function afterInclude(value) {
+  // Host-document code block, well below two includes.
+  return value + 1
+}
+----
+
+[stem]
+++++
+e^{i\pi} + 1 = 0
+++++
+
+A final host paragraph. Clicking it in the editor must reveal it in the preview,
+proving the offset is correct all the way to the end of the document.
+
+// END — note any scenario whose result did not match EXPECTED as a regression
+// of the include-aware scroll mapping (#869 / #59).
