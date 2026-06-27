@@ -46,6 +46,15 @@
   --adoc-caution: var(--vscode-charts-orange, #d18616);
 }
 
+/* Give the preview a solid, theme-matched background. The editor stylesheet
+ * leaves the body transparent and relies on the webview backdrop, but in some
+ * hosts (notably VS Code for the Web) that backdrop shows through as black even
+ * under a light theme. Anchor it to the editor background, falling back to white
+ * so a light theme never renders on black. */
+body {
+  background-color: var(--vscode-editor-background, #fff);
+}
+
 /* ----------------------------------------------------------------------
  * Typography & rhythm
  * -------------------------------------------------------------------- */
