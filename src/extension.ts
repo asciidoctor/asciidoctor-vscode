@@ -22,7 +22,10 @@ import { AsciidoctorIncludeItems } from './features/asciidoctor/asciidoctorInclu
 import { AsciidocCompletionProviders } from './features/completion/completionProviders.js'
 import LinkProvider from './features/documentLinkProvider.js'
 import AdocDocumentSymbolProvider from './features/documentSymbolProvider.js'
-import { DropImageIntoEditorProvider } from './features/dropIntoEditor.js'
+import {
+  DropImageIntoEditorProvider,
+  dropImageMetadata,
+} from './features/dropIntoEditor.js'
 import { getAsciidocExtensionContributions } from './features/extensionContributions.js'
 import AsciidocFoldingRangeProvider from './features/foldingProvider.js'
 import { AsciidocContentProvider } from './features/preview/previewContentProvider.js'
@@ -155,7 +158,8 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
     vscode.languages.registerDocumentDropEditProvider(
       selector,
-      new DropImageIntoEditorProvider(asciidocLoader),
+      new DropImageIntoEditorProvider(asciidocLoader, context.workspaceState),
+      dropImageMetadata,
     ),
   )
   const previewSecuritySelector = new PreviewSecuritySelector(
