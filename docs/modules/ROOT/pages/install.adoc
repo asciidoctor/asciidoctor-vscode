@@ -28,7 +28,7 @@ The table below summarizes what each environment supports.
 |Equations (via MathJax) |✔️ |✔️ (requires security to be disabled)
 |xref:export-pdf.adoc[Export as PDF] |✔️ |⛔
 |xref:diagram.adoc[Kroki integration for diagrams] |✔️ |✔️
-|xref:paste-image.adoc[Paste image] |✔️ |⛔
+|xref:paste-image.adoc[Paste image] |✔️ |✔️ (via kbd:[Ctrl+V] in the editor)
 |xref:save-html.adoc[Save as HTML] |✔️ |⛔
 |xref:save-docbook.adoc[Save as DocBook] |✔️ |⛔
 |xref:snippets.adoc[Snippets] |✔️ |✔️
