@@ -255,7 +255,12 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.workspace.onDidSaveTextDocument((e) => {
       // when the workspace configuration is updated, the file .vscode/settings.json since we are also listening onDidChangeConfiguration we can safely ignore this event
       if (!e.uri.path.endsWith('.vscode/settings.json')) {
-        previewManager.refresh(true)
+        // Force a re-render so an open preview picks up `include::`d files saved
+        // on disk (a save does not bump `document.version`), but keep the
+        // incremental morph path (`fullReload: false`): a save leaves the
+        // webview shell untouched, and a full reload would needlessly reset the
+        // preview/editor scroll position even though the content is unchanged.
+        previewManager.refresh(true, false)
       }
     }),
   )

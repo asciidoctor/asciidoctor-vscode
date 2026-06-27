@@ -103,5 +103,23 @@ describe('Refresh preview command', () => {
       /preview 2/,
       'a forced refresh must fully reload the webview, not just morph it',
     )
+
+    // A save forces a re-render (so an open preview picks up `include::`d files
+    // changed on disk, since a save does not bump the document version) but asks
+    // for the incremental morph path (`fullReload: false`). It must re-render
+    // yet leave `webview.html` untouched, so the preview/editor scroll position
+    // is preserved instead of being reset by a full reload.
+    preview.refresh(true, false)
+    await tick(500)
+    assert.equal(
+      renderCount,
+      3,
+      'a forced refresh must re-render even with fullReload disabled',
+    )
+    assert.match(
+      webviewHtml(),
+      /preview 2/,
+      'a forced refresh with fullReload disabled must morph, not reload (webview.html stays at the last full load)',
+    )
   })
 })
