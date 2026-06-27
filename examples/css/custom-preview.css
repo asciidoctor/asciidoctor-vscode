@@ -58,7 +58,7 @@ blockquote {
 }
 
 /* Tables: accent header row (solid accent reads on any theme). */
-table thead th {
+table.tableblock > thead > tr > th {
   background: var(--accent);
   color: #fff;
 }
