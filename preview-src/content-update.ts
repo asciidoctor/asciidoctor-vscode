@@ -217,7 +217,7 @@ function scheduleMathDrain(anchorLine: number | undefined) {
         scrollToLine(anchorLine)
       }
     })
-    .catch((err) => {
+    .catch((err: unknown) => {
       debugLog('MathJax typeset failed', err)
     })
     .finally(() => {
@@ -290,10 +290,7 @@ export function updatePreviewContent(html: string): boolean {
       // source, but its content hash is identical: keep the rendered version.
       const fromHash = blockHash(fromEl)
       const toHash = blockHash(toEl)
-      if (fromHash && toHash && fromHash === toHash) {
-        return false
-      }
-      return true
+      return !(fromHash && toHash && fromHash === toHash)
     },
     onElUpdated(el: Element) {
       record(el)
