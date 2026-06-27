@@ -1,7 +1,7 @@
 import * as vscode from 'vscode'
 import { Uri } from 'vscode'
 import { isBrowserEnvironment } from '../../core/environment.js'
-import { AntoraIncludeProcessor } from '../antora/includeProcessor.js'
+import { ResolverIncludeProcessor } from './includeProcessor.js'
 
 // `include::target[attrlist]` at the start of a line.
 const INCLUDE_DIRECTIVE_RX = /^include::([^[\s]+)\[[^\]]*\]\s*$/gm
@@ -87,7 +87,7 @@ export async function registerBrowserIncludeProcessor(
   }
   const rootDir = Uri.joinPath(documentUri, '..').toString()
   registry.includeProcessor(
-    new AntoraIncludeProcessor((_doc, target, cursor) => {
+    new ResolverIncludeProcessor((_doc, target, cursor) => {
       const parentDir =
         (cursor.file && cursor.file.src && cursor.file.src.dir) || rootDir
       const fileUri = Uri.joinPath(Uri.parse(parentDir), target)

@@ -12,7 +12,6 @@ import {
   getAntoraConfig,
   getAntoraDocumentContext,
 } from '../antora/antoraDocument.js'
-import { AntoraIncludeProcessor } from '../antora/includeProcessor.js'
 import { resolveIncludeFile } from '../antora/resolveIncludeFile.js'
 import { AsciidocContributionProvider } from '../extensionContributions.js'
 import { AsciidoctorWebViewConverter } from '../preview/asciidoctorWebViewConverter.js'
@@ -25,6 +24,7 @@ import { AsciidoctorConfigProvider } from './asciidoctorConfig.js'
 import { AsciidoctorExtensionsProvider } from './asciidoctorExtensions.js'
 import { AsciidoctorProcessor } from './asciidoctorProcessor.js'
 import { registerBrowserIncludeProcessor } from './browserIncludeSupport.js'
+import { ResolverIncludeProcessor } from './includeProcessor.js'
 import { resolveBlockSourceLines } from './sourceLineMapping.js'
 
 export type AsciidoctorBuiltInBackends = 'html5' | 'docbook5'
@@ -257,7 +257,7 @@ export class AsciidocEngine {
     if (antoraDocumentContext !== undefined) {
       const antoraConfig = await getAntoraConfig(textDocumentUri)
       registry.includeProcessor(
-        new AntoraIncludeProcessor((_, target, cursor) =>
+        new ResolverIncludeProcessor((_, target, cursor) =>
           resolveIncludeFile(
             target,
             {
