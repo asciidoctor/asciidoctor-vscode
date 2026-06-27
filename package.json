@@ -22,7 +22,7 @@
   "main": "./dist/src/extension.mjs",
   "l10n": "./l10n",
   "engines": {
-    "vscode": "^1.88.0",
+    "vscode": "^1.97.0",
     "node": ">=20"
   },
   "categories": [
@@ -281,6 +281,17 @@
             "type": "boolean",
             "default": true,
             "markdownDescription": "%asciidoc.editor.enableDrop.desc%",
+            "scope": "resource"
+          },
+          "asciidoc.editor.drop.copyIntoWorkspace": {
+            "type": "string",
+            "default": "smart",
+            "enum": ["smart", "never"],
+            "enumDescriptions": [
+              "%asciidoc.editor.drop.copyIntoWorkspace.smart%",
+              "%asciidoc.editor.drop.copyIntoWorkspace.never%"
+            ],
+            "markdownDescription": "%asciidoc.editor.drop.copyIntoWorkspace.desc%",
             "scope": "resource"
           }
         }
@@ -657,7 +668,7 @@
     "@playwright/test": "^1.47.2",
     "@types/lodash.throttle": "~4.1",
     "@types/node": "^24.0.0",
-    "@types/vscode": "~1.88.0",
+    "@types/vscode": "~1.97.0",
     "@vscode/test-electron": "^3.0.0",
     "@vscode/vsce": "3.9.1",
     "c8": "~11.0.0",

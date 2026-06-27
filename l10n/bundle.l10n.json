@@ -5,6 +5,8 @@
   "asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Manage Asciidoctor.js Extensions Trust Mode",
   "asciidoc.showPreviewSecuritySelector.title": "Manage Preview Security Settings",
   "documentLink.openFile.tooltip": "Open file {0}",
+  "dropImage.insertLink": "Insert image link",
+  "dropImage.insertAndCopy": "Insert image and copy to workspace",
   "links.navigate.follow": "Follow link",
   "preview.locked.title": "[Preview] {0}",
   "preview.securityMessage.label": "Security warning: Content disabled.",
