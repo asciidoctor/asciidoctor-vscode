@@ -28,6 +28,10 @@ import {
 } from './features/dropIntoEditor.js'
 import { getAsciidocExtensionContributions } from './features/extensionContributions.js'
 import AsciidocFoldingRangeProvider from './features/foldingProvider.js'
+import {
+  PasteImageIntoEditorProvider,
+  pasteImageMetadata,
+} from './features/pasteImageIntoEditor.js'
 import { AsciidocContentProvider } from './features/preview/previewContentProvider.js'
 import { AsciidocPreviewManager } from './features/preview/previewManager.js'
 import {
@@ -160,6 +164,13 @@ export async function activate(context: vscode.ExtensionContext) {
       selector,
       new DropImageIntoEditorProvider(asciidocLoader, context.workspaceState),
       dropImageMetadata,
+    ),
+  )
+  context.subscriptions.push(
+    vscode.languages.registerDocumentPasteEditProvider(
+      selector,
+      new PasteImageIntoEditorProvider(asciidocLoader, context.workspaceState),
+      pasteImageMetadata,
     ),
   )
   const previewSecuritySelector = new PreviewSecuritySelector(

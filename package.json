@@ -293,6 +293,23 @@
             ],
             "markdownDescription": "%asciidoc.editor.drop.copyIntoWorkspace.desc%",
             "scope": "resource"
+          },
+          "asciidoc.editor.paste.enabled": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "%asciidoc.editor.paste.enabled.desc%",
+            "scope": "resource"
+          },
+          "asciidoc.editor.paste.copyIntoWorkspace": {
+            "type": "string",
+            "default": "smart",
+            "enum": ["smart", "never"],
+            "enumDescriptions": [
+              "%asciidoc.editor.paste.copyIntoWorkspace.smart%",
+              "%asciidoc.editor.paste.copyIntoWorkspace.never%"
+            ],
+            "markdownDescription": "%asciidoc.editor.paste.copyIntoWorkspace.desc%",
+            "scope": "resource"
           }
         }
       },
