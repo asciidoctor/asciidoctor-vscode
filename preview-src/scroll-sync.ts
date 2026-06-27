@@ -55,8 +55,14 @@ function getCodeLineElements(): CodeLineElement[] {
   if (!cachedCodeLineElements) {
     cachedCodeLineElements = Array.prototype.map
       .call(
+        // Match any element carrying a `data-line-*` anchor, not only `div`: a
+        // table renders as `<table>` and its cells as `<td>`, so a `div`-only
+        // selector drops every table anchor. When a table is the first block
+        // (no paragraph before it), the only `div` anchor left is the trailing
+        // end-of-document sentinel, which collapses every scroll position onto
+        // the last line. See the matching selector in content-update.ts.
         document.querySelectorAll(
-          'div[class^="data-line-"], div[class*=" data-line-"]',
+          '[class^="data-line-"], [class*=" data-line-"]',
         ),
         (element: any) => {
           // A block now carries several `data-*` roles (`data-line-N` and the

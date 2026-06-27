@@ -1,0 +1,249 @@
+= Table Scroll Sync (issue #873)
+
+// Manual test for https://github.com/asciidoctor/asciidoctor-vscode/issues/873
+//
+// Goal: verify that editor <-> preview scroll synchronization stays accurate
+// across a single very large table that spans well beyond one viewport.
+//
+// How to test:
+// 1. Open this file and the preview side by side.
+// 2. Scroll the editor (wheel and scrollbar) through the middle of the table
+//    and check that the preview follows to the matching row.
+// 3. Scroll the preview and check that it does NOT snap back to the top of the
+//    table, and that the editor follows without noticeable lag.
+// 4. Watch the extension logs for "Illegal value for `line`" errors.
+//
+// The table below is intentionally long, uses spanned cells (.3+), multi-line
+// cells, and empty cells so that source lines and rendered rows do not line up
+// one-to-one -- the conditions that originally broke scroll sync.
+
+A documentation project tracker: each chapter is split across three workstreams
+(Writing, Review, Publishing). The table is taller than one viewport so that
+editor and preview rows must stay aligned while scrolling.
+
+[cols="2,4,1,2,2,4"]
+|===
+| Chapter | Description | | Owner | Status | Notes
+
+.3+| Introduction
+.3+| Overview of the extension and what it can do.
+
+| *Writing*
+| Alice | Done |
+
+| *Review*
+| Bruno | Done |
+
+| *Publishing*
+| Carla | Done |
+
+.3+| Installation
+.3+| How to install from the Marketplace and Open VSX.
+
+| *Writing*
+| Diego | Done |
+
+| *Review*
+| Emma | In progress | Verify the Open VSX steps on Windows.
+
+| *Publishing*
+| | Not started |
+
+.3+| Configuration
+.3+| Settings reference for the preview and the converter.
+
+| *Writing*
+| Farid | In progress
+| *See:* settings > preview > scroll
+
+Still missing the security settings.
+
+| *Review*
+| Gina | |
+
+| *Publishing*
+| | |
+
+.3+| Quick Start
+.3+| A five-minute tour from a blank file to a rendered preview.
+
+| *Writing*
+| Hugo | Done |
+
+| *Review*
+| Ines | Done |
+
+| *Publishing*
+| Hugo | Done |
+
+.3+| Syntax Basics
+.3+| Paragraphs, lists, links, and inline formatting.
+
+| *Writing*
+| Jonas | Done |
+
+| *Review*
+| Karim | In review |
+
+| *Publishing*
+| | |
+
+.3+| Tables
+.3+| Columns, spans, and cell formatting -- including very large tables.
+
+| *Writing*
+| Lena | In progress |
+
+| *Review*
+| Marco | |
+
+| *Publishing*
+| | Not started | Blocked until the Writing pass is done.
+
+.3+| Images
+.3+| Block and inline images, alt text, and sizing.
+
+| *Writing*
+| Nadia | Draft |
+
+| *Review*
+| | |
+
+| *Publishing*
+| | |
+
+.2+| Includes
+.2+| Splitting a document across multiple files. Useful for large manuals that
+would otherwise be hard to navigate in a single source file.
+
+| *Review*
+| Omar | |
+
+| *Publishing*
+| | |
+
+.3+| Diagrams
+.3+| Kroki integration for PlantUML, Mermaid, and friends.
+
+| *Writing*
+| Paula | In progress |
+
+| *Review*
+| Quentin | |
+
+| *Publishing*
+| | |
+
+.3+| Math
+.3+| STEM blocks rendered with MathJax in the preview.
+
+| *Writing*
+| Rania | Done |
+
+| *Review*
+| Sven | In review
+| *See:* preview > math > mathjax
+
+| *Publishing*
+| | |
+
+.3+| Themes
+.3+| Built-in and custom stylesheets for the preview.
+
+| *Writing*
+| Tara | Draft |
+
+| *Review*
+| Alice | |
+
+| *Publishing*
+| | |
+
+.3+| Preview
+.3+| The synchronized preview and how scrolling stays in sync.
+
+| *Writing*
+| Bruno | In progress |
+
+| *Review*
+| Carla | |
+
+| *Publishing*
+| | |
+
+.3+| Export to PDF
+.3+| Generating a printable document from the source.
+
+| *Writing*
+| | Not started |
+
+| *Review*
+| | |
+
+| *Publishing*
+| | |
+
+.3+| Troubleshooting
+.3+| Common errors and how to read the extension logs.
+
+| *Writing*
+| Diego | In progress
+| *See:* logs > illegal value for line
+
+This section covers the scroll-sync errors reported in issue #873.
+
+| *Review*
+| Emma | |
+
+| *Publishing*
+| | |
+
+.3+| Contributing
+.3+| Setting up the project and running the test suite.
+
+| *Writing*
+| Farid | Draft |
+
+| *Review*
+| | |
+
+| *Publishing*
+| | |
+
+.3+| FAQ
+.3+| Frequently asked questions, collected from the issue tracker.
+
+| *Writing*
+| Gina | In progress |
+
+| *Review*
+| Hugo | |
+
+| *Publishing*
+| | |
+
+.3+| Changelog
+.3+| Notable changes for each release.
+
+| *Writing*
+| Ines | Done |
+
+| *Review*
+| Jonas | Done |
+
+| *Publishing*
+| Karim | Done |
+
+.3+| Glossary
+.3+| Definitions for AsciiDoc and extension-specific terms.
+
+| *Writing*
+| Lena | Draft |
+
+| *Review*
+| | |
+
+| *Publishing*
+| | |
+
+|===
