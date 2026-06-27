@@ -53,6 +53,12 @@ In that case, you must close your Visual Studio code instance otherwise you will
  Running extension tests from the command line is currently only supported if no other instance of Code is running.
 ====
 
+To run only the tests of a single file (matching by file name), invoke the runner directly with `--file` (alias `-f`):
+
+ $ node ./src/test/runTest.mjs --file foldingProvider
+
+The value is a case-insensitive substring matched against the test file name (the `.test.ts` suffix is optional), so `-f folding` or `-f antora` work too; `antora` would run every `antora*.test.ts` file.
+
 === Running the Web version
 
 To test the extension, run the following command within the repository folder from the command line:
