@@ -125,7 +125,7 @@ export class AsciidocEngine {
     await this.asciidoctorConfigProvider.activate(registry, textDocumentUri)
     asciidoctorProcessor.restoreBuiltInSyntaxHighlighter()
 
-    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).baseDir
+    const asciidocDocument = AsciidocTextDocument.fromTextDocument(textDocument)
     const options: { [key: string]: any } = {
       attributes: {
         'env-vscode': '',
@@ -134,12 +134,20 @@ export class AsciidocEngine {
           asciidoctorAttributes,
         ),
         ...asciidoctorAttributes,
+        // Anchor relative includes/images to the document's own directory; do
+        // not set base_dir unless the user opted in (see #926).
+        ...(asciidocDocument.dirName && { docdir: asciidocDocument.dirName }),
+        ...(asciidocDocument.filePath && {
+          docfile: asciidocDocument.filePath,
+        }),
       },
       backend,
       extension_registry: registry,
       header_footer: true,
       safe: 'unsafe',
-      ...(baseDir && { base_dir: baseDir }),
+      ...(asciidocDocument.baseDirOverride && {
+        base_dir: asciidocDocument.baseDirOverride,
+      }),
     }
     const templateDirs = this.getTemplateDirs()
     if (templateDirs.length !== 0) {
@@ -263,7 +271,7 @@ export class AsciidocEngine {
     const antoraAttributes = await antoraSupport.getAttributes(textDocumentUri)
     const asciidocTextDocument =
       AsciidocTextDocument.fromTextDocument(textDocument)
-    const baseDir = asciidocTextDocument.baseDir
+    const baseDirOverride = asciidocTextDocument.baseDirOverride
     const documentDirectory = asciidocTextDocument.dirName
     const documentBasename = asciidocTextDocument.fileName
     const documentExtensionName = asciidocTextDocument.extensionName
@@ -298,7 +306,7 @@ export class AsciidocEngine {
       header_footer: true,
       safe: 'unsafe',
       sourcemap: true,
-      ...(baseDir && { base_dir: baseDir }),
+      ...(baseDirOverride && { base_dir: baseDirOverride }),
     }
     if (templateDirs.length !== 0) {
       options.template_dirs = templateDirs

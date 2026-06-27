@@ -36,10 +36,17 @@ export class AsciidoctorIncludeItems
         },
         process: function (doc, reader, target, attrs) {
           // We don't meaningfully process the includes, we just want to identify
-          // their line number and path if they belong in the base document
-
+          // their line number and path if they belong in the base document.
+          //
+          // Only record top-level includes (those written directly in the base
+          // document), not includes nested inside an included file. The reader's
+          // include depth is 0 while reading the base document and >= 1 once it
+          // has descended into an include. This is robust regardless of whether
+          // `docfile` is set; the previous `reader.path === '<stdin>'` test only
+          // held when `docfile` was absent — with it set, the top-level reader
+          // path becomes the file name instead of `<stdin>`.
           // @ts-ignore
-          if (reader.path === '<stdin>') {
+          if (reader.getIncludeDepth() === 0) {
             this.includeItems.push({
               index: this.includeIndex,
               name: target,

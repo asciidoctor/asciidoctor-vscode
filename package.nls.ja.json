@@ -67,7 +67,7 @@
   "asciidoc.trace.desc": "**非推奨:** AsciiDoc拡張のデバッグログを有効にします。",
   "asciidoc.useWorkspaceRoot.deprecationMessage": "本設定は、`#asciidoc.useWorkspaceRootAsBaseDirectory#`に置き換えられ、動作しません。",
   "asciidoc.useWorkspaceRoot.desc": "**非推奨:** ワークスペースのルートパスをベースディレクトリとして使用します。",
-  "asciidoc.useWorkspaceRootAsBaseDirectory.desc": "ワークスペースを開いている場合、ワークスペースルートのパスをベースディレクトリに指定します。",
+  "asciidoc.useWorkspaceRootAsBaseDirectory.desc": "**詳細設定。** Asciidoctor のベースディレクトリを、現在のファイルのディレクトリから導出する代わりに、ワークスペースルートに設定します。ドキュメントがインクルードや画像を現在のファイルからの相対パスではなくワークスペースルートからの相対パスで参照している場合（たとえば、すべてのファイルから同じように参照される共有フォルダー `docs/_includes/`）にのみ有効にしてください。無効のまま（既定値）にすることを推奨します。ベースディレクトリを明示的に指定すると、相対インクルードが壊れる可能性がある既知の落とし穴です。プレビュー、HTML/DocBook エクスポート、PDF エクスポートに適用されます。",
   "asciidoc.use_asciidoctorpdf.deprecationMessage": "本設定は、`#asciidoc.pdf.engine#`に置き換えられ、動作しません。",
   "asciidoc.use_asciidoctorpdf.desc": "**非推奨:** レンダラーにasciidoctor-pdfを使用します。",
   "asciidoc.use_kroki.deprecationMessage": "本設定は、`#asciidoc.extensions.enableKroki#`に置き換えられ、動作しません。",

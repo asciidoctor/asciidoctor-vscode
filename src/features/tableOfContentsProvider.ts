@@ -66,11 +66,19 @@ export class TableOfContentsProvider {
     let insideIncludeRun = false
     let currentIncludeLine = 0
 
+    // A section belongs to the host document when its source file matches the
+    // document's own file. Comparing the file (rather than testing the path
+    // against `<stdin>`) is robust whether or not `docfile` is set: without it
+    // both are `undefined`; with it both are the document's path. An included
+    // section instead reports the included file. (Same rule as
+    // `isFromMainDocument` in sourceLineMapping.)
+    const mainFile = asciidocDocument.getSourceLocation()?.getFile()
+
     const toc = asciidocDocument
       .findBy({ context: 'section' })
       .map((section) => {
-        const sourcePath = section.getSourceLocation()?.getPath()
-        const fromInclude = sourcePath !== undefined && sourcePath !== '<stdin>'
+        const sourceFile = section.getSourceLocation()?.getFile()
+        const fromInclude = sourceFile !== undefined && sourceFile !== mainFile
 
         let line: number
         if (fromInclude) {
