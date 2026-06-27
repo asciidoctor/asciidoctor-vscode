@@ -67,7 +67,7 @@
   "asciidoc.trace.desc": "**Obsolète**: Active les traces de debug de cette extension.",
   "asciidoc.useWorkspaceRoot.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.useWorkspaceRootAsBaseDirectory#` et n'a plus aucun effet.",
   "asciidoc.useWorkspaceRoot.desc": "**Obsolète:** Quand on est dans un espace de travail, utilise la racine de l'espace de travail en tant que répertoire de base pour Asciidoctor",
-  "asciidoc.useWorkspaceRootAsBaseDirectory.desc": "Quand on est dans un espace de travail, utilise la racine de l'espace de travail en tant que répertoire de base pour Asciidoctor. S'applique sur la prévisualisation et lors de l'export PDF.",
+  "asciidoc.useWorkspaceRootAsBaseDirectory.desc": "**Avancé.** Définit le répertoire de base d'Asciidoctor sur la racine de l'espace de travail au lieu de le dériver du répertoire du fichier courant. À n'activer que si vos documents référencent des inclusions ou des images par des chemins relatifs à la racine de l'espace de travail plutôt qu'au fichier courant (par exemple un dossier partagé `docs/_includes/` adressé de la même façon depuis chaque fichier). Il est recommandé de le laisser désactivé (valeur par défaut) : un répertoire de base explicite est un piège connu qui peut casser les inclusions relatives. S'applique à la prévisualisation, à l'export HTML/DocBook et à l'export PDF.",
   "asciidoc.use_asciidoctorpdf.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.pdf.engine#` et n'a plus aucun effet.",
   "asciidoc.use_asciidoctorpdf.desc": "**Obsolète**: Utilise `asciidoctor-pdf` plutôt que `wkhtmltopdf`.",
   "asciidoc.use_kroki.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.extensions.enableKroki#` et n'a plus aucun effet.",

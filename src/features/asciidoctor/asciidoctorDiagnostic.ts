@@ -49,7 +49,13 @@ export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
         const location = error.getSourceLocation()
         if (location) {
           //There is a source location
-          if (location.getPath() === '<stdin>') {
+          // The error is in the file we are parsing when its source file is
+          // unset (no `docfile`, path reported as `<stdin>`) or matches the
+          // document's own path. Comparing the file is robust whether or not
+          // `docfile` is set, unlike testing the path against `<stdin>` which
+          // only held when `docfile` was absent.
+          const errorFile = location.getFile()
+          if (!errorFile || errorFile === textDocument.uri.fsPath) {
             //error is within the file we are parsing
             sourceLine = location.getLineNumber() - 1
             // ensure errors are always associated with a valid line

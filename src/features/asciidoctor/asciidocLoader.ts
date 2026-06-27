@@ -41,11 +41,11 @@ export class AsciidocLoader {
     // opened or its text changes, so that merely invoking a provider — or
     // opening/closing the preview — never recomputes or clears them.
     const { registry } = await this.prepare(textDocument, false)
-    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).baseDir
+    const asciidocDocument = AsciidocTextDocument.fromTextDocument(textDocument)
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
     return load(
       textDocument.getText(),
-      this.getOptions(attributes, registry, baseDir),
+      this.getOptions(attributes, registry, asciidocDocument),
     )
   }
 
@@ -58,23 +58,40 @@ export class AsciidocLoader {
     textDocument: SkinnyTextDocument,
   ): Promise<void> {
     const { memoryLogger, registry } = await this.prepare(textDocument, true)
-    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).baseDir
+    const asciidocDocument = AsciidocTextDocument.fromTextDocument(textDocument)
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
     await load(
       textDocument.getText(),
-      this.getOptions(attributes, registry, baseDir),
+      this.getOptions(attributes, registry, asciidocDocument),
     )
     this.asciidoctorDiagnosticProvider.reportErrors(memoryLogger, textDocument)
   }
 
-  protected getOptions(attributes: {}, registry: Registry, baseDir: string) {
+  protected getOptions(
+    attributes: {},
+    registry: Registry,
+    asciidocDocument: AsciidocTextDocument,
+  ) {
     return {
-      attributes,
+      attributes: {
+        ...attributes,
+        // Intrinsic attributes are not set automatically when the input is a
+        // string, so provide docdir/docfile here to anchor relative includes
+        // and images to the document's own directory. We deliberately do NOT
+        // set base_dir (Asciidoctor derives it from docdir) unless the user
+        // opted into useWorkspaceRootAsBaseDirectory (see #926).
+        ...(asciidocDocument.dirName && { docdir: asciidocDocument.dirName }),
+        ...(asciidocDocument.filePath && {
+          docfile: asciidocDocument.filePath,
+        }),
+      },
       extension_registry: registry,
       sourcemap: true,
       safe: 'unsafe',
       parse: true,
-      ...(baseDir && { base_dir: baseDir }),
+      ...(asciidocDocument.baseDirOverride && {
+        base_dir: asciidocDocument.baseDirOverride,
+      }),
     }
   }
 
@@ -149,12 +166,12 @@ export class AsciidocIncludeItemsLoader extends AsciidocLoader {
     // `AsciidocLoader.load()` and the preview conversion.
     const { registry } = await this.prepare(textDocument, false)
     this.asciidoctorIncludeItemsProvider.activate(registry)
-    const baseDir = AsciidocTextDocument.fromTextDocument(textDocument).baseDir
+    const asciidocDocument = AsciidocTextDocument.fromTextDocument(textDocument)
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
     this.asciidoctorIncludeItemsProvider.reset()
     await load(
       textDocument.getText(),
-      this.getOptions(attributes, registry, baseDir),
+      this.getOptions(attributes, registry, asciidocDocument),
     )
     return this.asciidoctorIncludeItemsProvider.get()
   }
