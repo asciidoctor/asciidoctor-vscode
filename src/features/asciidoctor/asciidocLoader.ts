@@ -23,6 +23,7 @@ import {
   AsciidoctorIncludeItemsProvider,
   IncludeItems,
 } from './asciidoctorIncludeItems.js'
+import { registerBrowserIncludeProcessor } from './browserIncludeSupport.js'
 
 export class AsciidocLoader {
   constructor(
@@ -40,7 +41,17 @@ export class AsciidocLoader {
     // owned by `AsciidocDiagnosticManager` and refreshed only when a document is
     // opened or its text changes, so that merely invoking a provider — or
     // opening/closing the preview — never recomputes or clears them.
-    const { registry } = await this.prepare(textDocument, false)
+    const { registry, antoraDocumentContext } = await this.prepare(
+      textDocument,
+      false,
+    )
+    if (antoraDocumentContext === undefined) {
+      await registerBrowserIncludeProcessor(
+        registry,
+        textDocument.uri,
+        textDocument.getText(),
+      )
+    }
     const asciidocDocument = AsciidocTextDocument.fromTextDocument(textDocument)
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
     return load(
@@ -57,7 +68,15 @@ export class AsciidocLoader {
   public async reportDiagnostics(
     textDocument: SkinnyTextDocument,
   ): Promise<void> {
-    const { memoryLogger, registry } = await this.prepare(textDocument, true)
+    const { memoryLogger, registry, antoraDocumentContext } =
+      await this.prepare(textDocument, true)
+    if (antoraDocumentContext === undefined) {
+      await registerBrowserIncludeProcessor(
+        registry,
+        textDocument.uri,
+        textDocument.getText(),
+      )
+    }
     const asciidocDocument = AsciidocTextDocument.fromTextDocument(textDocument)
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
     await load(
@@ -135,6 +154,7 @@ export class AsciidocLoader {
     return {
       memoryLogger,
       registry,
+      antoraDocumentContext,
     }
   }
 }

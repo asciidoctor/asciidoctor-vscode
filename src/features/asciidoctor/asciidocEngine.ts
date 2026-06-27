@@ -24,6 +24,7 @@ import { AsciidoctorAttributesConfig } from './asciidoctorAttributesConfig.js'
 import { AsciidoctorConfigProvider } from './asciidoctorConfig.js'
 import { AsciidoctorExtensionsProvider } from './asciidoctorExtensions.js'
 import { AsciidoctorProcessor } from './asciidoctorProcessor.js'
+import { registerBrowserIncludeProcessor } from './browserIncludeSupport.js'
 import { resolveBlockSourceLines } from './sourceLineMapping.js'
 
 export type AsciidoctorBuiltInBackends = 'html5' | 'docbook5'
@@ -127,6 +128,13 @@ export class AsciidocEngine {
     })
     await this.asciidoctorConfigProvider.activate(registry, textDocumentUri)
     asciidoctorProcessor.restoreBuiltInSyntaxHighlighter()
+    // In the browser, resolve `include::` targets via vscode.workspace.fs since
+    // Asciidoctor.js cannot read them from disk (no-op on desktop).
+    await registerBrowserIncludeProcessor(
+      registry,
+      textDocumentUri,
+      textDocument.getText(),
+    )
 
     const asciidocDocument = AsciidocTextDocument.fromTextDocument(textDocument)
     const options: { [key: string]: any } = {
@@ -261,6 +269,10 @@ export class AsciidocEngine {
           ),
         ),
       )
+    } else {
+      // In the browser, Asciidoctor.js cannot read `include::` targets from
+      // disk; resolve them via vscode.workspace.fs instead (no-op on desktop).
+      await registerBrowserIncludeProcessor(registry, textDocumentUri, text)
     }
     if (context && editor) {
       register(
