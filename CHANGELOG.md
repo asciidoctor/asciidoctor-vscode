@@ -62,6 +62,7 @@
 * Migrate the README content into the Antora documentation (`docs/`): one page per topic (install, quick start, preview, export as PDF/HTML/DocBook, paste image, snippets, diagram integration, Asciidoctor.js extensions, Asciidoctor config file, VS Code environment, settings, build from source, contributing, get help) wired into the navigation, and slim the README down to an overview that links to the documentation
 * Add an Antora support page documenting how to enable it and the features available (resource id completion, cross-reference anchor completion, go-to-definition, attribute completion, preview), along with the current limitations
 * Remove the obsolete `unxhr` limitation note about `:kroki-fetch-diagram:` from the diagram integration page, since `asciidoctor-kroki` no longer depends on `unxhr`
+* Clarify the `asciidoctor-emoji` example on the Asciidoctor.js extensions page: name the extension file and document that emojis are images served from the Twemoji CDN (an internet connection is required), which the preview's Content Security Policy allows over HTTPS by default — so no security setting needs to be changed
 
 ### Infrastructure
 

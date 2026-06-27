@@ -44,13 +44,22 @@ Here is how to use the https://github.com/mogztter/asciidoctor-emoji[asciidoctor
 npm i asciidoctor-emoji
 ----
 
-. Create a JavaScript file in `.asciidoctor/lib` with the following content:
+. Create `.asciidoctor/lib/emoji.js` with the following content:
 +
 [source,javascript]
 ----
 module.exports = require('asciidoctor-emoji')
 ----
 
-. Enjoy :tada:
+. Write an emoji, for example `:tada:`, and watch it render in the preview.
 
 image::asciidoctor-vscode-emoji-ext.png[Asciidoctor.js Emoji extension enabled]
+
+[NOTE]
+====
+`asciidoctor-emoji` does not embed any image.
+It renders each emoji as an image served from the https://cdn.jsdelivr.net/npm/twemoji[Twemoji CDN] (for example `\https://cdn.jsdelivr.net/npm/twemoji@latest/2/svg/1f389.svg`), so an internet connection is required to display the emojis.
+
+The preview's Content Security Policy allows remote images served over HTTPS by default, so these emojis are *not* blocked and you do not need to change any security setting.
+If you ever need to load assets over plain HTTP instead, lower the preview security level with the *Manage Preview Security Settings* command.
+====
