@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 import * as vscode from 'vscode'
+import { FoldingRangeKind } from 'vscode'
 import { AsciidocLoader } from '../features/asciidoctor/asciidocLoader.js'
 import { AsciidoctorConfig } from '../features/asciidoctor/asciidoctorConfig.js'
 import { AsciidoctorDiagnostic } from '../features/asciidoctor/asciidoctorDiagnostic.js'
@@ -68,7 +69,45 @@ y`)
       assert.strictEqual(firstFold.end, 5)
     })
   })
+
+  // The line-scanning logic is covered exhaustively by the VS Code-independent
+  // unit tests (`src/test/unit/foldingRanges.test.ts`). These cases only check
+  // that the provider wires it onto `vscode.FoldingRange`, including the
+  // FoldingRangeKind mapping.
+  describe('getDelimitedBlockFoldingRanges', () => {
+    test('Should fold a listing block as a region', async () => {
+      const folds = await getFoldsForDocument(`before
+
+----
+line 1
+line 2
+----
+
+after`)
+      const fold = findFold(folds, 2)
+      assert.ok(fold, 'expected a fold starting at the opening delimiter')
+      assert.strictEqual(fold.end, 5)
+      assert.strictEqual(fold.kind, FoldingRangeKind.Region)
+    })
+
+    test('Should fold a comment block with the comment kind', async () => {
+      const folds = await getFoldsForDocument(`////
+comment
+////`)
+      const fold = findFold(folds, 0)
+      assert.ok(fold)
+      assert.strictEqual(fold.end, 2)
+      assert.strictEqual(fold.kind, FoldingRangeKind.Comment)
+    })
+  })
 })
+
+function findFold(
+  folds: readonly vscode.FoldingRange[],
+  start: number,
+): vscode.FoldingRange | undefined {
+  return folds.find((fold) => fold.start === start)
+}
 
 async function getFoldsForDocument(fileContents: string) {
   const doc = new InMemoryDocument(testFileName, fileContents)
