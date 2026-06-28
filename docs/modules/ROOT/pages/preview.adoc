@@ -17,6 +17,40 @@ You can also force a refresh with the *AsciiDoc: Refresh Preview* command.
 
 Set AsciiDoc attributes used to render the preview through the `asciidoc.preview.asciidoctorAttributes` setting.
 
+== Front matter
+
+Files written for static-site generators (Jekyll, Hugo, …) often start with a metadata block delimited by `+++` (TOML) or `---` (YAML):
+
+[source,asciidoc]
+----
+---
+title: cool example
+layout: post
+---
+= My Document
+
+body content
+----
+
+By default, Asciidoctor does not treat this block as metadata, so the preview renders it as a stray horizontal rule followed by a paragraph of `key: value` lines.
+
+To strip the front matter from the preview, set the `skip-front-matter` attribute through the `asciidoc.preview.asciidoctorAttributes` setting:
+
+[source,json]
+----
+"asciidoc.preview.asciidoctorAttributes": {
+  "skip-front-matter": ""
+}
+----
+
+The front matter is then consumed and exposed as the `front-matter` attribute, exactly as with the Asciidoctor `--attribute skip-front-matter` command-line option.
+
+[NOTE]
+====
+The attribute must be set through the setting, not in the document header or an xref:asciidoctorconfig.adoc[`.asciidoctorconfig`] file.
+Front matter is detected at the very top of the file, before the document header and before either of those sources is applied, so a `:skip-front-matter:` declared there is read too late to have any effect.
+====
+
 == Source code highlighting
 
 Source blocks are highlighted out of the box using the bundled https://highlightjs.org[Highlight.js] highlighter -- you don't need to set `:source-highlighter:` for the preview.
