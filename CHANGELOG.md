@@ -30,6 +30,7 @@
 * Fix Windows path generation by using `fsPath` (#998) - thanks @anoymouserver
 * Fix TextMate grammar: support dots as delimiter in listing paragraph (#1004)
 * Only provide attribute reference completion when typing inside `{ ... }`, instead of on every word, to reduce noise (notably inside macro targets such as `image::`)
+* Stop offering `:skip-front-matter:` and `:front-matter:` in the `:` document-attribute completion: both are set via the API/CLI (or populated by the processor) and have no effect when declared in the document, so suggesting them as something to set was misleading. They remain referenceable through `{ ... }` completion when present in the parsed document
 * Fix the docked table of contents (`toc2`) text color referencing a non-existent `--vscode-editor-color` theme variable, which left the text without an explicit color; use `--vscode-editor-foreground`
 * Fix the `[.text-center]` role not centering a block's caption/title in the preview (e.g. an image caption stayed left-aligned): the default `.imageblock > .title` rule pinned the title to the left, overriding the centering inherited from the role; add a `.text-center > .title` override (#1031)
 * Fix the bundled "Noto Serif" preview font never loading because its `@font-face` rules used `src: local('./fonts/…woff') format('woff')` — `local()` resolves an installed font by name, not a file, and `format()` is invalid after it; load the files with `url()` so the preview uses the bundled Noto Serif instead of falling back to a generic serif
@@ -81,6 +82,7 @@
 * Add a "Contribute Asciidoctor.js extensions from another VS Code extension" page documenting the `asciidoc.asciidoctorExtensions` contribution point and the `registerAsciidoctorExtensions(registry, context)` hook used to register Asciidoctor.js extensions from a companion VS Code extension
 * Mark "Paste image" as supported in VS Code for the Web in the support matrix: the document paste edit provider is registered unconditionally, so copying an image and pasting it with <kbd>Ctrl</kbd>+<kbd>V</kbd> in the editor works in the browser
 * Add a "File extensions and associations" page documenting the recognized extensions (`.adoc`, `.ad`, `.asciidoc`, `.asc`), how to use the extension with other extensions such as `.txt` via the `files.associations` setting, and why this is discouraged — a few features (workspace symbols, cross-file cross-reference completion, extension-less link resolution) look files up by the `.adoc` extension rather than by language, so they silently ignore non-`.adoc` files (#376)
+* Document how to keep static-site front matter (the `---`/`+++` metadata block at the top of a file) out of the preview by setting the `skip-front-matter` attribute through `asciidoc.preview.asciidoctorAttributes`, and why it must be set there rather than in the document header or `.asciidoctorconfig` (#104)
 
 ### Infrastructure
 

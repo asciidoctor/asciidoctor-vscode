@@ -79,11 +79,6 @@
     "insertText": "reproducible:",
     "description": "Prevents last-updated date from being added to HTML footer or DocBook info element. Useful for storing the output in a source code control system as it prevents spurious changes every time you convert the document."
   },
-  "skip-front-matter": {
-    "label": ":skip-front-matter:",
-    "insertText": "skip-front-matter:",
-    "description": "Consume YAML-style frontmatter at top of document and store it in front-matter attribute."
-  },
   "appendix-caption": {
     "label": ":appendix-caption:",
     "insertText": "appendix-caption: ${1:any}",
@@ -293,11 +288,6 @@
     "label": ":firstname:",
     "insertText": "firstname: ${1:any}",
     "description": "See Author Information."
-  },
-  "front-matter": {
-    "label": ":front-matter:",
-    "insertText": "front-matter: ${1:any}",
-    "description": "If skip-front-matter is set via the API or CLI, any YAML-style frontmatter skimmed from the top of the document is stored in this attribute."
   },
   "keywords": {
     "label": ":keywords:",
