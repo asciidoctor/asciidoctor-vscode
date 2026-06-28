@@ -9,6 +9,7 @@ import {
   getAntoraConfig,
   getAttributes,
 } from './antoraDocument.js'
+import { createAntoraSupportPromptHandler } from './antoraSupportPrompt.js'
 
 export interface AntoraResourceContext {
   component: string
@@ -154,42 +155,51 @@ export class AntoraSupportManager implements vscode.Disposable {
     if (isEnableAntoraSupportSettingDefined === true) {
       AntoraSupportManager.instance.registerFeatures()
     } else if (isEnableAntoraSupportSettingDefined === undefined) {
-      // choice has not been made
-      const onDidOpenAsciiDocFileAskAntoraSupport =
-        vscode.workspace.onDidOpenTextDocument(async (textDocument) => {
-          // A choice may have been made since this prompt was armed — e.g.
-          // through the "Enable/Disable Antora support" command (or set
-          // explicitly in tests). Honour it and stop asking, rather than
-          // prompting again and overwriting it.
-          if (workspaceState.get('antoraSupportSetting') !== undefined) {
-            onDidOpenAsciiDocFileAskAntoraSupport.dispose()
-            return
-          }
-          // Convert Git URI to `file://` URI since the Git file system provider produces unexpected results.
-          const textDocumentUri =
-            textDocument.uri.scheme === 'git'
-              ? Uri.file(textDocument.uri.path)
-              : textDocument.uri
-          if (await antoraConfigFileExists(textDocumentUri)) {
+      // The choice has not been made yet: ask the first time an Antora document
+      // is opened. The handler keeps the prompt to a single occurrence — see
+      // `createAntoraSupportPromptHandler` (asciidoctor/asciidoctor-vscode#896).
+      const handleOpenedDocument =
+        createAntoraSupportPromptHandler<vscode.TextDocument>({
+          appliesToAntora: (textDocument) => {
+            // Convert Git URI to `file://` URI since the Git file system
+            // provider produces unexpected results.
+            const textDocumentUri =
+              textDocument.uri.scheme === 'git'
+                ? Uri.file(textDocument.uri.path)
+                : textDocument.uri
+            return antoraConfigFileExists(textDocumentUri)
+          },
+          askToEnable: async () => {
             const yesAnswer = l10n_t('antora.activateSupport.yes')
-            const noAnswer = l10n_t('antora.activateSupport.no')
+            const neverAnswer = l10n_t('antora.activateSupport.never')
             const answer = await vscode.window.showInformationMessage(
               l10n_t('antora.activateSupport.message'),
               yesAnswer,
-              noAnswer,
+              l10n_t('antora.activateSupport.no'),
+              neverAnswer,
             )
-            const enableAntoraSupport = answer === yesAnswer
-            await workspaceState.update(
-              'antoraSupportSetting',
-              enableAntoraSupport,
-            )
-            if (enableAntoraSupport) {
-              AntoraSupportManager.instance.registerFeatures()
+            // "Yes" enables, "Never" persists a refusal so we stop asking. "No"
+            // and dismissing the prompt are both "not now": leave the choice
+            // unmade (`undefined`) so it can be asked again in a later session.
+            if (answer === yesAnswer) {
+              return true
             }
-            // do not ask again to avoid bothering users
-            onDidOpenAsciiDocFileAskAntoraSupport.dispose()
-          }
+            if (answer === neverAnswer) {
+              return false
+            }
+            return undefined
+          },
+          getDecision: () =>
+            workspaceState.get('antoraSupportSetting') as boolean | undefined,
+          setDecision: async (enabled) => {
+            await workspaceState.update('antoraSupportSetting', enabled)
+          },
+          enableFeatures: () =>
+            AntoraSupportManager.instance.registerFeatures(),
+          dispose: () => onDidOpenAsciiDocFileAskAntoraSupport.dispose(),
         })
+      const onDidOpenAsciiDocFileAskAntoraSupport =
+        vscode.workspace.onDidOpenTextDocument(handleOpenedDocument)
       AntoraSupportManager.instance._disposables.push(
         onDidOpenAsciiDocFileAskAntoraSupport,
       )
