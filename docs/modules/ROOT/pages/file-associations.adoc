@@ -57,7 +57,7 @@ Cross-file cross-reference completion::
 `xref:` and `<<` completion gathers candidates from `**/*.adoc` files across the workspace. References declared in a `.txt` file are not offered, and a `.txt` file will not contribute its anchors to other documents.
 
 Link resolution without an extension::
-When you kbd:[Ctrl]/kbd:[Cmd]+click a link or `include::`/`xref:` target written without an extension (for example `xref:chapter[]`), the extension resolves it by appending `.adoc`. A bare target that actually points at a `.txt` file will not resolve — you must spell out the full file name.
+When you kbd:[Ctrl]/kbd:[Cmd]+click a link or `include::`/`xref:` target written without an extension (for example `\xref:chapter[]`), the extension resolves it by appending `.adoc`. A bare target that actually points at a `.txt` file will not resolve — you must spell out the full file name.
 
 [CAUTION]
 ====
