@@ -1,0 +1,103 @@
+= Interdocument Anchor — Target Document (#705)
+:toc: macro
+:sectnums:
+
+// ============================================================================
+// This is the TARGET document opened by issue-705-anchor.adoc.
+//
+// It deliberately puts the interesting anchors FAR from the top so that, if the
+// preview opens it at line 0 (the old, broken behaviour), you clearly see the
+// title instead of the referenced anchor. When the fix works, following a link
+// jumps straight to the matching anchor below.
+// ============================================================================
+
+toc::[]
+
+Top of the target document. If you land HERE after clicking a link that had a
+`#fragment`, the fragment was dropped (regression).
+
+== First section
+
+Filler so the anchors below are well past the first viewport. Scroll, scroll,
+scroll…
+
+[%hardbreaks]
+line
+line
+line
+line
+line
+line
+line
+line
+line
+line
+
+== A section with an auto-generated id
+
+This section's id is the auto-generated `_a_section_with_an_auto_generated_id`.
+A `<<...>>` / `xref:...#_a_section_with_an_auto_generated_id` link should land
+right on this heading.
+
+[%hardbreaks]
+filler
+filler
+filler
+filler
+filler
+filler
+filler
+filler
+
+[#custom-section-id]
+== A section with an explicit id
+
+This heading has the explicit id `custom-section-id`. A link ending in
+`#custom-section-id` should land here.
+
+[%hardbreaks]
+filler
+filler
+filler
+filler
+filler
+filler
+filler
+filler
+
+[[inline-anchor-paragraph]]
+This paragraph carries an inline anchor `\[[inline-anchor-paragraph]]` — the exact
+case from issue #705 (an anchor on a paragraph, not a section). A link ending in
+`#inline-anchor-paragraph` should scroll right to THIS paragraph.
+
+[%hardbreaks]
+filler
+filler
+filler
+filler
+filler
+filler
+filler
+filler
+
+[#block-id]
+.A block with an id
+====
+This delimited block has the id `block-id`. A link ending in `#block-id` should
+land on this block.
+====
+
+[%hardbreaks]
+filler
+filler
+filler
+filler
+filler
+filler
+filler
+filler
+
+== Bottom of the target document
+
+If you can read this without scrolling after following a link, something jumped
+too far. Most links above point well above this line.

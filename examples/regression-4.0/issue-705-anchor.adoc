@@ -1,0 +1,81 @@
+= Jump to a Remote Document Anchor — Manual Test Bench (#705)
+:icons: font
+:experimental:
+
+// ============================================================================
+// WHAT THIS FILE IS FOR
+// ----------------------------------------------------------------------------
+// Issue #705: "Jump to remote document anchor does not work".
+//
+// THE BUG
+//   Clicking, in the PREVIEW, a link to another AsciiDoc file that ends with a
+//   `#anchor` (e.g. `link:other.adoc#id[]` or `xref:other.adoc#id[]`) opened the
+//   target document at its TOP instead of scrolling to the anchor. With the
+//   default setting `asciidoc.preview.openLinksToAsciidocFiles = "inPreview"`,
+//   the document was re-rendered in place but the `#fragment` was thrown away.
+//
+// THE FIX
+//   The fragment is now carried into the freshly rendered document. On load the
+//   preview scrolls to the element whose id matches the fragment and moves the
+//   editor to its source line — exactly like clicking an in-page anchor.
+//
+// HOW TO RUN
+//   1. Open this file, then "AsciiDoc: Open Preview to the Side".
+//   2. Make sure `asciidoc.preview.openLinksToAsciidocFiles` is "inPreview"
+//      (the default).
+//   3. In the PREVIEW, click each link below in turn.
+//      EXPECTED = the target document opens scrolled to the named anchor.
+//      REGRESSION (old build) = the target opens at its title (top).
+//   4. Use the editor "back" navigation (Alt+◀ / Ctrl+-) or reopen this file
+//      to return between clicks.
+// ============================================================================
+
+== link: macro to an anchor
+
+* Section with explicit id: link:issue-705-target.adoc#custom-section-id[Open at #custom-section-id]
+* Auto-generated section id: link:issue-705-target.adoc#_a_section_with_an_auto_generated_id[Open at the auto-id section]
+* Inline anchor on a paragraph (the exact #705 case): link:issue-705-target.adoc#inline-anchor-paragraph[Open at #inline-anchor-paragraph]
+* Block id: link:issue-705-target.adoc#block-id[Open at #block-id]
+
+EXPECTED: each link opens `issue-705-target.adoc` scrolled to the matching
+anchor (heading, paragraph or block), not at the document title.
+
+== xref: macro to an anchor
+
+* xref:issue-705-target.adoc#custom-section-id[Open at #custom-section-id]
+* xref:issue-705-target.adoc#inline-anchor-paragraph[Open at #inline-anchor-paragraph]
+* xref:issue-705-target.adoc#block-id[Open at #block-id]
+
+EXPECTED: same as above. (`xref:` is the recommended way to reference another
+AsciiDoc file.)
+
+== No fragment (control)
+
+* link:issue-705-target.adoc[Open at the top]
+
+EXPECTED: opens `issue-705-target.adoc` at its top — there is no anchor to jump
+to, so this must NOT scroll anywhere.
+
+== Same-document anchor (control)
+
+* <<_xref_macro_to_an_anchor>> — jumps within THIS file.
+
+EXPECTED: scrolls this preview to the "xref: macro to an anchor" section. This
+in-page case already worked before the fix; it must keep working.
+
+== Editor navigation (Ctrl/Cmd+click in the SOURCE)
+
+The fixes above also cover kbd:[Ctrl]/kbd:[Cmd]+click in the editor
+(not just the preview). Hover each macro target below and click it.
+
+* xref:issue-705-target.adoc#inline-anchor-paragraph[] — should open the target
+  file scrolled to the inline-anchor paragraph (not the top). REGRESSION: it
+  opened at the top because only section anchors were resolved.
+* link:issue-705-target.adoc#custom-section-id[open] — the `link:` target should
+  now be clickable AND scroll to the anchor. REGRESSION: `link:` to an AsciiDoc
+  file offered no Ctrl/Cmd+click navigation at all.
+* link:issue-705-target.adoc[open] — clickable, opens the file at its top.
+* link:https://example.com[external] — still handled as a URL (one link only).
+
+EXPECTED: every `xref:`/`link:` target above is underlined as a clickable link
+and, with a `#anchor`, the editor scrolls the opened file to that anchor.

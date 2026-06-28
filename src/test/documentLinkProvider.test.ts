@@ -276,6 +276,49 @@ Asciidoctor.js is published as a npm package at <https://www.npmjs.com/package/@
     assertRangeEqual(link.range, new vscode.Range(2, 49, 2, 96))
   })
 
+  test('Should make a "link:" macro to another file navigable, preserving the fragment', async () => {
+    const links = await getLinksForFile(`= Title
+
+See link:other.adoc#section[the section].
+`)
+    assert.strictEqual(links.length, 1)
+    const [link] = links
+    assert.strictEqual(link.target.scheme, 'command')
+    assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
+    assert.strictEqual(
+      link.target.query,
+      JSON.stringify({ path: 'other.adoc', fragment: 'section' }),
+    )
+    // range covers the target and fragment, excluding the `link:` prefix
+    assertRangeEqual(link.range, new vscode.Range(2, 9, 2, 27))
+  })
+
+  test('Should make a "link:" macro without a fragment navigable', async () => {
+    const links = await getLinksForFile(`= Title
+
+See link:other.adoc[other].
+`)
+    assert.strictEqual(links.length, 1)
+    const [link] = links
+    assert.strictEqual(link.target.scheme, 'command')
+    assert.strictEqual(
+      link.target.query,
+      JSON.stringify({ path: 'other.adoc', fragment: '' }),
+    )
+  })
+
+  test('Should not double-link a "link:" macro that points to a URL', async () => {
+    const links = await getLinksForFile(`= Title
+
+See link:https://example.com/page[example].
+`)
+    // The URL is linked once through the URL detection; the link: handling must
+    // not add a second, overlapping link for it.
+    assert.strictEqual(links.length, 1)
+    const [link] = links
+    assert.strictEqual(link.target.toString(), 'https://example.com/page')
+  })
+
   // Enumerating includes for document links stubs every include with a
   // `nothing` placeholder, which strips the callout markers from a source
   // block and makes Asciidoctor log "no callout found for <n>". That degraded

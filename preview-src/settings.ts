@@ -1,6 +1,8 @@
 export interface PreviewSettings {
   source: string
   line: number
+  // Anchor id to scroll to on load when following an interdocument link.
+  fragment?: string
   lineCount: number
   scrollPreviewWithEditor?: boolean
   scrollEditorWithPreview: boolean

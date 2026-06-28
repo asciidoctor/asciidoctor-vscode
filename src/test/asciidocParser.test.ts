@@ -108,3 +108,52 @@ asciidoc:
     }
   })
 })
+
+describe('AsciiDoc parser interdocument link fragment (#705)', () => {
+  function createEngine() {
+    return new AsciidocEngine(
+      new AsciidocContributionProviderTest(extensionContext.extensionUri),
+      new AsciidoctorConfig(),
+      new AsciidoctorExtensions(
+        AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+      ),
+    )
+  }
+
+  function readDataSettings(html: string): { [key: string]: any } {
+    const match = html.match(/data-settings="([^"]*)"/)
+    assert.ok(match, `no data-settings found in:\n${html}`)
+    return JSON.parse(match[1].replace(/&quot;/g, '"'))
+  }
+
+  // The webview reads the scroll-to anchor from `data-settings`; this checks the
+  // `fragment` passed to `convertFromTextDocument` reaches it through the engine.
+  test('carries the fragment through to the rendered data-settings', async () => {
+    const result = await createEngine().convertFromTextDocument(
+      new InMemoryDocument(
+        vscode.Uri.file('/fragment-test.adoc'),
+        '= Title\n\nSome content',
+      ),
+      extensionContext,
+      new TestWebviewResourceProvider(),
+      undefined, // line
+      'inline-anchor-paragraph', // fragment
+    )
+    assert.strictEqual(
+      readDataSettings(result.html).fragment,
+      'inline-anchor-paragraph',
+    )
+  })
+
+  test('leaves the fragment unset when none is provided', async () => {
+    const result = await createEngine().convertFromTextDocument(
+      new InMemoryDocument(
+        vscode.Uri.file('/fragment-test.adoc'),
+        '= Title\n\nSome content',
+      ),
+      extensionContext,
+      new TestWebviewResourceProvider(),
+    )
+    assert.strictEqual(readDataSettings(result.html).fragment, undefined)
+  })
+})
