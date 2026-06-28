@@ -45,9 +45,17 @@ describe('renderMathJax', () => {
     assert.ok(html.includes('<script nonce="NONCE">'), html)
   })
 
-  test('lazy-loads AsciiMath, which is in no combined component', () => {
+  test('eagerly loads AsciiMath and mhchem, which the combined component omits', () => {
     const html = renderMathJax(true, 'none', 'NONCE', resources)
-    assert.ok(html.includes("loader: { load: ['input/asciimath'] }"), html)
+    assert.ok(
+      html.includes("loader: { load: ['input/asciimath', '[tex]/mhchem'] }"),
+      html,
+    )
+  })
+
+  test('adds mhchem to the TeX packages so \\ce / \\pu are defined', () => {
+    const html = renderMathJax(true, 'none', 'NONCE', resources)
+    assert.ok(html.includes("packages: { '[+]': ['mhchem'] }"), html)
   })
 
   test('serves the CommonHTML font locally via fontPath (not the CDN)', () => {

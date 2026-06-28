@@ -48,7 +48,10 @@ export function renderMathJax(
   return `<script nonce="${nonce}">
 MathJax = {
   // AsciiMath is not part of any combined component, so load it on demand.
-  loader: { load: ['input/asciimath'] },
+  // mhchem (\\ce, \\pu) ships the \`autoload\` map in the combined component but
+  // its code is bundled separately; load it eagerly (like AsciiMath) rather than
+  // relying on autoload's lazy fetch, which is unreliable in the offline WebView.
+  loader: { load: ['input/asciimath', '[tex]/mhchem'] },
   output: {
     fontPath: '${resources.fontBase}/%%FONT%%'
   },
@@ -76,6 +79,8 @@ MathJax = {
     ignoreHtmlClass: 'nostem|nolatexmath|noasciimath'
   },
   tex: {
+    // Add mhchem to the default TeX packages so \\ce / \\pu are defined.
+    packages: { '[+]': ['mhchem'] },
     inlineMath: [['\\\\(', '\\\\)']],
     displayMath: [['\\\\[', '\\\\]']],
     // Asciidoctor wraps AsciiMath in \`\\$…\\$\` delimiters. MathJax 4 turns
