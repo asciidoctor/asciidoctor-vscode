@@ -132,7 +132,7 @@ See xref:test.adoc#first-section[]
     assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
     assert.strictEqual(
       link.target.query,
-      JSON.stringify({ path: 'test.adoc', fragment: 'L3' }),
+      JSON.stringify({ path: '/test.adoc', fragment: 'L3' }),
     )
     assertRangeEqual(link.range, new vscode.Range(9, 9, 9, 32))
   })
@@ -156,9 +156,28 @@ See xref:test.adoc#second-section[]
     assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
     assert.strictEqual(
       link.target.query,
-      JSON.stringify({ path: 'test.adoc', fragment: 'L9' }),
+      JSON.stringify({ path: '/test.adoc', fragment: 'L9' }),
     )
     assertRangeEqual(link.range, new vscode.Range(6, 9, 6, 33))
+  })
+
+  test('Should resolve a same-document xref to a section by its (implicit) id', async () => {
+    const links = await getLinksForFile(`= Title
+
+== Block Image
+
+See xref:_block_image[].
+`)
+    assert.strictEqual(links.length, 1)
+    const [link] = links
+    assert.strictEqual(link.target.scheme, 'command')
+    assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
+    // `_block_image` is the auto-generated id of the "Block Image" section on
+    // line 3; the xref must navigate there, not try to open a file.
+    assert.strictEqual(
+      link.target.query,
+      JSON.stringify({ path: '/test.adoc', fragment: 'L3' }),
+    )
   })
 
   test('Should detect inline URL', async () => {

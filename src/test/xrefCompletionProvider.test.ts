@@ -3,7 +3,12 @@ import { afterEach, beforeEach, describe, test } from 'node:test'
 import * as vscode from 'vscode'
 import { Position } from 'vscode'
 import { getDefaultWorkspaceFolderUri } from '../core/workspace.js'
+import { AsciidocLoader } from '../features/asciidoctor/asciidocLoader.js'
+import { AsciidoctorConfig } from '../features/asciidoctor/asciidoctorConfig.js'
+import { AsciidoctorDiagnostic } from '../features/asciidoctor/asciidoctorDiagnostic.js'
+import { AsciidoctorExtensions } from '../features/asciidoctor/asciidoctorExtensions.js'
 import { XrefCompletionProvider } from '../features/completion/xrefCompletionProvider.js'
+import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../features/security.js'
 import { extensionContext } from './helper.js'
 
 let workspaceUri: vscode.Uri
@@ -13,7 +18,16 @@ describe('Xref CompletionsProvider', () => {
   let xrefProvider: XrefCompletionProvider
   beforeEach(() => {
     workspaceUri = getDefaultWorkspaceFolderUri()
-    xrefProvider = new XrefCompletionProvider(extensionContext.workspaceState)
+    xrefProvider = new XrefCompletionProvider(
+      new AsciidocLoader(
+        new AsciidoctorConfig(),
+        new AsciidoctorExtensions(
+          AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+        ),
+        new AsciidoctorDiagnostic('test'),
+        extensionContext,
+      ),
+    )
   })
   afterEach(async () => {
     for (const createdFile of createdFiles) {
@@ -39,7 +53,7 @@ describe('Xref CompletionsProvider', () => {
     )
     await vscode.workspace.fs.writeFile(
       fileThatShouldAppearInAutoComplete,
-      Buffer.from('[[anOldStyleID]]'),
+      Buffer.from('[[anOldStyleID]]Some text.'),
     )
     createdFiles.push(fileThatShouldAppearInAutoComplete)
 
@@ -79,7 +93,7 @@ describe('Xref CompletionsProvider', () => {
     )
     await vscode.workspace.fs.writeFile(
       fileThatShouldAppearInAutoComplete,
-      Buffer.from('[#aShortHandID]'),
+      Buffer.from('[#aShortHandID]\nSome text.'),
     )
     createdFiles.push(fileThatShouldAppearInAutoComplete)
 
@@ -119,7 +133,7 @@ describe('Xref CompletionsProvider', () => {
     )
     await vscode.workspace.fs.writeFile(
       fileThatShouldAppearInAutoComplete,
-      Buffer.from('[id=longHandID]'),
+      Buffer.from('[id=longHandID]\nSome text.'),
     )
     createdFiles.push(fileThatShouldAppearInAutoComplete)
 
@@ -178,7 +192,7 @@ xref:`),
     )
     await vscode.workspace.fs.writeFile(
       fileToAutoComplete,
-      Buffer.from(`* [id=anInlinedAnchor]demo
+      Buffer.from(`* [[anInlinedAnchor]]demo
 
 xref:`),
     )
@@ -243,6 +257,72 @@ xref:`),
         (completionItem) => completionItem.label === 'shouldNotAppear',
       ).length,
       0,
+    )
+  })
+
+  test('Should suggest auto-generated section ids after "<<" (no explicit anchor)', async () => {
+    const fileToAutoComplete = vscode.Uri.joinPath(
+      workspaceUri,
+      'fileWithSectionsForInternalRef.adoc',
+    )
+    await vscode.workspace.fs.writeFile(
+      fileToAutoComplete,
+      Buffer.from(`= Document
+
+== Introduction
+
+<<
+
+== Conclusion
+`),
+    )
+    createdFiles.push(fileToAutoComplete)
+
+    const file = await vscode.workspace.openTextDocument(fileToAutoComplete)
+    const completionsItems = await xrefProvider.provideCompletionItems(
+      file,
+      new Position(4, 2),
+    )
+    const labels = completionsItems.map(
+      (completionItem) => completionItem.label,
+    )
+    assert.ok(
+      labels.includes('_introduction'),
+      `expected _introduction, got: ${labels.join(', ')}`,
+    )
+    assert.ok(
+      labels.includes('_conclusion'),
+      `expected _conclusion, got: ${labels.join(', ')}`,
+    )
+  })
+
+  test('Should suggest section ids after "xref:" with an empty target', async () => {
+    const fileToAutoComplete = vscode.Uri.joinPath(
+      workspaceUri,
+      'fileWithSectionsForXref.adoc',
+    )
+    await vscode.workspace.fs.writeFile(
+      fileToAutoComplete,
+      Buffer.from(`= Document
+
+== Getting Started
+
+xref:
+`),
+    )
+    createdFiles.push(fileToAutoComplete)
+
+    const file = await vscode.workspace.openTextDocument(fileToAutoComplete)
+    const completionsItems = await xrefProvider.provideCompletionItems(
+      file,
+      new Position(4, 5),
+    )
+    const labels = completionsItems.map(
+      (completionItem) => completionItem.label,
+    )
+    assert.ok(
+      labels.includes('_getting_started[]'),
+      `expected _getting_started[], got: ${labels.join(', ')}`,
     )
   })
 })
