@@ -16,6 +16,10 @@ const urlRx =
   /(?<=|link|<|[>()[\];"'])\\?(?:https?|file|ftp|irc):\/\/[^\s[\]]+/gm
 const inlineAnchorRx = /^\[\[(?<id>[^,]+)(?:,[^\]]+)*]]$/m
 const xrefRx = /xref:(?<target>[^#|^[]+)(?<fragment>#[^[]+)?\[[^\]]*]/gi
+// Shorthand internal cross reference: `<<target>>` or `<<target,link text>>`.
+// `target` is an id or a reftext (a section title); the optional link text after
+// the first comma is ignored for navigation.
+const internalRefRx = /<<(?<target>[^,>]+)(?:,[^>]*)?>>/g
 
 function normalizeLink(
   document: vscode.TextDocument,
@@ -199,6 +203,32 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
               results.push(documentLink)
             }
           }
+        }
+      }
+      if (line.includes('<<')) {
+        for (const internalRefFound of line.matchAll(internalRefRx)) {
+          const index = internalRefFound.index
+          const target = internalRefFound.groups.target
+          // An interdocument shorthand (`<<file.adoc#id>>`) is left to the
+          // xref/file handling above; here we only navigate same-document
+          // references (an id, an auto-generated section id, or a reftext).
+          if (target.includes('#')) {
+            continue
+          }
+          const range = new vscode.Range(
+            // span only the target, not the `<<` / `>>` delimiters
+            new vscode.Position(lineNumber, index + 2),
+            new vscode.Position(lineNumber, index + 2 + target.length),
+          )
+          xrefProxies.push((anchors) =>
+            buildSameDocumentXrefLink(
+              textDocument,
+              range,
+              target,
+              anchors,
+              referenceLines,
+            ),
+          )
         }
       }
     }

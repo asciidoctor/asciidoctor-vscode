@@ -44,7 +44,9 @@ export async function getReferencesFromContent(
 /**
  * Map every cross-reference target in a parsed document to its 1-based source
  * line, when the node carries a source location (requires `sourcemap: true`).
- * Used to turn a same-document `xref:`/`<<` target into a navigable link.
+ * Used to turn a same-document `xref:`/`<<` target into a navigable link. Keyed
+ * both by id and, when available, by reftext (a section title) so that a natural
+ * cross reference such as `<<Section Title>>` resolves too.
  */
 export function getReferenceLinesFromDocument(
   document: AsciidoctorDocument,
@@ -52,9 +54,15 @@ export function getReferenceLinesFromDocument(
   const refs = document.getRefs()
   const lines = new Map<string, number>()
   for (const id of Object.keys(refs)) {
-    const line = readLineNumber(refs[id])
-    if (line !== undefined) {
-      lines.set(id, line)
+    const node = refs[id]
+    const line = readLineNumber(node)
+    if (line === undefined) {
+      continue
+    }
+    lines.set(id, line)
+    const reftext = readReftext(node)
+    if (reftext && !lines.has(reftext)) {
+      lines.set(reftext, line)
     }
   }
   return lines
