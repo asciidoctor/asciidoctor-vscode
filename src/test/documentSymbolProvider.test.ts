@@ -118,6 +118,46 @@ include::documentsymbol-936-include.adoc[]
     )
   })
 
+  test('Should still return symbols when an attributes include directly follows the header with no blank line (#359)', async () => {
+    // Faithful reproduction of #359: an `include::` of an *attributes* file sits
+    // on the line right after the document title, with no blank line in between,
+    // and the sections live in the main document. The outline used to come back
+    // empty ("No symbols found in document") in this case.
+    createdFiles.push(
+      await createFile(
+        `:js: JavaScript
+:url-repo: https://example.org
+`,
+        'documentsymbol-359-attributes.adoc',
+      ),
+    )
+    const mainContent = `= {js} Modules
+include::documentsymbol-359-attributes.adoc[]
+
+== Overview
+
+== Details
+`
+    const mainFile = await createFile(
+      mainContent,
+      'documentsymbol-359-main.adoc',
+    )
+    createdFiles.push(mainFile)
+
+    const symbols = await newSymbolProvider().provideDocumentSymbols(
+      new InMemoryDocument(mainFile, mainContent),
+    )
+
+    assert.ok(symbols.length > 0, 'the outline should not be empty')
+    const root = symbols[0]
+    // The attribute defined in the included file is resolved in the title.
+    assert.strictEqual(root.name, 'JavaScript Modules')
+    assert.deepStrictEqual(
+      root.children.map((c) => c.name),
+      ['Overview', 'Details'],
+    )
+  })
+
   test('A section after an include stays a sibling, not nested under the include (#936)', async () => {
     createdFiles.push(
       await createFile(
