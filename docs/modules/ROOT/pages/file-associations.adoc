@@ -1,0 +1,66 @@
+= File extensions and associations
+:description: Which file extensions the extension recognizes, and how (and why not) to use it with other extensions such as .txt.
+
+The extension activates on files that VS Code identifies as the *AsciiDoc language*.
+Out of the box, the following extensions are registered to that language:
+
+* `.adoc`
+* `.ad`
+* `.asciidoc`
+* `.asc`
+
+[TIP]
+====
+Prefer `.adoc`.
+It is the conventional AsciiDoc file extension, it is the one registered as the AsciiDoc media type, and it is the only extension that every feature of this extension supports without surprises (see <<limitations>>).
+====
+
+[#use-another-extension]
+== Using the extension with another file extension
+
+If your project stores AsciiDoc content under a different extension (for example `.txt`), you can tell VS Code to treat those files as AsciiDoc with the built-in https://code.visualstudio.com/docs/languages/identifiers[`files.associations`] setting.
+
+Add this to your workspace or user `settings.json`:
+
+[,json]
+----
+{
+  "files.associations": {
+    "*.txt": "asciidoc"
+  }
+}
+----
+
+You can also set the association per file from the status bar: open the file, click the language indicator in the bottom-right corner, choose _Configure File Association for '.txt'..._, and pick *AsciiDoc*.
+
+Once a file is associated with the AsciiDoc language, most of the extension comes along, because these features key off the *language*, not the file name:
+
+* Syntax highlighting
+* xref:preview.adoc[Live preview] (and sync scrolling)
+* xref:edit.adoc[Document outline and symbols] for the open file
+* Completion (attributes, includes, cross-references within the file…)
+* Diagnostics
+* xref:snippets.adoc[Snippets] and xref:paste-image.adoc[image pasting]
+* The _Open Preview_, _Export as PDF_, _Save as HTML_… commands and menu entries
+
+[#limitations]
+== Limitations
+
+WARNING: Associating non-`.adoc` files with AsciiDoc is *not* fully equivalent to using `.adoc`. A handful of features look up files by the `.adoc` extension on disk rather than by language, so they will silently ignore your other files.
+
+The features that rely on the `.adoc` extension are:
+
+Workspace-wide symbols::
+The _Go to Symbol in Workspace_ command (kbd:[Ctrl+T]) only indexes `**/*.adoc` files. Symbols defined in a `.txt` file are not discovered, and edits to such files are not watched.
+
+Cross-file cross-reference completion::
+`xref:` and `<<` completion gathers candidates from `**/*.adoc` files across the workspace. References declared in a `.txt` file are not offered, and a `.txt` file will not contribute its anchors to other documents.
+
+Link resolution without an extension::
+When you kbd:[Ctrl]/kbd:[Cmd]+click a link or `include::`/`xref:` target written without an extension (for example `xref:chapter[]`), the extension resolves it by appending `.adoc`. A bare target that actually points at a `.txt` file will not resolve — you must spell out the full file name.
+
+[CAUTION]
+====
+Because of these gaps, using a non-`.adoc` extension is discouraged.
+If you can, rename your files to `.adoc`: it is the official AsciiDoc extension, it keeps every feature working, and your documents will be recognized as AsciiDoc by other tools and platforms (GitHub, GitLab, the Asciidoctor toolchain…) without extra configuration.
+====
