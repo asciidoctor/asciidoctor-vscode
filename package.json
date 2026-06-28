@@ -626,6 +626,7 @@
     "configurationDefaults": {
       "[asciidoc]": {
         "editor.wordWrap": "on",
+        "editor.wordBasedSuggestions": "off",
         "editor.quickSuggestions": {
           "comments": "off",
           "strings": "off",

@@ -1,7 +1,13 @@
 import * as vscode from 'vscode'
 import { findFiles } from '../../core/findFiles.js'
 import { getAntoraDocumentContext } from '../antora/antoraDocument.js'
+import { AsciidocLoader } from '../asciidoctor/asciidocLoader.js'
 import { Context, createContext } from './createContext.js'
+import {
+  CrossReference,
+  getReferencesFromContent,
+  getReferencesFromDocument,
+} from './crossReferences.js'
 import {
   buildCrossRefLabel,
   matchesCrossRefQuery,
@@ -9,20 +15,19 @@ import {
   parseInternalRefQuery,
   shouldProvideCompletion,
 } from './xrefCompletion.js'
-import { getIdsFromContent } from './xrefIdExtractor.js'
 
 /**
  * Completes `xref:` cross references (to files and their anchors) and `<<`
- * internal references. On Antora pages, cross references use resource ids
- * resolved against the content catalog, so the workspace-wide file-path
- * suggestions produced here are noise; the `AntoraResourceCompletionProvider`
- * takes over the `xref:` macro instead.
+ * internal references. Candidates come from Asciidoctor's reference catalog (see
+ * `crossReferences`), so sections — including their auto-generated ids — block
+ * anchors and bibliography entries are all offered, not just explicit anchors.
  *
- * The string parsing is delegated to the `vscode`-free helpers in
- * `xrefCompletion`; this class only wires them to the editor.
+ * On Antora pages, cross references use resource ids resolved against the content
+ * catalog, so the workspace-wide file-path suggestions produced here are noise;
+ * the `AntoraResourceCompletionProvider` takes over the `xref:` macro instead.
  */
 export class XrefCompletionProvider implements vscode.CompletionItemProvider {
-  constructor(private readonly workspaceState: vscode.Memento) {}
+  constructor(private readonly asciidocLoader: AsciidocLoader) {}
 
   public async provideCompletionItems(
     document: vscode.TextDocument,
@@ -34,26 +39,27 @@ export class XrefCompletionProvider implements vscode.CompletionItemProvider {
     ) {
       const antoraDocumentContext = await getAntoraDocumentContext(
         document.uri,
-        this.workspaceState,
+        this.asciidocLoader.context.workspaceState,
       )
       if (antoraDocumentContext !== undefined) {
         return []
       }
-      return provideCrossRef(context)
+      return provideCrossRef(context, this.asciidocLoader)
     } else if (
       shouldProvideCompletion(context.textFullLine, position.character, '<<')
     ) {
-      return provideInternalRef(context)
+      return provideInternalRef(context, this.asciidocLoader)
     } else {
       return []
     }
   }
 }
 
-async function getIdsFromFile(file: vscode.Uri) {
+async function getReferencesFromFile(
+  file: vscode.Uri,
+): Promise<CrossReference[]> {
   const data = await vscode.workspace.fs.readFile(file)
-  const content = Buffer.from(data).toString('utf8')
-  return getIdsFromContent(content)
+  return getReferencesFromContent(Buffer.from(data).toString('utf8'))
 }
 
 /**
@@ -61,6 +67,7 @@ async function getIdsFromFile(file: vscode.Uri) {
  */
 async function provideCrossRef(
   context: Context,
+  asciidocLoader: AsciidocLoader,
 ): Promise<vscode.CompletionItem[]> {
   const { textFullLine, position, document } = context
   const { search, hasBracket } = parseCrossRefQuery(
@@ -69,21 +76,23 @@ async function provideCrossRef(
   )
 
   const completionItems: vscode.CompletionItem[] = []
+  const currentFilePath = document.uri.fsPath
   const workspacesAdocFiles = await findFiles('**/*.adoc')
   for (const adocFile of workspacesAdocFiles) {
-    const labels = await getIdsFromFile(adocFile)
-    for (const label of labels) {
-      if (matchesCrossRefQuery(label, search)) {
-        const labelText = buildCrossRefLabel(label, hasBracket, {
-          currentFilePath: document.uri.fsPath,
+    // The active document is parsed through the loader so that unsaved edits,
+    // configured attributes and includes are taken into account; other files are
+    // parsed standalone from disk to keep completion responsive.
+    const references =
+      adocFile.fsPath === currentFilePath
+        ? getReferencesFromDocument(await asciidocLoader.load(document))
+        : await getReferencesFromFile(adocFile)
+    for (const reference of references) {
+      if (matchesCrossRefQuery(reference.id, search)) {
+        const labelText = buildCrossRefLabel(reference.id, hasBracket, {
+          currentFilePath,
           targetFilePath: adocFile.fsPath,
         })
-        completionItems.push(
-          new vscode.CompletionItem(
-            labelText,
-            vscode.CompletionItemKind.Reference,
-          ),
-        )
+        completionItems.push(buildCrossRefItem(labelText, reference))
       }
     }
   }
@@ -91,19 +100,42 @@ async function provideCrossRef(
   return completionItems
 }
 
+function buildCrossRefItem(
+  labelText: string,
+  reference: CrossReference,
+): vscode.CompletionItem {
+  const item = new vscode.CompletionItem(
+    labelText,
+    vscode.CompletionItemKind.Reference,
+  )
+  if (reference.reftext) {
+    item.detail = reference.reftext
+  }
+  return item
+}
+
 async function provideInternalRef(
   context: Context,
+  asciidocLoader: AsciidocLoader,
 ): Promise<vscode.CompletionItem[]> {
   const { textFullLine, position, document } = context
   const search = parseInternalRefQuery(textFullLine, position.character)
 
-  const internalRefLabels = await getIdsFromFile(document.uri)
+  const references = getReferencesFromDocument(
+    await asciidocLoader.load(document),
+  )
 
-  return internalRefLabels
-    .filter((label) => label.match(search))
-    .map((label) => ({
-      label: `${label}`,
-      kind: vscode.CompletionItemKind.Reference,
-      insertText: `${label}>>`,
-    }))
+  return references
+    .filter((reference) => reference.id.match(search))
+    .map((reference) => {
+      const item: vscode.CompletionItem = {
+        label: reference.id,
+        kind: vscode.CompletionItemKind.Reference,
+        insertText: `${reference.id}>>`,
+      }
+      if (reference.reftext) {
+        item.detail = reference.reftext
+      }
+      return item
+    })
 }

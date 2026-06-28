@@ -25,8 +25,8 @@ export class AsciidocCompletionProviders {
       ),
       vscode.languages.registerCompletionItemProvider(
         asciidocDocumentSelector,
-        new XrefCompletionProvider(asciidocLoader.context.workspaceState),
-        ...[':', '/'],
+        new XrefCompletionProvider(asciidocLoader),
+        ...[':', '/', '<'],
       ),
       vscode.languages.registerCompletionItemProvider(
         asciidocDocumentSelector,
