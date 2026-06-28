@@ -37,6 +37,16 @@ cpSync(
   join(dest, 'input', 'asciimath.js'),
 )
 
+// mhchem TeX extension (`\ce`, `\pu`), lazy-loaded by `[tex]/autoload` (part of
+// the combined component) from `<base>/input/tex/extensions/mhchem.js`. It only
+// depends on `[tex]/ams`, which is already bundled in the combined component.
+const texExtDest = join(dest, 'input', 'tex', 'extensions')
+mkdirSync(texExtDest, { recursive: true })
+cpSync(
+  join(mathjax, 'input', 'tex', 'extensions', 'mhchem.js'),
+  join(texExtDest, 'mhchem.js'),
+)
+
 // CommonHTML font assets, lazy-loaded from `[mathjax-newcm]`, which resolves to
 // `<base>/output/fonts/mathjax-newcm`.
 const fontDest = join(dest, 'output', 'fonts', 'mathjax-newcm', 'chtml')
