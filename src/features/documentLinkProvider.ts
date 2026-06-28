@@ -31,9 +31,13 @@ function normalizeLink(
     return externalSchemeUri
   }
 
-  // Assume it must be a relative or absolute file path
-  // Use a fake scheme to avoid parse warnings
-  const tempUri = vscode.Uri.parse(`vscode-resource:${link}`)
+  // Assume it must be a relative or absolute file path. We only parse `link` to
+  // split it into a path and a fragment; the resulting URI is never used as a
+  // webview resource. A neutral, non-special scheme is prepended to avoid the
+  // "scheme is missing" parse warning while keeping the path verbatim — `file`,
+  // `http` and `https` must NOT be used here as they make `Uri.parse` prepend a
+  // leading slash to relative paths (and turn an empty path into `/`).
+  const tempUri = vscode.Uri.parse(`adoc-link:${link}`)
 
   let resourcePath
   if (!tempUri.path) {
