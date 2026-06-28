@@ -4,6 +4,7 @@ import { AsciidocLoader } from './asciidoctor/asciidocLoader.js'
 import {
   buildImageCopyEdit,
   computeImageMacroTarget,
+  type ImagesLocation,
   imageCopyEditKind,
   imageLinkEditKind,
   imageMacrosSnippet,
@@ -54,8 +55,36 @@ export class DropImageIntoEditorProvider
       textDocument,
       textDocument.offsetAt(position),
     )
+    const location = await resolveImagesLocation(
+      textDocument,
+      imagesDir,
+      this.workspaceState,
+    )
 
-    // Always offer to insert a link, preserving the historical behavior.
+    // Offer to copy when enabled and at least one image cannot be linked
+    // cleanly from where it currently sits.
+    const copyEdit =
+      location !== undefined &&
+      configuration.get<'smart' | 'never'>(
+        'editor.drop.copyIntoWorkspace',
+        'smart',
+      ) !== 'never'
+        ? await this.tryBuildCopyEdit(
+            textDocument,
+            imageUris,
+            imagesDir,
+            location,
+          )
+        : undefined
+
+    // Under Antora a relative-path link does not resolve (images are referenced
+    // within the module's image family), so only the copy/insert edit is offered.
+    if (location?.antora) {
+      return copyEdit ? [copyEdit] : undefined
+    }
+
+    // Outside Antora, always offer to insert a link, preserving the historical
+    // behavior.
     const linkEdit = new vscode.DocumentDropEdit(
       imageMacrosSnippet(
         imageUris.map((uri) =>
@@ -66,16 +95,6 @@ export class DropImageIntoEditorProvider
       imageLinkEditKind,
     )
 
-    // Offer to copy when enabled and at least one image cannot be linked
-    // cleanly from where it currently sits.
-    const copyEdit =
-      configuration.get<'smart' | 'never'>(
-        'editor.drop.copyIntoWorkspace',
-        'smart',
-      ) !== 'never'
-        ? await this.tryBuildCopyEdit(textDocument, imageUris, imagesDir)
-        : undefined
-
     // The first edit is applied when the user does not pick from the widget, so
     // copying — when offered — becomes the default for poorly accessible images.
     return copyEdit ? [copyEdit, linkEdit] : [linkEdit]
@@ -85,15 +104,8 @@ export class DropImageIntoEditorProvider
     textDocument: vscode.TextDocument,
     imageUris: vscode.Uri[],
     imagesDir: string,
+    location: ImagesLocation,
   ): Promise<vscode.DocumentDropEdit | undefined> {
-    const location = await resolveImagesLocation(
-      textDocument,
-      imagesDir,
-      this.workspaceState,
-    )
-    if (location === undefined) {
-      return undefined
-    }
     const copy = await buildImageCopyEdit(
       textDocument.uri,
       imageUris.map((uri) => ({ uri })),

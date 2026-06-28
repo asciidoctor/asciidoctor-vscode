@@ -157,6 +157,14 @@ export class AntoraSupportManager implements vscode.Disposable {
       // choice has not been made
       const onDidOpenAsciiDocFileAskAntoraSupport =
         vscode.workspace.onDidOpenTextDocument(async (textDocument) => {
+          // A choice may have been made since this prompt was armed — e.g.
+          // through the "Enable/Disable Antora support" command (or set
+          // explicitly in tests). Honour it and stop asking, rather than
+          // prompting again and overwriting it.
+          if (workspaceState.get('antoraSupportSetting') !== undefined) {
+            onDidOpenAsciiDocFileAskAntoraSupport.dispose()
+            return
+          }
           // Convert Git URI to `file://` URI since the Git file system provider produces unexpected results.
           const textDocumentUri =
             textDocument.uri.scheme === 'git'

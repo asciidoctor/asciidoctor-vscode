@@ -297,8 +297,14 @@ export async function buildImageCopyEdit(
         'uri' in source &&
         isWithinDirectory(source.uri, location.directory)
       ) {
-        // Already conveniently located: a plain link is enough.
-        targets.push(computeImageMacroTarget(docUri, source.uri, imagesDir))
+        // Already conveniently located: reference it without copying. Under
+        // Antora the macro target is the bare file name (resolved within the
+        // module's image family), otherwise the path relative to imagesdir.
+        targets.push(
+          location.antora
+            ? encodeURI(path.basename(source.uri.fsPath))
+            : computeImageMacroTarget(docUri, source.uri, imagesDir),
+        )
         continue
       }
       const fileName =
@@ -322,7 +328,10 @@ export async function buildImageCopyEdit(
       )
       copies++
     }
-    if (copies === 0) {
+    if (copies === 0 && !location.antora) {
+      // Outside Antora, a drop/paste that needs no copy is left to the link
+      // edit (historical behavior). Under Antora there is no usable relative
+      // link, so the insert edit is still offered for an image already in place.
       return undefined
     }
     return { snippet: imageMacrosSnippet(targets), workspaceEdit }
