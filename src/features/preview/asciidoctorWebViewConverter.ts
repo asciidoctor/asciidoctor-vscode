@@ -187,6 +187,7 @@ export class AsciidoctorWebViewConverter {
     state?: any,
     private readonly krokiServerUrl?: string,
     private readonly dataUriEnabled: boolean = false,
+    fragment: string | undefined = undefined,
   ) {
     const textDocumentUri = textDocument.uri
     this.basebackend = 'html'
@@ -198,6 +199,9 @@ export class AsciidoctorWebViewConverter {
     this.initialData = {
       source: textDocumentUri.toString(),
       line,
+      // Anchor id to scroll to once this render has loaded (interdocument link
+      // navigation); empty for ordinary renders.
+      fragment,
       lineCount: textDocument.lineCount,
       scrollPreviewWithEditor: this.config.scrollPreviewWithEditor,
       scrollEditorWithPreview: this.config.scrollEditorWithPreview,

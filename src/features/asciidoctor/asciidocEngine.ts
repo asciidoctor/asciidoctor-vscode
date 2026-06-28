@@ -198,6 +198,7 @@ export class AsciidocEngine {
     context: vscode.ExtensionContext,
     editor: WebviewResourceProvider,
     line?: number,
+    fragment?: string,
   ): Promise<{ html: string; document: AsciidoctorDocument }> {
     const asciidoctorProcessor = AsciidoctorProcessor.getInstance()
     // Capture Asciidoctor log messages so they do not leak to the console.
@@ -249,6 +250,7 @@ export class AsciidocEngine {
       null,
       krokiServerUrl,
       dataUriEnabled,
+      fragment,
     )
     ConverterFactory.register(asciidoctorWebViewConverter, 'webview-html5')
 

@@ -35,6 +35,10 @@ export class AsciidocPreview
   private readonly editor: vscode.WebviewPanel
   private throttleTimer: any
   private line: number | undefined = undefined
+  // Anchor to scroll to once the next (full) render of the preview has loaded.
+  // Set when following an interdocument link with a fragment so the freshly
+  // opened document lands on the referenced anchor instead of its top.
+  private pendingScrollToFragment: string | undefined = undefined
   private readonly disposables: vscode.Disposable[] = []
   private firstUpdate = true
   private currentVersion?: { resource: vscode.Uri; version: number }
@@ -540,7 +544,11 @@ export class AsciidocPreview
       this._previewConfigurations,
       this,
       this.line,
+      this.pendingScrollToFragment,
     )
+    // One-shot: consume the anchor so later refreshes of the same document do
+    // not keep jumping back to it.
+    this.pendingScrollToFragment = undefined
     if (this.needsFullReload) {
       // Full reload: rebuild the entire webview (shell + content).
       this.editor.webview.html = html
@@ -654,6 +662,9 @@ export class AsciidocPreview
     if (openLinks === 'inPreview') {
       const asciidocLink = await resolveLinkToAsciidocFile(targetResource.path)
       if (asciidocLink) {
+        // Opening another document in place forces a full reload; carry the
+        // fragment so the new render scrolls to the referenced anchor.
+        this.pendingScrollToFragment = targetResource.fragment || undefined
         this.update(asciidocLink)
         return
       }

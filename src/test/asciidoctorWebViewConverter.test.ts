@@ -509,6 +509,61 @@ See xref:my-table[xrefstyle=short] for more reference.
     )
   })
 
+  // #705: an interdocument link with a `#fragment` is followed in the preview by
+  // re-rendering the target document with that fragment, which the webview reads
+  // from `data-settings` to scroll to the anchor. These tests check the fragment
+  // makes it into the rendered `data-settings` (and is absent otherwise).
+  function readDataSettings(html: string): { [key: string]: any } {
+    const match = html.match(/data-settings="([^"]*)"/)
+    assert.ok(match, `no data-settings found in:\n${html}`)
+    return JSON.parse(match[1].replace(/&quot;/g, '"'))
+  }
+
+  async function convertStandaloneWithFragment(
+    input: string,
+    fragment: string | undefined,
+  ): Promise<string> {
+    const file = await vscode.workspace.openTextDocument(
+      vscode.Uri.joinPath(workspaceUri, 'asciidoctorWebViewConverterTest.adoc'),
+    )
+    const converter = new AsciidoctorWebViewConverter(
+      file,
+      new TestWebviewResourceProvider(),
+      2,
+      false,
+      new TestAsciidocContributions(),
+      new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(
+        file.uri,
+      ),
+      undefined,
+      undefined, // line
+      null, // state
+      undefined, // krokiServerUrl
+      false, // dataUriEnabled
+      fragment,
+    )
+    return (await asciidoctorConvert(input, {
+      ...createConverterOptions(converter, file.fileName),
+      standalone: true,
+    })) as unknown as string
+  }
+
+  test('Should carry the scroll-to fragment into data-settings', async () => {
+    const html = await convertStandaloneWithFragment(
+      'Some content',
+      'inline-anchor-paragraph',
+    )
+    assert.strictEqual(
+      readDataSettings(html).fragment,
+      'inline-anchor-paragraph',
+    )
+  })
+
+  test('Should not set a fragment in data-settings when none is given', async () => {
+    const html = await convertStandaloneWithFragment('Some content', undefined)
+    assert.strictEqual(readDataSettings(html).fragment, undefined)
+  })
+
   for (const testCase of testCases) {
     if (testCase.standalone) {
       test(testCase.title, async () =>

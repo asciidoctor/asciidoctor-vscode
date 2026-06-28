@@ -16,6 +16,9 @@ const urlRx =
   /(?<=|link|<|[>()[\];"'])\\?(?:https?|file|ftp|irc):\/\/[^\s[\]]+/gm
 const inlineAnchorRx = /^\[\[(?<id>[^,]+)(?:,[^\]]+)*]]$/m
 const xrefRx = /xref:(?<target>[^#|^[]+)(?<fragment>#[^[]+)?\[[^\]]*]/gi
+// `link:target[...]` to a file (URLs are matched by `urlRx` instead). The target
+// is a path that may carry a `#fragment`; spaces, `#` and `[` end it.
+const linkRx = /link:(?<target>[^#\s[]+)(?<fragment>#[^\s[]+)?\[[^\]]*]/gi
 // Shorthand internal cross reference: `<<target>>` or `<<target,link text>>`.
 // `target` is an id or a reftext (a section title); the optional link text after
 // the first comma is ignored for navigation.
@@ -206,6 +209,54 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
               )
               results.push(documentLink)
             }
+          }
+        }
+      }
+      if (line.includes('link:')) {
+        for (const linkFound of line.matchAll(linkRx)) {
+          const index = linkFound.index
+          const target = linkFound.groups.target
+          const fragment = linkFound.groups.fragment || ''
+          // URLs (`link:https://…[]`) are already linked through `urlRx`; only
+          // add navigation for links that point at a local file.
+          if (getUriForLinkWithKnownExternalScheme(target)) {
+            continue
+          }
+          const originalTarget = `${target}${fragment}`
+          const range = new vscode.Range(
+            // exclude the `link:` prefix
+            new vscode.Position(lineNumber, index + 5),
+            new vscode.Position(lineNumber, originalTarget.length + index + 5),
+          )
+          let targetUri
+          if (path.isAbsolute(target)) {
+            targetUri = vscode.Uri.parse(target)
+          } else {
+            targetUri = vscode.Uri.parse(base + '/' + target)
+          }
+          if (targetUri.path === textDocument.uri.path) {
+            // A `link:` back to the current file (with a `#fragment`): navigate
+            // within the document like a cross reference.
+            const anchorId = fragment.replace(/^#/, '')
+            xrefProxies.push((anchors) =>
+              buildSameDocumentXrefLink(
+                textDocument,
+                range,
+                anchorId,
+                anchors,
+                referenceLines,
+              ),
+            )
+          } else {
+            const documentLink = new vscode.DocumentLink(
+              range,
+              normalizeLink(textDocument, originalTarget, base),
+            )
+            documentLink.tooltip = l10nT(
+              'documentLink.openFile.tooltip',
+              target,
+            )
+            results.push(documentLink)
           }
         }
       }

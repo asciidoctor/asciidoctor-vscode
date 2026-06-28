@@ -62,7 +62,29 @@ onceDocumentLoaded(() => {
     )
   }
 
-  if (settings.scrollPreviewWithEditor) {
+  const fragment = settings.fragment
+  if (fragment) {
+    // Followed an interdocument link with a `#anchor`: bring that anchor into
+    // view and move the editor to its source line, mirroring an in-page anchor
+    // click.
+    setTimeout(() => {
+      const target = document.getElementById(fragment)
+      if (target) {
+        scrollDisabled = true
+        suppressScrollEcho(250)
+        target.scrollIntoView()
+        const targetLine = getSourceLineForElement(target)
+        if (
+          typeof targetLine === 'number' &&
+          settings.scrollEditorWithPreview
+        ) {
+          messaging.postMessage('revealLine', {
+            line: Math.max(0, targetLine - 1),
+          })
+        }
+      }
+    }, 0)
+  } else if (settings.scrollPreviewWithEditor) {
     setTimeout(() => {
       const initialLine = vscode.getState().line
       if (!isNaN(initialLine)) {

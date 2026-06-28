@@ -3,6 +3,7 @@ import * as vscode from 'vscode'
 import { Command } from '../core/commandManager.js'
 import { isAsciidocFile } from '../core/file.js'
 import { AsciidocLoader } from '../features/asciidoctor/asciidocLoader.js'
+import { getReferenceLinesFromDocument } from '../features/completion/crossReferences.js'
 import { TableOfContentsProvider } from '../features/tableOfContentsProvider.js'
 
 export interface OpenDocumentLinkArgs {
@@ -52,6 +53,20 @@ export class OpenDocumentLinkCommand implements Command {
 
   private async tryRevealLine(editor: vscode.TextEditor, fragment?: string) {
     if (editor && fragment) {
+      // Resolve the anchor through Asciidoctor's reference catalog first: unlike
+      // the table of contents (sections only), it also covers inline `[[id]]`
+      // anchors and block ids — the exact case from #705 (an anchor on a
+      // paragraph) — and maps each to its source line.
+      const referenceLine = await this.lookupReferenceLine(
+        editor.document,
+        fragment,
+      )
+      if (referenceLine !== undefined) {
+        return editor.revealRange(
+          new vscode.Range(referenceLine, 0, referenceLine, 0),
+          vscode.TextEditorRevealType.AtTop,
+        )
+      }
       const toc = new TableOfContentsProvider(
         editor.document,
         this.asciidocLoader,
@@ -73,6 +88,27 @@ export class OpenDocumentLinkCommand implements Command {
           )
         }
       }
+    }
+  }
+
+  /**
+   * Source line (0-based) of a cross-reference target — section, block or inline
+   * anchor — resolved through Asciidoctor's reference catalog, or `undefined`
+   * when the id is unknown or carries no source location.
+   */
+  private async lookupReferenceLine(
+    document: vscode.TextDocument,
+    fragment: string,
+  ): Promise<number | undefined> {
+    try {
+      const referenceLines = getReferenceLinesFromDocument(
+        await this.asciidocLoader.load(document),
+      )
+      const line = referenceLines.get(fragment)
+      // The catalog reports 1-based line numbers.
+      return line !== undefined ? Math.max(0, line - 1) : undefined
+    } catch {
+      return undefined
     }
   }
 }

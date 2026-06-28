@@ -14,12 +14,14 @@ export class AsciidocContentProvider {
     previewConfigurations: AsciidocPreviewConfigurationManager,
     editor: WebviewResourceProvider,
     line?: number,
+    fragment?: string,
   ): Promise<string> {
     const { html } = await this.asciidocEngine.convertFromTextDocument(
       asciidocDocument,
       this.context,
       editor,
       line,
+      fragment,
     )
     return html
   }
