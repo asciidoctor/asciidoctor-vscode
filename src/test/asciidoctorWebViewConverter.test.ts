@@ -457,6 +457,58 @@ See xref:my-table[xrefstyle=short] for more reference.
     },
   ]
 
+  async function convertWithDataUri(input: string): Promise<string> {
+    const file = await vscode.workspace.openTextDocument(
+      vscode.Uri.joinPath(workspaceUri, 'asciidoctorWebViewConverterTest.adoc'),
+    )
+    const converter = new AsciidoctorWebViewConverter(
+      file,
+      new TestWebviewResourceProvider(),
+      2,
+      false,
+      new TestAsciidocContributions(),
+      new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(
+        file.uri,
+      ),
+      undefined,
+      undefined,
+      null,
+      undefined,
+      true, // dataUriEnabled
+    )
+    return (await asciidoctorConvert(
+      input,
+      createConverterOptions(converter, file.fileName),
+    )) as unknown as string
+  }
+
+  const svg =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10"></svg>'
+  const svgDataUri = `data:image/svg+xml;base64,${Buffer.from(svg).toString('base64')}`
+
+  test('Should embed a local SVG as a data-uri when data-uri is enabled', async () => {
+    createdFiles.push(await createFile(svg, 'data-uri-local.svg'))
+    const html = await convertWithDataUri('image::data-uri-local.svg[]')
+    assert.ok(
+      html.includes(`<img src="${svgDataUri}"`),
+      `expected embedded data-uri in:\n${html}`,
+    )
+  })
+
+  test('Should resolve the image against the imagesdir in effect at the image', async () => {
+    createdFiles.push(await createDirectory('data-uri-assets'))
+    createdFiles.push(await createFile(svg, 'data-uri-assets', 'in-dir.svg'))
+    // `:imagesdir:` is read from the image node (position-aware), so the file is
+    // resolved under data-uri-assets/ even though it is set in the document body.
+    const html = await convertWithDataUri(
+      ':imagesdir: data-uri-assets\n\nimage::in-dir.svg[]',
+    )
+    assert.ok(
+      html.includes(`<img src="${svgDataUri}"`),
+      `expected imagesdir-resolved data-uri in:\n${html}`,
+    )
+  })
+
   for (const testCase of testCases) {
     if (testCase.standalone) {
       test(testCase.title, async () =>

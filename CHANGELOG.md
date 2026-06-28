@@ -4,6 +4,7 @@
 
 ### Bug fixes
 
+* Fix `:data-uri:` not embedding images in the preview (desktop and VS Code for the Web): Asciidoctor's built-in `data-uri` embedding reads from disk, which does not work for VS Code workspaces, so it was disabled. When `:data-uri:` is set the preview now embeds images itself — reading local files (honouring `imagesdir`) through `vscode.workspace.fs` and fetching remote images over HTTP — so both local and remote images (including SVG) are inlined as `data:` URIs
 * Fix paste image (<kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>V</kbd>) saving to a bogus folder and breaking the inserted macro when a `:imagesdir:` line merely appears inside a delimited block (e.g. a listing block) (#879). The `imagesdir` resolution used a naive text scan that matched those literal lines; it now skips delimited blocks while still honouring an `:imagesdir:` redefined in the document body (so the value reflects where the image is pasted), and falls back to Asciidoctor when the attribute is set outside the document text (e.g. `.asciidoctorconfig`)
 
 * Fix the MathJax 4 preview leaving a stray `$` on each side of every formula: Asciidoctor wraps AsciiMath in `\$…\$` delimiters, but MathJax 4 turns `tex.processEscapes` on by default, which rewrites each `\$` into a literal `<span>$</span>` before AsciiMath runs and steals the delimiters. `processEscapes` is now disabled so the `\$` delimiters reach the AsciiMath input jax intact
