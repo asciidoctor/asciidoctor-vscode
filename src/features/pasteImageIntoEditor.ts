@@ -5,6 +5,7 @@ import {
   buildImageCopyEdit,
   computeImageMacroTarget,
   type ImageSource,
+  type ImagesLocation,
   imageCopyEditKind,
   imageLinkEditKind,
   imageMacrosSnippet,
@@ -84,7 +85,20 @@ export class PasteImageIntoEditorProvider
     if (bitmaps.length === 0 || token.isCancellationRequested) {
       return undefined
     }
-    const copyEdit = await this.buildCopyEdit(textDocument, bitmaps, imagesDir)
+    const location = await resolveImagesLocation(
+      textDocument,
+      imagesDir,
+      this.workspaceState,
+    )
+    if (location === undefined) {
+      return undefined
+    }
+    const copyEdit = await this.buildCopyEdit(
+      textDocument,
+      bitmaps,
+      imagesDir,
+      location,
+    )
     return copyEdit ? [copyEdit] : undefined
   }
 
@@ -93,7 +107,29 @@ export class PasteImageIntoEditorProvider
     imageUris: vscode.Uri[],
     imagesDir: string,
     copyEnabled: boolean,
-  ): Promise<vscode.DocumentPasteEdit[]> {
+  ): Promise<vscode.DocumentPasteEdit[] | undefined> {
+    const location = await resolveImagesLocation(
+      textDocument,
+      imagesDir,
+      this.workspaceState,
+    )
+
+    const copyEdit =
+      copyEnabled && location !== undefined
+        ? await this.buildCopyEdit(
+            textDocument,
+            imageUris.map((uri) => ({ uri })),
+            imagesDir,
+            location,
+          )
+        : undefined
+
+    // Under Antora a relative-path link does not resolve (images are referenced
+    // within the module's image family), so only the copy/insert edit is offered.
+    if (location?.antora) {
+      return copyEdit ? [copyEdit] : undefined
+    }
+
     const linkEdit = new vscode.DocumentPasteEdit(
       imageMacrosSnippet(
         imageUris.map((uri) =>
@@ -104,14 +140,6 @@ export class PasteImageIntoEditorProvider
       imageLinkEditKind,
     )
 
-    const copyEdit = copyEnabled
-      ? await this.buildCopyEdit(
-          textDocument,
-          imageUris.map((uri) => ({ uri })),
-          imagesDir,
-        )
-      : undefined
-
     // The first edit is the default applied without opening the paste widget.
     return copyEdit ? [copyEdit, linkEdit] : [linkEdit]
   }
@@ -120,15 +148,8 @@ export class PasteImageIntoEditorProvider
     textDocument: vscode.TextDocument,
     sources: readonly ImageSource[],
     imagesDir: string,
+    location: ImagesLocation,
   ): Promise<vscode.DocumentPasteEdit | undefined> {
-    const location = await resolveImagesLocation(
-      textDocument,
-      imagesDir,
-      this.workspaceState,
-    )
-    if (location === undefined) {
-      return undefined
-    }
     const copy = await buildImageCopyEdit(
       textDocument.uri,
       sources,

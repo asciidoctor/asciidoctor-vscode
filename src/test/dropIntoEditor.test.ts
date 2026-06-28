@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import * as fs from 'node:fs'
 import * as os from 'node:os'
 import * as path from 'node:path'
-import { afterEach, beforeEach, describe, test } from 'node:test'
+import { after, afterEach, before, beforeEach, describe, test } from 'node:test'
 import * as vscode from 'vscode'
 import { AsciidocLoader } from '../features/asciidoctor/asciidocLoader.js'
 import { AsciidoctorConfig } from '../features/asciidoctor/asciidoctorConfig.js'
@@ -16,6 +16,13 @@ import {
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../features/security.js'
 import { extensionContext } from './helper.js'
 import { InMemoryDocument } from './inMemoryDocument.js'
+import {
+  createDirectories,
+  createFile,
+  enableAntoraSupport,
+  removeFiles,
+  resetAntoraSupport,
+} from './workspaceHelper.js'
 
 function createProvider(): DropImageIntoEditorProvider {
   return new DropImageIntoEditorProvider(
@@ -155,5 +162,74 @@ describe('asciidoc.DropImageIntoEditorProvider', () => {
     )
     assert.strictEqual(edits?.length, 1)
     assert.strictEqual(edits[0].additionalEdit, undefined)
+  })
+})
+
+describe('asciidoc.DropImageIntoEditorProvider (Antora)', () => {
+  const createdFiles: vscode.Uri[] = []
+  let page: vscode.Uri
+  let externalImage: vscode.Uri
+  let moduleImage: vscode.Uri
+
+  before(async () => {
+    await createDirectories('modules', 'ROOT', 'pages')
+    await createDirectories('modules', 'ROOT', 'images')
+    createdFiles.push(
+      await createFile(`name: doc\nversion: '1.0'\n`, 'antora.yml'),
+    )
+    page = await createFile(
+      '= Page\n\n',
+      'modules',
+      'ROOT',
+      'pages',
+      'index.adoc',
+    )
+    createdFiles.push(page)
+    externalImage = await createFile('PNG', 'external', 'pic.png')
+    createdFiles.push(externalImage)
+    moduleImage = await createFile(
+      'PNG',
+      'modules',
+      'ROOT',
+      'images',
+      'diagram.png',
+    )
+    createdFiles.push(moduleImage)
+    // Enable support *before* the page is opened so the one-shot activation
+    // prompt sees a decision already made and stays out of the way.
+    await enableAntoraSupport()
+  })
+
+  after(async () => {
+    await removeFiles(createdFiles)
+    createdFiles.length = 0
+    await resetAntoraSupport()
+  })
+
+  test('Should offer only a copy edit (no broken link) for an external image', async () => {
+    const edits = await provideDrop(
+      await vscode.workspace.openTextDocument(page),
+      externalImage,
+    )
+    // The relative-path link is suppressed under Antora; only the copy-into-
+    // module edit remains, targeting the image by its bare name.
+    assert.strictEqual(edits?.length, 1)
+    assert.strictEqual(
+      (edits[0].insertText as vscode.SnippetString).value,
+      'image::pic.png[]',
+    )
+    assert.ok(edits[0].additionalEdit, 'the copy edit must carry a file copy')
+  })
+
+  test('Should insert the bare name (no link) for an image already in the module images', async () => {
+    const edits = await provideDrop(
+      await vscode.workspace.openTextDocument(page),
+      moduleImage,
+    )
+    assert.strictEqual(edits?.length, 1)
+    assert.strictEqual(
+      (edits[0].insertText as vscode.SnippetString).value,
+      'image::diagram.png[]',
+    )
   })
 })
