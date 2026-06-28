@@ -1,6 +1,7 @@
 {
   "antora.activateSupport.message": "Antoraの構成を検出しました。Antoraサポートを有効にしますか？",
   "antora.activateSupport.no": "いいえ、結構です",
+  "antora.activateSupport.never": "今後表示しない",
   "antora.activateSupport.yes": "はい",
   "asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Asciidoctor.js拡張の信頼モード設定",
   "asciidoc.showPreviewSecuritySelector.title": "プレビューセキュリティ設定",

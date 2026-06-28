@@ -1,6 +1,7 @@
 {
   "antora.activateSupport.message": "AsciiDoc extension found Antora. Would you like to enable Antora support?",
   "antora.activateSupport.no": "No",
+  "antora.activateSupport.never": "Never",
   "antora.activateSupport.yes": "Yes",
   "asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Manage Asciidoctor.js Extensions Trust Mode",
   "asciidoc.showPreviewSecuritySelector.title": "Manage Preview Security Settings",

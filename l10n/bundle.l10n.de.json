@@ -1,6 +1,7 @@
 {
   "antora.activateSupport.message": "Die AsciiDoc Erweiterung hat Antora gefunden. Möchten Sie Antora verwenden?",
   "antora.activateSupport.no": "Nein",
+  "antora.activateSupport.never": "Nie",
   "antora.activateSupport.yes": "Ja",
   "asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Vertrauensstufe für Asciidoctor.js Erweiterungen verwalten",
   "asciidoc.showPreviewSecuritySelector.title": "Sicherheitseinstellung für Vorschau verwalten",
