@@ -80,6 +80,7 @@
 * Clarify the `asciidoctor-emoji` example on the Asciidoctor.js extensions page: name the extension file and document that emojis are images served from the Twemoji CDN (an internet connection is required), which the preview's Content Security Policy allows over HTTPS by default — so no security setting needs to be changed
 * Add a "Contribute Asciidoctor.js extensions from another VS Code extension" page documenting the `asciidoc.asciidoctorExtensions` contribution point and the `registerAsciidoctorExtensions(registry, context)` hook used to register Asciidoctor.js extensions from a companion VS Code extension
 * Mark "Paste image" as supported in VS Code for the Web in the support matrix: the document paste edit provider is registered unconditionally, so copying an image and pasting it with <kbd>Ctrl</kbd>+<kbd>V</kbd> in the editor works in the browser
+* Add a "File extensions and associations" page documenting the recognized extensions (`.adoc`, `.ad`, `.asciidoc`, `.asc`), how to use the extension with other extensions such as `.txt` via the `files.associations` setting, and why this is discouraged — a few features (workspace symbols, cross-file cross-reference completion, extension-less link resolution) look files up by the `.adoc` extension rather than by language, so they silently ignore non-`.adoc` files (#376)
 
 ### Infrastructure
 

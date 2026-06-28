@@ -1,6 +1,7 @@
 * xref:index.adoc[]
 * xref:quick-start.adoc[]
 * xref:install.adoc[]
+* xref:file-associations.adoc[]
 * Features
 ** xref:edit.adoc[]
 ** xref:preview.adoc[]
