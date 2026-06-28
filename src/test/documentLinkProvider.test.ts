@@ -180,6 +180,57 @@ See xref:_block_image[].
     )
   })
 
+  test('Should navigate a "<<id>>" internal reference to its (implicit) section id', async () => {
+    const links = await getLinksForFile(`= Title
+
+== Block Image
+
+See <<_block_image>>.
+`)
+    assert.strictEqual(links.length, 1)
+    const [link] = links
+    assert.strictEqual(link.target.scheme, 'command')
+    assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
+    assert.strictEqual(
+      link.target.query,
+      JSON.stringify({ path: '/test.adoc', fragment: 'L3' }),
+    )
+    // span only the id, not the `<<`/`>>` delimiters
+    assertRangeEqual(link.range, new vscode.Range(4, 6, 4, 18))
+  })
+
+  test('Should navigate a "<<id,link text>>" reference, ignoring the link text', async () => {
+    const links = await getLinksForFile(`= Title
+
+[[the-anchor]]
+== A Section
+
+See <<the-anchor,the label>>.
+`)
+    assert.strictEqual(links.length, 1)
+    const [link] = links
+    assert.strictEqual(
+      link.target.query,
+      JSON.stringify({ path: '/test.adoc', fragment: 'L3' }),
+    )
+    assertRangeEqual(link.range, new vscode.Range(5, 6, 5, 16))
+  })
+
+  test('Should navigate a natural "<<Section Title>>" cross reference', async () => {
+    const links = await getLinksForFile(`= Title
+
+== Getting Started
+
+See <<Getting Started>>.
+`)
+    assert.strictEqual(links.length, 1)
+    const [link] = links
+    assert.strictEqual(
+      link.target.query,
+      JSON.stringify({ path: '/test.adoc', fragment: 'L3' }),
+    )
+  })
+
   test('Should detect inline URL', async () => {
     const links = await getLinksForFile(`= Title
 
