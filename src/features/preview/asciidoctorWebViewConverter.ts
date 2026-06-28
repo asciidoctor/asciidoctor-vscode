@@ -19,6 +19,41 @@ import { AsciidocPreviewConfiguration } from './previewConfig.js'
 const BAD_PROTO_RE = /^(vbscript|javascript|data):/i
 const GOOD_DATA_RE = /^data:image\/(gif|png|jpeg|webp);/i
 
+const IMAGE_MIME_TYPES: { [ext: string]: string } = {
+  svg: 'image/svg+xml',
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  gif: 'image/gif',
+  webp: 'image/webp',
+  bmp: 'image/bmp',
+  ico: 'image/x-icon',
+}
+
+function mimeTypeForTarget(target: string): string {
+  const ext = target.split('?')[0].split('#')[0].split('.').pop()?.toLowerCase()
+  return IMAGE_MIME_TYPES[ext] ?? 'application/octet-stream'
+}
+
+/**
+ * Base64-encode raw bytes in a way that works in both the Node desktop
+ * extension host (`Buffer`) and the browser extension host (`btoa`).
+ */
+function encodeBase64(bytes: Uint8Array): string {
+  if (typeof Buffer !== 'undefined') {
+    return Buffer.from(bytes).toString('base64')
+  }
+  let binary = ''
+  const chunkSize = 0x8000
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode.apply(
+      null,
+      bytes.subarray(i, i + chunkSize) as unknown as number[],
+    )
+  }
+  return btoa(binary)
+}
+
 /**
  * Disallow blacklisted URL types following MarkdownIt and the VS Code Markdown extension
  * @param   {String}  href   The link address
@@ -151,6 +186,7 @@ export class AsciidoctorWebViewConverter {
     line: number | undefined = undefined,
     state?: any,
     private readonly krokiServerUrl?: string,
+    private readonly dataUriEnabled: boolean = false,
   ) {
     const textDocumentUri = textDocument.uri
     this.basebackend = 'html'
@@ -342,9 +378,80 @@ export class AsciidoctorWebViewConverter {
         const alt = resourceUri.split('/').pop().split('.').shift()
         node.setAttribute('target', resourceUri)
         node.setAttribute('alt', alt)
+      } else if (this.dataUriEnabled) {
+        // We embed images ourselves rather than relying on Asciidoctor's own
+        // `data-uri` (disabled in the engine, see asciidocEngine.ts). Since
+        // Asciidoctor.js 4.0 dropped Opal, the native path reads via
+        // `node:fs`/`fetch` and would work on the desktop — but not in VS Code
+        // for the Web (no `node:fs`) nor on virtual file systems (Remote SSH,
+        // dev containers, `vscode-vfs:`), where only `vscode.workspace.fs` can
+        // read the file. Going through the VS Code FS API (local) and `fetch`
+        // (remote) embeds images uniformly across every host.
+        const dataUri = await this.toImageDataUri(node, target)
+        if (dataUri !== undefined) {
+          node.setAttribute('target', dataUri)
+        }
       }
     }
     return await this.baseConverter.convert(node, transform)
+  }
+
+  /**
+   * Build a `data:` URI for an image target, mirroring Asciidoctor's `data-uri`
+   * attribute. Returns undefined when the image cannot be read so the base
+   * converter falls back to rendering the original (linked) target.
+   */
+  private async toImageDataUri(
+    node,
+    target: string,
+  ): Promise<string | undefined> {
+    if (typeof target !== 'string' || target.startsWith('data:')) {
+      return undefined
+    }
+    try {
+      let bytes: Uint8Array
+      let mimeType: string
+      if (/^https?:\/\//i.test(target)) {
+        const response = await fetch(target)
+        if (!response.ok) {
+          return undefined
+        }
+        bytes = new Uint8Array(await response.arrayBuffer())
+        mimeType =
+          response.headers.get('content-type')?.split(';')[0].trim() ||
+          mimeTypeForTarget(target)
+      } else {
+        const fileUri = this.resolveImageUri(node, target)
+        bytes = await vscode.workspace.fs.readFile(fileUri)
+        mimeType = mimeTypeForTarget(target)
+      }
+      return `data:${mimeType};base64,${encodeBase64(bytes)}`
+    } catch (e) {
+      logger.warn(`Unable to embed image "${target}" as data-uri: ${e}`)
+      return undefined
+    }
+  }
+
+  /**
+   * Resolve a local image target to a filesystem URI, honouring `imagesdir` and
+   * resolving relative paths against the AsciiDoc document's directory.
+   *
+   * `imagesdir` is read from the image *node*, not the document: Asciidoctor
+   * captures the value in effect at each image's position during parsing, so
+   * this stays correct when `:imagesdir:` is redefined in the document body
+   * (`document.getAttribute('imagesdir')` would only report the header value).
+   */
+  private resolveImageUri(node, target: string): vscode.Uri {
+    if (target.startsWith('/') || /^[a-z]:[\\/]/i.test(target)) {
+      return vscode.Uri.file(target)
+    }
+    const imagesdir = node.getAttribute('imagesdir', '') || ''
+    const relativePath = imagesdir ? `${imagesdir}/${target}` : target
+    const segments = relativePath.split('/').filter((s) => s.length > 0)
+    return vscode.Uri.joinPath(
+      uri.Utils.dirname(this.textDocument.uri),
+      ...segments,
+    )
   }
 
   /**

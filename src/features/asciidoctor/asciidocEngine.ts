@@ -223,6 +223,10 @@ export class AsciidocEngine {
     }
     const krokiServerUrl =
       document.getAttribute('kroki-server-url') || 'https://kroki.io'
+    // Detected from the header-only parse: the preview embeds images itself when
+    // `data-uri` is set (see the converter), because Asciidoctor's own data-uri
+    // embedding reads from disk and does not work for VS Code workspaces.
+    const dataUriEnabled = document.isAttribute('data-uri')
 
     // Antora Resource Identifiers resolution
     const antoraDocumentContext = await getAntoraDocumentContext(
@@ -244,6 +248,7 @@ export class AsciidocEngine {
       line,
       null,
       krokiServerUrl,
+      dataUriEnabled,
     )
     ConverterFactory.register(asciidoctorWebViewConverter, 'webview-html5')
 
@@ -317,7 +322,15 @@ export class AsciidocEngine {
         ...(documentBasename && { docname: documentBasename }),
         docfilesuffix: documentExtensionName,
         filetype: asciidoctorWebViewConverter.outfilesuffix.substring(1), // remove the leading '.'
-        '!data-uri': '', // disable data-uri since Asciidoctor.js is unable to read files from a VS Code workspace.
+        // Disable Asciidoctor's own data-uri embedding; the WebView converter
+        // does it instead (see AsciidoctorWebViewConverter, gated on
+        // `dataUriEnabled`). Asciidoctor.js 4.0 dropped Opal and reads via
+        // `node:fs`/`fetch`, so the native path works on the desktop — but not
+        // in VS Code for the Web (no `node:fs`) nor on virtual file systems
+        // (Remote SSH, dev containers, `vscode-vfs:`), where only
+        // `vscode.workspace.fs` can read the file. Embedding through the VS Code
+        // FS API covers every host uniformly.
+        '!data-uri': '',
       },
       backend: 'webview-html5',
       extension_registry: registry,
