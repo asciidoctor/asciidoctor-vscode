@@ -4,3 +4,37 @@
 The extension ships with code snippets for common AsciiDoc constructs, including (but not limited to) include statements, images, links, the document header, headings, lists, and blocks.
 
 To browse the full list, open the command palette and select *Insert Snippet*.
+
+== Bind a keyboard shortcut to a snippet
+
+VS Code does not let you assign a key directly in the snippet definition, but you can bind a shortcut to a *specific* snippet through the built-in `editor.action.insertSnippet` command.
+
+Open the command palette, run *Preferences: Open Keyboard Shortcuts (JSON)*, and add an entry.
+
+Reference an existing snippet by its name:
+
+[source,json]
+----
+{
+  "key": "ctrl+alt+i",
+  "command": "editor.action.insertSnippet",
+  "when": "editorLangId == asciidoc",
+  "args": { "name": "Insert image block" }
+}
+----
+
+The `name` matches the snippet title shown in the *Insert Snippet* list (for example `Insert link`, `Insert include statement`, `Insert table`).
+
+Alternatively, define the snippet body inline, without declaring a snippet first:
+
+[source,json]
+----
+{
+  "key": "ctrl+alt+l",
+  "command": "editor.action.insertSnippet",
+  "when": "editorLangId == asciidoc",
+  "args": { "snippet": "link:${1:url}[${2:text}]" }
+}
+----
+
+The `when` clause restricts the shortcut to AsciiDoc files so it does not clash with other languages.
