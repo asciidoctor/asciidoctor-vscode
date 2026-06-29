@@ -4,7 +4,10 @@
   "description": "%description%",
   "version": "3.4.6-dev",
   "publisher": "asciidoctor",
-  "author": "João Pinto <lamego.pinto@gmail.com>",
+  "author": "Guillaume Grossetie <ggrossetie@yuzutech.fr>",
+  "contributors": [
+    "João Pinto <lamego.pinto@gmail.com>"
+  ],
   "license": "MIT",
   "readme": "README.md",
   "repository": {
