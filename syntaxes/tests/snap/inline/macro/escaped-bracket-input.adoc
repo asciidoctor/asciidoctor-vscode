@@ -1,0 +1,5 @@
+latexmath:[\]] and after
+stem:[a < b] then text
+asciimath:[sqrt(4)] done
+xref:target[link \] text] and more
+footnote:[note with \] bracket] end

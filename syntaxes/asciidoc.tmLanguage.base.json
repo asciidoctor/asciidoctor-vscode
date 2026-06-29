@@ -850,7 +850,7 @@
               "include": "#inlines"
             }
           ],
-          "end": "\\]|^$"
+          "end": "(?<!\\\\)\\]|^$"
         }
       ]
     },
@@ -1158,7 +1158,7 @@
               "include": "text.html.basic"
             }
           ],
-          "end": "\\]|^$"
+          "end": "(?<!\\\\)\\]|^$"
         }
       ]
     },
@@ -1176,7 +1176,7 @@
             }
           },
           "contentName": "string.unquoted.asciidoc",
-          "end": "\\]|^$"
+          "end": "(?<!\\\\)\\]|^$"
         }
       ]
     },
@@ -1194,7 +1194,7 @@
             }
           },
           "contentName": "string.unquoted.asciidoc",
-          "end": "\\]|^$"
+          "end": "(?<!\\\\)\\]|^$"
         }
       ]
     },
@@ -1350,7 +1350,7 @@
             }
           },
           "contentName": "string.unquoted.asciidoc",
-          "end": "\\]|^$"
+          "end": "(?<!\\\\)\\]|^$"
         }
       ]
     },
