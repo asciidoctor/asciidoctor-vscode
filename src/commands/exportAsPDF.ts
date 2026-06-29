@@ -2,7 +2,7 @@ import { exec, SpawnOptions, spawn } from 'node:child_process'
 import * as fs from 'node:fs'
 import * as os from 'node:os'
 import * as path from 'node:path'
-import { Document as AsciidoctorDocument } from '@asciidoctor/core'
+import { Document as AsciidoctorDocument, load } from '@asciidoctor/core'
 import { v4 as uuidv4 } from 'uuid'
 import * as vscode from 'vscode'
 import { Command } from '../core/commandManager.js'
@@ -83,7 +83,20 @@ ${text}`
         '-a',
         'allow-uri-read',
       ]
-      const args = defaultArgs.concat(asciidoctorPdfCommandArgs).concat(['-']) // read from stdin
+      // Resolve a relative `pdf-theme` against the document's base directory.
+      // Since the document is piped through stdin and the process runs from the
+      // workspace root, asciidoctor-pdf would otherwise resolve the theme file
+      // relative to the current working directory rather than the document (#979).
+      const headerDocument = await load(text, { header_only: true })
+      const pdfThemeArgs = _resolvePdfThemesArgs(
+        headerDocument.getAttribute('pdf-theme'),
+        headerDocument.getAttribute('pdf-themesdir'),
+        baseDirectory,
+      )
+      const args = defaultArgs
+        .concat(pdfThemeArgs)
+        .concat(asciidoctorPdfCommandArgs)
+        .concat(['-']) // read from stdin
 
       try {
         this.exportAsPdfStatusBarItem.name = 'Export As PDF'
@@ -413,6 +426,36 @@ function execute(
       childProcess.stdin.end()
     }
   })
+}
+
+/**
+ * Compute the extra asciidoctor-pdf arguments needed so that a relative
+ * `pdf-theme` file resolves against the document's base directory.
+ *
+ * asciidoctor-pdf resolves a `.yml` theme path (when no `pdf-themesdir` is set)
+ * relative to the current working directory. Because the extension pipes the
+ * document through stdin and runs the process from the workspace root, a theme
+ * such as `pdf-theme: custom-theme.yml` located next to the document is not
+ * found. Setting `pdf-themesdir` to the document's base directory restores the
+ * behaviour one gets when running `asciidoctor-pdf <file>` from that directory.
+ *
+ * Built-in named themes (e.g. `pdf-theme: default`) and explicit `pdf-themesdir`
+ * or absolute theme paths are left untouched. (#979)
+ */
+export function _resolvePdfThemesArgs(
+  pdfTheme: string | undefined,
+  pdfThemesDir: string | undefined,
+  baseDirectory: string,
+): string[] {
+  if (
+    pdfTheme &&
+    pdfTheme.endsWith('.yml') &&
+    !pdfThemesDir &&
+    !path.isAbsolute(pdfTheme)
+  ) {
+    return ['-a', `pdf-themesdir=${baseDirectory}`]
+  }
+  return []
 }
 
 export function _generateCoverHtmlContent(
