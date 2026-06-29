@@ -1,0 +1,17 @@
+****
+[verse,The Agile Manifesto]
+----
+We are uncovering better ways.
+
+Responding to change over following a plan.
+----
+****
+
+[verse,No Sidebar]
+----
+Line one.
+
+Line two.
+----
+
+Text after, must be *plain*.

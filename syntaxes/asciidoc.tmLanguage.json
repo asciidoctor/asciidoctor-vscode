@@ -1770,6 +1770,32 @@
                 }
               ],
               "end": "(?<=\\1)$"
+            },
+            {
+              "comment": "listing-style verse delimiter",
+              "begin": "^(-{4,})\\s*$",
+              "patterns": [
+                {
+                  "include": "#inlines"
+                },
+                {
+                  "include": "#list"
+                }
+              ],
+              "end": "^(\\1)$"
+            },
+            {
+              "comment": "literal-style verse delimiter",
+              "begin": "^(\\.{4,})\\s*$",
+              "patterns": [
+                {
+                  "include": "#inlines"
+                },
+                {
+                  "include": "#list"
+                }
+              ],
+              "end": "^(\\1)$"
             }
           ],
           "end": "((?<=____|\"\"|--)$|^\\p{Blank}*$)"
