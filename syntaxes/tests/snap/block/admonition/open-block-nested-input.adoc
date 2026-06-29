@@ -1,0 +1,6 @@
+[TIP]
+--
+First paragraph.
+
+* a list item
+--

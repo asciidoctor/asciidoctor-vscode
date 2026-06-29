@@ -1383,26 +1383,20 @@
               "begin": "^(={4,})\\s*$",
               "patterns": [
                 {
-                  "include": "#inlines"
-                },
-                {
-                  "include": "#list"
+                  "include": "$self"
                 }
               ],
-              "end": "(?<=\\1)"
+              "end": "^(\\1)$"
             },
             {
               "comment": "open block",
               "begin": "^(-{2})\\s*$",
               "patterns": [
                 {
-                  "include": "#inlines"
-                },
-                {
-                  "include": "#list"
+                  "include": "$self"
                 }
               ],
-              "end": "(?<=\\1)"
+              "end": "^(\\1)$"
             }
           ],
           "end": "((?<=--|====)$|^\\p{Blank}*$)"
