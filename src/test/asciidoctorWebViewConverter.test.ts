@@ -231,6 +231,18 @@ I want to link to xref:docB.adoc#other_anchor[]`,
 </div>`,
     },
     {
+      // #645: the link role must render as the element's class. Regression guard
+      // for the `node.role` (always undefined in JS) → `node.getRole()` fix; the
+      // old code emitted `class="undefined"`.
+      title: 'Should render a macro link role as a class (#645)',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: 'link:foo.adoc[role=bar]',
+      antoraDocumentContext: undefined,
+      expected: `<div class="paragraph">
+<p><a href="foo.adoc" class="bare bar" data-href="foo.adoc">foo.adoc</a></p>
+</div>`,
+    },
+    {
       title:
         'Should resolve "xref:" macro from included document referencing the source document',
       filePath: ['docA.adoc'],
