@@ -53,7 +53,9 @@ export class AsciidocLoader {
       )
     }
     const asciidocDocument = AsciidocTextDocument.fromTextDocument(textDocument)
-    const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
+    const attributes = AsciidoctorAttributesConfig.getPreviewAttributes(
+      textDocument.uri,
+    )
     return load(
       textDocument.getText(),
       this.getOptions(attributes, registry, asciidocDocument),
@@ -78,7 +80,9 @@ export class AsciidocLoader {
       )
     }
     const asciidocDocument = AsciidocTextDocument.fromTextDocument(textDocument)
-    const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
+    const attributes = AsciidoctorAttributesConfig.getPreviewAttributes(
+      textDocument.uri,
+    )
     await load(
       textDocument.getText(),
       this.getOptions(attributes, registry, asciidocDocument),
@@ -201,7 +205,9 @@ export class AsciidocIncludeItemsLoader extends AsciidocLoader {
     const { registry } = await this.prepare(textDocument, false)
     this.asciidoctorIncludeItemsProvider.activate(registry)
     const asciidocDocument = AsciidocTextDocument.fromTextDocument(textDocument)
-    const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
+    const attributes = AsciidoctorAttributesConfig.getPreviewAttributes(
+      textDocument.uri,
+    )
     this.asciidoctorIncludeItemsProvider.reset()
     await load(
       textDocument.getText(),
