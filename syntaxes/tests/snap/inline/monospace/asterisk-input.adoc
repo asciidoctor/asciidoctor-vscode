@@ -1,0 +1,2 @@
+`[<multiplier>*][<align>][<width>][<style>]`
+see `*x*` and *bold* too
