@@ -9,6 +9,7 @@ import {
   _resolvePdfOutputPath,
   _resolvePdfThemesArgs,
   decorateSpawnError,
+  getSpawnEnv,
 } from '../commands/exportAsPDF.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -175,6 +176,25 @@ Kismet R. Lee <kismet@asciidoctor.org>`)
         cwd: '/this/path/does/not/exist',
       })
       assert.strictEqual(decorated, eacces)
+    })
+  })
+
+  describe('getSpawnEnv', () => {
+    test('never drops the existing PATH entries (#973)', function () {
+      if (process.platform === 'win32') {
+        // PATH is inherited on Windows; the helper is a no-op there.
+        assert.strictEqual(getSpawnEnv(), process.env)
+        return
+      }
+      const before = (process.env.PATH ?? '')
+        .split(path.delimiter)
+        .filter(Boolean)
+      const after = new Set(
+        (getSpawnEnv().PATH ?? '').split(path.delimiter).filter(Boolean),
+      )
+      for (const dir of before) {
+        assert.ok(after.has(dir), `expected PATH to still contain '${dir}'`)
+      }
     })
   })
 })

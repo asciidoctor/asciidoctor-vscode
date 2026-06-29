@@ -357,7 +357,9 @@ gem 'asciidoctor-pdf'`,
       }
     } else {
       const answer = await vscode.window.showInformationMessage(
-        'This feature requires asciidoctor-pdf but the executable was not found on your PATH. Please install asciidoctor-pdf or configure the path to the executable from the extension settings.',
+        'This feature requires asciidoctor-pdf but the executable was not found on your PATH. ' +
+          'This often happens when VS Code is launched from the Dock/Finder rather than a terminal, so it does not inherit your shell PATH. ' +
+          'Install asciidoctor-pdf, or set its full path in the "Asciidoc › Pdf: Asciidoctor Pdf Command Path" setting (e.g. /opt/homebrew/bin/asciidoctor-pdf).',
         'Install',
         'Configure',
       )
@@ -399,12 +401,46 @@ gem 'asciidoctor-pdf'`,
   }
 }
 
+/**
+ * Augment `process.env.PATH` with the common locations where Homebrew, rbenv,
+ * rvm and `gem` install CLI tools. VS Code launched from the GUI (Dock, Finder,
+ * Spotlight) does not inherit the shell PATH, so `asciidoctor-pdf`/`bundle`
+ * installed in those directories are otherwise invisible to child processes,
+ * which makes the export fall back to (or fail on) the Bundler install (#973).
+ * Only existing directories not already on PATH are appended, so precedence of
+ * the configured PATH is preserved. Windows inherits the PATH, so it is left
+ * untouched.
+ */
+export function getSpawnEnv(): NodeJS.ProcessEnv {
+  if (process.platform === 'win32') {
+    return process.env
+  }
+  const home = os.homedir()
+  const currentPath = process.env.PATH ?? ''
+  const known = new Set(currentPath.split(path.delimiter))
+  const missing = [
+    '/opt/homebrew/bin',
+    '/opt/homebrew/sbin',
+    '/usr/local/bin',
+    path.join(home, '.rbenv/shims'),
+    path.join(home, '.rvm/bin'),
+    path.join(home, '.local/bin'),
+  ].filter((dir) => !known.has(dir) && fs.existsSync(dir))
+  if (missing.length === 0) {
+    return process.env
+  }
+  return {
+    ...process.env,
+    PATH: [currentPath, ...missing].filter(Boolean).join(path.delimiter),
+  }
+}
+
 function commandExists(
   command: string,
   options: SpawnOptions,
 ): Promise<{ stdout: string; code: number }> {
   const childProcess = spawn(command, ['--version'], {
-    env: process.env,
+    env: getSpawnEnv(),
     ...options,
   })
   return new Promise(function (resolve, reject) {
@@ -457,7 +493,10 @@ function execute(
     `Executing command: '${command} ${args.join(' ')}' (cwd: '${options.cwd ?? process.cwd()}')`,
   )
   return new Promise(function (resolve, reject) {
-    const childProcess = spawn(command, args, { env: process.env, ...options })
+    const childProcess = spawn(command, args, {
+      env: getSpawnEnv(),
+      ...options,
+    })
     const stderrOutput = []
     childProcess.stderr.on('data', (data) => {
       stderrOutput.push(data)
