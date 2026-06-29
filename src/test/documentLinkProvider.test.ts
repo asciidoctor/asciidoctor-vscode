@@ -276,6 +276,21 @@ Asciidoctor.js is published as a npm package at <https://www.npmjs.com/package/@
     assertRangeEqual(link.range, new vscode.Range(2, 49, 2, 96))
   })
 
+  test('Should not link a backslash-escaped URL and should not drop other links (#980)', async () => {
+    const links = await getLinksForFile(`= Title
+
+https://asciidoc.org[test]
+\\https://asciidoc.org
+`)
+    // The escaped URL on the second line must not become a link (and must not
+    // make Uri.parse throw, which used to abort the whole provider and drop the
+    // valid link on the line above).
+    assert.strictEqual(links.length, 1)
+    const [link] = links
+    assert.deepStrictEqual(link.target.toString(), 'https://asciidoc.org/')
+    assertRangeEqual(link.range, new vscode.Range(2, 0, 2, 20))
+  })
+
   test('Should make a "link:" macro to another file navigable, preserving the fragment', async () => {
     const links = await getLinksForFile(`= Title
 

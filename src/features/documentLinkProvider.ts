@@ -12,8 +12,10 @@ import { getReferenceLinesFromDocument } from './completion/crossReferences.js'
  * Reference: https://gist.github.com/dperini/729294
  */
 // eslint-disable-next-line max-len
+// A leading backslash escapes the URL in AsciiDoc (it is rendered literally and
+// must not become a link), so a backslash-prefixed URL is excluded here.
 const urlRx =
-  /(?<=|link|<|[>()[\];"'])\\?(?:https?|file|ftp|irc):\/\/[^\s[\]]+/gm
+  /(?<=|link|<|[>()[\];"'])(?<!\\)(?:https?|file|ftp|irc):\/\/[^\s[\]]+/gm
 const inlineAnchorRx = /^\[\[(?<id>[^,]+)(?:,[^\]]+)*]]$/m
 const xrefRx = /xref:(?<target>[^#|^[]+)(?<fragment>#[^[]+)?\[[^\]]*]/gi
 // `link:target[...]` to a file (URLs are matched by `urlRx` instead). The target
@@ -128,12 +130,20 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
           for (const urlFound of urlsFound) {
             const index = urlFound.index
             const url = urlFound[0].replace(/[,.;?!:)>]+$/, '')
+            let targetUri: vscode.Uri
+            try {
+              targetUri = vscode.Uri.parse(url)
+            } catch {
+              // A malformed URL would make `Uri.parse` throw and abort the whole
+              // provider (every link on the page would be lost); skip it instead.
+              continue
+            }
             const documentLink = new vscode.DocumentLink(
               new vscode.Range(
                 new vscode.Position(lineNumber, index),
                 new vscode.Position(lineNumber, url.length + index),
               ),
-              vscode.Uri.parse(url),
+              targetUri,
             )
             documentLink.tooltip = l10nT('links.navigate.follow')
             results.push(documentLink)
