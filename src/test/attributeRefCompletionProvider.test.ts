@@ -73,6 +73,29 @@ describe('Attribute ref CompletionsProvider', () => {
       '{my-attribute-to-find-in-completion}',
     )
   })
+  test('Should offer the intrinsic docname attribute (#82)', async () => {
+    const fileToAutoComplete = await createFile(
+      `= test
+{`,
+      'fileToAutoComplete-attributeRef-docname.adoc',
+    )
+    createdFiles.push(fileToAutoComplete)
+    const items = await findCompletionItems(
+      fileToAutoComplete,
+      new Position(1, 1),
+      filterByLabel('docname'),
+    )
+    const completionItem = items[0]
+    assert.ok(
+      completionItem,
+      'docname should be offered as an attribute reference completion.',
+    )
+    assert.deepStrictEqual(
+      (completionItem.label as vscode.CompletionItemLabel).description,
+      'fileToAutoComplete-attributeRef-docname',
+    )
+    assert.deepStrictEqual(completionItem.insertText, '{docname}')
+  })
   test('Should return attribute key defined in same file corresponding to its value', async () => {
     const fileToAutoComplete = await createFile(
       `:my-attribute-to-find-in-completion: dummy value

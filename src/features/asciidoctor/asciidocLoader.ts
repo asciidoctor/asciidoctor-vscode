@@ -95,14 +95,25 @@ export class AsciidocLoader {
       attributes: {
         ...attributes,
         // Intrinsic attributes are not set automatically when the input is a
-        // string, so provide docdir/docfile here to anchor relative includes
-        // and images to the document's own directory. We deliberately do NOT
-        // set base_dir (Asciidoctor derives it from docdir) unless the user
-        // opted into useWorkspaceRootAsBaseDirectory (see #926).
+        // string (Asciidoctor.js only derives them when the input is a file),
+        // so we provide them here for the API — this is allowed since the safe
+        // mode is 'unsafe'. docdir/docfile anchor relative includes and images
+        // to the document's own directory; docname/docfilesuffix make
+        // {docname} resolvable in attribute-reference completion (#82), like the
+        // preview already does. We deliberately do NOT set base_dir (Asciidoctor
+        // derives it from docdir) unless the user opted into
+        // useWorkspaceRootAsBaseDirectory (see #926).
+        // https://docs.asciidoctor.org/asciidoc/latest/attributes/document-attributes-ref/#intrinsic-attributes
         ...(asciidocDocument.dirName && { docdir: asciidocDocument.dirName }),
         ...(asciidocDocument.filePath && {
           docfile: asciidocDocument.filePath,
         }),
+        // docname is the root name of the source document (no leading path or
+        // file extension), see https://github.com/asciidoctor/asciidoctor-vscode/issues/82
+        ...(asciidocDocument.fileName && {
+          docname: asciidocDocument.fileName,
+        }),
+        docfilesuffix: asciidocDocument.extensionName,
       },
       extension_registry: registry,
       sourcemap: true,
