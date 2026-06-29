@@ -13,6 +13,27 @@ The same commands as the Markdown extension are available:
 The preview updates automatically as you type.
 You can also force a refresh with the *AsciiDoc: Refresh Preview* command.
 
+== Control when the preview updates
+
+By default the preview re-renders as you type, throttled by the `asciidoc.preview.refreshInterval` setting (in milliseconds, `2000` by default).
+
+Set the interval to `0` to turn off live updates entirely:
+
+[source,json]
+----
+"asciidoc.preview.refreshInterval": 0
+----
+
+The preview then refreshes only when you ask for it, in one of two ways:
+
+Save (kbd:[Ctrl+S], Mac: kbd:[Cmd+S]):: Re-renders every open preview, keeping its scroll position.
+Saving an `include::`d file refreshes the preview too -- includes are read *from disk*, so the change must be saved (saving the parent while an include is still unsaved keeps showing the old include).
+
+*AsciiDoc: Refresh Preview* command:: Forces a refresh on demand without saving anything, and fully reloads the preview (styles, theme, webview shell), resetting the scroll position.
+Use it when an include was changed *outside* VS Code -- no save event fires there -- or when you want a clean rebuild.
+
+This is useful for documents with heavy content -- for example complex MathJax equations that would otherwise re-typeset and jump around on every keystroke.
+
 == AsciiDoc attributes
 
 Set AsciiDoc attributes used to render the preview through the `asciidoc.preview.asciidoctorAttributes` setting.

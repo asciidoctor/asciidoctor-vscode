@@ -89,6 +89,7 @@
 * Mark "Paste image" as supported in VS Code for the Web in the support matrix: the document paste edit provider is registered unconditionally, so copying an image and pasting it with <kbd>Ctrl</kbd>+<kbd>V</kbd> in the editor works in the browser
 * Add a "File extensions and associations" page documenting the recognized extensions (`.adoc`, `.ad`, `.asciidoc`, `.asc`), how to use the extension with other extensions such as `.txt` via the `files.associations` setting, and why this is discouraged — a few features (workspace symbols, cross-file cross-reference completion, extension-less link resolution) look files up by the `.adoc` extension rather than by language, so they silently ignore non-`.adoc` files (#376)
 * Document how to keep static-site front matter (the `---`/`+++` metadata block at the top of a file) out of the preview by setting the `skip-front-matter` attribute through `asciidoc.preview.asciidoctorAttributes`, and why it must be set there rather than in the document header or `.asciidoctorconfig` (#104)
+* Document how to control when the preview updates: setting `asciidoc.preview.refreshInterval` to `0` disables live updates, after which the preview refreshes only on save (<kbd>Ctrl</kbd>+<kbd>S</kbd>, which re-reads `include::`d files from disk while keeping the scroll position) or on demand through the "Refresh Preview" command (a full reload that also picks up includes changed outside VS Code) — useful for heavy documents that contains complex MathJax equations (#229)
 
 ### Infrastructure
 
