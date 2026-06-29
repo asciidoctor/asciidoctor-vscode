@@ -1426,7 +1426,7 @@
               "include": "#inlines"
             }
           ],
-          "end": "^\\p{Blank}*$"
+          "end": "^\\p{Blank}*$|(?=^/{2})"
         }
       ]
     },
