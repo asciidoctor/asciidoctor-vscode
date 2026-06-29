@@ -1,0 +1,5 @@
+TIP: This is a one-line tip.
+// a comment under the tip
+////
+block comment
+////
