@@ -31,13 +31,6 @@ export class ExportAsPDF implements Command {
     }
 
     const doc = editor.document
-    const workspaceFolder = getWorkspaceFolder(doc.uri)
-    if (workspaceFolder === undefined) {
-      await vscode.window.showWarningMessage(
-        'Unable to get the workspace folder, aborting.',
-      )
-      return
-    }
     const asciidocTextDocument = AsciidocTextDocument.fromTextDocument(doc)
     const baseDirectory = asciidocTextDocument.baseDir
     const pdfFilename = vscode.Uri.file(
@@ -60,7 +53,14 @@ export class ExportAsPDF implements Command {
       text = `${asciidoctorConfigContent}
 ${text}`
     }
-    const workspacePath = workspaceFolder.uri.fsPath
+    // Resolve the working directory used to run the export process and to
+    // expand `${workspaceFolder}` placeholders in configured command paths.
+    // A workspace is not required: when the document does not belong to any
+    // workspace folder, fall back to the document's own directory rather than
+    // aborting the export (#749).
+    const workspaceFolder = getWorkspaceFolder(doc.uri)
+    const workspacePath =
+      workspaceFolder?.uri.fsPath ?? path.dirname(doc.uri.fsPath)
     const pdfEngine = asciidocPdfConfig.get('engine')
     if (pdfEngine === 'asciidoctor-pdf') {
       const asciidoctorPdfCommand = await this.resolveAsciidoctorPdfCommand(
@@ -401,6 +401,9 @@ function execute(
   input: string | undefined,
   options: SpawnOptions,
 ): Promise<boolean> {
+  logger.debug(
+    `Executing command: '${command} ${args.join(' ')}' (cwd: '${options.cwd ?? process.cwd()}')`,
+  )
   return new Promise(function (resolve, reject) {
     const childProcess = spawn(command, args, { env: process.env, ...options })
     const stderrOutput = []
