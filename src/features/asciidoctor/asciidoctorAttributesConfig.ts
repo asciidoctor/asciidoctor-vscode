@@ -2,10 +2,14 @@ import * as vscode from 'vscode'
 import { findDefaultWorkspaceFolderUri } from '../../core/workspace.js'
 
 export class AsciidoctorAttributesConfig {
-  public static getPreviewAttributes(): {} {
+  public static getPreviewAttributes(documentUri?: vscode.Uri): {} {
+    // Pass the document URI as the configuration scope so folder-level settings
+    // (`.vscode/settings.json`) and multi-root workspace folder settings are
+    // honored. Passing `null` would only read the global (User) configuration
+    // and silently ignore workspace/folder overrides (#928).
     const asciidocPreviewConfig = vscode.workspace.getConfiguration(
       'asciidoc.preview',
-      null,
+      documentUri ?? null,
     )
     const attributes = asciidocPreviewConfig.get('asciidoctorAttributes', {})
     const workspacePath =

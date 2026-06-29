@@ -209,7 +209,9 @@ export class AsciidocEngine {
 
     // load the Asciidoc header only to get kroki-server-url attribute
     const text = textDocument.getText()
-    const attributes = AsciidoctorAttributesConfig.getPreviewAttributes()
+    const attributes = AsciidoctorAttributesConfig.getPreviewAttributes(
+      textDocument.uri,
+    )
     const document = await load(text, {
       attributes,
       header_only: true,
