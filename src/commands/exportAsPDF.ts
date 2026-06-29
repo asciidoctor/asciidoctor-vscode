@@ -33,26 +33,9 @@ export class ExportAsPDF implements Command {
     const doc = editor.document
     const asciidocTextDocument = AsciidocTextDocument.fromTextDocument(doc)
     const baseDirectory = asciidocTextDocument.baseDir
-    const pdfFilename = vscode.Uri.file(
-      path.join(baseDirectory, asciidocTextDocument.fileName + '.pdf'),
-    )
 
     const asciidocPdfConfig = vscode.workspace.getConfiguration('asciidoc.pdf')
-    const pdfOutputUri = await vscode.window.showSaveDialog({
-      defaultUri: pdfFilename,
-    })
-    if (!pdfOutputUri) {
-      logger.debug('No output directory selected to save the PDF, aborting.')
-      return
-    }
 
-    const pdfOutputPath = pdfOutputUri.fsPath
-    const asciidoctorConfigContent = await getAsciidoctorConfigContent(doc.uri)
-    let text = doc.getText()
-    if (asciidoctorConfigContent !== undefined) {
-      text = `${asciidoctorConfigContent}
-${text}`
-    }
     // Resolve the working directory used to run the export process and to
     // expand `${workspaceFolder}` placeholders in configured command paths.
     // A workspace is not required: when the document does not belong to any
@@ -61,6 +44,47 @@ ${text}`
     const workspaceFolder = getWorkspaceFolder(doc.uri)
     const workspacePath =
       workspaceFolder?.uri.fsPath ?? path.dirname(doc.uri.fsPath)
+
+    // Compute the default output path. By default the PDF is written next to the
+    // document, but `asciidoc.pdf.outputDirectory` can redirect it elsewhere
+    // while keeping the document's base name (#868).
+    const defaultPdfPath = _resolvePdfOutputPath(
+      asciidocPdfConfig.get<string>('outputDirectory', ''),
+      baseDirectory,
+      workspacePath,
+      asciidocTextDocument.fileName + '.pdf',
+    )
+
+    // When `asciidoc.pdf.askOutputLocation` is disabled, skip the save dialog
+    // and write directly to the default path, overwriting any existing file.
+    // This enables a tight save/regenerate iteration cycle (#868). The default
+    // (true) preserves the historical prompt-on-every-export behaviour.
+    let pdfOutputUri: vscode.Uri
+    if (asciidocPdfConfig.get<boolean>('askOutputLocation', true)) {
+      const selectedUri = await vscode.window.showSaveDialog({
+        defaultUri: vscode.Uri.file(defaultPdfPath),
+      })
+      if (!selectedUri) {
+        logger.debug('No output directory selected to save the PDF, aborting.')
+        return
+      }
+      pdfOutputUri = selectedUri
+    } else {
+      pdfOutputUri = vscode.Uri.file(defaultPdfPath)
+    }
+
+    const pdfOutputPath = pdfOutputUri.fsPath
+    // Make sure the destination directory exists (mkdir -p) so the PDF engine
+    // can write the output file even when `outputDirectory` points to a folder
+    // that does not exist yet.
+    fs.mkdirSync(path.dirname(pdfOutputPath), { recursive: true })
+
+    const asciidoctorConfigContent = await getAsciidoctorConfigContent(doc.uri)
+    let text = doc.getText()
+    if (asciidoctorConfigContent !== undefined) {
+      text = `${asciidoctorConfigContent}
+${text}`
+    }
     const pdfEngine = asciidocPdfConfig.get('engine')
     if (pdfEngine === 'asciidoctor-pdf') {
       const asciidoctorPdfCommand = await this.resolveAsciidoctorPdfCommand(
@@ -459,6 +483,35 @@ export function _resolvePdfThemesArgs(
     return ['-a', `pdf-themesdir=${baseDirectory}`]
   }
   return []
+}
+
+/**
+ * Resolve the absolute path of the exported PDF file.
+ *
+ * When `outputDirectory` is empty, the PDF is written next to the document
+ * (historical behaviour). Otherwise the file is written into `outputDirectory`,
+ * keeping the document's base name. The `${workspaceFolder}` placeholder is
+ * expanded and a relative directory is resolved against the workspace folder
+ * (or, without a workspace, the document's own directory). (#868)
+ */
+export function _resolvePdfOutputPath(
+  outputDirectory: string | undefined,
+  baseDirectory: string,
+  workspacePath: string,
+  pdfFileName: string,
+): string {
+  if (!outputDirectory || outputDirectory.trim() === '') {
+    return path.join(baseDirectory, pdfFileName)
+  }
+  let directory = outputDirectory.replace(
+    // biome-ignore lint/suspicious/noTemplateCurlyInString: magic-value used in the VS code settings
+    '${workspaceFolder}',
+    workspacePath,
+  )
+  if (!path.isAbsolute(directory)) {
+    directory = path.resolve(workspacePath, directory)
+  }
+  return path.join(directory, pdfFileName)
 }
 
 export function _generateCoverHtmlContent(

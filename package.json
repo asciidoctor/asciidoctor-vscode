@@ -544,6 +544,20 @@
             "uniqueItems": false,
             "order": 5,
             "scope": "resource"
+          },
+          "asciidoc.pdf.outputDirectory": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "%asciidoc.pdf.outputDirectory.desc%",
+            "order": 6,
+            "scope": "resource"
+          },
+          "asciidoc.pdf.askOutputLocation": {
+            "type": "boolean",
+            "default": true,
+            "markdownDescription": "%asciidoc.pdf.askOutputLocation.desc%",
+            "order": 7,
+            "scope": "resource"
           }
         }
       },

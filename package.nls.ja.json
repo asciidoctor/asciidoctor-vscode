@@ -33,6 +33,8 @@
   "asciidoc.pdf.engine.asciidoctorPdf.desc": "asciidoctor-pdfコマンドライン",
   "asciidoc.pdf.engine.desc": "PDFエキスポートで使用するPDFエンジンを選択します。",
   "asciidoc.pdf.engine.wkhtmltopdf.desc": "wkhtmltopdfコマンドライン",
+  "asciidoc.pdf.outputDirectory.desc": "エクスポートしたPDFの出力先ディレクトリを指定します。空の場合、PDFはAsciiDocドキュメントと同じ場所に保存されます。相対パスはワークスペースフォルダー(ワークスペースがない場合はドキュメントのディレクトリ)を基準に解決され、`${workspaceFolder}`変数も使用できます。ディレクトリが存在しない場合は作成されます。出力ファイルはドキュメント名に`.pdf`拡張子を付けた名前になります。",
+  "asciidoc.pdf.askOutputLocation.desc": "PDFをエクスポートするたびに出力先を確認します。無効にすると、確認なしで`#asciidoc.pdf.outputDirectory#`(またはドキュメントと同じ場所)に直接書き込み、既存のファイルを上書きします。保存と再生成を繰り返す素早い反復作業に便利です。",
   "asciidoc.pdf.title": "PDF",
   "asciidoc.pdf.wkhtmltopdfCommandArgs.desc": "引数のリストを指定します。例えば、`--orientation`, `Landscape`のように指定します。キーバリューの場合は、引数を分けて設定してください(つまり、二つの引数になります。)。デフォルトでは、`--enable-local-file-access`, `--encoding`, `utf-8`, `--javascript-delay`, `1000`, `--footer-center` (有効の場合) と `cover` (カバーページがある場合)が指定されます。",
   "asciidoc.pdf.wkhtmltopdfCommandPath.desc": "外部の`wkhtmltopdf`のコマンドの実行パスを指定します。本設定は、`/path/to/wkhtmltopdf`のようにフルパスである必要があります。空が設定された場合、Linux/macOSでは`wkhtmltopdf`、Windowsでは`wkhtmltopdf.exe`が指定されます。",

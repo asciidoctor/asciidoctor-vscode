@@ -6,6 +6,7 @@ import { fileURLToPath } from 'url'
 import * as vscode from 'vscode'
 import {
   _generateCoverHtmlContent,
+  _resolvePdfOutputPath,
   _resolvePdfThemesArgs,
 } from '../commands/exportAsPDF.js'
 
@@ -42,6 +43,53 @@ Kismet R. Lee <kismet@asciidoctor.org>`)
   </body>
   </html>`,
     )
+  })
+
+  describe('_resolvePdfOutputPath', () => {
+    const baseDir = path.join(path.sep, 'work', 'book')
+    const workspacePath = path.join(path.sep, 'work')
+
+    test('writes next to the document when no output directory is set', () => {
+      assert.strictEqual(
+        _resolvePdfOutputPath('', baseDir, workspacePath, 'doc.pdf'),
+        path.join(baseDir, 'doc.pdf'),
+      )
+    })
+
+    test('treats a blank output directory as unset', () => {
+      assert.strictEqual(
+        _resolvePdfOutputPath('   ', baseDir, workspacePath, 'doc.pdf'),
+        path.join(baseDir, 'doc.pdf'),
+      )
+    })
+
+    test('resolves a relative output directory against the workspace folder', () => {
+      assert.strictEqual(
+        _resolvePdfOutputPath('out/pdf', baseDir, workspacePath, 'doc.pdf'),
+        path.join(workspacePath, 'out', 'pdf', 'doc.pdf'),
+      )
+    })
+
+    test('keeps an absolute output directory untouched', () => {
+      const absolute = path.join(path.sep, 'exports', 'pdf')
+      assert.strictEqual(
+        _resolvePdfOutputPath(absolute, baseDir, workspacePath, 'doc.pdf'),
+        path.join(absolute, 'doc.pdf'),
+      )
+    })
+
+    test('expands the workspaceFolder variable', () => {
+      assert.strictEqual(
+        _resolvePdfOutputPath(
+          // biome-ignore lint/suspicious/noTemplateCurlyInString: testing the literal `${workspaceFolder}` placeholder
+          '${workspaceFolder}/build',
+          baseDir,
+          workspacePath,
+          'doc.pdf',
+        ),
+        path.join(workspacePath, 'build', 'doc.pdf'),
+      )
+    })
   })
 
   describe('_resolvePdfThemesArgs', () => {
