@@ -688,7 +688,7 @@
     "pretest": "npm run build && npm run build-test",
     "test": "node ./src/test/runTest.mjs && npm run test:unit && npm run test:grammar",
     "test:unit": "node --test build/src/test/unit/*.test.js",
-    "test:grammar": "npx textmate-grammar-snap -g syntaxes/asciidoc.tmLanguage.json -g syntaxes/ruby.tmLanguage.json  syntaxes/tests/snap/**/**.adoc",
+    "test:grammar": "npx textmate-grammar-snap -g syntaxes/asciidoc.tmLanguage.json -g syntaxes/ruby.tmLanguage.json -g syntaxes/html.tmLanguage.json  syntaxes/tests/snap/**/**.adoc",
     "coverage": "c8 --clean npm run test"
   },
   "devDependencies": {

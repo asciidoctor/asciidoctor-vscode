@@ -1,0 +1,7 @@
+++++
+<style>
+include::file.adoc[]
+</style>
+++++
+
+// some comment
