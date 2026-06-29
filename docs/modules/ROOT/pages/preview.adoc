@@ -126,6 +126,7 @@ For *HTML-based exports* the detection does not apply: list the extra languages 
 :highlightjs-languages: dockerfile, powershell
 ----
 
+[#styling]
 == Styling
 
 By default, the preview uses the VS Code editor theme (`workbench.colorTheme`).
@@ -136,6 +137,12 @@ By default, the preview uses the VS Code editor theme (`workbench.colorTheme`).
 * To define custom templates, set `asciidoc.preview.templates`.
 
 See xref:settings.adoc#preview[the preview settings] for the full list of options.
+
+[NOTE]
+====
+The preview is HTML styled with CSS, so it uses the settings above -- not an `asciidoctor-pdf` theme.
+A PDF theme (`theme.yml`, set through `:pdf-theme:` / `:pdf-themesdir:`) only affects the `asciidoctor-pdf` engine of xref:export-pdf.adoc#custom-pdf-theme[Export as PDF] and never changes the preview's appearance.
+====
 
 == Sync scrolling
 

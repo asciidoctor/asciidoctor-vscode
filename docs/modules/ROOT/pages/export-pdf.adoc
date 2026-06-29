@@ -14,3 +14,24 @@ By default, PDF export relies on `asciidoctor-pdf`.
 To use `wkhtmltopdf` instead, set `asciidoc.pdf.engine` to `wkhtmltopdf`, and configure `asciidoc.pdf.wkhtmltopdfCommandPath` if needed.
 
 See xref:settings.adoc#pdf[the PDF settings] for all related options.
+
+[#custom-pdf-theme]
+== Custom PDF theme
+
+A custom PDF theme applies to the `asciidoctor-pdf` engine only -- it has no effect on the xref:preview.adoc[preview], which is HTML styled with CSS (see xref:preview.adoc#styling[Preview -> Styling]).
+
+The recommended way is to declare the xref:pdf-converter::theme.adoc[asciidoctor-pdf theme attributes] in the document header:
+
+[source,asciidoc]
+----
+= My Document
+:pdf-themesdir: ../themes
+:pdf-theme: custom
+----
+
+This resolves the `custom-theme.yml` file (the `-theme.yml` suffix is added automatically) from the `themes` directory next to the document.
+The extension runs `asciidoctor-pdf` with `--base-dir` set to the document's directory, so relative paths such as `../themes` are resolved from there.
+
+Keeping the configuration in the document header rather than in the extension settings makes it portable across machines and across documents that use different themes or folder structures.
+
+Alternatively, you can pass the same attributes through the `asciidoc.pdf.asciidoctorPdfCommandArgs` setting -- see xref:settings.adoc#pdf[the PDF settings].

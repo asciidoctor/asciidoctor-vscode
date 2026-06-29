@@ -92,6 +92,7 @@
 * Document how to keep static-site front matter (the `---`/`+++` metadata block at the top of a file) out of the preview by setting the `skip-front-matter` attribute through `asciidoc.preview.asciidoctorAttributes`, and why it must be set there rather than in the document header or `.asciidoctorconfig` (#104)
 * Document how to control when the preview updates: setting `asciidoc.preview.refreshInterval` to `0` disables live updates, after which the preview refreshes only on save (<kbd>Ctrl</kbd>+<kbd>S</kbd>, which re-reads `include::`d files from disk while keeping the scroll position) or on demand through the "Refresh Preview" command (a full reload that also picks up includes changed outside VS Code) — useful for heavy documents that contains complex MathJax equations (#229)
 * Document how to bind a keyboard shortcut to a specific snippet through VS Code's built-in `editor.action.insertSnippet` command, either by referencing a snippet by name or by giving the snippet body inline (#778)
+* Document how to use a custom PDF theme with the `asciidoctor-pdf` engine through the `:pdf-themesdir:` / `:pdf-theme:` document header attributes (resolved from the document's directory via `--base-dir`), and clarify that a PDF theme (`theme.yml`) only affects the PDF export and never the HTML preview, which is styled with CSS (#307)
 
 ### Infrastructure
 
