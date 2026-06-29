@@ -1,0 +1,22 @@
+{
+  "name": "HTML",
+  "scopeName": "text.html.basic",
+  "comment": "Minimal HTML grammar used only to exercise embedded-HTML highlighting in the snapshot tests (passthrough blocks). It is not the grammar shipped to VS Code.",
+  "patterns": [
+    {
+      "comment": "tag",
+      "match": "(</?)([a-zA-Z][a-zA-Z0-9-]*)([^>]*)(>)",
+      "captures": {
+        "1": {
+          "name": "punctuation.definition.tag.html"
+        },
+        "2": {
+          "name": "entity.name.tag.html"
+        },
+        "4": {
+          "name": "punctuation.definition.tag.html"
+        }
+      }
+    }
+  ]
+}
