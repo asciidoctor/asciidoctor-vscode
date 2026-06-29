@@ -510,7 +510,7 @@ const delimitedCodeBlockDefinition = (
   // [#id,js]
   // [%linenums,js]
   // [.code,js]
-  const sourceBlockAttrRx = `^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(${identifiers.join('|')}))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$`
+  const sourceBlockAttrRx = `^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(${identifiers.join('|')}))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$`
   return {
     name: `markup.code.${name}.asciidoc`,
     begin: `(?=${sourceBlockAttrRx})`,

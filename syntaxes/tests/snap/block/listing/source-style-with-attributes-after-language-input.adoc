@@ -1,0 +1,14 @@
+[source,cpp,linenums]
+----
+int linenums = 1;
+----
+
+[source,cpp,subs="verbatim"]
+----
+int subs = 2;
+----
+
+[,cpp]
+----
+int implicit = 3;
+----
