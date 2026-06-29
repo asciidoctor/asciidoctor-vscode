@@ -132,6 +132,55 @@ You can edit them from the VS Code Settings UI or directly in `settings.json`.
 |`false`
 |===
 
+[#editor-defaults]
+== Editor defaults
+
+Besides the `asciidoc.*` settings above, the extension also sets a few *VS Code editor* defaults for AsciiDoc files through the https://code.visualstudio.com/api/references/contribution-points#contributes.configurationDefaults[`configurationDefaults`] contribution point:
+
+[,json]
+----
+"[asciidoc]": {
+  "editor.wordWrap": "on",
+  "editor.wordBasedSuggestions": "off",
+  "editor.quickSuggestions": {
+    "comments": "off",
+    "strings": "off",
+    "other": "off"
+  }
+}
+----
+
+Word wrap is on because AsciiDoc is a prose format.
+The two suggestion settings are off on purpose: word-based suggestions (the editor proposing other words already present in the document) and the automatic suggestion pop-up add noise while you type structured constructs such as attribute references `+{name}+`, attribute entries `:name:` or cross references, where the extension already provides its own, context-aware completion.
+
+[#override-editor-defaults]
+=== Overriding these defaults
+
+These are only *defaults*: you can override any of them in your own `settings.json`.
+For example, to get the editor to suggest words from the document while writing prose:
+
+[,json]
+----
+"[asciidoc]": {
+  "editor.wordBasedSuggestions": "matchingDocuments",
+  "editor.quickSuggestions": {
+    "other": "on"
+  }
+}
+----
+
+[IMPORTANT]
+====
+Scope your override under `[asciidoc]`, as shown above — *not* as a plain top-level `"editor.wordBasedSuggestions"`.
+VS Code applies https://code.visualstudio.com/docs/getstarted/settings#_languagespecific-editor-settings[language-specific settings] over non-language-specific ones regardless of scope, so a top-level value never wins against the extension's `[asciidoc]` default.
+====
+
+[NOTE]
+====
+When you work over Remote-SSH, in a dev container or over WSL, the extension runs on the remote machine and so do its defaults.
+Put the `[asciidoc]` override in your *Remote* (or *Workspace*) `settings.json`, not the local one, otherwise it has no effect on the remotely opened files.
+====
+
 [#debug]
 == Debug
 
