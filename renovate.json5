@@ -1,6 +1,10 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "dependencyDashboard": true,
+  // Don't open PRs automatically: list available updates on the dashboard and
+  // wait for manual approval (tick the checkbox) before raising a PR. Avoids
+  // noise when an upgrade also needs post-processing changes.
+  "dependencyDashboardApproval": true,
   "separateMajorMinor": true,
   "extends": [
     ":preserveSemverRanges"
@@ -14,7 +18,9 @@
   "packageRules": [
     {
       "matchManagers": ["github-actions"],
-      "groupName": "GitHub Actions"
+      "groupName": "GitHub Actions",
+      // Low-risk updates: let these through without dashboard approval.
+      "dependencyDashboardApproval": false
     },
     {
       "matchManagers": ["npm"],
@@ -85,5 +91,10 @@
   ],
   "lockFileMaintenance": {
     "enabled": true
+  },
+  // Security fixes bypass dashboard approval so vulnerabilities get patched
+  // without waiting for a manual tick.
+  "vulnerabilityAlerts": {
+    "dependencyDashboardApproval": false
   }
 }
