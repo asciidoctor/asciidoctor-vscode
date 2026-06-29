@@ -8,6 +8,7 @@ import {
   findAntoraConfigFile,
   getAntoraDocumentContext,
 } from '../features/antora/antoraDocument.js'
+import { resolveIncludeFile } from '../features/antora/resolveIncludeFile.js'
 import { extensionContext } from './helper.js'
 import {
   createDirectories,
@@ -461,6 +462,70 @@ describe('Antora content catalog construction', () => {
         resolved,
         imageFile.path,
         'Resource id must resolve to the absolute path of the image',
+      )
+    } finally {
+      await removeFiles(createdFiles)
+      await resetAntoraSupport()
+    }
+  })
+
+  // #880 — `include::example$…[]` resolved to nothing (so Asciidoctor fell back
+  // to a literal relative include, "include file not found: …/pages/example$…").
+  // Resolving the `example$` family resource id against the content catalog must
+  // return the example file's contents.
+  test('Should resolve an example$ include resource id to its contents', async () => {
+    const createdFiles = []
+    try {
+      createdFiles.push(await createDirectory('modules'))
+      await createDirectories('modules', 'ROOT', 'pages')
+      const asciidocFile = await createFile(
+        'include::example$some_python_code.py[]',
+        'modules',
+        'ROOT',
+        'pages',
+        'landscape.adoc',
+      )
+      createdFiles.push(asciidocFile)
+      createdFiles.push(
+        await createFile(
+          'print("hello")',
+          'modules',
+          'ROOT',
+          'examples',
+          'some_python_code.py',
+        ),
+      )
+      createdFiles.push(
+        await createFile(`name: ROOT\nversion: ~\n`, 'antora.yml'),
+      )
+      await enableAntoraSupport()
+      const result = await getAntoraDocumentContext(
+        asciidocFile,
+        extensionContext.workspaceState,
+      )
+      assert.notStrictEqual(
+        result,
+        undefined,
+        'An Antora document context must be established for the page',
+      )
+      const resolved = resolveIncludeFile(
+        'example$some_python_code.py',
+        { src: result.resourceContext },
+        // The example$ branch resolves by resource id and never touches the
+        // reader cursor, which is only used for plain relative includes.
+        { file: undefined, dir: undefined },
+        result.getContentCatalog(),
+        undefined,
+      )
+      assert.notStrictEqual(
+        resolved,
+        undefined,
+        'The example$ resource id must resolve to a catalog entry',
+      )
+      assert.strictEqual(
+        resolved.contents,
+        'print("hello")',
+        'The include must resolve to the example file contents',
       )
     } finally {
       await removeFiles(createdFiles)
