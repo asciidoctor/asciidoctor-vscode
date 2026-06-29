@@ -30,7 +30,8 @@ An editor SHOULD apply the Asciidoctor default stylesheet to the preview by defa
 An editor SHOULD allow authors to:
 
 * Switch to the IDE's own theme-derived stylesheet
-* Supply a custom CSS file via configuration
+* Supply a custom CSS file via configuration that replaces the default stylesheet
+* Extend the default stylesheet with additional style rules (so authors can tweak the appearance without re-supplying a complete stylesheet)
 * Configure font family, font size, and line height for the preview
 
 An editor MAY support Asciidoctor custom templates (e.g., Slim/ERB templates) that override the default HTML output.
@@ -76,6 +77,8 @@ An editor SHOULD remember the security level per workspace.
 == MathML / LaTeX Rendering
 
 An editor SHOULD support rendering of mathematical formulas using MathML or a compatible renderer (e.g., MathJax, KaTeX).
+
+An editor MAY additionally support chemical notation (e.g., the `\ce` and `\pu` macros provided by the MathJax mhchem extension) so that chemistry-oriented documents render correctly.
 
 == Link Handling
 

@@ -14,6 +14,13 @@ An editor MUST NOT activate Antora-specific behaviors in non-Antora projects.
 An editor SHOULD provide a user-facing toggle to enable or disable Antora support per workspace.
 An editor SHOULD prompt the author to enable Antora support when an Antora project is first detected.
 
+When prompting to enable Antora support, an editor SHOULD:
+
+* Show at most one prompt at a time, rather than stacking one prompt per opened document
+* Treat dismissing the prompt (without answering) as "not now" — it stops prompting for the current session without disabling Antora support, so the question MAY be asked again in a later session
+* Offer a way to permanently decline (e.g., a "Never" choice) that is persisted and stops the editor from prompting again
+* Honour a decision made meanwhile through the enable/disable command instead of asking again
+
 == Attribute Resolution
 
 When Antora support is active, an editor MUST resolve document attributes from `antora.yml` component and module descriptors, including:
@@ -61,6 +68,16 @@ An editor MUST resolve `include::` directives using Antora's resource ID syntax,
 \include::partial$common-attributes.adoc[]
 \include::version@component:module:partial$shared.adoc[]
 ----
+
+== Image Insertion
+
+When Antora support is active, an editor inserting an image (via drag-and-drop or clipboard paste) MUST reference the image within the page's module image family rather than by a document-relative path.
+
+An editor SHOULD:
+
+* Reference an image that already lives in the module's `images` directory by its bare name, without copying it
+* Offer to copy an external image into the module's `images` directory and then reference it by its bare name
+* Suppress document-relative "insert path" options that would not resolve under Antora's resource resolution
 
 == Preview Integration
 

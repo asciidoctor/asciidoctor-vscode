@@ -5,6 +5,7 @@
 An editor MUST provide an "Export as HTML" action that converts the current AsciiDoc document to a standalone HTML file using Asciidoctor.
 
 The generated HTML file MUST be self-contained (embedded CSS and assets where possible) or reference the Asciidoctor default stylesheet.
+An editor SHOULD honour the `:data-uri:` attribute to embed images directly in the output as data URIs when a fully self-contained file is required.
 An editor SHOULD allow configuring custom attributes and stylesheets for HTML export.
 An editor SHOULD open the generated HTML file in the system default browser upon completion.
 

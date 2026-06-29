@@ -32,6 +32,16 @@ An editor MAY distinguish between missing files and missing anchors within exist
 
 An editor SHOULD warn about deprecated AsciiDoc constructs (e.g., two-colon include syntax variants, deprecated attribute names) and suggest the modern equivalent.
 
+== Quick Fixes
+
+An editor SHOULD offer quick fixes (intention actions) attached to diagnostics where an automatic correction is possible, for example:
+
+* Creating the missing target file for a broken `include::` or `image::` reference
+* Replacing a deprecated construct with its modern equivalent
+* Adding an unknown word to the custom dictionary from a spelling diagnostic
+
+A quick fix MUST be undoable as a single action.
+
 == Spell Checking
 
 An editor SHOULD provide spell checking for prose content in AsciiDoc documents.
