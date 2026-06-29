@@ -357,9 +357,10 @@ gem 'asciidoctor-pdf'`,
       }
     } else {
       const answer = await vscode.window.showInformationMessage(
-        'This feature requires asciidoctor-pdf but the executable was not found on your PATH. ' +
-          'This often happens when VS Code is launched from the Dock/Finder rather than a terminal, so it does not inherit your shell PATH. ' +
-          'Install asciidoctor-pdf, or set its full path in the "Asciidoc › Pdf: Asciidoctor Pdf Command Path" setting (e.g. /opt/homebrew/bin/asciidoctor-pdf).',
+        'This feature requires asciidoctor-pdf, but the executable was not found on your PATH. ' +
+          "If you haven't installed it yet, install asciidoctor-pdf. " +
+          'If you have already installed it, VS Code may not see it because it was launched from the Dock/Finder rather than a terminal and does not inherit your shell PATH: ' +
+          'set its full path in the "Asciidoc › Pdf: Asciidoctor Pdf Command Path" setting (e.g. /opt/homebrew/bin/asciidoctor-pdf).',
         'Install',
         'Configure',
       )
