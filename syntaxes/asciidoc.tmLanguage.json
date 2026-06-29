@@ -2010,10 +2010,10 @@
       "patterns": [
         {
           "name": "markup.code.css.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(css|css.erb))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(css|css.erb))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(css|css.erb))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(css|css.erb))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -2102,10 +2102,10 @@
         },
         {
           "name": "markup.code.basic.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(html|htm|shtml|xhtml|inc|tmpl|tpl))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(html|htm|shtml|xhtml|inc|tmpl|tpl))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(html|htm|shtml|xhtml|inc|tmpl|tpl))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(html|htm|shtml|xhtml|inc|tmpl|tpl))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -2194,10 +2194,10 @@
         },
         {
           "name": "markup.code.ini.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(ini|conf))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(ini|conf))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(ini|conf))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(ini|conf))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -2286,10 +2286,10 @@
         },
         {
           "name": "markup.code.java.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(java|bsh))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(java|bsh))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(java|bsh))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(java|bsh))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -2378,10 +2378,10 @@
         },
         {
           "name": "markup.code.lua.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(lua))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(lua))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(lua))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(lua))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -2470,10 +2470,10 @@
         },
         {
           "name": "markup.code.makefile.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(Makefile|makefile|GNUmakefile|OCamlMakefile))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(Makefile|makefile|GNUmakefile|OCamlMakefile))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(Makefile|makefile|GNUmakefile|OCamlMakefile))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(Makefile|makefile|GNUmakefile|OCamlMakefile))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -2562,10 +2562,10 @@
         },
         {
           "name": "markup.code.perl.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(perl|pl|pm|pod|t|PL|psgi|vcl))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(perl|pl|pm|pod|t|PL|psgi|vcl))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(perl|pl|pm|pod|t|PL|psgi|vcl))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(perl|pl|pm|pod|t|PL|psgi|vcl))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -2654,10 +2654,10 @@
         },
         {
           "name": "markup.code.r.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(R|r|s|S|Rprofile|\\{\\.r.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(R|r|s|S|Rprofile|\\{\\.r.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(R|r|s|S|Rprofile|\\{\\.r.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(R|r|s|S|Rprofile|\\{\\.r.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -2746,10 +2746,10 @@
         },
         {
           "name": "markup.code.ruby.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(ruby|rb|rbx|rjs|Rakefile|rake|cgi|fcgi|gemspec|irbrc|Capfile|ru|prawn|Cheffile|Gemfile|Guardfile|Hobofile|Vagrantfile|Appraisals|Rantfile|Berksfile|Berksfile.lock|Thorfile|Puppetfile))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(ruby|rb|rbx|rjs|Rakefile|rake|cgi|fcgi|gemspec|irbrc|Capfile|ru|prawn|Cheffile|Gemfile|Guardfile|Hobofile|Vagrantfile|Appraisals|Rantfile|Berksfile|Berksfile.lock|Thorfile|Puppetfile))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(ruby|rb|rbx|rjs|Rakefile|rake|cgi|fcgi|gemspec|irbrc|Capfile|ru|prawn|Cheffile|Gemfile|Guardfile|Hobofile|Vagrantfile|Appraisals|Rantfile|Berksfile|Berksfile.lock|Thorfile|Puppetfile))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(ruby|rb|rbx|rjs|Rakefile|rake|cgi|fcgi|gemspec|irbrc|Capfile|ru|prawn|Cheffile|Gemfile|Guardfile|Hobofile|Vagrantfile|Appraisals|Rantfile|Berksfile|Berksfile.lock|Thorfile|Puppetfile))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -2838,10 +2838,10 @@
         },
         {
           "name": "markup.code.php.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(php|php3|php4|php5|phpt|phtml|aw|ctp))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(php|php3|php4|php5|phpt|phtml|aw|ctp))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(php|php3|php4|php5|phpt|phtml|aw|ctp))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(php|php3|php4|php5|phpt|phtml|aw|ctp))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -2939,10 +2939,10 @@
         },
         {
           "name": "markup.code.sql.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(sql|ddl|dml))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(sql|ddl|dml))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(sql|ddl|dml))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(sql|ddl|dml))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -3031,10 +3031,10 @@
         },
         {
           "name": "markup.code.vs_net.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(vb))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(vb))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(vb))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(vb))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -3123,10 +3123,10 @@
         },
         {
           "name": "markup.code.xml.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(xml|xsd|tld|jsp|pt|cpt|dtml|rss|opml))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(xml|xsd|tld|jsp|pt|cpt|dtml|rss|opml))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(xml|xsd|tld|jsp|pt|cpt|dtml|rss|opml))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(xml|xsd|tld|jsp|pt|cpt|dtml|rss|opml))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -3215,10 +3215,10 @@
         },
         {
           "name": "markup.code.xsl.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(xsl|xslt))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(xsl|xslt))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(xsl|xslt))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(xsl|xslt))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -3307,10 +3307,10 @@
         },
         {
           "name": "markup.code.yaml.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(yaml|yml))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(yaml|yml))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(yaml|yml))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(yaml|yml))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -3399,10 +3399,10 @@
         },
         {
           "name": "markup.code.dosbatch.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(bat|batch))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(bat|batch))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(bat|batch))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(bat|batch))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -3491,10 +3491,10 @@
         },
         {
           "name": "markup.code.clojure.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(clj|cljs|clojure))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(clj|cljs|clojure))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(clj|cljs|clojure))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(clj|cljs|clojure))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -3583,10 +3583,10 @@
         },
         {
           "name": "markup.code.coffee.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(coffee|Cakefile|coffee.erb))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(coffee|Cakefile|coffee.erb))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(coffee|Cakefile|coffee.erb))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(coffee|Cakefile|coffee.erb))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -3675,10 +3675,10 @@
         },
         {
           "name": "markup.code.c.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(c|h))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(c|h))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(c|h))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(c|h))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -3767,10 +3767,10 @@
         },
         {
           "name": "markup.code.cpp.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(cpp|c\\+\\+|cxx))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(cpp|c\\+\\+|cxx))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(cpp|c\\+\\+|cxx))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(cpp|c\\+\\+|cxx))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -3859,10 +3859,10 @@
         },
         {
           "name": "markup.code.diff.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(patch|diff|rej))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(patch|diff|rej))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(patch|diff|rej))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(patch|diff|rej))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -3951,10 +3951,10 @@
         },
         {
           "name": "markup.code.dockerfile.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(dockerfile|Dockerfile))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(dockerfile|Dockerfile))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(dockerfile|Dockerfile))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(dockerfile|Dockerfile))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -4043,10 +4043,10 @@
         },
         {
           "name": "markup.code.git_commit.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(COMMIT_EDITMSG|MERGE_MSG))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(COMMIT_EDITMSG|MERGE_MSG))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(COMMIT_EDITMSG|MERGE_MSG))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(COMMIT_EDITMSG|MERGE_MSG))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -4135,10 +4135,10 @@
         },
         {
           "name": "markup.code.git_rebase.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(git-rebase-todo))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(git-rebase-todo))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(git-rebase-todo))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(git-rebase-todo))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -4227,10 +4227,10 @@
         },
         {
           "name": "markup.code.go.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(go|golang))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(go|golang))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(go|golang))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(go|golang))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -4319,10 +4319,10 @@
         },
         {
           "name": "markup.code.groovy.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(groovy|gvy))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(groovy|gvy))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(groovy|gvy))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(groovy|gvy))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -4411,10 +4411,10 @@
         },
         {
           "name": "markup.code.pug.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(jade|pug))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(jade|pug))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(jade|pug))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(jade|pug))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -4503,10 +4503,10 @@
         },
         {
           "name": "markup.code.js.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(js|jsx|javascript|es6|mjs|cjs|dataviewjs|\\{\\.js.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(js|jsx|javascript|es6|mjs|cjs|dataviewjs|\\{\\.js.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(js|jsx|javascript|es6|mjs|cjs|dataviewjs|\\{\\.js.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(js|jsx|javascript|es6|mjs|cjs|dataviewjs|\\{\\.js.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -4595,10 +4595,10 @@
         },
         {
           "name": "markup.code.js_regexp.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(regexp))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(regexp))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(regexp))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(regexp))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -4687,10 +4687,10 @@
         },
         {
           "name": "markup.code.json.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(json|json5|sublime-settings|sublime-menu|sublime-keymap|sublime-mousemap|sublime-theme|sublime-build|sublime-project|sublime-completions))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(json|json5|sublime-settings|sublime-menu|sublime-keymap|sublime-mousemap|sublime-theme|sublime-build|sublime-project|sublime-completions))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(json|json5|sublime-settings|sublime-menu|sublime-keymap|sublime-mousemap|sublime-theme|sublime-build|sublime-project|sublime-completions))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(json|json5|sublime-settings|sublime-menu|sublime-keymap|sublime-mousemap|sublime-theme|sublime-build|sublime-project|sublime-completions))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -4779,10 +4779,10 @@
         },
         {
           "name": "markup.code.jsonc.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(jsonc))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(jsonc))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(jsonc))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(jsonc))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -4871,10 +4871,10 @@
         },
         {
           "name": "markup.code.less.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(less))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(less))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(less))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(less))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -4963,10 +4963,10 @@
         },
         {
           "name": "markup.code.objc.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(objectivec|objective-c|mm|objc|obj-c|m|h))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(objectivec|objective-c|mm|objc|obj-c|m|h))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(objectivec|objective-c|mm|objc|obj-c|m|h))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(objectivec|objective-c|mm|objc|obj-c|m|h))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -5055,10 +5055,10 @@
         },
         {
           "name": "markup.code.swift.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(swift))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(swift))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(swift))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(swift))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -5147,10 +5147,10 @@
         },
         {
           "name": "markup.code.scss.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(scss))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(scss))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(scss))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(scss))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -5239,10 +5239,10 @@
         },
         {
           "name": "markup.code.perl6.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(perl6|p6|pl6|pm6|nqp))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(perl6|p6|pl6|pm6|nqp))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(perl6|p6|pl6|pm6|nqp))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(perl6|p6|pl6|pm6|nqp))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -5331,10 +5331,10 @@
         },
         {
           "name": "markup.code.powershell.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(powershell|ps1|psm1|psd1|pwsh))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(powershell|ps1|psm1|psd1|pwsh))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(powershell|ps1|psm1|psd1|pwsh))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(powershell|ps1|psm1|psd1|pwsh))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -5423,10 +5423,10 @@
         },
         {
           "name": "markup.code.python.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(python|py|py3|rpy|pyw|cpy|SConstruct|Sconstruct|sconstruct|SConscript|gyp|gypi|\\{\\.python.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(python|py|py3|rpy|pyw|cpy|SConstruct|Sconstruct|sconstruct|SConscript|gyp|gypi|\\{\\.python.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(python|py|py3|rpy|pyw|cpy|SConstruct|Sconstruct|sconstruct|SConscript|gyp|gypi|\\{\\.python.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(python|py|py3|rpy|pyw|cpy|SConstruct|Sconstruct|sconstruct|SConscript|gyp|gypi|\\{\\.python.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -5515,10 +5515,10 @@
         },
         {
           "name": "markup.code.julia.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(julia|\\{\\.julia.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(julia|\\{\\.julia.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(julia|\\{\\.julia.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(julia|\\{\\.julia.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -5607,10 +5607,10 @@
         },
         {
           "name": "markup.code.regexp_python.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(re))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(re))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(re))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(re))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -5699,10 +5699,10 @@
         },
         {
           "name": "markup.code.rust.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(rust|rs|\\{\\.rust.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(rust|rs|\\{\\.rust.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(rust|rs|\\{\\.rust.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(rust|rs|\\{\\.rust.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -5791,10 +5791,10 @@
         },
         {
           "name": "markup.code.scala.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(scala|sbt))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(scala|sbt))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(scala|sbt))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(scala|sbt))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -5883,10 +5883,10 @@
         },
         {
           "name": "markup.code.shell.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(shell|sh|bash|zsh|bashrc|bash_profile|bash_login|profile|bash_logout|.textmate_init|\\{\\.bash.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(shell|sh|bash|zsh|bashrc|bash_profile|bash_login|profile|bash_logout|.textmate_init|\\{\\.bash.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(shell|sh|bash|zsh|bashrc|bash_profile|bash_login|profile|bash_logout|.textmate_init|\\{\\.bash.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(shell|sh|bash|zsh|bashrc|bash_profile|bash_login|profile|bash_logout|.textmate_init|\\{\\.bash.+?\\}))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -5975,10 +5975,10 @@
         },
         {
           "name": "markup.code.ts.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(typescript|ts))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(typescript|ts))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(typescript|ts))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(typescript|ts))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -6067,10 +6067,10 @@
         },
         {
           "name": "markup.code.tsx.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(tsx))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(tsx))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(tsx))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(tsx))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -6159,10 +6159,10 @@
         },
         {
           "name": "markup.code.csharp.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(cs|csharp|c#))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(cs|csharp|c#))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(cs|csharp|c#))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(cs|csharp|c#))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -6251,10 +6251,10 @@
         },
         {
           "name": "markup.code.fsharp.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(fs|fsharp|f#))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(fs|fsharp|f#))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(fs|fsharp|f#))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(fs|fsharp|f#))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -6343,10 +6343,10 @@
         },
         {
           "name": "markup.code.dart.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(dart))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(dart))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(dart))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(dart))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -6435,10 +6435,10 @@
         },
         {
           "name": "markup.code.handlebars.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(handlebars|hbs))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(handlebars|hbs))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(handlebars|hbs))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(handlebars|hbs))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -6527,10 +6527,10 @@
         },
         {
           "name": "markup.code.markdown.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(markdown|md))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(markdown|md))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(markdown|md))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(markdown|md))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -6619,10 +6619,10 @@
         },
         {
           "name": "markup.code.log.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(log))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(log))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(log))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(log))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -6711,10 +6711,10 @@
         },
         {
           "name": "markup.code.erlang.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(erlang))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(erlang))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(erlang))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(erlang))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -6803,10 +6803,10 @@
         },
         {
           "name": "markup.code.elixir.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(elixir))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(elixir))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(elixir))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(elixir))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -6895,10 +6895,10 @@
         },
         {
           "name": "markup.code.latex.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(latex|tex))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(latex|tex))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(latex|tex))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(latex|tex))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -6987,10 +6987,10 @@
         },
         {
           "name": "markup.code.bibtex.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(bibtex))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(bibtex))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(bibtex))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(bibtex))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -7079,10 +7079,10 @@
         },
         {
           "name": "markup.code.twig.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(twig))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(twig))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(twig))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(twig))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -7171,10 +7171,10 @@
         },
         {
           "name": "markup.code.yang.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(yang))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(yang))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(yang))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(yang))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -7263,10 +7263,10 @@
         },
         {
           "name": "markup.code.abap.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(abap))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(abap))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(abap))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(abap))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -7355,10 +7355,10 @@
         },
         {
           "name": "markup.code.restructuredtext.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(restructuredtext|rst))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(restructuredtext|rst))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(restructuredtext|rst))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(restructuredtext|rst))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -7447,10 +7447,10 @@
         },
         {
           "name": "markup.code.haskell.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(haskell))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(haskell))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(haskell))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(haskell))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
@@ -7539,10 +7539,10 @@
         },
         {
           "name": "markup.code.kotlin.asciidoc",
-          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(kotlin|kt))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$)",
+          "begin": "(?=^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(kotlin|kt))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$)",
           "patterns": [
             {
-              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(kotlin|kt))(\\p{Blank}*,\\p{Blank}*[^\\]]*|\\])$",
+              "match": "^\\[([^,]+|)\\p{Blank}*,\\p{Blank}*(?i:(kotlin|kt))(\\p{Blank}*,\\p{Blank}*[^\\]]*)?\\]$",
               "captures": {
                 "0": {
                   "name": "markup.heading.asciidoc",
