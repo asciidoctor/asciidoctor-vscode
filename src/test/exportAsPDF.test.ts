@@ -46,8 +46,10 @@ Kismet R. Lee <kismet@asciidoctor.org>`)
   })
 
   describe('_resolvePdfOutputPath', () => {
-    const baseDir = path.join(path.sep, 'work', 'book')
-    const workspacePath = path.join(path.sep, 'work')
+    // Use path.resolve so the fixtures are fully-qualified (drive-anchored on
+    // Windows), matching how _resolvePdfOutputPath resolves relative directories.
+    const baseDir = path.resolve(path.sep, 'work', 'book')
+    const workspacePath = path.resolve(path.sep, 'work')
 
     test('writes next to the document when no output directory is set', () => {
       assert.strictEqual(
