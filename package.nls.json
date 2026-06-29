@@ -33,6 +33,8 @@
   "asciidoc.pdf.engine.asciidoctorPdf.desc": "asciidoctor-pdf CLI",
   "asciidoc.pdf.engine.desc": "Controls the PDF engine used to export as PDF.",
   "asciidoc.pdf.engine.wkhtmltopdf.desc": "wkhtmltopdf CLI",
+  "asciidoc.pdf.outputDirectory.desc": "Directory where the exported PDF is written. When empty, the PDF is saved next to the AsciiDoc document. A relative path is resolved against the workspace folder (or the document directory when there is no workspace); the `${workspaceFolder}` variable is also supported. The directory is created if it does not exist. The exported file keeps the document name with a `.pdf` extension.",
+  "asciidoc.pdf.askOutputLocation.desc": "Ask for the output location every time a PDF is exported. When disabled, the PDF is written directly to `#asciidoc.pdf.outputDirectory#` (or next to the document) without prompting, overwriting any existing file. Useful for a quick save-and-regenerate iteration cycle.",
   "asciidoc.pdf.title": "PDF",
   "asciidoc.pdf.wkhtmltopdfCommandArgs.desc": "List of arguments, for instance: `--orientation`, `Landscape`. Please note that the argument key and value should be added separately. In other words, adding `--orientation Landscape` is invalid! It should be`--orientation` (key) and `Landscape` (value) added as two entries. By default, it passes the following arguments: `--enable-local-file-access`, `--encoding`, `utf-8`, `--javascript-delay`, `1000`, `--footer-center` (if enabled) and `cover` (if it has a cover page).",
   "asciidoc.pdf.wkhtmltopdfCommandPath.desc": "External `wkhtmltopdf` command to execute. It accepts a full path to the binary, for instance: `/path/to/wkhtmltopdf`. If the value is empty, use either `wkhtmltopdf` on Linux/macOS or `wkhtmltopdf.exe` on Windows.",

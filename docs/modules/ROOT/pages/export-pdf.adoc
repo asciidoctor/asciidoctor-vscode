@@ -7,6 +7,48 @@ The extension provides a command to export the current AsciiDoc file as PDF.
 . Select *AsciiDoc: Export document as PDF*.
 . Choose the folder and filename for the generated PDF.
 
+[#output-location]
+== Output location
+
+By default, exporting a document opens a save dialog so you can choose the folder and filename.
+The suggested name is the document file name with a `.pdf` extension, in the same directory as the document.
+
+Two settings let you control this behaviour -- useful, for example, to repeatedly regenerate the same PDF in a tight iteration cycle.
+
+`asciidoc.pdf.askOutputLocation` (default `true`)::
+When set to `false`, the export skips the save dialog and writes the PDF directly, *overwriting any existing file without prompting*.
+
+`asciidoc.pdf.outputDirectory` (default empty)::
+Directory where the PDF is written.
+When empty, the PDF is saved next to the document.
+The exported file always keeps the document name with a `.pdf` extension.
+
+The output directory is resolved as follows:
+
+* an empty value writes the PDF next to the document (the historical behaviour);
+* an absolute path (for example `/home/me/exports` or `C:\exports`) is used as-is;
+* a relative path (for example `build/pdf`) is resolved against the workspace folder, or against the document's own directory when the file does not belong to any workspace;
+* the `${workspaceFolder}` variable is expanded to the workspace folder path, so `${workspaceFolder}/build/pdf` is equivalent to `build/pdf`.
+
+The directory is created automatically if it does not exist.
+
+[TIP]
+====
+For a quick save-and-regenerate workflow, set both options, for example in `.vscode/settings.json`:
+
+[source,json]
+----
+{
+  "asciidoc.pdf.askOutputLocation": false,
+  "asciidoc.pdf.outputDirectory": "${workspaceFolder}/build/pdf"
+}
+----
+
+Each export then overwrites `build/pdf/<document-name>.pdf` without any prompt.
+====
+
+Because these settings have a `resource` scope, they can be configured per workspace folder.
+
 == PDF engine
 
 By default, PDF export relies on `asciidoctor-pdf`.

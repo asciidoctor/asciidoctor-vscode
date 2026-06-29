@@ -94,6 +94,14 @@ You can edit them from the VS Code Settings UI or directly in `settings.json`.
 |`asciidoc.pdf.wkhtmltopdfCommandArgs`
 |List of arguments, for instance `--orientation`, `Landscape`. The key and value must be added as separate items. By default, the extension passes `--enable-local-file-access`, `--encoding`, `utf-8`, `--javascript-delay`, `1000`, `--footer-center` (if enabled), and `cover` (if a cover page is present).
 |`[]`
+
+|`asciidoc.pdf.outputDirectory`
+|Directory where the exported PDF is written. When empty, the PDF is saved next to the document. A relative path is resolved against the workspace folder (or the document directory when there is no workspace); `${workspaceFolder}` is supported. The directory is created if it does not exist. See xref:export-pdf.adoc#output-location[Output location].
+|`""`
+
+|`asciidoc.pdf.askOutputLocation`
+|Ask for the output location every time a PDF is exported. When disabled, the PDF is written directly to `asciidoc.pdf.outputDirectory` (or next to the document) without prompting, overwriting any existing file.
+|`true`
 |===
 
 [#extensions]
