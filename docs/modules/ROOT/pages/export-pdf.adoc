@@ -77,3 +77,37 @@ The extension runs `asciidoctor-pdf` with `--base-dir` set to the document's dir
 Keeping the configuration in the document header rather than in the extension settings makes it portable across machines and across documents that use different themes or folder structures.
 
 Alternatively, you can pass the same attributes through the `asciidoc.pdf.asciidoctorPdfCommandArgs` setting -- see xref:settings.adoc#pdf[the PDF settings].
+
+[#troubleshooting]
+== Troubleshooting
+
+[#pdf-not-found]
+=== `asciidoctor-pdf` is not found (or the export fails after a while)
+
+When exporting, you may see a notification that `asciidoctor-pdf` was not found on your `PATH`, or an error such as `command failed: asciidoctor-pdf` or the more cryptic `spawn /bin/sh ENOENT`.
+
+There are two distinct causes:
+
+`asciidoctor-pdf` is not installed::
+Install it by following the xref:pdf-converter::install.adoc[Asciidoctor PDF installation guide].
+If https://bundler.io/[Bundler] is available, the extension can also install a local copy for you on first use, in its global storage directory.
+
+`asciidoctor-pdf` is installed but not visible to VS Code::
+This is the most common cause on macOS, and it explains the puzzling behaviour where the export works right after a fresh start but fails "after some time", and only a *full* restart of VS Code (closing every window is not enough) fixes it.
++
+When VS Code is launched from the Dock, Finder or Spotlight -- rather than from a terminal with `code .` -- it does not inherit your shell `PATH`.
+Tools installed by a Ruby version manager or a package manager (Homebrew, rbenv, rvm, asdf, `gem install`, ...) live in directories that your shell adds to `PATH` through its profile files (`.zprofile`, `.zshrc`, `.bash_profile`, ...).
+Those directories are therefore missing from the environment VS Code passes to `asciidoctor-pdf`, so the executable cannot be found even though it runs fine in a terminal.
+
+[NOTE]
+====
+The misleading `spawn /bin/sh ENOENT` is a https://github.com/nodejs/node/issues/9644[long-standing Node.js quirk]: when a child process is spawned with a working directory that does not exist, the error is reported against the shell binary rather than the directory.
+In practice it means the extension tried to run the bundled fallback copy of `asciidoctor-pdf` from a directory that had not been created yet -- a side effect of `asciidoctor-pdf` not being found on the `PATH` in the first place.
+====
+
+The extension already appends the usual install locations (`/opt/homebrew/bin`, `/usr/local/bin`, rbenv/rvm/gem `bin` directories) to the `PATH` it uses to run `asciidoctor-pdf`.
+If your installation lives somewhere else, use one of the following remedies:
+
+* Set the full path to the executable in the `asciidoc.pdf.asciidoctorPdfCommandPath` setting (see xref:settings.adoc#pdf[the PDF settings]), for instance `/opt/homebrew/bin/asciidoctor-pdf`.
+You can find it by running `which asciidoctor-pdf` in a terminal.
+* Or launch VS Code from a terminal with `code .` so it inherits your shell `PATH`.
