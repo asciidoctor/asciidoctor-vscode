@@ -55,6 +55,17 @@ An editor SHOULD provide a "Find All References" action for:
 
 An editor MAY provide an inline "Peek Definition" panel for cross-references and includes that shows the referenced content without leaving the current document.
 
+== Hover / Quick Documentation
+
+An editor SHOULD provide hover (quick documentation) information when the cursor hovers over, or is positioned on, the following elements:
+
+* Attribute references (`{name}`) — show the resolved value and the location where the attribute is declared
+* Cross-references (`<<target>>`, `xref:target[]`) — show the title of the target section or the content of the target anchor
+* `include::` directives — show the resolved path of the included file
+* Image and media macros — show the resolved path, and where feasible a thumbnail or rendered preview of the target
+
+An editor MAY render a small HTML preview of the referenced element so that authors can inspect content without navigating away from the current document.
+
 == Document Links
 
 An editor MUST detect and make clickable the following link types within the editor:

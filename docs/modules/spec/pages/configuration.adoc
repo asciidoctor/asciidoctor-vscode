@@ -49,6 +49,18 @@ An editor implementing custom extension support MUST load extensions from the `.
 * **Ruby extensions** (`.rb` files) loaded via the standard Asciidoctor extension API
 * **AsciidoctorJ extensions** (JAR files with a Java service loader entry) where a JVM runtime is available
 
+=== Host-Editor Extension Contributions
+
+An editor MAY allow other plugins or extensions installed in the host editor to contribute Asciidoctor extensions programmatically (for example, a companion plugin that bundles a domain-specific extension), in addition to extensions discovered on disk.
+
+An editor implementing host-editor extension contributions SHOULD let a contributor scope each extension to the relevant processing modes:
+
+* `preview` — rendering the document for the live preview
+* `export` — converting the document for an export command (HTML, PDF, DocBook, …)
+* `load` — parsing the document for analysis (diagnostics, navigation, completion)
+
+An editor SHOULD isolate contribution failures so that a single failing contributor does not prevent the document from rendering, and SHOULD report the failure to the user.
+
 === Trust and Security
 
 An editor MUST NOT load extensions automatically without explicit user consent, as extensions run with the same privileges as the IDE process.
