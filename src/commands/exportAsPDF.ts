@@ -275,6 +275,15 @@ ${text}`
         'asciidoctor-pdf-install',
       )
       try {
+        // The install directory only exists once a local install has succeeded.
+        // Probing `bundle exec asciidoctor-pdf` with a non-existent `cwd` would
+        // make `spawn` fail with a misleading `spawn /bin/sh ENOENT` instead of a
+        // clear "not installed" signal, so bail out explicitly first (#973).
+        if (!fs.existsSync(installDirectory)) {
+          throw new Error(
+            `Asciidoctor PDF is not installed locally (missing '${installDirectory}')`,
+          )
+        }
         await commandExists('bundle exec asciidoctor-pdf', {
           shell: true,
           cwd: installDirectory,
@@ -414,9 +423,28 @@ function commandExists(
       }
     })
     childProcess.on('error', function (err) {
-      reject(err)
+      reject(decorateSpawnError(err, command, options))
     })
   })
+}
+
+/**
+ * Turn the opaque `spawn /bin/sh ENOENT` error that Node reports when the spawn
+ * `cwd` is missing into an actionable message. With `shell: true`, an invalid
+ * working directory is attributed to the shell binary rather than the directory
+ * itself, which is highly misleading (#973).
+ */
+export function decorateSpawnError(
+  err: NodeJS.ErrnoException,
+  command: string,
+  options: SpawnOptions,
+): Error {
+  if (err?.code === 'ENOENT' && options.cwd && !fs.existsSync(options.cwd)) {
+    return new Error(
+      `Unable to run '${command}': working directory does not exist ('${options.cwd}')`,
+    )
+  }
+  return err
 }
 
 function execute(
@@ -446,7 +474,7 @@ function execute(
       }
     })
     childProcess.on('error', function (err) {
-      reject(err)
+      reject(decorateSpawnError(err, command, options))
     })
     if (input !== undefined) {
       childProcess.stdin.write(input)

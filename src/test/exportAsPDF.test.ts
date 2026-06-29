@@ -8,6 +8,7 @@ import {
   _generateCoverHtmlContent,
   _resolvePdfOutputPath,
   _resolvePdfThemesArgs,
+  decorateSpawnError,
 } from '../commands/exportAsPDF.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -137,6 +138,43 @@ Kismet R. Lee <kismet@asciidoctor.org>`)
         _resolvePdfThemesArgs(undefined, undefined, baseDir),
         [],
       )
+    })
+  })
+
+  describe('decorateSpawnError', () => {
+    test('rewrites a spawn ENOENT caused by a missing working directory (#973)', () => {
+      const enoent: NodeJS.ErrnoException = new Error('spawn /bin/sh ENOENT')
+      enoent.code = 'ENOENT'
+      const decorated = decorateSpawnError(
+        enoent,
+        'bundle exec asciidoctor-pdf',
+        {
+          shell: true,
+          cwd: '/this/path/does/not/exist',
+        },
+      )
+      assert.notStrictEqual(decorated, enoent)
+      assert.match(decorated.message, /working directory does not exist/)
+      assert.match(decorated.message, /\/this\/path\/does\/not\/exist/)
+    })
+
+    test('leaves the error untouched when the working directory exists', () => {
+      const enoent: NodeJS.ErrnoException = new Error('spawn /bin/sh ENOENT')
+      enoent.code = 'ENOENT'
+      const decorated = decorateSpawnError(enoent, 'asciidoctor-pdf', {
+        shell: true,
+        cwd: __dirname,
+      })
+      assert.strictEqual(decorated, enoent)
+    })
+
+    test('leaves non-ENOENT errors untouched', () => {
+      const eacces: NodeJS.ErrnoException = new Error('boom')
+      eacces.code = 'EACCES'
+      const decorated = decorateSpawnError(eacces, 'asciidoctor-pdf', {
+        cwd: '/this/path/does/not/exist',
+      })
+      assert.strictEqual(decorated, eacces)
     })
   })
 })
