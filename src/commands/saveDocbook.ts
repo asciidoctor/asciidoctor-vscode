@@ -4,21 +4,30 @@ import * as path from 'node:path'
 import * as vscode from 'vscode'
 import { Command } from '../core/commandManager.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
+import { AsciidocPreviewManager } from '../features/preview/previewManager.js'
+import {
+  resolveAsciidocDocument,
+  WebviewContext,
+} from './resolveAsciidocDocument.js'
 
 export class SaveDocbook implements Command {
   public readonly id = 'asciidoc.saveDocbook'
 
-  constructor(private readonly engine: AsciidocEngine) {
+  constructor(
+    private readonly engine: AsciidocEngine,
+    private readonly previewManager: AsciidocPreviewManager,
+  ) {
     this.engine = engine
   }
 
-  public async execute() {
-    const editor = vscode.window.activeTextEditor
-    if (editor === null || editor === undefined) {
+  public async execute(context?: WebviewContext) {
+    const textDocument = await resolveAsciidocDocument(
+      this.previewManager,
+      context,
+    )
+    if (!textDocument) {
       return
     }
-
-    const textDocument = editor.document
 
     const docPath = path.parse(path.resolve(textDocument.fileName))
     const fsPath = textDocument.isUntitled

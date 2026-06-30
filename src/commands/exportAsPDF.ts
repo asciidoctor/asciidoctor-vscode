@@ -11,6 +11,11 @@ import { getWorkspaceFolder } from '../core/workspace.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
 import { AsciidocTextDocument } from '../features/asciidoctor/asciidocTextDocument.js'
 import { getAsciidoctorConfigContent } from '../features/asciidoctor/asciidoctorConfig.js'
+import { AsciidocPreviewManager } from '../features/preview/previewManager.js'
+import {
+  resolveAsciidocDocument,
+  WebviewContext,
+} from './resolveAsciidocDocument.js'
 
 export class ExportAsPDF implements Command {
   public readonly id = 'asciidoc.exportAsPDF'
@@ -22,15 +27,14 @@ export class ExportAsPDF implements Command {
   constructor(
     private readonly engine: AsciidocEngine,
     private readonly context: vscode.ExtensionContext,
+    private readonly previewManager: AsciidocPreviewManager,
   ) {}
 
-  public async execute() {
-    const editor = vscode.window.activeTextEditor
-    if (editor === null || editor === undefined) {
+  public async execute(context?: WebviewContext) {
+    const doc = await resolveAsciidocDocument(this.previewManager, context)
+    if (!doc) {
       return
     }
-
-    const doc = editor.document
     const asciidocTextDocument = AsciidocTextDocument.fromTextDocument(doc)
     const baseDirectory = asciidocTextDocument.baseDir
 

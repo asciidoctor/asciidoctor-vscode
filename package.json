@@ -157,6 +157,23 @@
       }
     ],
     "menus": {
+      "webview/context": [
+        {
+          "command": "asciidoc.saveHTML",
+          "when": "webviewId == 'asciidoc.preview' && !isWeb",
+          "group": "1_asciidoc_export@1"
+        },
+        {
+          "command": "asciidoc.exportAsPDF",
+          "when": "webviewId == 'asciidoc.preview' && !isWeb",
+          "group": "1_asciidoc_export@2"
+        },
+        {
+          "command": "asciidoc.saveDocbook",
+          "when": "webviewId == 'asciidoc.preview' && !isWeb",
+          "group": "1_asciidoc_export@3"
+        }
+      ],
       "editor/title": [
         {
           "command": "asciidoc.showPreviewToSide",
