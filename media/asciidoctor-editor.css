@@ -662,12 +662,16 @@ h6 strong {
   word-wrap: break-word
 }
 
-:not(pre)>code.nobreak {
+:not(pre).nobreak {
   word-wrap: normal
 }
 
-:not(pre)>code.nowrap {
+:not(pre).nowrap {
   white-space: nowrap
+}
+
+:not(pre).pre-wrap {
+  white-space: pre-wrap
 }
 
 pre {
