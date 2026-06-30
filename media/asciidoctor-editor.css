@@ -1613,7 +1613,7 @@ pre.pygments .lineno::before {
 
 table.tableblock {
   max-width: 100%;
-  border-collapse: separate
+  border-collapse: collapse
 }
 
 p.tableblock:last-child {
@@ -1631,38 +1631,21 @@ td.tableblock {
   border: 0 solid;
 }
 
-table.grid-all>thead>tr>.tableblock,
-table.grid-all>tbody>tr>.tableblock {
-  border-width: 0 1px 1px 0
-}
-
-table.grid-all>tfoot>tr>.tableblock {
-  border-width: 1px 1px 0 0
+/* Modern Asciidoctor border model: a full border on every grid cell, merged by
+ * `border-collapse: collapse`. The legacy model (right/bottom borders only, with
+ * `:last-child` rules stripping the outer edges) left gaps around merged cells
+ * (colspan/rowspan), because a spanned cell can be the last child of its row
+ * without being the visually last cell. See asciidoctor/asciidoctor-vscode#609. */
+table.grid-all>*>tr>.tableblock {
+  border-width: 1px
 }
 
 table.grid-cols>*>tr>.tableblock {
-  border-width: 0 1px 0 0
+  border-width: 0 1px
 }
 
-table.grid-rows>thead>tr>.tableblock,
-table.grid-rows>tbody>tr>.tableblock {
-  border-width: 0 0 1px
-}
-
-table.grid-rows>tfoot>tr>.tableblock {
-  border-width: 1px 0 0
-}
-
-table.grid-all>*>tr>.tableblock:last-child,
-table.grid-cols>*>tr>.tableblock:last-child {
-  border-right-width: 0
-}
-
-table.grid-all>tbody>tr:last-child>.tableblock,
-table.grid-all>thead:last-child>tr>.tableblock,
-table.grid-rows>tbody>tr:last-child>.tableblock,
-table.grid-rows>thead:last-child>tr>.tableblock {
-  border-bottom-width: 0
+table.grid-rows>*>tr>.tableblock {
+  border-width: 1px 0
 }
 
 table.frame-all {
