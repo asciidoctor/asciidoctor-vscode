@@ -345,6 +345,93 @@ kbd {
   border-radius: 4px;
 }
 
+/* ----------------------------------------------------------------------
+ * Built-in text-span roles (colors & color backgrounds)
+ *
+ * `asciidoctor-editor.css` ships these roles with the colors from the
+ * default Asciidoctor stylesheet, which are tuned for a white page. Against
+ * a dark editor theme the dark foreground colors (black, navy, blue, …) are
+ * unreadable, and the light color backgrounds keep the theme's (light)
+ * foreground, leaving text invisible. Re-derive them so they stay legible on
+ * any theme: foreground colors keep their semantic hue but switch to a
+ * brighter shade under a dark color-scheme (`light-dark()`), and the color
+ * backgrounds force a fixed, contrasting text color. The sizing/decoration
+ * roles (`.big`, `.small`, `.underline`, `.overline`, `.line-through`) are
+ * theme-independent and inherited as-is from `asciidoctor-editor.css`.
+ * -------------------------------------------------------------------- */
+
+.aqua {
+  color: light-dark(#00bfbf, #2ad4d4);
+}
+.black {
+  color: var(--adoc-fg);
+}
+.blue {
+  color: light-dark(#0000bf, #6ea8ff);
+}
+.fuchsia {
+  color: light-dark(#bf00bf, #e673e6);
+}
+.gray {
+  color: light-dark(#606060, #a6a6a6);
+}
+.green {
+  color: light-dark(#006000, #3aae3a);
+}
+.lime {
+  color: light-dark(#00bf00, #4fd44f);
+}
+.maroon {
+  color: light-dark(#600000, #d97a7a);
+}
+.navy {
+  color: light-dark(#000060, #8a97ff);
+}
+.olive {
+  color: light-dark(#606000, #b3b300);
+}
+.purple {
+  color: light-dark(#600060, #cf73cf);
+}
+.red {
+  color: light-dark(#bf0000, #ff6b6b);
+}
+.silver {
+  color: light-dark(#909090, #c2c2c2);
+}
+.teal {
+  color: light-dark(#006060, #3ab3b3);
+}
+.white {
+  color: light-dark(#bfbfbf, #e6e6e6);
+}
+.yellow {
+  color: light-dark(#bfbf00, #d4d400);
+}
+
+/* Color backgrounds stay the fixed colors from `asciidoctor-editor.css`;
+   only the text color is pinned so it reads on that (theme-independent) fill. */
+.aqua-background,
+.lime-background,
+.silver-background,
+.white-background,
+.yellow-background {
+  color: #000;
+}
+.black-background,
+.blue-background,
+.fuchsia-background,
+.gray-background,
+.green-background,
+.maroon-background,
+.navy-background,
+.olive-background,
+.purple-background,
+.red-background,
+.teal-background {
+  color: #fff;
+}
+
 /* Respect users who prefer reduced motion. */
 @media (prefers-reduced-motion: reduce) {
   * {
