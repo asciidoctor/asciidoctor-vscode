@@ -251,6 +251,20 @@ export class AsciidoctorWebViewConverter {
       const footerDocinfo = await node.getDocinfo('footer')
       const docinfo = await node.getDocinfo()
       const content = await node.getContent()
+      // Context consumed by the `webview/context` menu contribution (see
+      // package.json) and by the export commands to target the previewed
+      // document. `preventDefaultContextMenuItems` suppresses VS Code's native
+      // Cut/Copy/Paste entries: Cut and Paste are meaningless in a read-only
+      // preview, and copying is still available through Ctrl/Cmd+C. VS Code
+      // offers no way to keep only Copy (microsoft/vscode#165679, closed as
+      // not planned), so the whole native menu is dropped in favour of our
+      // export-only menu.
+      const vscodeContext = escapeAttribute(
+        JSON.stringify({
+          webviewSection: 'asciidoc-preview',
+          preventDefaultContextMenuItems: true,
+        }),
+      )
       return `<!DOCTYPE html>
      <html style="${escapeAttribute(this.getSettingsOverrideStyles(this.config))}">
       <head>
@@ -266,7 +280,7 @@ export class AsciidoctorWebViewConverter {
         ${docinfo}
         <base href="${webviewResourceProvider.asWebviewUri(this.textDocument.uri)}">
       </head>
-      <body${node.getId() ? ` id="${node.getId()}"` : ''} class="${this.getBodyCssClasses(node)}">
+      <body${node.getId() ? ` id="${node.getId()}"` : ''} class="${this.getBodyCssClasses(node)}" data-vscode-context="${vscodeContext}">
         <div id="preview-root">
         ${headerDocinfo}
         ${await this.getDocumentHeader(node)}
