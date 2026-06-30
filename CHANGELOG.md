@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Features
+
+* Add keyboard shortcuts to toggle inline formatting in the editor (#975): <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>B</kbd> for bold (`*…*`), <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>I</kbd> for italic (`_…_`) and <kbd>Ctrl</kbd>/<kbd>Cmd</kbd>+<kbd>M</kbd> for monospace (`` `…` ``), plus the matching "AsciiDoc: Toggle Bold/Italic/Monospace" commands. Each shortcut wraps the selection, unwraps it again when it is already wrapped (toggle off), wraps the word under the cursor when nothing is selected, or inserts an empty marker pair with the cursor between the markers. AsciiDoc's two formatting forms are honoured: the constrained single marker (`*bold*`) is used at word boundaries and the unconstrained doubled marker (`**bold**`) when the selection is glued to a word (e.g. mid-word `fo**ob**ar`); toggling off recognises either form, whether the marks are inside the selection or immediately around it, and leading/trailing whitespace is kept outside the marks. The bindings only apply while editing an AsciiDoc document
+
 ### Bug fixes
 
 * Stop non-actionable Asciidoctor log messages from cluttering the Problems panel: `INFO` and `DEBUG` records (such as "possible invalid reference") were surfaced as `Information` diagnostics — log output, not document problems — and a `FATAL` record was mislabelled `Information` instead of an error. Only `WARN` (→ Warning) and `ERROR`/`FATAL` (→ Error) now produce diagnostics. The full Asciidoctor log, including the filtered `INFO`/`DEBUG` messages, is still mirrored to the "Asciidoctor" output channel (with its source location) for troubleshooting, regardless of the `asciidoc.debug.enableErrorDiagnostics` setting — visible through "Developer: Show Logs…" and filtered by the channel's log level

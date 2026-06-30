@@ -139,6 +139,21 @@
         "command": "asciidoc.disableAntoraSupport",
         "title": "%asciidoc.disableAntoraSupport.title%",
         "category": "AsciiDoc"
+      },
+      {
+        "command": "asciidoc.toggleBold",
+        "title": "%asciidoc.toggleBold.title%",
+        "category": "AsciiDoc"
+      },
+      {
+        "command": "asciidoc.toggleItalic",
+        "title": "%asciidoc.toggleItalic.title%",
+        "category": "AsciiDoc"
+      },
+      {
+        "command": "asciidoc.toggleMonospace",
+        "title": "%asciidoc.toggleMonospace.title%",
+        "category": "AsciiDoc"
       }
     ],
     "menus": {
@@ -272,6 +287,24 @@
         "key": "ctrl+alt+s",
         "mac": "cmd+alt+s",
         "when": "editorLangId == asciidoc"
+      },
+      {
+        "command": "asciidoc.toggleBold",
+        "key": "ctrl+b",
+        "mac": "cmd+b",
+        "when": "editorTextFocus && editorLangId == asciidoc"
+      },
+      {
+        "command": "asciidoc.toggleItalic",
+        "key": "ctrl+i",
+        "mac": "cmd+i",
+        "when": "editorTextFocus && editorLangId == asciidoc"
+      },
+      {
+        "command": "asciidoc.toggleMonospace",
+        "key": "ctrl+m",
+        "mac": "cmd+m",
+        "when": "editorTextFocus && editorLangId == asciidoc"
       }
     ],
     "configuration": [
