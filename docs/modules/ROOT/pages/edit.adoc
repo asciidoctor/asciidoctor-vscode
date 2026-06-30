@@ -9,6 +9,9 @@ AsciiDoc syntax is highlighted as you type, making documents easier to read and 
 Document outline and symbols::
 The structure of your document (sections, blocks) is exposed through the VS Code outline and the _Go to Symbol_ command (kbd:[Ctrl+Shift+O], Mac: kbd:[Cmd+Shift+O]).
 
+Format text::
+Toggle bold, italic and monospace with keyboard shortcuts. See xref:text-formatting.adoc[].
+
 Snippets::
 Insert common AsciiDoc constructs in a few keystrokes. See xref:snippets.adoc[].
 

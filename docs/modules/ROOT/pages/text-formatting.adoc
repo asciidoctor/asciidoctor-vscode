@@ -1,0 +1,57 @@
+= Format text
+:description: Toggle bold, italic and monospace formatting with keyboard shortcuts.
+
+The extension provides keyboard shortcuts to apply inline formatting to the current selection, just like a word processor.
+
+[cols="1,1,1,2"]
+|===
+|Action |Windows/Linux |Mac |Result
+
+|Toggle bold
+|kbd:[Ctrl+B]
+|kbd:[Cmd+B]
+|`+*bold*+`
+
+|Toggle italic
+|kbd:[Ctrl+I]
+|kbd:[Cmd+I]
+|`+_italic_+`
+
+|Toggle monospace
+|kbd:[Ctrl+M]
+|kbd:[Cmd+M]
+|`+`monospace`+`
+|===
+
+The matching commands -- *AsciiDoc: Toggle Bold*, *AsciiDoc: Toggle Italic* and *AsciiDoc: Toggle Monospace* -- are also available from the command palette (kbd:[Ctrl+Shift+P], Mac: kbd:[Cmd+Shift+P]).
+
+== How it works
+
+The shortcut adapts to what is under the cursor:
+
+Text is selected::
+The selection is wrapped with the marker. Pressing the same shortcut again removes it (toggle off).
+
+Nothing is selected::
+The word under the cursor is wrapped. If the cursor is not on a word, an empty marker pair is inserted and the cursor is placed between the markers so you can start typing.
+
+Any leading or trailing whitespace is kept outside the markers, since AsciiDoc does not allow a formatting mark to sit directly against a space.
+
+== Constrained and unconstrained forms
+
+AsciiDoc has two ways to write inline formatting, and the extension picks the right one automatically:
+
+Constrained (single marker)::
+Used when the formatting sits on a word boundary, for example `+*bold*+`.
+
+Unconstrained (doubled marker)::
+Used when the marks would touch a word character -- typically in the middle of a word -- for example `+fo**ob**ar+`.
+
+When you remove formatting, both forms are recognised, whether the marks are inside your selection (you selected `+**bold**+`) or immediately around it (you selected `+bold+` but it is written `+**bold**+`).
+
+[TIP]
+====
+kbd:[Ctrl+M] normally toggles _Tab moves focus_ in VS Code. The AsciiDoc binding only overrides it while an AsciiDoc editor has focus, so the shortcut keeps working everywhere else. You can remap any of these shortcuts from menu:File[Preferences > Keyboard Shortcuts] if you prefer.
+====
+
+These shortcuts are available in both VS Code desktop and xref:install.adoc[VS Code for the Web]. See the xref:cheat-sheet.adoc[] for the full list of actions.

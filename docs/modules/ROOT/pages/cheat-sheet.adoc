@@ -1,0 +1,135 @@
+= Cheat sheet
+:description: All AsciiDoc extension commands and keyboard shortcuts at a glance.
+
+This page lists every command and keyboard shortcut provided by the extension.
+
+All commands are available from the command palette (kbd:[Ctrl+Shift+P] or kbd:[F1], Mac: kbd:[Cmd+Shift+P]) by typing their name.
+
+The *Web* column tells you whether an action is available in {url-vscode-web}[VS Code for the Web]: ✔️ supported, ⛔ desktop only.
+
+== Editing
+
+[cols="2,1,1,^1",options="header"]
+|===
+|Command |Windows/Linux |Mac |Web
+
+|xref:text-formatting.adoc[AsciiDoc: Toggle Bold]
+|kbd:[Ctrl+B]
+|kbd:[Cmd+B]
+|✔️
+
+|xref:text-formatting.adoc[AsciiDoc: Toggle Italic]
+|kbd:[Ctrl+I]
+|kbd:[Cmd+I]
+|✔️
+
+|xref:text-formatting.adoc[AsciiDoc: Toggle Monospace]
+|kbd:[Ctrl+M]
+|kbd:[Cmd+M]
+|✔️
+
+|xref:paste-image.adoc[AsciiDoc: Paste Image]
+|kbd:[Ctrl+Alt+V]
+|kbd:[Option+Cmd+V]
+|⛔
+|===
+
+[NOTE]
+====
+On VS Code for the Web you can still paste an image with the standard kbd:[Ctrl+V] (Mac: kbd:[Cmd+V]) inside the editor. See xref:paste-image.adoc[].
+====
+
+== Preview
+
+[cols="2,1,1,^1",options="header"]
+|===
+|Command |Windows/Linux |Mac |Web
+
+|AsciiDoc: Open Preview
+|kbd:[Ctrl+Shift+V]
+|kbd:[Cmd+Shift+V]
+|✔️
+
+|AsciiDoc: Open Preview to the Side
+|kbd:[Ctrl+K V]
+|kbd:[Cmd+K V]
+|✔️
+
+|AsciiDoc: Open Locked Preview to the Side
+|--
+|--
+|✔️
+
+|AsciiDoc: Show Source
+|--
+|--
+|✔️
+
+|AsciiDoc: Refresh Preview
+|--
+|--
+|✔️
+
+|AsciiDoc: Toggle Preview Locking
+|--
+|--
+|✔️
+
+|AsciiDoc: Manage Preview Security Settings
+|--
+|--
+|✔️
+
+|AsciiDoc: Manage Asciidoctor.js Extensions Trust Mode
+|--
+|--
+|✔️
+|===
+
+See xref:preview.adoc[] for details.
+
+== Export and save
+
+[cols="2,1,1,^1",options="header"]
+|===
+|Command |Windows/Linux |Mac |Web
+
+|xref:export-pdf.adoc[AsciiDoc: Export Document as PDF]
+|--
+|--
+|⛔
+
+|xref:save-html.adoc[AsciiDoc: Save HTML Document]
+|kbd:[Ctrl+Alt+S]
+|kbd:[Option+Cmd+S]
+|⛔
+
+|xref:save-docbook.adoc[AsciiDoc: Save to DocBook]
+|--
+|--
+|⛔
+|===
+
+== Antora
+
+[cols="2,1,1,^1",options="header"]
+|===
+|Command |Windows/Linux |Mac |Web
+
+|AsciiDoc: Enable Antora support in this workspace
+|--
+|--
+|✔️
+
+|AsciiDoc: Disable Antora support in this workspace
+|--
+|--
+|✔️
+|===
+
+See xref:antora.adoc[] for details.
+
+[TIP]
+====
+Any shortcut can be changed from menu:File[Preferences > Keyboard Shortcuts] (Mac: menu:Code[Settings > Keyboard Shortcuts]). Search for the command name to rebind it.
+====
