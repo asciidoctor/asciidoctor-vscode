@@ -14,4 +14,9 @@ export {
 } from './showPreview.js'
 export { ShowPreviewSecuritySelectorCommand } from './showPreviewSecuritySelector.js'
 export { ShowSourceCommand } from './showSource.js'
+export {
+  ToggleBoldCommand,
+  ToggleItalicCommand,
+  ToggleMonospaceCommand,
+} from './toggleFormatting.js'
 export { ToggleLockCommand } from './toggleLock.js'
