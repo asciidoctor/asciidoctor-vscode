@@ -4,6 +4,7 @@
 * xref:file-associations.adoc[]
 * Features
 ** xref:edit.adoc[]
+** xref:text-formatting.adoc[]
 ** xref:preview.adoc[]
 ** xref:export-pdf.adoc[]
 ** xref:save-html.adoc[]
@@ -15,6 +16,7 @@
 ** xref:asciidoctorconfig.adoc[]
 ** xref:antora.adoc[]
 ** xref:vscode-environment.adoc[]
+** xref:cheat-sheet.adoc[]
 * xref:settings.adoc[]
 * Extending
 ** xref:contribute-asciidoctorjs-extensions.adoc[]

@@ -24,6 +24,7 @@ The table below summarizes what each environment supports.
 |Feature |Desktop |Web
 
 |Document outline and symbols |✔️ |✔️
+|xref:text-formatting.adoc[Bold/italic/monospace shortcuts] |✔️ |✔️
 |`include::` directives |✔️ |✔️ (relative paths within the workspace)
 |Equations (via MathJax) |✔️ |✔️ (requires security to be disabled)
 |xref:export-pdf.adoc[Export as PDF] |✔️ |⛔
