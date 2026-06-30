@@ -227,7 +227,17 @@ td.tableblock {
 
 table.tableblock {
   border-radius: var(--adoc-radius);
+  /* Clip the cells to the rounded corners. With `border-collapse: collapse`
+   * this also clips the table's collapsed outer border, so the frame is drawn
+   * as a ring below instead. */
   overflow: hidden;
+}
+
+/* Draw the table frame as a 1px ring that hugs the rounded rect: `box-shadow`
+ * follows `border-radius` and, unlike the collapsed cell borders, is not clipped
+ * by `overflow: hidden`. Skipped for borderless tables (`frame=none`). */
+table.tableblock:not(.frame-none) {
+  box-shadow: 0 0 0 1px var(--adoc-border);
 }
 
 table.tableblock > thead > tr > th,

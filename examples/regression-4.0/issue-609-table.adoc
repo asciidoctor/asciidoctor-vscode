@@ -1,0 +1,31 @@
+= Table regression: borders around merged cells (#609)
+
+// ============================================================================
+// HOW TO USE
+// ----------------------------------------------------------------------------
+// Open this file in the PREVIEW (this is about the table CSS, not the editor).
+// The table below mixes a row span (`.2+|`) and a column span (`3+|`), which
+// used to lose a border segment with the editor stylesheet.
+//
+// Check it BOTH ways via "asciidoc.preview.useEditorStyle":
+//   - ON  (default) -> editor theme: borders follow the VS Code color theme.
+//   - OFF            -> default Asciidoctor stylesheet (always rendered fine).
+//
+// EXPECTED, in both modes: every cell — including the "Rows 1:2, Col5" rowspan
+// and the "Row 2, Col 2:4" colspan — is fully boxed, with a complete frame
+// around the whole table. A missing segment (e.g. between "Row 2, Col 2:4" and
+// "Rows 1:2, Col5", or anywhere along the outer edge) is the regression.
+// ============================================================================
+
+[cols="1,1,1,1,1"]
+[caption="Table {counter:table-number}: This is a Table", reftext="{table-caption} {table-number}", title="", id="some_table"]
+|===
+|*Column1*|*Column2*|*Column3*|*Column4*|*Column5*
+.2+| Rows 1:2, Col 1
+| Row 1, Col 2
+| Row 1, Col 3
+| Row1, Col 4
+.2+| Rows 1:2, Col5
+// No border generated
+3+| Row 2, Col 2:4
+|===
