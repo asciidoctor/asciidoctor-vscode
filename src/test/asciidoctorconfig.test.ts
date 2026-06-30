@@ -4,7 +4,10 @@ import * as vscode from 'vscode'
 import { WebviewResourceProvider } from '../core/resources.js'
 import { getDefaultWorkspaceFolderUri } from '../core/workspace.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
-import { AsciidoctorConfig } from '../features/asciidoctor/asciidoctorConfig.js'
+import {
+  AsciidoctorConfig,
+  getAsciidoctorConfigContent,
+} from '../features/asciidoctor/asciidoctorConfig.js'
 import { AsciidoctorExtensions } from '../features/asciidoctor/asciidoctorExtensions.js'
 import {
   AsciidocContributionProvider,
@@ -272,6 +275,56 @@ describe('asciidoc.Asciidoctorconfig', () => {
         ),
         true,
         '{root-and-level1} should be substituted by the value defined at level 1',
+      )
+    })
+  })
+
+  describe('Pick up .asciidoctorconfig from other workspace folder roots (multi-root workspace)', () => {
+    const createdFiles: vscode.Uri[] = []
+
+    after(async () => {
+      await removeFiles(createdFiles)
+    })
+
+    test('config at another workspace folder root is applied with the lowest precedence', async () => {
+      const workspaceUri = getDefaultWorkspaceFolderUri()
+      // Track the top-level directories so they are cleaned up recursively.
+      createdFiles.push(vscode.Uri.joinPath(workspaceUri, 'shared-config-root'))
+      createdFiles.push(vscode.Uri.joinPath(workspaceUri, 'docs-root'))
+
+      // A workspace folder dedicated to shared configuration.
+      await createFile(
+        `:shared-attribute: from shared root\n:overridden: from shared root`,
+        'shared-config-root',
+        '.asciidoctorconfig',
+      )
+      // The document lives in another folder with its own, more specific config.
+      await createFile(
+        `:overridden: from document folder`,
+        'docs-root',
+        '.asciidoctorconfig',
+      )
+      const documentUri = await createFile('= Title', 'docs-root', 'doc.adoc')
+
+      // Simulate a multi-root workspace: the document's own folder plus a
+      // dedicated configuration folder declared as another workspace folder.
+      const content = await getAsciidoctorConfigContent(documentUri, [
+        workspaceUri,
+        vscode.Uri.joinPath(workspaceUri, 'shared-config-root'),
+      ])
+
+      assert.ok(content !== undefined, 'config content should be resolved')
+      assert.ok(
+        content.includes(':shared-attribute: from shared root'),
+        'an attribute from another workspace folder root should be picked up',
+      )
+      // The shared root is the most general config (applied first); the
+      // document-folder config is applied last and therefore wins.
+      const sharedIndex = content.indexOf('from shared root')
+      const documentIndex = content.indexOf('from document folder')
+      assert.ok(
+        sharedIndex >= 0 && documentIndex > sharedIndex,
+        'the document-folder config must be applied after (and override) the shared root config',
       )
     })
   })

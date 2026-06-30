@@ -20,6 +20,8 @@ An editor MUST look for `.asciidoctorconfig` files in the following locations an
 
 When multiple `.asciidoctorconfig` files are found, an editor MUST apply them in order from the outermost (workspace root) to the innermost (document's directory), with inner files taking precedence over outer files.
 
+In a multi-root workspace, an editor SHOULD also look for an `.asciidoctorconfig` file at the root of the other workspace folders and apply them as the most general configuration -- before the document's own workspace folder chain, so that files closer to the document keep precedence.
+
 === Content
 
 `.asciidoctorconfig` files MUST be processed as AsciiDoc header fragments.

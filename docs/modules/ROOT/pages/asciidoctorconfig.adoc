@@ -1,8 +1,100 @@
 = Asciidoctor configuration file
-:description: Provide a shared set of attributes to the preview with an .asciidoctorconfig file.
+:description: Provide a shared set of attributes to the preview and the export commands with an .asciidoctorconfig file.
 
 To provide a common set of attributes when rendering the preview, the extension reads an `.asciidoctorconfig` or `.asciidoctorconfig.adoc` configuration file.
 
 This is useful to optimize the preview when a project contains a document split across multiple include files: define the attributes those includes rely on once, and the preview resolves them consistently.
 
 This feature is inspired by the implementation in the https://intellij-asciidoc-plugin.ahus1.de/docs/users-guide/features/advanced/asciidoctorconfig-file.html[IntelliJ AsciiDoc plugin], also reused in the https://github.com/de-jcup/eclipse-asciidoctor-editor/wiki/Asciidoctor-configfiles[Eclipse AsciiDoc plugin].
+Keeping the same convention means a project's configuration is portable across editors.
+
+== Create a configuration file
+
+Create a file named `.asciidoctorconfig` (or `.asciidoctorconfig.adoc`) and treat it as the *header* of every document it applies to.
+It typically contains document attribute declarations, but any header content works -- `include::` directives and preprocessor conditionals included.
+
+[source,asciidoc]
+----
+:source-highlighter: highlight.js
+:icons: font
+:experimental:
+:product-name: ACME Rocket
+----
+
+A document rendered next to this file can now use `{product-name}` and gets the highlighter, admonition icons and UI macros without repeating those attributes in each file.
+
+== Where the extension looks for it
+
+The extension applies *every* configuration file found on the way from the workspace folder down to the document, from the most general to the most specific:
+
+. the root of the workspace folder that contains the document;
+. every intermediate directory between that root and the document;
+. the directory that contains the document itself.
+
+When the same attribute is defined in more than one file, the file *closest to the document wins*.
+This lets a configuration file at the workspace root set project-wide defaults that a configuration file deeper in the tree can override for a sub-folder.
+
+If a document does not belong to any workspace folder (a loose file opened on its own), the extension walks up the file system from the document's own directory instead.
+
+[NOTE]
+====
+Both `.asciidoctorconfig` and `.asciidoctorconfig.adoc` are read.
+When both exist in the same directory, `.asciidoctorconfig.adoc` is applied after -- and therefore takes precedence over -- `.asciidoctorconfig`.
+====
+
+== Multi-root workspaces
+
+In a https://code.visualstudio.com/docs/editor/multi-root-workspaces[multi-root workspace], the extension also reads an `.asciidoctorconfig` (or `.asciidoctorconfig.adoc`) sitting at the *root of the other workspace folders*.
+
+These act as the most general configuration -- they are applied first, before the document's own folder chain, so anything defined closer to the document still wins.
+This is handy to keep shared configuration and assets (a `docinfo` folder, a custom stylesheet, …) in a dedicated folder added to the workspace, while each documentation folder keeps its own, more specific configuration:
+
+----
+my.code-workspace
+├── shared/                 <1>
+│   ├── .asciidoctorconfig
+│   └── docinfo/
+└── docs/                    <2>
+    ├── .asciidoctorconfig
+    └── guide.adoc
+----
+<1> A workspace folder dedicated to shared configuration; its `.asciidoctorconfig` applies to documents in every folder.
+<2> The documentation folder; its `.asciidoctorconfig` refines or overrides the shared values for `guide.adoc`.
+
+== Reference files relative to the config: `{asciidoctorconfigdir}`
+
+Before applying a configuration file, the extension sets the `asciidoctorconfigdir` attribute to the *absolute path of the directory that contains it*.
+Use it to point at resources from the configuration file with paths that stay correct wherever the edited document lives:
+
+[source,asciidoc]
+----
+:docinfodir: {asciidoctorconfigdir}/docinfo
+:stylesdir: {asciidoctorconfigdir}/styles
+:imagesdir: {asciidoctorconfigdir}/images
+----
+
+This is the portable, IDE-agnostic way to anchor paths -- prefer it over editor-specific variables such as `+${workspaceFolder}+`, so the same configuration file keeps working in other editors and with the Asciidoctor CLI.
+
+== Switch between configurations (e.g. web vs. print)
+
+Because a configuration file is processed as an AsciiDoc header, you can keep several profiles in one file and toggle them with preprocessor conditionals.
+Name the file `.asciidoctorconfig.adoc` -- the `ifdef`/`ifndef`/`ifeval` directives only run when the file has the `.adoc` extension.
+
+[source,asciidoc]
+----
+ifndef::print[]
+:stylesheet: web.css
+:docinfo: shared,private
+endif::[]
+ifdef::print[]
+:stylesheet: book.css
+:media: prepress
+endif::[]
+----
+
+Set the switching attribute (here `print`) where it suits your workflow -- for example through `asciidoc.preview.asciidoctorAttributes` in the workspace settings, or on the export command line.
+
+== Limitations
+
+* Preprocessor conditionals (`ifdef::`, `ifndef::`, `ifeval::`) are only evaluated in a file named `.asciidoctorconfig.adoc`, not in `.asciidoctorconfig`.
+* The configuration is read as a document header: put attribute declarations and header-level directives in it, not body content.
