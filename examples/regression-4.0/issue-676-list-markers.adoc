@@ -1,0 +1,138 @@
+= List Marker Highlighting — Manual Test Bench (#676)
+:icons: font
+:experimental:
+
+// ============================================================================
+// WHAT THIS FILE IS FOR
+// ----------------------------------------------------------------------------
+// Issue #676: "Highlighting ordered/unordered list markers in the editor".
+//
+// THE REQUEST
+//   In Atom, the leading marker of a list item (the `*`, `-`, `.`, `1.`, the
+//   `::` of a description term, the `<1>` of a callout) is given its own colour
+//   so lists stand out. The ask was whether the VS Code extension can do the
+//   same.
+//
+// STATE
+//   Already implemented. The TextMate grammar
+//   (syntaxes/asciidoc.tmLanguage.base.json, rule "list") already assigns a
+//   distinct scope to every list marker:
+//     - unordered  (-, *, **, ...)          -> punctuation.definition.list.begin
+//     - numbered   (., .., 1., a., IV))     -> punctuation.definition.list.begin
+//     - checklist  (- [ ], - [x])           -> punctuation.definition.list.begin
+//     - description (term::, term:::)        -> markup.list.bullet.asciidoc
+//     - callouts   (<1>, <.>)               -> callout-list rule
+//   Whether the marker looks highlighted depends on the active COLOR THEME
+//   colouring those scopes (Dark+, Light+ and most themes do).
+//
+// HOW TO CHECK
+//   1. Open this file in the editor (no preview needed — this is about EDITOR
+//      syntax highlighting, not the rendered output).
+//   2. Command Palette -> "Developer: Inspect Editor Tokens and Scopes",
+//      then click a marker. Confirm the scope listed above is present.
+//   3. Visually confirm the markers are tinted differently from the item text
+//      with a theme such as Dark+ / Light+.
+// ============================================================================
+
+== Unordered lists
+
+* Level 1 item
+* Another level 1 item
+** Level 2 item
+*** Level 3 item
+**** Level 4 item
+***** Level 5 item
+
+Alternative dash marker:
+
+- Item with a dash marker
+- Another dash item
+
+EXPECTED: every leading `*`, `**` … `*****` and `-` carries the
+`punctuation.definition.list.begin` scope and is tinted by the theme.
+
+== Ordered lists
+
+. First
+. Second
+.. Nested second-level
+... Nested third-level
+. Third
+
+Explicit numbers and letters:
+
+1. Explicit arabic one
+2. Explicit arabic two
+a. Lower-alpha item
+IV) Upper-roman with paren
+
+With an explicit numbering style:
+
+[lowerroman, start=5]
+. numeral five
+. numeral six
+
+EXPECTED: the `.`, `..`, `...`, `1.`, `a.`, `IV)` markers all carry the
+`punctuation.definition.list.begin` scope.
+
+== Checklists (to-do lists)
+
+* [ ] Unchecked with a star marker
+* [x] Checked with a star marker
+- [ ] Unchecked with a dash marker
+- [*] Checked (asterisk form)
+
+EXPECTED: the `-`/`*` marker and the `[ ]`/`[x]`/`[*]` checkbox are scoped
+(`markup.list.todo.asciidoc`); the marker itself keeps the list-begin scope.
+
+== Description lists
+
+Term 1:: Description of term 1.
+Term 2:: Description of term 2.
+Longer term::: Third-level description (`:::`).
+Deepest term:::: Fourth-level description (`::::`).
+
+Horizontal / Q&A style:
+
+CPU:: The brain.
+Memory:: The short-term storage.
+
+EXPECTED: the trailing `::`, `:::`, `::::` receive the
+`markup.list.bullet.asciidoc` scope.
+
+== Callout lists
+
+[source,ruby]
+----
+require 'sinatra' # <1>
+
+get '/hi' do # <2>
+  "Hello World!" # <3>
+end
+----
+<1> Library import.
+<2> Route declaration.
+<3> Response body.
+
+EXPECTED: the `<1>`, `<2>`, `<3>` callout markers (in the source block and in
+the list below) are scoped by the callout-list rule.
+
+== Mixed / nested lists (real-world shape)
+
+. Ordered step one
+* unordered sub-point
+* another sub-point
++
+--
+A continuation block attached to the sub-point.
+--
+. Ordered step two
+** deeper unordered point
+*** deeper still
+
+Term with a nested list::
+* nested unordered under a description term
+* second nested item
+
+EXPECTED: markers keep their scope regardless of nesting depth or of being
+mixed inside continuations (`+`) and attached blocks (`--`).
