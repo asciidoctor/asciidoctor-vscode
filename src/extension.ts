@@ -19,6 +19,7 @@ import { AsciidoctorConfig } from './features/asciidoctor/asciidoctorConfig.js'
 import { AsciidoctorDiagnostic } from './features/asciidoctor/asciidoctorDiagnostic.js'
 import { AsciidoctorExtensions } from './features/asciidoctor/asciidoctorExtensions.js'
 import { AsciidoctorIncludeItems } from './features/asciidoctor/asciidoctorIncludeItems.js'
+import { AttributeReferenceHoverProvider } from './features/attributeReferenceHoverProvider.js'
 import { AsciidocCompletionProviders } from './features/completion/completionProviders.js'
 import LinkProvider from './features/documentLinkProvider.js'
 import AdocDocumentSymbolProvider from './features/documentSymbolProvider.js'
@@ -141,6 +142,12 @@ export async function activate(context: vscode.ExtensionContext) {
           )
       }
     }),
+  )
+  context.subscriptions.push(
+    vscode.languages.registerHoverProvider(
+      selector,
+      new AttributeReferenceHoverProvider(asciidocLoader),
+    ),
   )
   context.subscriptions.push(
     vscode.languages.registerDocumentLinkProvider(
