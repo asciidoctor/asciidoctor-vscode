@@ -1,0 +1,40 @@
+= Attribute reference highlighting (#677)
+
+// ============================================================================
+// HOW TO USE
+// ----------------------------------------------------------------------------
+// This is about the EDITOR syntax highlighting (the TextMate grammar), NOT the
+// preview. Open this file in the editor with a DEFAULT color theme (e.g.
+// "Dark+"/"Light+") and look at the attribute references below.
+//
+// Before the fix, only the curly braces of `{name}` picked up a color (from
+// VS Code bracket-pair colorization), so the attribute name in between looked
+// unhighlighted and users assumed the reference was not recognized.
+//
+// EXPECTED after the fix: the attribute NAME inside the braces is colored
+// (scope `support.constant.attribute-name.asciidoc`), just like the name in a
+// `{set:...}` / `{counter:...}` reference already was. Use
+// "Developer: Inspect Editor Tokens and Scopes" to confirm the scopes.
+// ============================================================================
+
+:my-attribute: Asciidoctor
+
+// A plain reference: the whole `{my-attribute}` should be highlighted, name
+// included — not only the braces.
+This document is powered by {my-attribute}.
+
+// Built-in intrinsic attributes should be highlighted too.
+Rendered from {docfile} into {outfilesuffix}.
+
+// A hyphenated name still highlights as a single attribute name.
+There are {page-count} pages.
+
+// set: the name and value already highlighted; kept here for comparison.
+{set:sectids!}
+
+// counter: the function name, the counter name and the seed value.
+Figure {counter:figure-number}.
+Figure {counter2:figure-number-silent:10}.
+
+// An escaped reference must NOT be treated as an attribute reference.
+This is a literal \{my-attribute} placeholder.
