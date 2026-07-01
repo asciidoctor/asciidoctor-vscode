@@ -1,0 +1,161 @@
+= Attribute reference hover — Manual Test Bench (#729)
+:product-name: AsciiDoctor VS Code
+:version: 3.4.6
+:url-repo: https://github.com/asciidoctor/asciidoctor-vscode
+:empty-attribute:
+:composed-attribute: {product-name} {version}
+
+// ============================================================================
+// HOW TO USE
+// ----------------------------------------------------------------------------
+// This is an EDITOR feature, not a preview one: hover the mouse over an
+// attribute reference `{name}` IN THIS EDITOR (no need to open the preview).
+// A tooltip should pop up showing the resolved value.
+//
+// SCOPE (by design) — the hover resolves an attribute from the parsed document
+// via `document.getAttributes()`. The extension parses with `parse: true` and
+// never converts, so ONLY attributes known at the end of the HEADER are
+// available:
+//   - header attributes (declared before the first blank line),
+//   - intrinsic attributes ({docname}, {docfile}, {docdir}, …),
+//   - `.asciidoctorconfig` attributes,
+//   - `asciidoc.preview.asciidoctorAttributes` settings.
+//
+// Attribute entries in the BODY (after the header) are only applied during
+// CONVERSION, so they never appear in `getAttributes()`. See the KNOWN
+// LIMITATIONS part below for what that excludes.
+// ============================================================================
+
+
+// ############################################################################
+// PART A — SUPPORTED (a hover with the resolved value should appear)
+// ############################################################################
+
+== 1. Attribute defined in the header
+
+EXPECTED: hovering shows `{product-name} = AsciiDoctor VS Code`.
+
+This is {product-name}, version {version}, hosted at {url-repo}.
+
+== 2. Intrinsic attribute
+
+EXPECTED: `{docname}` resolves to `issue-729-attribute-hover` and `{docfile}`
+to this file's absolute path — even though they are never declared here (the
+extension seeds them when it parses).
+
+Current document: {docname} ({docfilesuffix}).
+
+== 3. Header attribute whose value contains other references
+
+EXPECTED: `{composed-attribute}` shows the fully substituted value
+`AsciiDoctor VS Code 3.4.6` (references inside a header value are resolved at
+definition time).
+
+Composed: {composed-attribute}.
+
+== 4. Empty (set but valueless) header attribute
+
+EXPECTED: a hover is still shown, with an empty value after the `=` — the
+attribute IS set, it just has no value. This is different from case 6.
+
+Empty: {empty-attribute}end.
+
+== 5. Undefined attribute — typo detection
+
+EXPECTED: hovering shows "`{prodcut-name}` is not set in this document."
+(note the typo: `prodcut` instead of `product`). Handy to catch mistakes.
+
+Typo: {prodcut-name}.
+
+== 6. Verbatim block WITH attributes subs — hover shown
+
+EXPECTED: a tooltip IS shown here, because `[subs=+attributes]` opts the block
+into attribute substitution, and `{version}` is a header attribute.
+
+[source,xml,subs=+attributes]
+----
+<dependency>
+  <artifactId>asciidoctor-vscode</artifactId>
+  <version>{version}</version>
+</dependency>
+----
+
+
+// ############################################################################
+// PART B — NO HOVER (intentionally suppressed)
+// ############################################################################
+
+== 7. Verbatim block WITHOUT attributes subs
+
+EXPECTED: NO tooltip when hovering `{product-name}` below. A plain listing
+block does not substitute attributes, so showing a value would be misleading.
+
+----
+Deploying {product-name} {version}
+----
+
+== 8. Not an attribute reference
+
+EXPECTED: NO tooltip over `{counter:seq}` below — a counter macro is not a
+plain attribute reference (the `:` is outside the accepted name syntax), so it
+is intentionally ignored.
+
+Counter: {counter:seq}.
+
+
+// ############################################################################
+// PART C — KNOWN LIMITATIONS (the hover is wrong or missing here, by design)
+// ############################################################################
+//
+// These all stem from the SCOPE note at the top: `getAttributes()` on a parsed
+// (not converted) document only reflects header/intrinsic/config attributes.
+// Resolving these correctly would require a positional scan of attribute
+// entries instead of `getAttributes()` — deliberately out of scope for now.
+
+== 9. LIMITATION — attribute defined in the BODY
+
+`:body-attribute:` is declared after the header, so it is absent from
+`getAttributes()`.
+
+EXPECTED (current): hovering `{body-attribute}` shows "is not set in this
+document.", even though the preview renders it fine.
+
+:body-attribute: defined in the body
+Body value: {body-attribute}.
+
+== 10. LIMITATION — attribute from an include placed in the BODY
+
+The include below is in the body, so `:attribute-from-include:` (set in
+`_partials/hover-attributes.adoc`) is likewise absent from `getAttributes()`.
+
+EXPECTED (current): hovering `{attribute-from-include}` shows "is not set in
+this document.".
+
+include::_partials/hover-attributes.adoc[]
+
+Included value: {attribute-from-include}.
+
+== 11. LIMITATION — redefinition (position-dependent value)
+
+`:reassigned:` is a body attribute, so BOTH references below show "is not set
+in this document." on hover.
+
+Note also an upstream asciidoctor.js bug (unrelated to this extension): in the
+PREVIEW both references render as `two`, whereas Asciidoctor Ruby correctly
+renders `one` then `two`. Even once the value is resolvable, showing the value
+at a given position would require replaying attribute entries in document order
+rather than reading the final state.
+
+:reassigned: one
+First reference (Ruby renders "one"): {reassigned}.
+
+:reassigned: two
+Second reference (Ruby renders "two"): {reassigned}.
+
+== 12. LIMITATION — inline substitution context is not detected
+
+Only block-level substitution is checked. Hovering `{version}` inside the
+passthrough below still shows a value, even though a passthrough suppresses
+substitutions:
+
+Passthrough: pass:[{version}].
