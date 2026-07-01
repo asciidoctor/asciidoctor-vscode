@@ -173,6 +173,13 @@ For example, to get the editor to suggest words from the document while writing 
 ====
 Scope your override under `[asciidoc]`, as shown above — *not* as a plain top-level `"editor.wordBasedSuggestions"`.
 VS Code applies https://code.visualstudio.com/docs/getstarted/settings#_languagespecific-editor-settings[language-specific settings] over non-language-specific ones regardless of scope, so a top-level value never wins against the extension's `[asciidoc]` default.
+
+In practice this means changing a setting from the *Settings UI search box* (for example toggling *Editor: Word Wrap*) has **no effect** on AsciiDoc files: VS Code writes a non-language-specific value there, which the `[asciidoc]` default overrides.
+To override a default, use an *AsciiDoc-specific* setting instead, any of:
+
+* run `Preferences: Configure Language Specific Settings…` from the Command Palette and pick *AsciiDoc*;
+* filter the Settings UI with `@lang:asciidoc`, then change the setting;
+* or edit `settings.json` directly with an `[asciidoc]` block, as shown above.
 ====
 
 [NOTE]
