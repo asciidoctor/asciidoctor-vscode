@@ -339,7 +339,10 @@
           "asciidoc.editor.drop.copyIntoWorkspace": {
             "type": "string",
             "default": "smart",
-            "enum": ["smart", "never"],
+            "enum": [
+              "smart",
+              "never"
+            ],
             "enumDescriptions": [
               "%asciidoc.editor.drop.copyIntoWorkspace.smart%",
               "%asciidoc.editor.drop.copyIntoWorkspace.never%"
@@ -356,7 +359,10 @@
           "asciidoc.editor.paste.copyIntoWorkspace": {
             "type": "string",
             "default": "smart",
-            "enum": ["smart", "never"],
+            "enum": [
+              "smart",
+              "never"
+            ],
             "enumDescriptions": [
               "%asciidoc.editor.paste.copyIntoWorkspace.smart%",
               "%asciidoc.editor.paste.copyIntoWorkspace.never%"

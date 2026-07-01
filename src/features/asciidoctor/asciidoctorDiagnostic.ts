@@ -151,7 +151,7 @@ export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
           }
         } else {
           // generic error (e.g. :source-highlighter: coderay)
-          errorMessage = error.message
+          errorMessage = error.getText()
         }
         let diagnosticRelated = null
         if (relatedFile) {
