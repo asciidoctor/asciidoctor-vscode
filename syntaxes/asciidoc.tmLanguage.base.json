@@ -752,7 +752,18 @@
         },
         {
           "name": "markup.substitution.attribute-reference.asciidoc",
-          "match": "(?<!\\\\)(\\{)(\\w+(?:[\\-]\\w+)*)(?<!\\\\)(\\})"
+          "match": "(?<!\\\\)(\\{)(\\w+(?:[\\-]\\w+)*)(?<!\\\\)(\\})",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.attribute-reference.begin.asciidoc"
+            },
+            "2": {
+              "name": "support.constant.attribute-name.asciidoc"
+            },
+            "3": {
+              "name": "punctuation.definition.attribute-reference.end.asciidoc"
+            }
+          }
         }
       ]
     },
