@@ -1,7 +1,7 @@
 {
   "asciidoc.antora.enableAntoraSupport.deprecationMessage": "本設定は、`#asciidoc.antora.showEnableAntoraPrompt#`に置き換えられ、動作しません。",
   "asciidoc.antora.enableAntoraSupport.desc": "[Antora](https://antora.org/)サポートを有効にします。",
-  "asciidoc.antora.showEnableAntoraPrompt.desc": "antora.ymlファイルを検出したときに、[Antora](https://antora.org/)サポートを有効にするためのプロンプトを表示します。",
+  "asciidoc.antora.showEnableAntoraPrompt.desc": "antora.ymlファイルを検出したときに、[Antora](https://antora.org/)サポートを確認するプロンプトを表示します。",
   "asciidoc.antora.title": "Antora",
   "asciidoc.asciidoctorpdf_command.deprecationMessage": "本設定は、`#asciidoc.pdf.asciidoctorPdfCommandPath#` + `#asciidoc.pdf.asciidoctorPdfCommandArgs#`に置き換えられ、動作しません。",
   "asciidoc.asciidoctorpdf_command.desc": "**非推奨:** Asciidoctor PDFの実行バイナリのフルパスを指定します。",
