@@ -576,6 +576,89 @@ See xref:my-table[xrefstyle=short] for more reference.
     assert.strictEqual(readDataSettings(html).fragment, undefined)
   })
 
+  // #598 / #322: the `stylesheet` (and `stylesdir`) document attributes should
+  // drive the preview stylesheet just like Asciidoctor's own HTML output, and
+  // supersede the built-in default stylesheet.
+  test('Should link the `stylesheet` document attribute and drop the default stylesheet', async () => {
+    const html = await convertStandaloneWithFragment(
+      '= Title\n:stylesheet: my-theme.css\n\nSome content',
+      undefined,
+    )
+    assert.ok(
+      html.includes('class="code-user-style"') && html.includes('my-theme.css'),
+      `expected a custom stylesheet link in:\n${html}`,
+    )
+    assert.ok(
+      !html.includes('asciidoctor-default.css'),
+      `the default stylesheet must be replaced in:\n${html}`,
+    )
+  })
+
+  test('Should look up the `stylesheet` under `stylesdir`', async () => {
+    const html = await convertStandaloneWithFragment(
+      '= Title\n:stylesdir: css\n:stylesheet: my-theme.css\n\nSome content',
+      undefined,
+    )
+    assert.ok(
+      html.includes('css/my-theme.css') || html.includes('css%2Fmy-theme.css'),
+      `expected the stylesheet resolved under stylesdir in:\n${html}`,
+    )
+  })
+
+  test('Should use a URL `stylesheet` as-is (and ignore stylesdir)', async () => {
+    const html = await convertStandaloneWithFragment(
+      '= Title\n:stylesdir: css\n:stylesheet: https://example.com/theme.css\n\nSome content',
+      undefined,
+    )
+    assert.ok(
+      html.includes('href="https://example.com/theme.css"'),
+      `expected the URL stylesheet used verbatim in:\n${html}`,
+    )
+    // `stylesdir` must not be prepended to a URL stylesheet.
+    assert.ok(
+      !html.includes('css/https://example.com/theme.css'),
+      `stylesdir must be ignored for a URL stylesheet in:\n${html}`,
+    )
+    assert.ok(
+      !html.includes('asciidoctor-default.css') &&
+        !html.includes('asciidoctor-editor.css'),
+      `the built-in stylesheet must be replaced in:\n${html}`,
+    )
+  })
+
+  test('Should use an absolute `stylesheet` path as-is (and ignore stylesdir)', async () => {
+    const html = await convertStandaloneWithFragment(
+      '= Title\n:stylesdir: css\n:stylesheet: /etc/themes/my-theme.css\n\nSome content',
+      undefined,
+    )
+    assert.ok(
+      html.includes('class="code-user-style"') &&
+        html.includes('/etc/themes/my-theme.css'),
+      `expected the absolute stylesheet used verbatim in:\n${html}`,
+    )
+    // `stylesdir` must not be prepended to an absolute stylesheet.
+    assert.ok(
+      !html.includes('css/etc/themes/my-theme.css'),
+      `stylesdir must be ignored for an absolute stylesheet in:\n${html}`,
+    )
+  })
+
+  test('Should keep the built-in stylesheet when no `stylesheet` attribute is set', async () => {
+    const html = await convertStandaloneWithFragment(
+      '= Title\n\nSome content',
+      undefined,
+    )
+    assert.ok(
+      html.includes('asciidoctor-default.css') ||
+        html.includes('asciidoctor-editor.css'),
+      `expected the built-in stylesheet in:\n${html}`,
+    )
+    assert.ok(
+      !html.includes('class="code-user-style"'),
+      `expected no custom stylesheet link in:\n${html}`,
+    )
+  })
+
   for (const testCase of testCases) {
     if (testCase.standalone) {
       test(testCase.title, async () =>

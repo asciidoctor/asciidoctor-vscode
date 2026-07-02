@@ -138,6 +138,43 @@ By default, the preview uses the VS Code editor theme (`workbench.colorTheme`).
 
 See xref:settings.adoc#preview[the preview settings] for the full list of options.
 
+[#stylesheet-attribute]
+=== The `stylesheet` document attribute
+
+When `asciidoc.preview.style` is *not* set, the preview also honors the standard `stylesheet` (and `stylesdir`) document attributes, so the preview matches the stylesheet used by the generated HTML:
+
+[source,asciidoc]
+----
+= My document
+:stylesdir: css
+:stylesheet: my-theme.css
+----
+
+Like `asciidoc.preview.style`, a `stylesheet` attribute *replaces* the default preview stylesheet; `asciidoc.preview.additionalStyles` are still layered on top of it.
+
+Resolution and precedence:
+
+* The `asciidoc.preview.style` setting always wins. When it is set, the `stylesheet`/`stylesdir` attributes are ignored by the preview.
+* An absolute path or a URL (`http:`, `https:`, `file:`) `stylesheet` is used as-is (and `stylesdir` is ignored).
+* A relative `stylesheet` is looked up under `stylesdir`, relative to the document's base directory — the same base directory Asciidoctor uses. By default, that is the folder containing the AsciiDoc file; when `asciidoc.useWorkspaceRootAsBaseDirectory` is enabled it is the workspace root, so a relative `stylesheet` resolves the same way it does in the exported HTML.
+
+[WARNING]
+====
+For security reasons, the preview webview can only load local files from a fixed set of locations: the workspace folders, or -- when the document does not belong to a workspace -- the folder containing the AsciiDoc file. A `stylesheet` that resolves *outside* those locations -- typically an **absolute path** pointing elsewhere on disk, or a relative path that climbs out of the workspace with `+../+` -- is blocked and silently falls back to no custom stylesheet.
+
+Keep the stylesheet inside the workspace (or next to the document), or use the `asciidoc.preview.style` setting instead: unlike the attribute, that setting also whitelists its own directory, so it can load a stylesheet kept outside the workspace. A URL (`https:`) stylesheet is not affected by this restriction. This limitation is specific to the preview; the exported HTML is not sandboxed and loads the stylesheet from anywhere.
+====
+
+[NOTE]
+====
+This differs from the `asciidoc.preview.style` and `asciidoc.preview.additionalStyles` settings, whose relative paths are resolved relative to the folder open in the Explorer (or, with no open folder, relative to the AsciiDoc file) regardless of `asciidoc.useWorkspaceRootAsBaseDirectory`.
+
+The two follow different conventions on purpose, because they are different kinds of value: *configuration paths follow the editor's conventions, content paths follow Asciidoctor's.*
+
+* A setting is *editor configuration*, typically defined once for a project (in `.vscode/settings.json`) and shared by every document. It cannot meaningfully be resolved against a document's base directory: a single `asciidoc.preview.style` applies to all open documents, which each have their own base directory, so a relative path there would point at a different file per document — almost never the intent. Resolving it relative to the workspace matches how other VS Code path settings behave.
+* The `stylesheet` attribute is *document content*, and its meaning is defined by Asciidoctor. Resolving it against the document's base directory is what keeps the preview identical to the exported HTML.
+====
+
 [NOTE]
 ====
 The preview is HTML styled with CSS, so it uses the settings above -- not an `asciidoctor-pdf` theme.
