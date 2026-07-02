@@ -30,7 +30,7 @@
   "security.showPreviewSecuritySelector.title": "Select security settings for AsciiDoc preview in this workspace.",
   "security.strict.description": "Only load secure content.",
   "security.strict.title": "Strict",
-  "security.toggleSecurityWarning.description": "Please note: This setting has no effect on content security level.",
+  "security.toggleSecurityWarning.description": "Please note: This setting has no effect on the content security level.",
   "security.trustAsciidoctorExtensionsAuthors.description": "Execution of Asciidoctor.js extensions will be allowed.",
   "security.trustAsciidoctorExtensionsAuthors.title": "Trusted"
 }
