@@ -591,10 +591,20 @@ export class AsciidocPreview
       vscode.Uri.joinPath(contributionProvider.extensionUri, 'media'),
       vscode.Uri.joinPath(contributionProvider.extensionUri, 'dist'),
     ]
+    // Whitelist the directory of an *absolute local* custom stylesheet so the
+    // webview can load it from outside the workspace. Relative paths already
+    // resolve under a whitelisted root (a workspace folder, or the document's
+    // own folder added below), and URLs are loaded directly. `Uri.file` (not
+    // `Uri.parse`) keeps a Windows drive path such as `C:\styles\site.css` from
+    // being mistaken for a URI whose scheme is the drive letter (#430).
     const previewStylePath = asciidocPreviewConfiguration.previewStyle
-    if (previewStylePath !== '') {
-      const previewStyleUri = vscode.Uri.parse(previewStylePath)
-      baseRoots.push(uri.Utils.dirname(previewStyleUri))
+    if (
+      previewStylePath !== '' &&
+      !/^(https?|file):/i.test(previewStylePath) &&
+      (previewStylePath.startsWith('/') ||
+        /^[a-z]:[\\/]/i.test(previewStylePath))
+    ) {
+      baseRoots.push(uri.Utils.dirname(vscode.Uri.file(previewStylePath)))
     }
     const folder = getWorkspaceFolder(resource)
     if (folder) {
