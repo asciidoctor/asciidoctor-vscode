@@ -305,6 +305,102 @@ export class AsciidoctorExtensionsSecurityPolicyArbiter {
   }
 }
 
+/**
+ * Consent gate for the templates auto-discovered under `.asciidoctor/templates`.
+ *
+ * Custom templates are executable code — a plain `.js`/`.cjs` template is
+ * `require`d and run, and the supported template engines (Nunjucks, EJS, Pug, …)
+ * can evaluate arbitrary expressions — so, exactly like the Asciidoctor.js
+ * extensions discovered in `.asciidoctor/lib` (see
+ * {@link AsciidoctorExtensionsSecurityPolicyArbiter}), they are only loaded once
+ * the user has trusted the authors of the files in the workspace. Templates that
+ * the user references explicitly through the `asciidoc.preview.templates` setting
+ * are a deliberate opt-in and are not gated here.
+ */
+export class AsciidoctorTemplatesSecurityPolicyArbiter {
+  public readonly trustAsciidoctorTemplatesAuthorsKey =
+    'asciidoc.trust_asciidoctor_templates_authors'
+
+  // eslint-disable-next-line no-use-before-define
+  private static instance: AsciidoctorTemplatesSecurityPolicyArbiter
+
+  protected constructor(private readonly context: vscode.ExtensionContext) {
+    this.context = context
+  }
+
+  public static activate(
+    context: vscode.ExtensionContext,
+  ): AsciidoctorTemplatesSecurityPolicyArbiter {
+    AsciidoctorTemplatesSecurityPolicyArbiter.instance =
+      new AsciidoctorTemplatesSecurityPolicyArbiter(context)
+    return AsciidoctorTemplatesSecurityPolicyArbiter.instance
+  }
+
+  public static getInstance(): AsciidoctorTemplatesSecurityPolicyArbiter {
+    if (!AsciidoctorTemplatesSecurityPolicyArbiter.instance) {
+      throw new Error(
+        'AsciidoctorTemplatesSecurityPolicyArbiter must be activated by calling #activate()',
+      )
+    }
+    return AsciidoctorTemplatesSecurityPolicyArbiter.instance
+  }
+
+  /**
+   * @returns `true`/`false` once the user has answered, or `undefined` while no
+   * decision has been recorded yet (so the caller knows to ask).
+   */
+  public asciidoctorTemplatesAuthorsTrusted(): boolean | undefined {
+    return this.context.workspaceState.get<boolean>(
+      this.trustAsciidoctorTemplatesAuthorsKey,
+      undefined,
+    )
+  }
+
+  public async denyAsciidoctorTemplatesAuthors(): Promise<void> {
+    return this.setTrustAsciidoctorTemplatesAuthors(false)
+  }
+
+  public async trustAsciidoctorTemplatesAuthors(): Promise<void> {
+    return this.setTrustAsciidoctorTemplatesAuthors(true)
+  }
+
+  public async confirmAsciidoctorTemplatesTrustMode(
+    templatesCount: number,
+  ): Promise<boolean> {
+    const templatesTrusted = this.asciidoctorTemplatesAuthorsTrusted()
+    if (templatesTrusted !== undefined) {
+      // The templates authors are already trusted or not, do not ask again.
+      return templatesTrusted
+    }
+    return this.showTrustAsciidoctorTemplatesDialog(templatesCount)
+  }
+
+  private async showTrustAsciidoctorTemplatesDialog(
+    templatesCount: number,
+  ): Promise<boolean> {
+    const userChoice = await vscode.window.showWarningMessage(
+      `This feature will execute ${templatesCount} template ${templatesCount > 1 ? 'files' : 'file'} from .asciidoctor/templates.
+      Do you trust the authors of ${templatesCount > 1 ? 'these files' : 'this file'}?`,
+      // "modal" is disabled. Because, I couldn't control the button's order in Linux when "modal" is enabled.
+      { title: 'Yes, I trust the authors', value: true },
+      { title: "No, I don't trust the authors", value: false },
+    )
+    // if userChoice is undefined, no choice was selected, consider that we don't trust authors.
+    const trustGranted = userChoice?.value || false
+    await this.setTrustAsciidoctorTemplatesAuthors(trustGranted)
+    return trustGranted
+  }
+
+  private async setTrustAsciidoctorTemplatesAuthors(
+    value: boolean,
+  ): Promise<void> {
+    return this.context.workspaceState.update(
+      this.trustAsciidoctorTemplatesAuthorsKey,
+      value,
+    )
+  }
+}
+
 export class AsciidoctorExtensionsTrustModeSelector {
   public async showSelector(): Promise<void> {
     const aespArbiter = AsciidoctorExtensionsSecurityPolicyArbiter.getInstance()
@@ -358,6 +454,62 @@ export class AsciidoctorExtensionsTrustModeSelector {
     if (userChoice.type === 'trust_asciidoctor_extensions_authors') {
       await aespArbiter.enableAsciidoctorExtensions() // make sure that Asciidoctor.js extensions are enabled
       await aespArbiter.trustAsciidoctorExtensionsAuthors()
+    }
+  }
+}
+
+export class AsciidoctorTemplatesTrustModeSelector {
+  public async showSelector(): Promise<void> {
+    const arbiter = AsciidoctorTemplatesSecurityPolicyArbiter.getInstance()
+    const asciidoctorTemplatesAuthorsTrusted =
+      arbiter.asciidoctorTemplatesAuthorsTrusted()
+
+    interface TemplatePickItem extends vscode.QuickPickItem {
+      readonly type:
+        | 'trust_asciidoctor_templates_authors'
+        | 'deny_asciidoctor_templates_authors'
+    }
+
+    function markActiveWhen(when: boolean): string {
+      return when ? '• ' : ''
+    }
+
+    const userChoice = await vscode.window.showQuickPick<TemplatePickItem>(
+      [
+        {
+          type: 'deny_asciidoctor_templates_authors',
+          label:
+            markActiveWhen(asciidoctorTemplatesAuthorsTrusted === false) +
+            l10nT('security.restrictAsciidoctorTemplatesAuthors.title'),
+          description: l10nT(
+            'security.restrictAsciidoctorTemplatesAuthors.description',
+          ),
+        },
+        {
+          type: 'trust_asciidoctor_templates_authors',
+          label:
+            markActiveWhen(asciidoctorTemplatesAuthorsTrusted === true) +
+            l10nT('security.trustAsciidoctorTemplatesAuthors.title'),
+          description: l10nT(
+            'security.trustAsciidoctorTemplatesAuthors.description',
+          ),
+        },
+      ],
+      {
+        placeHolder: l10nT(
+          'security.asciidoctorTemplatesTrustModeSelector.title',
+        ),
+      },
+    )
+
+    if (!userChoice) {
+      return
+    }
+    if (userChoice.type === 'deny_asciidoctor_templates_authors') {
+      await arbiter.denyAsciidoctorTemplatesAuthors()
+    }
+    if (userChoice.type === 'trust_asciidoctor_templates_authors') {
+      await arbiter.trustAsciidoctorTemplatesAuthors()
     }
   }
 }

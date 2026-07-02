@@ -38,6 +38,8 @@ import { AsciidocPreviewManager } from './features/preview/previewManager.js'
 import {
   AsciidoctorExtensionsSecurityPolicyArbiter,
   AsciidoctorExtensionsTrustModeSelector,
+  AsciidoctorTemplatesSecurityPolicyArbiter,
+  AsciidoctorTemplatesTrustModeSelector,
   ExtensionContentSecurityPolicyArbiter,
   PreviewSecuritySelector,
 } from './features/security.js'
@@ -57,6 +59,12 @@ export async function activate(context: vscode.ExtensionContext) {
     )
   const asciidoctorExtensionsTrustModeSelector =
     new AsciidoctorExtensionsTrustModeSelector()
+  // Consent gate for templates auto-discovered under `.asciidoctor/templates`
+  // (mirrors the `.asciidoctor/lib` extensions trust above). The arbiter is a
+  // singleton read back via getInstance() from getTemplateDirs().
+  AsciidoctorTemplatesSecurityPolicyArbiter.activate(context)
+  const asciidoctorTemplatesTrustModeSelector =
+    new AsciidoctorTemplatesTrustModeSelector()
 
   const asciidocEngine = new AsciidocEngine(
     contributionProvider,
@@ -203,6 +211,11 @@ export async function activate(context: vscode.ExtensionContext) {
   commandManager.register(
     new commands.ShowAsciidoctorExtensionsTrustModeSelectorCommand(
       asciidoctorExtensionsTrustModeSelector,
+    ),
+  )
+  commandManager.register(
+    new commands.ShowAsciidoctorTemplatesTrustModeSelectorCommand(
+      asciidoctorTemplatesTrustModeSelector,
     ),
   )
   commandManager.register(new commands.OpenDocumentLinkCommand(asciidocLoader))

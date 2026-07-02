@@ -68,6 +68,7 @@
   "asciidoc.saveDocbook.title": "Dokument als DocBook speichern",
   "asciidoc.saveHTML.title": "Dokument als HTML speichern",
   "asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Vertrauensstufe für Asciidoctor.js Erweiterungen verwalten",
+  "asciidoc.showAsciidoctorTemplatesTrustModeSelector.title": "Vertrauensstufe für Asciidoctor Vorlagen verwalten",
   "asciidoc.showLockedPreviewToSide.title": "Eine festgelegte Vorschau für das aktuelle Dokument zur Seite öffnen",
   "asciidoc.showPreview.title": "Vorschau öffnen",
   "asciidoc.showPreviewSecuritySelector.title": "Sicherheitseinstellung für Vorschau verwalten",

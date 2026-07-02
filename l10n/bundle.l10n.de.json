@@ -4,6 +4,7 @@
   "antora.activateSupport.never": "Nie",
   "antora.activateSupport.yes": "Ja",
   "asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Vertrauensstufe für Asciidoctor.js Erweiterungen verwalten",
+  "asciidoc.showAsciidoctorTemplatesTrustModeSelector.title": "Vertrauensstufe für Asciidoctor Vorlagen verwalten",
   "asciidoc.showPreviewSecuritySelector.title": "Sicherheitseinstellung für Vorschau verwalten",
   "documentLink.openFile.tooltip": "Datei öffnen {0}",
   "imageInsertion.insertLink": "Bildlink einfügen",
@@ -17,6 +18,7 @@
   "preview.styleLoadError.message": "Stilvorlage 'asciidoc.preview.style' : {0} kann nicht geladen werden.",
   "preview.unlocked.title": "Vorschau {0}",
   "security.asciidoctorExtensionsTrustModeSelector.title": "Einschränkungen für Asciidoctor.js Erweiterungen in diesen Arbeitsbereich auswählen.",
+  "security.asciidoctorTemplatesTrustModeSelector.title": "Einschränkungen für Asciidoctor Vorlagen in diesen Arbeitsbereich auswählen.",
   "security.disable.description": "Alle Inhalte und Skriptausführung erlauben. Nicht empfohlen.",
   "security.disable.title": "Deaktivieren",
   "security.disableSecurityWarning.title": "Sicherheitswarnung im Arbeitsbereich deaktivieren.",
@@ -27,10 +29,14 @@
   "security.insecureLocalContent.title": "Unsichere lokale Inhalte erlauben.",
   "security.restrictAsciidoctorExtensionsAuthors.description": "Ausführung von Asciidoctor.js Erweiterungen wird verhindert.",
   "security.restrictAsciidoctorExtensionsAuthors.title": "Nicht Vertrauenswürdig",
+  "security.restrictAsciidoctorTemplatesAuthors.description": "Laden von Vorlagen aus .asciidoctor/templates wird verhindert.",
+  "security.restrictAsciidoctorTemplatesAuthors.title": "Nicht Vertrauenswürdig",
   "security.showPreviewSecuritySelector.title": "Sicherheitseinstellung für Asciidoc Vorschau in diesem Arbeitsbereich auswählen.",
   "security.strict.description": "Nur sichere Inhalte laden.",
   "security.strict.title": "Strikt",
   "security.toggleSecurityWarning.description": "Bitte beachten: Diese Einstellung hat keine Auswirkungen auf die Sicherheitsstufe für Inhalte.",
   "security.trustAsciidoctorExtensionsAuthors.description": "Ausführung von Asciidoctor.js Erweiterungen wird gestattet.",
-  "security.trustAsciidoctorExtensionsAuthors.title": "Vertrauenswürdig"
+  "security.trustAsciidoctorExtensionsAuthors.title": "Vertrauenswürdig",
+  "security.trustAsciidoctorTemplatesAuthors.description": "Laden von Vorlagen aus .asciidoctor/templates wird gestattet.",
+  "security.trustAsciidoctorTemplatesAuthors.title": "Vertrauenswürdig"
 }

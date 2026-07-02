@@ -4,6 +4,7 @@
   "antora.activateSupport.never": "Jamais",
   "antora.activateSupport.yes": "Oui",
   "asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Configurer le mode de confiance des extensions Asciidoctor.js",
+  "asciidoc.showAsciidoctorTemplatesTrustModeSelector.title": "Configurer le mode de confiance des modèles Asciidoctor",
   "asciidoc.showPreviewSecuritySelector.title": "Configurer les paramètres de sécurité de la prévisualisation",
   "documentLink.openFile.tooltip": "Ouvrir le fichier {0}",
   "imageInsertion.insertLink": "Insérer un lien vers l'image",
@@ -17,6 +18,7 @@
   "preview.styleLoadError.message": "Impossible de charger la feuille de style 'asciidoc.preview.style' : {0}",
   "preview.unlocked.title": "Prévisualisation {0}",
   "security.asciidoctorExtensionsTrustModeSelector.title": "Sélectionner le niveau de confiance adapté aux extensions Asciidoctor.js présentes dans cet espace de travail.",
+  "security.asciidoctorTemplatesTrustModeSelector.title": "Sélectionner le niveau de confiance adapté aux modèles Asciidoctor présents dans cet espace de travail.",
   "security.disable.description": "Autorise le chargement de l'ensemble des contenus ainsi que l'exécution des scripts. Pas recommandé.",
   "security.disable.title": "Désactiver",
   "security.disableSecurityWarning.title": "Désactiver les alertes de sécurité de la prévisualisation dans cet espace de travail",
@@ -27,10 +29,14 @@
   "security.insecureLocalContent.title": "Autoriser les contenus locaux non sécurisés",
   "security.restrictAsciidoctorExtensionsAuthors.description": "Désactive l'exécution du code des extensions Asciidoctor.js.",
   "security.restrictAsciidoctorExtensionsAuthors.title": "Non approuvé",
+  "security.restrictAsciidoctorTemplatesAuthors.description": "Désactive le chargement des modèles présents dans .asciidoctor/templates.",
+  "security.restrictAsciidoctorTemplatesAuthors.title": "Non approuvé",
   "security.showPreviewSecuritySelector.title": "Sélectionner le niveau de sécurité adapté aux prévisualisations des documents AsciiDoc dans cet espace de travail.",
   "security.strict.description": "Charge seulement le contenu sûr.",
   "security.strict.title": "Strict",
   "security.toggleSecurityWarning.description": "À noter que cela n'affecte pas le niveau de sécurité configuré.",
   "security.trustAsciidoctorExtensionsAuthors.description": "Autorise l'exécution du code des extensions Asciidoctor.js.",
-  "security.trustAsciidoctorExtensionsAuthors.title": "Approuvé"
+  "security.trustAsciidoctorExtensionsAuthors.title": "Approuvé",
+  "security.trustAsciidoctorTemplatesAuthors.description": "Autorise le chargement des modèles présents dans .asciidoctor/templates.",
+  "security.trustAsciidoctorTemplatesAuthors.title": "Approuvé"
 }
