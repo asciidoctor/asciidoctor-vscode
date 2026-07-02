@@ -843,8 +843,16 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
         `<link rel="stylesheet" type="text/css" href="${escapeAttribute(webviewResourceProvider.asWebviewUri(previewStyle))}">`,
       )
     }
-    // QUESTION: should we support `stylesdir` and `stylesheet` attributes?
-    if (config.previewStyle === '') {
+    // A "replacement" stylesheet supplants Asciidoctor's default one. It can
+    // come from the `asciidoc.preview.style` setting or, as a fallback when that
+    // setting is empty, from the document's own `stylesheet`/`stylesdir`
+    // attributes (like Asciidoctor's HTML output). The setting wins so an
+    // explicit user override still takes precedence over the document.
+    const replacementStyle =
+      config.previewStyle !== ''
+        ? config.previewStyle
+        : this.resolveDocumentStylesheet(node)
+    if (replacementStyle === '') {
       const builtinStylesheet = config.useEditorStylesheet
         ? 'asciidoctor-editor.css'
         : 'asciidoctor-default.css'
@@ -864,9 +872,58 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
       )
     }
     return `${baseStyles.join('\n')}
-  ${this.computeCustomStyleSheetIncludes(webviewResourceProvider, textDocumentUri, config)}
+  ${this.computeCustomStyleSheetIncludes(webviewResourceProvider, textDocumentUri, replacementStyle, config.additionalStyles)}
   ${this.getScrollBeyondLastLineStyles()}
   ${this.getImageStabilizerStyles(state)}`
+  }
+
+  /**
+   * Resolve the `stylesheet` (and `stylesdir`) document attributes to a path
+   * that {@link fixHref} can turn into a webview `href`, mirroring Asciidoctor's
+   * own resolution: a `stylesheet` that is a URI or an absolute path is used
+   * verbatim (and `stylesdir` is ignored), otherwise it is looked up under
+   * `stylesdir` relative to the document's `base_dir`. Returns '' when no
+   * `stylesheet` attribute is set.
+   *
+   * Resolving against `node.getBaseDir()` (rather than the document's own
+   * directory) keeps the preview aligned with Asciidoctor: by default the base
+   * dir is the document directory, but when
+   * `asciidoc.useWorkspaceRootAsBaseDirectory` is enabled it is the workspace
+   * root, and a relative `stylesheet` follows suit — exactly as it would in the
+   * generated HTML.
+   *
+   * Only consulted as a fallback when the `asciidoc.preview.style` setting is
+   * empty, so an explicit user setting still wins.
+   */
+  private resolveDocumentStylesheet(node: AsciidoctorDocument): string {
+    const stylesheet = node.getAttribute('stylesheet')
+    if (!stylesheet) {
+      return ''
+    }
+    const isUri = (value: string): boolean =>
+      /^(https?|file):/.test(value) ||
+      value.startsWith('/') ||
+      /^[a-z]:\\/i.test(value)
+    // An absolute or URI `stylesheet` ignores `stylesdir`, like Asciidoctor.
+    if (isUri(stylesheet)) {
+      return stylesheet
+    }
+    const stylesdir = node.getAttribute('stylesdir', '')
+    const combined =
+      stylesdir && stylesdir !== '.'
+        ? `${stylesdir.replace(/\/+$/, '')}/${stylesheet}`
+        : stylesheet
+    // `stylesdir` may itself be a URL or absolute base directory.
+    if (isUri(combined)) {
+      return combined
+    }
+    // Resolve against Asciidoctor's effective base dir, then let `fixHref` map
+    // the absolute path to a webview URI.
+    const baseDir = node.getBaseDir()
+    const baseUri = baseDir
+      ? vscode.Uri.file(baseDir)
+      : uri.Utils.dirname(this.textDocument.uri)
+    return uri.Utils.joinPath(baseUri, combined).fsPath
   }
 
   private getScripts(
@@ -885,11 +942,12 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
   private computeCustomStyleSheetIncludes(
     webviewResourceProvider: WebviewResourceProvider,
     textDocumentUri: vscode.Uri,
-    config: AsciidocPreviewConfiguration,
+    replacementStyle: string,
+    additionalStyles: readonly string[],
   ): string {
     return buildCustomStyleSheetLinks(
-      config.previewStyle,
-      config.additionalStyles,
+      replacementStyle,
+      additionalStyles,
       (stylePath) =>
         this.fixHref(webviewResourceProvider, textDocumentUri, stylePath),
     )
