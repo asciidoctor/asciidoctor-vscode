@@ -194,6 +194,10 @@ export class AsciidoctorWebViewConverter {
     this.outfilesuffix = '.html'
     this.supports_templates = true
     this.baseConverter = Html5Converter.create()
+    // NOTE: `supports_templates` above was the Asciidoctor.js < 4 (Opal) flag;
+    // 4.0 reads a `hasSupportsTemplates()` method instead (see below), so a
+    // custom converter that only sets the old property would silently disable
+    // custom templates in the preview.
     this.securityLevel = asciidocPreviewSecurityLevel
     this.config = previewConfigurations
     this.initialData = {
@@ -412,6 +416,47 @@ export class AsciidoctorWebViewConverter {
       }
     }
     return await this.baseConverter.convert(node, transform)
+  }
+
+  /**
+   * Signal to Asciidoctor.js 4.0 that this converter can be composed with a
+   * template converter. When `template_dirs` is set, the factory only builds the
+   * `CompositeConverter([TemplateConverter, this])` — which lets user templates
+   * override individual node transforms in the preview — if the backend
+   * converter answers `true` here (see `@asciidoctor/core` converter.js). The
+   * legacy `supports_templates` property is not consulted in 4.0.
+   */
+  hasSupportsTemplates(): boolean {
+    return true
+  }
+
+  /**
+   * In a `CompositeConverter`, each transform is routed to the first converter
+   * whose `handles()` returns `true`. The template converter is tried first and
+   * only claims the transforms it has a template for; this converter is the
+   * fallback and handles everything else, so it always returns `true`.
+   */
+  handles(): boolean {
+    return true
+  }
+
+  /**
+   * Backend traits the `CompositeConverter` copies from its delegate to expose
+   * `outfilesuffix`/`filetype`/… to the document. Kept in sync with the string
+   * properties set in the constructor.
+   */
+  backendInfo(): {
+    basebackend: string
+    outfilesuffix: string
+    filetype: string
+    htmlsyntax: string
+  } {
+    return {
+      basebackend: this.basebackend,
+      outfilesuffix: this.outfilesuffix,
+      filetype: 'html',
+      htmlsyntax: 'html',
+    }
   }
 
   /**

@@ -26,6 +26,7 @@ import { AsciidoctorProcessor } from './asciidoctorProcessor.js'
 import { registerBrowserIncludeProcessor } from './browserIncludeSupport.js'
 import { ResolverIncludeProcessor } from './includeProcessor.js'
 import { resolveBlockSourceLines } from './sourceLineMapping.js'
+import { getTemplateDirs } from './templateDirs.js'
 
 export type AsciidoctorBuiltInBackends = 'html5' | 'docbook5'
 
@@ -160,7 +161,7 @@ export class AsciidocEngine {
         base_dir: asciidocDocument.baseDirOverride,
       }),
     }
-    const templateDirs = this.getTemplateDirs()
+    const templateDirs = await getTemplateDirs(textDocumentUri)
     if (templateDirs.length !== 0) {
       options.template_dirs = templateDirs
     }
@@ -303,7 +304,7 @@ export class AsciidocEngine {
     const documentBasename = asciidocTextDocument.fileName
     const documentExtensionName = asciidocTextDocument.extensionName
     const documentFilePath = asciidocTextDocument.filePath
-    const templateDirs = this.getTemplateDirs()
+    const templateDirs = await getTemplateDirs(textDocumentUri)
     // Expose the active VS Code color theme as a document attribute so authors
     // can branch on it (e.g. `ifeval::["{vscode-theme}" == "dark"]`) and so
     // diagram extensions can request a matching theme. Mirrors the dark/light
@@ -385,15 +386,5 @@ export class AsciidocEngine {
       vscode.window.showErrorMessage(e.toString())
       throw e
     }
-  }
-
-  /**
-   * Get user defined template directories from configuration.
-   * @private
-   */
-  private getTemplateDirs() {
-    return vscode.workspace
-      .getConfiguration('asciidoc.preview', null)
-      .get<string[]>('templates', [])
   }
 }

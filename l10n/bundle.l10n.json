@@ -4,6 +4,7 @@
   "antora.activateSupport.never": "Never",
   "antora.activateSupport.yes": "Yes",
   "asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Manage Asciidoctor.js Extensions Trust Mode",
+  "asciidoc.showAsciidoctorTemplatesTrustModeSelector.title": "Manage Asciidoctor Templates Trust Mode",
   "asciidoc.showPreviewSecuritySelector.title": "Manage Preview Security Settings",
   "documentLink.openFile.tooltip": "Open file {0}",
   "imageInsertion.insertLink": "Insert image link",
@@ -17,6 +18,7 @@
   "preview.styleLoadError.message": "Could not load style 'asciidoc.preview.style': {0}.",
   "preview.unlocked.title": "Preview {0}",
   "security.asciidoctorExtensionsTrustModeSelector.title": "Select trust mode for Asciidoctor.js extensions in this workspace.",
+  "security.asciidoctorTemplatesTrustModeSelector.title": "Select trust mode for Asciidoctor templates in this workspace.",
   "security.disable.description": "Allow all content and script execution. Not recommended.",
   "security.disable.title": "Disable",
   "security.disableSecurityWarning.title": "Disable security warning in this workspace.",
@@ -27,10 +29,14 @@
   "security.insecureLocalContent.title": "Allow insecure local content.",
   "security.restrictAsciidoctorExtensionsAuthors.description": "Execution of Asciidoctor.js extensions will be prevented.",
   "security.restrictAsciidoctorExtensionsAuthors.title": "Untrusted",
+  "security.restrictAsciidoctorTemplatesAuthors.description": "Loading of templates from .asciidoctor/templates will be prevented.",
+  "security.restrictAsciidoctorTemplatesAuthors.title": "Untrusted",
   "security.showPreviewSecuritySelector.title": "Select security settings for AsciiDoc preview in this workspace.",
   "security.strict.description": "Only load secure content.",
   "security.strict.title": "Strict",
   "security.toggleSecurityWarning.description": "Please note: This setting has no effect on the content security level.",
   "security.trustAsciidoctorExtensionsAuthors.description": "Execution of Asciidoctor.js extensions will be allowed.",
-  "security.trustAsciidoctorExtensionsAuthors.title": "Trusted"
+  "security.trustAsciidoctorExtensionsAuthors.title": "Trusted",
+  "security.trustAsciidoctorTemplatesAuthors.description": "Loading of templates from .asciidoctor/templates will be allowed.",
+  "security.trustAsciidoctorTemplatesAuthors.title": "Trusted"
 }

@@ -109,6 +109,11 @@
         "category": "AsciiDoc"
       },
       {
+        "command": "asciidoc.showAsciidoctorTemplatesTrustModeSelector",
+        "title": "%asciidoc.showAsciidoctorTemplatesTrustModeSelector.title%",
+        "category": "AsciiDoc"
+      },
+      {
         "command": "asciidoc.preview.refresh",
         "title": "%asciidoc.preview.refresh.title%",
         "category": "AsciiDoc"
@@ -205,6 +210,11 @@
           "command": "asciidoc.showAsciidoctorExtensionsTrustModeSelector",
           "when": "asciidocPreviewFocus",
           "group": "1_asciidoc"
+        },
+        {
+          "command": "asciidoc.showAsciidoctorTemplatesTrustModeSelector",
+          "when": "asciidocPreviewFocus",
+          "group": "1_asciidoc"
         }
       ],
       "explorer/context": [
@@ -264,6 +274,10 @@
         },
         {
           "command": "asciidoc.showAsciidoctorExtensionsTrustModeSelector",
+          "when": "editorLangId == asciidoc || asciidocPreviewFocus"
+        },
+        {
+          "command": "asciidoc.showAsciidoctorTemplatesTrustModeSelector",
           "when": "editorLangId == asciidoc || asciidocPreviewFocus"
         },
         {

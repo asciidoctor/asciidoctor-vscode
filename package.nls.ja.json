@@ -68,6 +68,7 @@
   "asciidoc.saveDocbook.title": "DocBook保存",
   "asciidoc.saveHTML.title": "HTMLドキュメントの保存",
   "asciidoc.showAsciidoctorExtensionsTrustModeSelector.title": "Asciidoctor.js拡張の信頼モード設定",
+  "asciidoc.showAsciidoctorTemplatesTrustModeSelector.title": "Asciidoctorテンプレートの信頼モード設定",
   "asciidoc.showLockedPreviewToSide.title": "サイドにロック状態でプレビュー",
   "asciidoc.showPreview.title": "プレビューを開く",
   "asciidoc.showPreviewSecuritySelector.title": "プレビューセキュリティ設定",
