@@ -39,6 +39,16 @@ An editor SHOULD also suggest built-in Asciidoctor attributes (e.g., `toc`, `doc
 
 An editor MAY provide completion for citation macros (e.g., `cite:`, `citenp:`) by reading `.bib` files present in the workspace.
 
+== Hover
+
+=== Attribute Reference Hover
+
+An editor SHOULD display the resolved value of an attribute reference (`+{name}+`) when the user hovers over it, and SHOULD indicate when the attribute is not set so that typos can be caught.
+
+Resolution is based on the parsed document header. An editor SHOULD resolve attributes declared in the document header, in `.asciidoctorconfig` files, through editor-provided attributes, and intrinsic attributes. An editor MAY leave body-level attribute entries, redefinitions, and attributes contributed by body-level includes unresolved (reported as not set), as resolving them reliably requires converting the document.
+
+An editor SHOULD NOT display a hover when the reference is inside a verbatim block that does not run the `attributes` substitution, since the reference is not resolved in that context.
+
 == Snippets
 
 An editor SHOULD provide live templates or snippets for commonly used AsciiDoc constructs, including:

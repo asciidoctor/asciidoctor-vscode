@@ -18,7 +18,54 @@ Insert common AsciiDoc constructs in a few keystrokes. See xref:snippets.adoc[].
 Paste an image::
 Paste an image straight from the clipboard into your document. See xref:paste-image.adoc[].
 
+Resolve attributes on hover::
+Hover over an attribute reference such as `{name}` to see the value it resolves to. See <<attribute-hover>>.
+
 [TIP]
 ====
 You can also preview your changes live as you edit. See xref:preview.adoc[].
 ====
+
+[#attribute-hover]
+== Attribute value on hover
+
+When you hover over an attribute reference such as `+{version}+`, the extension shows the value the attribute resolves to:
+
+[source,asciidoc]
+----
+{version} = 2.1.0
+----
+
+If the attribute is not defined, the hover tells you so instead:
+
+____
+`+{verison}+` is not set in this document.
+____
+
+This is handy for catching typos in attribute names: a misspelled reference is reported as _not set_ rather than silently rendering as literal text in the preview.
+
+[#attribute-hover-limitations]
+=== Why the hover sometimes shows nothing or "not set"
+
+The value comes from parsing the document *header*, so only attributes that Asciidoctor knows about at that point are resolved. Understanding what is included avoids surprises:
+
+.The hover resolves these attributes
+* Attributes declared in the document header (before the first blank line following the title)
+* Attributes provided by a `.asciidoctorconfig` file. See xref:asciidoctorconfig.adoc[].
+* Attributes set through the `asciidoc.preview.asciidoctorAttributes` setting. See xref:settings.adoc[].
+* Intrinsic (built-in) attributes such as `docdir`, `docname` or `asciidoctor-version`
+
+.The hover does *not* resolve these attributes, and reports them as _not set_
+* Attributes declared in the *body* of the document, i.e. anywhere after the header
+* A *redefinition* of an attribute that appears after the header (the header value is shown, not the later one)
+* Attributes contributed by an `include::[]` directive located in the body
+* Attributes set or unset conditionally (for example inside an `ifdef::[]` block)
+
+[NOTE]
+====
+Body-level attributes are only applied by Asciidoctor while it _converts_ a document, and the hover works on the _parsed_ document without converting it (for speed). Resolving those values reliably would require tracking every attribute assignment in document order, which is intentionally out of scope. The xref:preview.adoc[preview] always renders the fully converted document, so use it when you need the final, position-accurate value.
+====
+
+No hover is shown at all when the reference sits inside a verbatim block (for example a `----` listing or literal block) that does not run the `attributes` substitution. In that context Asciidoctor keeps `+{name}+` as literal text, so displaying a resolved value would be misleading. This matches the behaviour of attribute-reference auto-completion.
+
+Attribute names are case-insensitive, so `+{Version}+` and `+{version}+` resolve to the same value.
