@@ -20,7 +20,7 @@ You can edit them from the VS Code Settings UI or directly in `settings.json`.
 |`2000`
 
 |`asciidoc.preview.style`
-|A URL or local path to a CSS stylesheet that *replaces* the default preview stylesheet.
+|A URL or local path to a CSS stylesheet that *replaces* the default preview stylesheet. When left empty, the preview falls back to the document's `stylesheet`/`stylesdir` attributes (see xref:preview.adoc#stylesheet-attribute[the `stylesheet` attribute]).
 |
 
 |`asciidoc.preview.additionalStyles`
