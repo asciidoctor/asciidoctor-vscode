@@ -1,7 +1,11 @@
 import assert from 'node:assert/strict'
 import * as path from 'node:path'
 import { after, before, describe, test } from 'node:test'
-import { convert as asciidoctorConvert } from '@asciidoctor/core'
+import {
+  convert as asciidoctorConvert,
+  load as asciidoctorLoad,
+  Extensions,
+} from '@asciidoctor/core'
 import sinon from 'sinon'
 import * as vscode from 'vscode'
 import { WebviewResourceProvider } from '../core/resources.js'
@@ -9,6 +13,7 @@ import { getDefaultWorkspaceFolderUri } from '../core/workspace.js'
 import { AntoraDocumentContext } from '../features/antora/antoraContext.js'
 import { AsciidocContributions } from '../features/extensionContributions.js'
 import { AsciidoctorWebViewConverter } from '../features/preview/asciidoctorWebViewConverter.js'
+import { mermaidJSProcessor } from '../features/preview/mermaid.js'
 import { AsciidocPreviewConfigurationManager } from '../features/preview/previewConfig.js'
 import { createDirectory, createFile, removeFiles } from './workspaceHelper.js'
 
@@ -574,6 +579,60 @@ See xref:my-table[xrefstyle=short] for more reference.
   test('Should not set a fragment in data-settings when none is given', async () => {
     const html = await convertStandaloneWithFragment('Some content', undefined)
     assert.strictEqual(readDataSettings(html).fragment, undefined)
+  })
+
+  // A passthrough block (here a [mermaid] diagram) is emitted verbatim by the
+  // base converter, which dropped the `data-line-*`/`data-h-*` roles the engine
+  // attaches to every source block. Without them the incremental preview update
+  // could neither anchor the diagram to a source line nor detect it as
+  // unchanged, so every edit reverted the rendered diagram back to raw source
+  // until a click forced a full refresh. The converter now wraps passthrough
+  // content in an element carrying those roles.
+  test('Should preserve data-line/data-h roles around a passthrough (Mermaid) block', async () => {
+    const file = await vscode.workspace.openTextDocument(
+      vscode.Uri.joinPath(workspaceUri, 'asciidoctorWebViewConverterTest.adoc'),
+    )
+    const converter = new AsciidoctorWebViewConverter(
+      file,
+      new TestWebviewResourceProvider(),
+      2,
+      false,
+      new TestAsciidocContributions(),
+      new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(
+        file.uri,
+      ),
+      undefined,
+      undefined,
+    )
+    const registry = Extensions.create()
+    registry.block('mermaid', mermaidJSProcessor())
+    // Typed loosely, like the engine does (asciidocEngine.ts), because the
+    // `@asciidoctor/core` typings only describe a handful of the options `load`
+    // and `convert` actually accept.
+    const options: { [key: string]: any } = {
+      ...createConverterOptions(converter, file.fileName),
+      sourcemap: true,
+      extension_registry: registry,
+    }
+    const doc = await asciidoctorLoad(
+      '[mermaid]\n----\ngraph TD\n  A --> B\n----',
+      options,
+    )
+    // Replicate the per-block source-line / content-hash roles the engine adds
+    // (see asciidocEngine.ts) so the converter sees the same input as in a real
+    // preview render.
+    doc
+      .findBy((b) => typeof b.getLineNumber() !== 'undefined')
+      .forEach((b) => {
+        b.addRole('data-line-' + b.getLineNumber())
+        b.addRole('data-h-test')
+      })
+    const html = (await doc.convert(options)) as unknown as string
+    assert.match(
+      html,
+      /<div class="data-line-\d+ data-h-test"><pre class='mermaid'>graph TD\n {2}A --> B<\/pre><\/div>/,
+      `expected the Mermaid passthrough wrapped with its roles in:\n${html}`,
+    )
   })
 
   // #598 / #322: the `stylesheet` (and `stylesdir`) document attributes should
