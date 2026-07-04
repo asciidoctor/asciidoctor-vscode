@@ -225,20 +225,11 @@ td.tableblock {
   border-color: var(--adoc-border);
 }
 
-table.tableblock {
-  border-radius: var(--adoc-radius);
-  /* Clip the cells to the rounded corners. With `border-collapse: collapse`
-   * this also clips the table's collapsed outer border, so the frame is drawn
-   * as a ring below instead. */
-  overflow: hidden;
-}
-
-/* Draw the table frame as a 1px ring that hugs the rounded rect: `box-shadow`
- * follows `border-radius` and, unlike the collapsed cell borders, is not clipped
- * by `overflow: hidden`. Skipped for borderless tables (`frame=none`). */
-table.tableblock:not(.frame-none) {
-  box-shadow: 0 0 0 1px var(--adoc-border);
-}
+/* Tables keep square corners on purpose: rounding a `border-collapse: collapse`
+ * table needs `overflow: hidden`, which the webview does not clip cleanly around
+ * header backgrounds and merged cells, and it hides the collapsed outer border.
+ * The frame and the precise internal borders (rowspan/colspan, see #609) come
+ * from the merged-border model in `asciidoctor-editor.css`. */
 
 table.tableblock > thead > tr > th,
 table.tableblock > tfoot > tr > th,
