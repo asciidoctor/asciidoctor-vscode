@@ -1,4 +1,5 @@
 import * as vscode from 'vscode'
+import { logger } from '../core/logger.js'
 import { AsciidocLoader } from './asciidoctor/asciidocLoader.js'
 import { findNearestBlock } from './completion/attributeReferenceUtils.js'
 
@@ -19,7 +20,15 @@ export class AttributeReferenceHoverProvider implements vscode.HoverProvider {
       return undefined
     }
     const document = await this.asciidocLoader.load(textDocument)
-    const nearestBlock = findNearestBlock(document, position.line + 1) // 0-based on VS Code but 1-based on Asciidoctor (hence the + 1)
+    const nearestBlock = findNearestBlock(
+      document,
+      position.line + 1, // 0-based on VS Code but 1-based on Asciidoctor (hence the + 1)
+      (err) =>
+        logger.error(
+          'Attribute hover: skipping a block that could not be inspected',
+          err,
+        ),
+    )
     if (
       nearestBlock &&
       nearestBlock.getContentModel() === 'verbatim' &&
