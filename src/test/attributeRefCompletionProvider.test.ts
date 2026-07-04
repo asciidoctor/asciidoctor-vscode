@@ -73,6 +73,33 @@ describe('Attribute ref CompletionsProvider', () => {
       '{my-attribute-to-find-in-completion}',
     )
   })
+  test('Should still complete in a document that contains a table', async () => {
+    // A table_cell exposes a source location without `getLineNumber`, which used
+    // to throw while scanning blocks and rejected the whole request — attribute
+    // completion (and the attribute hover) then silently failed for any document
+    // with a table.
+    const fileToAutoComplete = await createFile(
+      `:my-attribute-to-find-in-completion: dummy value
+
+|===
+| A | B
+| C | D
+|===
+
+{`,
+      'fileToAutoComplete-attributeRef-table.adoc',
+    )
+    createdFiles.push(fileToAutoComplete)
+    const items = await findCompletionItems(
+      fileToAutoComplete,
+      new Position(7, 1),
+      filterByLabel('my-attribute-to-find-in-completion'),
+    )
+    assert.deepStrictEqual(
+      (items[0].label as vscode.CompletionItemLabel).description,
+      'dummy value',
+    )
+  })
   test('Should offer the intrinsic docname attribute (#82)', async () => {
     const fileToAutoComplete = await createFile(
       `= test

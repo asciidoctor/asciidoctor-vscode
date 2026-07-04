@@ -56,4 +56,16 @@ describe('findNearestBlock', () => {
     assert.ok(block)
     assert.strictEqual(block.getContext(), 'listing')
   })
+
+  test('does not throw on a document containing a table', async () => {
+    // A `table_cell` exposes a source location without `getLineNumber`; calling
+    // it used to throw and, through the providers, silently killed attribute
+    // completion and hover for any document with a table.
+    const doc = await load('|===\n| A | B\n| C | D\n|===\n\nAfter.', OPTIONS)
+    let onErrorCalls = 0
+    const block = findNearestBlock(doc, 6, () => onErrorCalls++)
+    assert.strictEqual(onErrorCalls, 0, 'no block should have thrown')
+    assert.ok(block)
+    assert.strictEqual(block.getContext(), 'paragraph')
+  })
 })

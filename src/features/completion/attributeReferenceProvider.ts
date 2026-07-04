@@ -1,4 +1,5 @@
 import * as vscode from 'vscode'
+import { logger } from '../../core/logger.js'
 import { AsciidocLoader } from '../asciidoctor/asciidocLoader.js'
 import { findNearestBlock } from './attributeReferenceUtils.js'
 
@@ -23,7 +24,15 @@ export class AttributeReferenceProvider {
     }
     const document = await this.asciidocLoader.load(textDocument)
     const attributes = document.getAttributes()
-    const nearestBlock = findNearestBlock(document, position.line + 1) // 0-based on VS code but 1-based on Asciidoctor (hence the + 1)
+    const nearestBlock = findNearestBlock(
+      document,
+      position.line + 1, // 0-based on VS Code but 1-based on Asciidoctor (hence the + 1)
+      (err) =>
+        logger.error(
+          'Attribute completion: skipping a block that could not be inspected',
+          err,
+        ),
+    )
     if (
       nearestBlock &&
       nearestBlock.getContentModel() === 'verbatim' &&
