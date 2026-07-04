@@ -15,6 +15,7 @@ import { AsciidocPreviewSecurityLevel } from '../security.js'
 import { buildCustomStyleSheetLinks } from './customStyles.js'
 import { renderMathJax } from './mathjax.js'
 import { AsciidocPreviewConfiguration } from './previewConfig.js'
+import { resolveStyleUri } from './resolveStyleHref.js'
 
 const BAD_PROTO_RE = /^(vbscript|javascript|data):/i
 const GOOD_DATA_RE = /^data:image\/(gif|png|jpeg|webp);/i
@@ -990,35 +991,19 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
     if (!href) {
       return href
     }
-
-    if (
-      href.startsWith('http:') ||
-      href.startsWith('https:') ||
-      href.startsWith('file:')
-    ) {
-      return href
+    // The URL-vs-file decision (including the VS Code Web `vscode-vfs://` case)
+    // lives in the pure, unit-tested `resolveStyleUri`; here we only turn its
+    // result into the final webview href.
+    const resolved = resolveStyleUri(
+      href,
+      getWorkspaceFolder(textDocumentUri)?.uri,
+      textDocumentUri,
+    )
+    if (resolved.kind === 'url') {
+      return resolved.href
     }
-
-    // Assume it must be a local file
-    if (href.startsWith('/') || /^[a-z]:\\/i.test(href)) {
-      return webviewResourceProvider
-        .asWebviewUri(vscode.Uri.file(href))
-        .toString()
-    }
-
-    // Use a workspace relative path if there is a workspace
-    const root = getWorkspaceFolder(textDocumentUri)
-    if (root) {
-      return webviewResourceProvider
-        .asWebviewUri(vscode.Uri.joinPath(root.uri, href))
-        .toString()
-    }
-
-    // Otherwise look relative to the AsciiDoc file
     return webviewResourceProvider
-      .asWebviewUri(
-        vscode.Uri.joinPath(uri.Utils.dirname(textDocumentUri), href),
-      )
+      .asWebviewUri(vscode.Uri.from(resolved.uri))
       .toString()
   }
 }

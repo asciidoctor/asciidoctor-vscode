@@ -130,6 +130,7 @@
 ### Infrastructure
 
 * Extract the pure completion logic (Antora resource id forms, Antora resource macro matching, xref/`<<` anchor id extraction, and the xref/`<<` query parsing and label building) into `vscode`-free modules and cover it with fast Node `test:unit` unit tests instead of the extension-host suite (#434)
+* Extract the custom preview stylesheet path resolution out of the WebView converter's `fixHref` into a pure, `vscode`-free `resolveStyleUri` module and cover it with fast Node `test:unit` unit tests, locking in the behaviour of a custom `asciidoc.preview.style` in the VS Code Web editor (#651): an `http:`/`https:`/`file:` URL is passed through verbatim (rather than being resolved against the project path), and a relative path resolves under the workspace folder — working on the `vscode-vfs://` filesystem used by github.dev/vscode.dev. The scheme detection is now case-insensitive, matching the webview resource-root whitelist
 * Migrate from webpack to esbuild
 * Switch Node.js extension output to `.mjs` and remove `"type": "module"` from `package.json` to prevent VS Code web worker host from misidentifying the CJS browser bundle as ESM
 * Migrate to Asciidoctor.js 4.0.x (#999)
