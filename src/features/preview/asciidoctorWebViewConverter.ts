@@ -416,6 +416,22 @@ export class AsciidoctorWebViewConverter {
         }
       }
     }
+    // Block-level passthrough content — a `[mermaid]` diagram, or the inline SVG
+    // asciidoctor-kroki emits with `opts=inline` — is written verbatim by the
+    // base converter, with no wrapping element. That drops the `data-line-*` /
+    // `data-h-*` roles the engine attaches to every source block (see
+    // asciidocEngine.ts), which the incremental preview update relies on (see
+    // content-update.ts): without a `data-line-*` ancestor the block is never
+    // recorded as changed, so its renderer is never re-run, and without a
+    // `data-h-*` hash morphdom cannot tell it is unchanged. The visible symptom
+    // is a rendered diagram reverting to its raw source on the next edit and
+    // only rendering again after a click forces a full refresh. Wrap the
+    // passthrough content so those roles survive as classes on a real element.
+    if (nodeName === 'pass' && node.hasRoleAttribute()) {
+      const content = await node.getContent()
+      const id = node.getId() ? ` id="${node.getId()}"` : ''
+      return `<div${id} class="${node.getRole()}">${content}</div>`
+    }
     return await this.baseConverter.convert(node, transform)
   }
 
