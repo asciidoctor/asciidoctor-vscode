@@ -61,7 +61,7 @@ my.code-workspace
 <1> A workspace folder dedicated to shared configuration; its `.asciidoctorconfig` applies to documents in every folder.
 <2> The documentation folder; its `.asciidoctorconfig` refines or overrides the shared values for `guide.adoc`.
 
-== Reference files relative to the config: `{asciidoctorconfigdir}`
+== Reference files relative to the config: `+{asciidoctorconfigdir}+`
 
 Before applying a configuration file, the extension sets the `asciidoctorconfigdir` attribute to the *absolute path of the directory that contains it*.
 Use it to point at resources from the configuration file with paths that stay correct wherever the edited document lives:

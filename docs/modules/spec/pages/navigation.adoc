@@ -29,7 +29,7 @@ An editor SHOULD display a breadcrumb bar showing the current cursor position wi
 
 === Cross-References
 
-An editor MUST provide a "Go to Definition" action for cross-references (`<<target>>` and `xref:target[]`) that navigates to the anchor or section with the matching ID, either in the current file or in another file in the workspace.
+An editor MUST provide a "Go to Definition" action for cross-references (`\<<target>>` and `\xref:target[]`) that navigates to the anchor or section with the matching ID, either in the current file or in another file in the workspace.
 
 === Include Directives
 
@@ -41,7 +41,7 @@ An editor SHOULD provide a "Go to Definition" action for `image::`, `video::`, a
 
 === Attribute Declarations
 
-An editor SHOULD provide a "Go to Definition" action for attribute references (`{name}`) that navigates to the attribute declaration in the document header or in an `.asciidoctorconfig` file.
+An editor SHOULD provide a "Go to Definition" action for attribute references (`+{name}+`) that navigates to the attribute declaration in the document header or in an `.asciidoctorconfig` file.
 
 == Find References
 
@@ -59,8 +59,8 @@ An editor MAY provide an inline "Peek Definition" panel for cross-references and
 
 An editor SHOULD provide hover (quick documentation) information when the cursor hovers over, or is positioned on, the following elements:
 
-* Attribute references (`{name}`) — show the resolved value and the location where the attribute is declared
-* Cross-references (`<<target>>`, `xref:target[]`) — show the title of the target section or the content of the target anchor
+* Attribute references (`+{name}+`) — show the resolved value and the location where the attribute is declared
+* Cross-references (`\<<target>>`, `\xref:target[]`) — show the title of the target section or the content of the target anchor
 * `include::` directives — show the resolved path of the included file
 * Image and media macros — show the resolved path, and where feasible a thumbnail or rendered preview of the target
 
@@ -71,7 +71,7 @@ An editor MAY render a small HTML preview of the referenced element so that auth
 An editor MUST detect and make clickable the following link types within the editor:
 
 * External URLs (`http://`, `https://`, `ftp://`, `irc://`)
-* Cross-references: `<<target>>` and `xref:target[]`
+* Cross-references: `\<<target>>` and `\xref:target[]`
 * Include paths: `include::path[]`
 * Image and media paths: `image::path[]`, `video::path[]`, `audio::path[]`
 

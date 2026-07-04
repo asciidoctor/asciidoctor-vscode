@@ -9,7 +9,7 @@ An editor MUST provide auto-completion for cross-references using both syntaxes:
 * Shorthand syntax: `<<` triggers completion with available anchor IDs and section titles from the current document
 * Xref macro: `xref:` triggers completion with anchor IDs and section titles from all AsciiDoc files in the workspace
 
-An editor SHOULD resolve IDs defined via explicit anchors (`[[id]]`, `[id]`), auto-generated section title IDs, and anchors defined in included files.
+An editor SHOULD resolve IDs defined via explicit anchors (`\[[id]]`, `[id]`), auto-generated section title IDs, and anchors defined in included files.
 
 === Include Path Completion
 
@@ -89,7 +89,7 @@ An editor SHOULD automatically close the following delimiter pairs when typed:
 * `{` → `}`
 * `"` → `"`
 * `'` → `'`
-* `` ` `` → `` ` ``
+* `+`+` → `+`+`
 
 An editor SHOULD wrap selected text when one of the following characters is typed while text is selected: `*`, `_`, `` ` ``, `#`, `^`, `~`, `(`, `[`, `{`.
 

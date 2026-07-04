@@ -96,7 +96,7 @@ You can edit them from the VS Code Settings UI or directly in `settings.json`.
 |`[]`
 
 |`asciidoc.pdf.outputDirectory`
-|Directory where the exported PDF is written. When empty, the PDF is saved next to the document. A relative path is resolved against the workspace folder (or the document directory when there is no workspace); `${workspaceFolder}` is supported. The directory is created if it does not exist. See xref:export-pdf.adoc#output-location[Output location].
+|Directory where the exported PDF is written. When empty, the PDF is saved next to the document. A relative path is resolved against the workspace folder (or the document directory when there is no workspace); `+${workspaceFolder}+` is supported. The directory is created if it does not exist. See xref:export-pdf.adoc#output-location[Output location].
 |`""`
 
 |`asciidoc.pdf.askOutputLocation`

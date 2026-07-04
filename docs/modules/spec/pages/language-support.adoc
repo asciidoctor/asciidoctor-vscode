@@ -22,8 +22,8 @@ An editor MUST provide syntax highlighting for the following AsciiDoc constructs
 * Block delimiters: listing (` ---- `), literal (` .... `), sidebar (`****`), quote (`____`), example (`====`), passthrough (`++++`), open (`--`), comment (`////`)
 * Admonitions: `NOTE`, `TIP`, `IMPORTANT`, `WARNING`, `CAUTION`
 * List markers: unordered (`*`, `-`), ordered (`.`), description (`::`), callout (`<n>`)
-* Attribute declarations (`:[name]:`) and references (`{name}`)
-* Cross-references: `<<target>>` and `xref:target[]`
+* Attribute declarations (`:[name]:`) and references (`+{name}+`)
+* Cross-references: `\<<target>>` and `\xref:target[]`
 * Block and inline comments (`//` and `////...////`)
 * Preprocessor directives: `ifdef::`, `ifndef::`, `ifeval::`, `endif::`, `include::`
 * Table syntax (header rows, column separators, cell specifiers)

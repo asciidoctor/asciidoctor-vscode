@@ -4,8 +4,8 @@
 
 An editor SHOULD provide a rename refactoring for the following AsciiDoc elements:
 
-* **Anchor IDs**: renaming an anchor (`[[id]]` or `[id]`) updates all `xref:id[]` and `<<id>>` cross-references pointing to it across all files in the workspace.
-* **Document attributes**: renaming an attribute declaration (`:[name]:`) updates all `{name}` references throughout the document and, where applicable, across other files.
+* **Anchor IDs**: renaming an anchor (`\[[id]]` or `[id]`) updates all `\xref:id[]` and `\<<id>>` cross-references pointing to it across all files in the workspace.
+* **Document attributes**: renaming an attribute declaration (`:[name]:`) updates all `+{name}+` references throughout the document and, where applicable, across other files.
 * **File names**: renaming an AsciiDoc file updates all `include::` directives and `xref:` references that target it across the workspace.
 
 Rename refactoring MUST be preview-able before being applied (showing which files and lines will change).

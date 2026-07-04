@@ -62,7 +62,7 @@ See xref:settings.adoc#pdf[the PDF settings] for all related options.
 
 A custom PDF theme applies to the `asciidoctor-pdf` engine only -- it has no effect on the xref:preview.adoc[preview], which is HTML styled with CSS (see xref:preview.adoc#styling[Preview -> Styling]).
 
-The recommended way is to declare the xref:pdf-converter::theme.adoc[asciidoctor-pdf theme attributes] in the document header:
+The recommended way is to declare the xref:pdf-converter:theme:index.adoc[asciidoctor-pdf theme attributes] in the document header:
 
 [source,asciidoc]
 ----

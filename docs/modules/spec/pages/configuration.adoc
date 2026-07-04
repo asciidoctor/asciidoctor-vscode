@@ -31,7 +31,7 @@ They SHOULD support:
 * `include::` directives
 * `ifdef::` / `ifndef::` / `ifeval::` / `endif::` preprocessor directives
 
-An editor implementing `.asciidoctorconfig` SHOULD expose a built-in `{asciidoctorconfigdir}` attribute that resolves to the directory containing the config file, so that relative include paths within the config file work correctly regardless of where the document being edited is located.
+An editor implementing `.asciidoctorconfig` SHOULD expose a built-in `+{asciidoctorconfigdir}+` attribute that resolves to the directory containing the config file, so that relative include paths within the config file work correctly regardless of where the document being edited is located.
 
 === IDE-Agnostic Convention
 
