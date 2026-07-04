@@ -25,6 +25,7 @@
   "asciidoc.enableErrorDiagnostics.desc": "**Obsolète** : Active les diagnostics d'erreurs.",
   "asciidoc.exportAsPDF.title": "Exporter le document en PDF",
   "asciidoc.extensions.enableKroki.desc": "Active l'extension Kroki afin de générer des diagrammes.",
+  "asciidoc.extensions.kroki.serverUrl.desc": "URL du serveur Kroki utilisé pour générer les diagrammes (par exemple `http://localhost:8000` pour une instance auto-hébergée). Laissez ce champ vide pour utiliser le serveur public `https://kroki.io`. Un attribut `kroki-server-url` défini dans l'en-tête du document ou dans un fichier `.asciidoctorconfig` est prioritaire sur ce paramètre.",
   "asciidoc.extensions.registerWorkspaceExtensions.desc": "Active l'enregistrement des extensions Asciidoctor.js déclarées dans le répertoire `.asciidoctor/lib` de l'espace de travail.",
   "asciidoc.extensions.title": "Extensions",
   "asciidoc.pasteImage.title": "Coller l'image (déprécié)",
