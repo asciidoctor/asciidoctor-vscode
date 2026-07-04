@@ -278,7 +278,17 @@ export class AsciidocPreview
     vscode.window.onDidChangeActiveTextEditor(
       (editor) => {
         if (editor && isAsciidocFile(editor.document) && !this._locked) {
-          this.update(editor.document.uri)
+          // Only follow a switch to a *different* document. The preview is a
+          // webview in the editor area, so focusing it clears
+          // `activeTextEditor`; merely clicking back into the already-previewed
+          // editor fires this event again with the same document. Calling
+          // `update()` there would hit `doUpdate()`'s unchanged-version path,
+          // which re-emits `updateView` and snaps the preview back to the
+          // editor's top line — scrolling it when the user only moved focus.
+          // A real editor scroll still syncs through the topmost-line monitor.
+          if (editor.document.uri.fsPath !== this._resource.fsPath) {
+            this.update(editor.document.uri)
+          }
         }
       },
       null,
