@@ -115,6 +115,12 @@ You can edit them from the VS Code Settings UI or directly in `settings.json`.
 |Enable the Kroki extension to generate diagrams.
 |`false`
 
+|`asciidoc.extensions.kroki.serverUrl`
+|URL of the Kroki server used to render diagrams (for example `http://localhost:8000` for a self-hosted instance).
+Leave empty to use the public `https://kroki.io` server.
+A `kroki-server-url` attribute set in the document header or in an `.asciidoctorconfig` file takes precedence over this setting.
+|_(empty)_
+
 |`asciidoc.extensions.registerWorkspaceExtensions`
 |Enable registration of Asciidoctor.js extensions from the workspace directory `.asciidoctor/lib`.
 |`false`

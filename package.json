@@ -637,10 +637,17 @@
             "order": 1,
             "scope": "resource"
           },
+          "asciidoc.extensions.kroki.serverUrl": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "%asciidoc.extensions.kroki.serverUrl.desc%",
+            "order": 2,
+            "scope": "resource"
+          },
           "asciidoc.extensions.registerWorkspaceExtensions": {
             "type": "boolean",
             "default": false,
-            "order": 2,
+            "order": 3,
             "markdownDescription": "%asciidoc.extensions.registerWorkspaceExtensions.desc%"
           }
         }

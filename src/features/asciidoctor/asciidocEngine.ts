@@ -33,6 +33,23 @@ export type AsciidoctorBuiltInBackends = 'html5' | 'docbook5'
 const previewConfigurationManager = new AsciidocPreviewConfigurationManager()
 
 /**
+ * Read the dedicated `asciidoc.extensions.kroki.serverUrl` setting (#480).
+ *
+ * Returns `undefined` when the setting is empty so it can be applied as a soft
+ * default (`kroki-server-url@`): a `kroki-server-url` set closer to the
+ * document — in the document header or in an `.asciidoctorconfig` file — still
+ * takes precedence, and when nothing sets it the public `https://kroki.io`
+ * server is used as before.
+ */
+function getKrokiServerUrlSetting(documentUri: vscode.Uri): string | undefined {
+  const value = vscode.workspace
+    .getConfiguration('asciidoc.extensions', documentUri)
+    .get<string>('kroki.serverUrl')
+  const trimmed = value?.trim()
+  return trimmed ? trimmed : undefined
+}
+
+/**
  * Build a stable signature string for a block, used to detect whether its
  * content changed between two renders. Most blocks expose their raw source;
  * tables do not, so their signature is derived from their cells (otherwise a
@@ -138,10 +155,16 @@ export class AsciidocEngine {
     )
 
     const asciidocDocument = AsciidocTextDocument.fromTextDocument(textDocument)
+    const krokiServerUrlSetting = getKrokiServerUrlSetting(textDocumentUri)
     const options: { [key: string]: any } = {
       attributes: {
         'env-vscode': '',
         env: 'vscode',
+        // Soft default (`@`): the document header and `.asciidoctorconfig`
+        // still win over the `asciidoc.extensions.kroki.serverUrl` setting.
+        ...(krokiServerUrlSetting && {
+          'kroki-server-url@': krokiServerUrlSetting,
+        }),
         ...AsciidoctorAttributesConfig.defaultSourceHighlighter(
           asciidoctorAttributes,
         ),
@@ -213,8 +236,28 @@ export class AsciidocEngine {
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes(
       textDocument.uri,
     )
+    // Soft default (`@`): a `kroki-server-url` set closer to the document (in
+    // the header or an `.asciidoctorconfig`) still wins over the setting (#480).
+    const krokiServerUrlSetting = getKrokiServerUrlSetting(textDocument.uri)
+    const headerOnlyAttributes = {
+      ...attributes,
+      ...(krokiServerUrlSetting && {
+        'kroki-server-url@': krokiServerUrlSetting,
+      }),
+    }
+    // Apply `.asciidoctorconfig` to the header-only parse as well, so the
+    // resolved `kroki-server-url` — and therefore the CSP allow-list built from
+    // it below — reflects a URL defined only in the configuration file. This
+    // matters for a non-`https:` server (e.g. `http://localhost:8000`), which
+    // the CSP's `https:` wildcard does not cover.
+    const headerOnlyRegistry = Extensions.create()
+    await this.asciidoctorConfigProvider.activate(
+      headerOnlyRegistry,
+      textDocument.uri,
+    )
     const document = await load(text, {
-      attributes,
+      attributes: headerOnlyAttributes,
+      extension_registry: headerOnlyRegistry,
       header_only: true,
     })
     const isRougeSourceHighlighterEnabled = document.isAttribute(
@@ -316,6 +359,11 @@ export class AsciidocEngine {
     const options: { [key: string]: any } = {
       attributes: {
         ...attributes,
+        // Soft default (`@`): the document header and `.asciidoctorconfig` still
+        // win over the `asciidoc.extensions.kroki.serverUrl` setting (#480).
+        ...(krokiServerUrlSetting && {
+          'kroki-server-url@': krokiServerUrlSetting,
+        }),
         ...antoraAttributes,
         'vscode-theme': isDarkTheme ? 'dark' : 'light',
         // The following attributes are "intrinsic attributes" but they are not set when the input is a string

@@ -7,7 +7,26 @@ You can see the full range of supported diagram types on the https://kroki.io/#s
 
 == Enable diagrams
 
-Set the `asciidoc.extensions.enableKroki` setting to `true`.
+Diagram rendering is disabled by default (see <<Privacy>>).
+Set the `asciidoc.extensions.enableKroki` setting to `true` to enable it.
+
+The first time you preview a document that contains a diagram Kroki can render while the extension is disabled, a one-time notification points it out and offers to enable Kroki (or to open this page).
+The notification is shown at most once; enabling Kroki always remains an explicit choice.
+
+== Use your own Kroki server
+
+By default, diagrams are rendered by the public `https://kroki.io` server.
+To render them with your own instance instead, set the `asciidoc.extensions.kroki.serverUrl` setting to its URL (for example `http://localhost:8000`).
+
+The setting is the lowest-precedence way to set the server URL: a `kroki-server-url` attribute set closer to the document still wins.
+You can therefore override the setting for a single document from its header, or for a directory tree from an `.asciidoctorconfig` file, using the same attribute:
+
+[source,asciidoc]
+----
+:kroki-server-url: https://kroki.example.org
+----
+
+The resolution order, from highest to lowest precedence, is therefore: the document header, then the nearest `.asciidoctorconfig`, then the `asciidoc.extensions.kroki.serverUrl` setting, and finally the public `https://kroki.io` server.
 
 == Privacy
 
@@ -15,6 +34,6 @@ Set the `asciidoc.extensions.enableKroki` setting to `true`.
 ====
 By default, diagram source is sent to {url-kroki} to be rendered.
 
-If this is a concern, you can run your own Kroki instance and point the extension to it.
-See the {url-asciidoctor-kroki}#using-your-own-kroki[asciidoctor-kroki instructions] for details.
+If this is a concern, you can run your own Kroki instance and point the extension to it (see <<Use your own Kroki server>>).
+See also the {url-asciidoctor-kroki}#using-your-own-kroki[asciidoctor-kroki instructions] for details.
 ====
