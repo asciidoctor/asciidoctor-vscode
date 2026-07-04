@@ -28,7 +28,7 @@ The output directory is resolved as follows:
 * an empty value writes the PDF next to the document (the historical behaviour);
 * an absolute path (for example `/home/me/exports` or `C:\exports`) is used as-is;
 * a relative path (for example `build/pdf`) is resolved against the workspace folder, or against the document's own directory when the file does not belong to any workspace;
-* the `${workspaceFolder}` variable is expanded to the workspace folder path, so `${workspaceFolder}/build/pdf` is equivalent to `build/pdf`.
+* the `+${workspaceFolder}+` variable is expanded to the workspace folder path, so `+${workspaceFolder}/build/pdf+` is equivalent to `build/pdf`.
 
 The directory is created automatically if it does not exist.
 

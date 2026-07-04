@@ -43,7 +43,7 @@ An editor MUST configure the following language behaviors:
 An editor SHOULD also configure:
 
 * Surrounding pairs for inline formatting characters: `*`, `_`, `` ` ``, `#`, `^`, `~`
-* Word pattern that recognizes attribute references (`{name}`) as word tokens
+* Word pattern that recognizes attribute references (`+{name}+`) as word tokens
 
 == YAML Front Matter
 

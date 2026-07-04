@@ -21,7 +21,7 @@ It typically contains document attribute declarations, but any header content wo
 :product-name: ACME Rocket
 ----
 
-A document rendered next to this file can now use `{product-name}` and gets the highlighter, admonition icons and UI macros without repeating those attributes in each file.
+A document rendered next to this file can now use `+{product-name}+` and gets the highlighter, admonition icons and UI macros without repeating those attributes in each file.
 
 == Where the extension looks for it
 
@@ -82,14 +82,14 @@ Name the file `.asciidoctorconfig.adoc` -- the `ifdef`/`ifndef`/`ifeval` directi
 
 [source,asciidoc]
 ----
-ifndef::print[]
+\ifndef::print[]
 :stylesheet: web.css
 :docinfo: shared,private
-endif::[]
-ifdef::print[]
+\endif::[]
+\ifdef::print[]
 :stylesheet: book.css
 :media: prepress
-endif::[]
+\endif::[]
 ----
 
 Set the switching attribute (here `print`) where it suits your workflow -- for example through `asciidoc.preview.asciidoctorAttributes` in the workspace settings, or on the export command line.

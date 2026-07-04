@@ -19,7 +19,7 @@ Paste an image::
 Paste an image straight from the clipboard into your document. See xref:paste-image.adoc[].
 
 Resolve attributes on hover::
-Hover over an attribute reference such as `{name}` to see the value it resolves to. See <<attribute-hover>>.
+Hover over an attribute reference such as `+{name}+` to see the value it resolves to. See <<attribute-hover>>.
 
 [TIP]
 ====
