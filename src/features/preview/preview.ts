@@ -262,8 +262,13 @@ export class AsciidocPreview
       (event) => {
         if (this.isPreviewOf(event.textEditor.document.uri)) {
           const line = event.selections[0].active.line
-          this.line = line
-
+          // Send the cursor line to move the active-line highlight, but do NOT
+          // set `this.line` from it: `this.line` is the scroll anchor consumed by
+          // `providePreviewHTML`/`updateForView`, and pointing it at the caret
+          // would make the next (re)render scroll the preview to the cursor even
+          // though the user only moved the selection. The anchor is maintained by
+          // real scrolling (`onDidScrollPreview`, the topmost-line monitor) and by
+          // `update()` reading the editor's visible line.
           this.postMessage({
             type: 'onDidChangeTextEditorSelection',
             line,
