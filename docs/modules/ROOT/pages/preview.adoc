@@ -138,6 +138,13 @@ By default, the preview uses the VS Code editor theme (`workbench.colorTheme`).
 
 See xref:settings.adoc#preview[the preview settings] for the full list of options.
 
+[NOTE]
+====
+Custom stylesheets work in VS Code for the Web (`vscode.dev`, `github.dev`).
+Both `asciidoc.preview.style` and `asciidoc.preview.additionalStyles` are loaded through the web extension, including *relative* paths -- they are read via VS Code's virtual file system, so no local file access is required.
+This is unlike custom templates (`asciidoc.preview.templates`), which rely on Node's file system and therefore apply only to the desktop preview.
+====
+
 [#stylesheet-attribute]
 === The `stylesheet` document attribute
 
