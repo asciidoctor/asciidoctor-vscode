@@ -1,5 +1,5 @@
-body.showEditorSelection :not(tr).code-active-line:before,
-body.showEditorSelection :not(tr).code-line:hover:before {
+body.showEditorSelection :not(tr):not(table).code-active-line:before,
+body.showEditorSelection :not(tr):not(table).code-line:hover:before {
   content: "";
   display: block;
   position: absolute;
@@ -13,7 +13,7 @@ body.showEditorSelection li.code-line:hover:before {
   left: -30px;
 }
 
-body.showEditorSelection .code-active-line {
+body.showEditorSelection .code-active-line:not(table):not(tr) {
   position: relative;
 }
 
@@ -51,4 +51,59 @@ body.showEditorSelection .code-active-line {
 
 .vscode-high-contrast.showEditorSelection .code-line .code-line:hover:before {
   border-left: none;
+}
+
+/* A `<table>` carries the block's `data-line-*` anchor, so it becomes the
+ * `.code-active-line` when the selection lands on it. The marker above relies on
+ * `position: relative` to anchor its absolutely-positioned `::before` bar, but
+ * positioning a `border-collapse: collapse` table makes Chromium re-snap the
+ * collapsed borders by 1px, nudging the header row. Tables (and their rows) are
+ * therefore excluded from that rule; the same left bar is instead painted with a
+ * `box-shadow`, which is pure paint — no reflow, no border re-snap, no shift.
+ *
+ * A single shadow can only sit flush against the table (it is the table's own
+ * silhouette shifted left), so two are stacked to detach the bar into the gutter
+ * like the `::before` marker: the near one repaints a 9px gap in the page colour
+ * on top, the far one draws the 3px bar behind it — only its outer 3px (from -9px
+ * to -12px) shows past the gap, mirroring the paragraph marker's -12px offset.
+ *
+ * CSS cannot read the background actually painted behind an element, so the gap
+ * colour cannot auto-adapt. The container blocks that give a table a non-page
+ * background (sidebar, example, quote, collapsible details) instead publish their
+ * own colour through the inherited `--adoc-marker-gap` custom property, which a
+ * table nested in them picks up; the fallback is the page background. */
+.vscode-light.showEditorSelection table.code-active-line {
+  box-shadow:
+    -9px 0 0 var(--adoc-marker-gap, var(--vscode-editor-background, #fff)),
+    -12px 0 0 rgba(0, 0, 0, 0.15);
+}
+
+.vscode-light.showEditorSelection table.code-line:hover {
+  box-shadow:
+    -9px 0 0 var(--adoc-marker-gap, var(--vscode-editor-background, #fff)),
+    -12px 0 0 rgba(0, 0, 0, 0.4);
+}
+
+.vscode-dark.showEditorSelection table.code-active-line {
+  box-shadow:
+    -9px 0 0 var(--adoc-marker-gap, var(--vscode-editor-background, #fff)),
+    -12px 0 0 rgba(255, 255, 255, 0.4);
+}
+
+.vscode-dark.showEditorSelection table.code-line:hover {
+  box-shadow:
+    -9px 0 0 var(--adoc-marker-gap, var(--vscode-editor-background, #fff)),
+    -12px 0 0 rgba(255, 255, 255, 0.6);
+}
+
+.vscode-high-contrast.showEditorSelection table.code-active-line {
+  box-shadow:
+    -9px 0 0 var(--adoc-marker-gap, var(--vscode-editor-background, #fff)),
+    -12px 0 0 rgba(255, 160, 0, 0.7);
+}
+
+.vscode-high-contrast.showEditorSelection table.code-line:hover {
+  box-shadow:
+    -9px 0 0 var(--adoc-marker-gap, var(--vscode-editor-background, #fff)),
+    -12px 0 0 rgba(255, 160, 0, 1);
 }

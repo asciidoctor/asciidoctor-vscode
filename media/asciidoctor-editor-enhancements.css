@@ -169,6 +169,14 @@ figcaption,
     var(--adoc-accent, var(--adoc-fg)) 8%,
     transparent
   );
+  /* Same tint as the (translucent) background, but composited over the page so a
+   * nested table's marker gap matches: 8% accent over transparent rendered on the
+   * page equals 8% accent over the page. */
+  --adoc-marker-gap: color-mix(
+    in srgb,
+    var(--adoc-accent, var(--adoc-fg)) 8%,
+    var(--vscode-editor-background, #fff)
+  );
   border-left: 3px solid var(--adoc-accent, var(--adoc-border));
   border-radius: 0 var(--adoc-radius) var(--adoc-radius) 0;
 }
@@ -264,6 +272,11 @@ table.stripes-hover > tbody > tr:hover {
   margin: 0 0 1.25em;
   border-left: 3px solid var(--vscode-textBlockQuote-border, var(--adoc-link));
   background: var(--vscode-textBlockQuote-background, var(--adoc-surface-1));
+  /* Colour of the editor-selection marker's gutter gap for a nested table. */
+  --adoc-marker-gap: var(
+    --vscode-textBlockQuote-background,
+    var(--adoc-surface-1)
+  );
   border-radius: 0 var(--adoc-radius) var(--adoc-radius) 0;
   padding: 0.75em 1.25em;
 }
@@ -293,12 +306,14 @@ table.stripes-hover > tbody > tr:hover {
 
 .sidebarblock {
   background: var(--adoc-surface-2);
+  --adoc-marker-gap: var(--adoc-surface-2);
   border: 1px solid var(--adoc-border);
   border-radius: var(--adoc-radius);
 }
 
 .exampleblock > .content {
   background: var(--adoc-surface-1);
+  --adoc-marker-gap: var(--adoc-surface-1);
   border: 1px solid var(--adoc-border);
   border-radius: var(--adoc-radius);
 }
@@ -308,6 +323,7 @@ details {
   border-radius: var(--adoc-radius);
   padding: 0.4em 1em;
   background: var(--adoc-surface-1);
+  --adoc-marker-gap: var(--adoc-surface-1);
 }
 
 details > summary {
