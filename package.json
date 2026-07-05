@@ -748,6 +748,7 @@
     "dev": "npm run build",
     "build": "npm run copy-assets && npm run build-grammar && npm run build-ext && npm run build-preview",
     "build-web": "node tasks/build-browser.mjs",
+    "open-in-browser": "npm run build-web && npm run build-preview && npx @vscode/test-web --browserType=chromium --extensionDevelopmentPath=.",
     "build-preview": "node tasks/build-preview.mjs",
     "build-ext": "node tasks/build-ext.mjs",
     "build-grammar": "node ./syntaxes/generate.js",
