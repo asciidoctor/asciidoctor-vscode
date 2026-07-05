@@ -1,0 +1,8 @@
+[source,c]
+----
+/* This is a long
+   comment
+*/
+----
+
+Text after the source is a normal paragraph
