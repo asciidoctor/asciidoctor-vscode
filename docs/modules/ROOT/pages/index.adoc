@@ -9,7 +9,7 @@ Preview your docs locally before publishing them.
 Collaborate using a version control system.
 Publish with confidence using automated builds.
 
-image::simple.gif[Live preview of an AsciiDoc document,align=center]
+image::demo.gif[Live preview of an AsciiDoc document,align=center]
 
 Besides VS Code's basic editing, a number of AsciiDoc-specific features will help you be more productive:
 
