@@ -7,7 +7,7 @@
 
 An extension that provides live preview, syntax highlighting, and snippets for the AsciiDoc format using Asciidoctor.
 
-![demo](images/simple.gif)
+![demo](images/demo.gif)
 
 ## Install
 
