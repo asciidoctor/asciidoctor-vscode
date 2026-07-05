@@ -63,7 +63,7 @@ The value is a case-insensitive substring matched against the test file name (th
 
 To test the extension, run the following command within the repository folder from the command line:
 
- $ npm run build-web && npm run build-preview && npx @vscode/test-web --browserType=chromium --extensionDevelopmentPath=${PWD}
+ $ npm run open-in-browser
 
 IMPORTANT: In development, you will need to disable security because resources are loaded through http://localhost:3000/static/devextensions
 
