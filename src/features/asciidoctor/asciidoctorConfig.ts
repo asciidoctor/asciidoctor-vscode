@@ -92,9 +92,18 @@ export async function getAsciidoctorConfigContent(
   }
   const configContents = []
   for (const asciidoctorConfig of asciidoctorConfigs) {
-    const asciidoctorConfigContent = new TextDecoder().decode(
-      await vscode.workspace.fs.readFile(asciidoctorConfig),
-    )
+    let rawConfig: Uint8Array
+    try {
+      rawConfig = await vscode.workspace.fs.readFile(asciidoctorConfig)
+    } catch (_err) {
+      // The file was reported by stat() but cannot be read. This happens in
+      // VS Code for the Web when the document lives under the extension's
+      // bundled resources: the file system provider serving them answers
+      // stat() optimistically but returns 404 on read. Treat it as absent
+      // rather than letting the error break the whole preview render.
+      continue
+    }
+    const asciidoctorConfigContent = new TextDecoder().decode(rawConfig)
     const asciidoctorConfigParentUri = vscode.Uri.joinPath(
       asciidoctorConfig,
       '..',
