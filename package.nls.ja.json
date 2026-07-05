@@ -73,6 +73,7 @@
   "asciidoc.showLockedPreviewToSide.title": "サイドにロック状態でプレビュー",
   "asciidoc.showPreview.title": "プレビューを開く",
   "asciidoc.showPreviewSecuritySelector.title": "プレビューセキュリティ設定",
+  "asciidoc.showCheatSheet.title": "AsciiDoc チートシートを開く",
   "asciidoc.showSource.title": "ソース表示",
   "asciidoc.toggleBold.title": "太字の切り替え",
   "asciidoc.toggleItalic.title": "斜体の切り替え",

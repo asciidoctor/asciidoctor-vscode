@@ -99,6 +99,12 @@
         "icon": "$(go-to-file)"
       },
       {
+        "command": "asciidoc.showCheatSheet",
+        "title": "%asciidoc.showCheatSheet.title%",
+        "category": "AsciiDoc",
+        "icon": "$(book)"
+      },
+      {
         "command": "asciidoc.showPreviewSecuritySelector",
         "title": "%asciidoc.showPreviewSecuritySelector.title%",
         "category": "AsciiDoc"

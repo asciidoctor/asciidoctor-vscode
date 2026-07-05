@@ -39,6 +39,21 @@ The *Web* column tells you whether an action is available in {url-vscode-web}[VS
 On VS Code for the Web you can still paste an image with the standard kbd:[Ctrl+V] (Mac: kbd:[Cmd+V]) inside the editor. See xref:paste-image.adoc[].
 ====
 
+== Reference
+
+[cols="2,1,1,^1",options="header"]
+|===
+|Command |Windows/Linux |Mac |Web
+
+|AsciiDoc: Open AsciiDoc Cheat Sheet
+|--
+|--
+|✔️
+|===
+
+Opens a built-in AsciiDoc *language* syntax reference -- the most common elements, blocks, macros and attributes at a glance -- as a locked preview to the side.
+Unlike the other commands, it is available from the command palette even when no AsciiDoc file is open, so you can pull up the syntax at any time.
+
 == Preview
 
 [cols="2,1,1,^1",options="header"]

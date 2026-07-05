@@ -73,6 +73,7 @@
   "asciidoc.showLockedPreviewToSide.title": "Eine festgelegte Vorschau für das aktuelle Dokument zur Seite öffnen",
   "asciidoc.showPreview.title": "Vorschau öffnen",
   "asciidoc.showPreviewSecuritySelector.title": "Sicherheitseinstellung für Vorschau verwalten",
+  "asciidoc.showCheatSheet.title": "AsciiDoc-Spickzettel öffnen",
   "asciidoc.showSource.title": "Quelltext anzeigen",
   "asciidoc.toggleBold.title": "Fett umschalten",
   "asciidoc.toggleItalic.title": "Kursiv umschalten",
