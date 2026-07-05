@@ -159,8 +159,13 @@ window.addEventListener(
     switch (event.data.type) {
       case 'onDidChangeTextEditorSelection': {
         const line = event.data.line
+        // Only move the active-line highlight. Do NOT write the cursor line into
+        // the persisted state: `state.line` is the preview's scroll anchor (used
+        // by the full-reload `DOMContentLoaded` and by window restoration), so
+        // arming it with the cursor line would make the next reload jump the
+        // preview to wherever the caret is — even though the user only clicked.
+        // The scroll anchor is kept up to date by actual scrolling (`onUpdateView`).
         marker.onDidChangeTextEditorSelection(line)
-        vscode.setState({ ...vscode.getState(), line })
         break
       }
 

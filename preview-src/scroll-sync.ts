@@ -1,3 +1,9 @@
+import {
+  anchorIndicesForLine,
+  type LineTop,
+  scrollTopForLine,
+  sourceLineAtViewportTop,
+} from '../src/features/preview/scrollMapping.js'
 import { getSettings } from './settings.js'
 
 function clamp(min: number, max: number, value: number) {
@@ -93,6 +99,17 @@ export function resetCodeLineElements() {
 }
 
 /**
+ * Snapshot the anchors as `{ line, top }` for the pure mapping helpers, reading
+ * each element's current on-screen position once.
+ */
+function codeAnchors(): LineTop[] {
+  return getCodeLineElements().map((entry) => ({
+    line: entry.line,
+    top: entry.element.getBoundingClientRect().top,
+  }))
+}
+
+/**
  * Source line of the nearest `data-line-*` anchor at or above `element`, or
  * `undefined` when none is found. Used to map a click target (e.g. a TOC entry)
  * back to its editor line.
@@ -130,43 +147,23 @@ export function getLastSourceLine(): number {
  * If an exact match, returns a single element. If the line is between elements,
  * returns the element prior to and the element after the given line.
  */
-export function getElementsForSourceLine(targetLine: number): {
+export function getElementsForSourceLine(
+  targetLine: number,
+  sourceLine = false,
+): {
   previous: CodeLineElement
   next?: CodeLineElement
 } {
-  const lineNumber = Math.floor(targetLine + 1) // off by one line
   const lines = getCodeLineElements()
-  let previous = lines[0] || null
-  for (const entry of lines) {
-    if (entry.line === lineNumber) {
-      return { previous: entry, next: undefined }
-    } else if (entry.line > lineNumber) {
-      return { previous, next: entry }
-    }
-    previous = entry
+  const { previous, next } = anchorIndicesForLine(
+    lines.map((entry) => entry.line),
+    targetLine,
+    sourceLine,
+  )
+  return {
+    previous: lines[previous],
+    next: next >= 0 ? lines[next] : undefined,
   }
-  return { previous }
-}
-
-/**
- * Compute the page scroll offset that brings a given source line to the top of
- * the preview, or `undefined` when no mapping is available.
- */
-function getScrollTopForSourceLine(line: number): number | undefined {
-  const { previous, next } = getElementsForSourceLine(line)
-  if (!previous) {
-    return undefined
-  }
-  const previousTop = previous.element.getBoundingClientRect().top
-  if (next && next.line !== previous.line) {
-    // Between two elements. Go to percentage offset between them.
-    const betweenProgress = (line - previous.line) / (next.line - previous.line)
-    const elementOffset = next.element.getBoundingClientRect().top - previousTop
-    return window.scrollY + previousTop + betweenProgress * elementOffset
-  } else if (line === 0) {
-    return 0
-  }
-  return window.scrollY + previousTop
 }
 
 /**
@@ -176,13 +173,32 @@ export function scrollToRevealSourceLine(line: number) {
   if (!getSettings().scrollPreviewWithEditor) {
     return
   }
-  const scrollTo = getScrollTopForSourceLine(line)
-  if (scrollTo !== undefined) {
-    // This is the editor → preview direction; do not let the resulting scroll
-    // bounce back to the editor.
-    suppressScrollEcho(250)
-    window.scroll(0, Math.max(1, scrollTo))
+  // `line` is a 0-based editor line (from `updateView`/the initial state).
+  const scrollTo = scrollTopForLine(codeAnchors(), window.scrollY, line)
+  if (scrollTo === undefined) {
+    return
   }
+  // `scrollTo` brings `line` to the very top of the preview, so its distance
+  // from the current scroll position is where that line sits on screen right
+  // now (its client-Y).
+  const clientY = scrollTo - window.scrollY
+  const viewportHeight = window.innerHeight
+  // Don't move when the line is already comfortably on screen: a refocus, an
+  // edit, or a selection that doesn't really scroll the editor must not make
+  // the preview jump when the target line is already visible.
+  //
+  // Exception — a "snap zone" near the top: during smooth editor → preview
+  // scrolling the editor's top line sits at client-Y ≈ 0 and must keep snapping
+  // to the preview top, or lockstep scrolling would stall (#638). Only lines
+  // *below* that zone (and still on screen) are left in place.
+  const snapZone = viewportHeight / 4
+  if (clientY > snapZone && clientY < viewportHeight) {
+    return
+  }
+  // This is the editor → preview direction; do not let the resulting scroll
+  // bounce back to the editor.
+  suppressScrollEcho(250)
+  window.scroll(0, Math.max(1, scrollTo))
 }
 
 /**
@@ -194,7 +210,11 @@ export function scrollToRevealSourceLine(line: number) {
  * make the preview jump.
  */
 export function scrollToLine(line: number) {
-  const scrollTo = getScrollTopForSourceLine(line)
+  // `line` comes from `getEditorLineNumberForPageOffset`, i.e. it is already a
+  // 1-based source line (a `data-line-N` value), so map it back with the same
+  // convention (`sourceLine: true`) — otherwise the +1 for editor lines targets
+  // the next anchor and this "keep position" re-pin jumps by one source line.
+  const scrollTo = scrollTopForLine(codeAnchors(), window.scrollY, line, true)
   if (scrollTo !== undefined) {
     suppressScrollEcho(250)
     window.scroll(0, Math.max(0, scrollTo))
@@ -212,39 +232,8 @@ export function scrollToLine(line: number) {
  * block or a run of non-rendering source lines sits between two anchors.
  */
 export function getEditorLineNumberForPageOffset(offset: number) {
-  const lines = getCodeLineElements()
-  if (!lines.length) {
-    return null
-  }
-
   // `offset` is the page scrollY, so the top of the viewport is at client y = 0.
   const viewportTop = offset - window.scrollY
-
-  // Binary search for `previous`: the last anchor at or above the viewport top.
-  let lo = 0
-  let hi = lines.length - 1
-  if (lines[0].element.getBoundingClientRect().top > viewportTop) {
-    // The viewport top is above the first anchor.
-    return clampLine(lines[0].line)
-  }
-  while (lo < hi) {
-    const mid = Math.ceil((lo + hi) / 2)
-    if (lines[mid].element.getBoundingClientRect().top <= viewportTop) {
-      lo = mid
-    } else {
-      hi = mid - 1
-    }
-  }
-
-  const previous = lines[lo]
-  const next = lines[lo + 1]
-  const previousTop = previous.element.getBoundingClientRect().top
-  if (next) {
-    const nextTop = next.element.getBoundingClientRect().top
-    const span = nextTop - previousTop
-    const progress = span > 0 ? (viewportTop - previousTop) / span : 0
-    const line = previous.line + progress * (next.line - previous.line)
-    return clampLine(line)
-  }
-  return clampLine(previous.line)
+  const line = sourceLineAtViewportTop(codeAnchors(), viewportTop)
+  return line === null ? null : clampLine(line)
 }
