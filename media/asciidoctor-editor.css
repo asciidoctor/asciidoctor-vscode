@@ -838,7 +838,11 @@ p a>code:hover {
 
 #header>h1:first-child+#toc {
   margin-top: 8px;
-  /* DISABLED border-top: 1px solid #dddddf */
+  /* Top rule of the two that bracket a header-anchored TOC (`:toc:` auto, or a
+   * collapsed `toc: left`/`right` sidebar) when there is no author line; the
+   * bottom rule is the TOC's own border-bottom. With an author present the
+   * `.details` border plays this role, so this selector (TOC adjacent to the
+   * title) correctly does not match. Colour comes from the enhancements sheet. */
   border-top: 1px solid;
 }
 
@@ -907,11 +911,16 @@ body.toc2 #header>h1:nth-last-child(2) {
 #toc {
   /* DISABLED border-bottom: 1px solid #e7e7e9; */
   border-bottom: 1px solid;
+  padding-top: .5em;
   padding-bottom: .5em
 }
 
 #toc>ul {
-  margin-left: .125em
+  margin-left: .125em;
+  /* Drop the generic list `margin-bottom: 1.25em` on the TOC's own list, so the
+   * gap below the last entry matches the gap above the title and the TOC sits
+   * evenly between its two rules (or inside its card). */
+  margin-bottom: 0
 }
 
 #toc ul.sectlevel0>li>a {
@@ -951,9 +960,12 @@ body.toc2 #header>h1:nth-last-child(2) {
     font-size: 1.375em
   }
 
+  /* `toc: left` is disabled: a left sidebar overlaps the content in the
+   * preview, so every `toc2` sidebar is pinned to the right (where it lays out
+   * correctly, same as `toc: right`). */
   body.toc2 {
-    padding-left: 15em;
-    padding-right: 0
+    padding-left: 0;
+    padding-right: 15em
   }
 
   #toc.toc2 {
@@ -963,10 +975,11 @@ body.toc2 #header>h1:nth-last-child(2) {
     color: var(--vscode-editor-foreground);
     position: fixed;
     width: 15em;
-    left: 0;
+    left: auto;
+    right: 0;
     top: 0;
     /* DISABLED border-right: 1px solid #e7e7e9; */
-    border-right: 1px solid;
+    border-left: 1px solid;
     border-top-width: 0 !important;
     border-bottom-width: 0 !important;
     z-index: 1000;
@@ -1013,8 +1026,8 @@ body.toc2 #header>h1:nth-last-child(2) {
 
 @media screen and (min-width:1280px) {
   body.toc2 {
-    padding-left: 20em;
-    padding-right: 0
+    padding-left: 0;
+    padding-right: 20em
   }
 
   #toc.toc2 {

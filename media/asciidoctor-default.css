@@ -699,6 +699,10 @@ p a > code:hover {
 }
 
 #header > h1:first-child + #toc {
+    /* Top rule of the two that bracket a header-anchored TOC when there is no
+     * author line; the bottom rule is the TOC's own border-bottom. With an
+     * author the `.details` border plays this role, so this selector (TOC
+     * adjacent to the title) correctly does not match. */
     margin-top: 8px;
     border-top: 1px solid #dddddf
 }
@@ -763,11 +767,16 @@ p a > code:hover {
 
 #toc {
     border-bottom: 1px solid #e7e7e9;
-    padding-bottom: .5em
+    padding-top: 1em;
+    padding-bottom: 1em;
 }
 
 #toc > ul {
-    margin-left: .125em
+    margin-left: .125em;
+    /* Drop the generic list `margin-bottom: 1.25em` on the TOC's own list, so
+     * the gap below the last entry matches the gap above the title and the TOC
+     * sits evenly between its two rules (or inside its card). */
+    margin-bottom: 0
 }
 
 #toc ul.sectlevel0 > li > a {
@@ -801,14 +810,24 @@ p a > code:hover {
     font-size: 1.2em
 }
 
+/* Drop the generic heading `margin-top: 1em` on the TOC title when the TOC is
+ * anchored in the header (below the document title), so the title sits 1em
+ * below the top rule — matching the 1em gap above the bottom rule. */
+#header #toctitle {
+    margin-top: 0
+}
+
 @media screen and (min-width: 768px) {
     #toctitle {
         font-size: 1.375em
     }
 
+    /* `toc: left` is disabled: a left sidebar overlaps the content in the
+     * preview, so every `toc2` sidebar is pinned to the right (where it lays
+     * out correctly, same as `toc: right`). */
     body.toc2 {
-        padding-left: 15em;
-        padding-right: 0
+        padding-left: 0;
+        padding-right: 15em
     }
 
     #toc.toc2 {
@@ -816,9 +835,10 @@ p a > code:hover {
         background: #f8f8f7;
         position: fixed;
         width: 15em;
-        left: 0;
+        left: auto;
+        right: 0;
         top: 0;
-        border-right: 1px solid #e7e7e9;
+        border-left: 1px solid #e7e7e9;
         border-top-width: 0 !important;
         border-bottom-width: 0 !important;
         z-index: 1000;
@@ -864,8 +884,8 @@ p a > code:hover {
 
 @media screen and (min-width: 1280px) {
     body.toc2 {
-        padding-left: 20em;
-        padding-right: 0
+        padding-left: 0;
+        padding-right: 20em
     }
 
     #toc.toc2 {
@@ -887,6 +907,17 @@ p a > code:hover {
     body.toc2.toc-right {
         padding-left: 0;
         padding-right: 20em
+    }
+}
+
+/* When a `toc: left`/`right` sidebar collapses below the title at narrow
+ * widths, the title's bottom border stacks against the TOC's own bottom
+ * border, leaving two rules a few lines apart. Drop the title's redundant one
+ * so the header and TOC read as a single banner with one divider underneath. */
+@media screen and (max-width: 767.98px) {
+    body.toc2 #header > h1:only-child, body.toc2 #header > h1:nth-last-child(2) {
+        border-bottom-width: 0;
+        padding-bottom: 0
     }
 }
 

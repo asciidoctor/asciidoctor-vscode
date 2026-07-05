@@ -181,6 +181,18 @@ The preview is HTML styled with CSS, so it uses the settings above -- not an `as
 A PDF theme (`theme.yml`, set through `:pdf-theme:` / `:pdf-themesdir:`) only affects the `asciidoctor-pdf` engine of xref:export-pdf.adoc#custom-pdf-theme[Export as PDF] and never changes the preview's appearance.
 ====
 
+[#table-of-contents]
+=== Table of contents
+
+A `toc: left` or `toc: right` document attribute renders the table of contents as a *sidebar on the right* of the preview, in both the editor style and the default Asciidoctor style.
+
+[NOTE]
+====
+`toc: left` is *not* supported as a left-hand sidebar. A left sidebar overlaps the document text in the preview instead of reserving a column for it, so a left-positioned table of contents is placed on the right instead -- the same as `toc: right` -- where it lays out correctly.
+====
+
+When the preview is too narrow to show the sidebar, the table of contents collapses inline below the document title, the same way a `:toc:` (auto) table of contents is always displayed. A table of contents placed in the body with the `toc::[]` macro keeps its boxed styling wherever it appears.
+
 == Sync scrolling
 
 The editor and the preview stay in sync as you scroll, and the current selection is highlighted in the preview.
