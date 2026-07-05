@@ -14,7 +14,10 @@ import {
 } from '../antora/antoraDocument.js'
 import { resolveIncludeFile } from '../antora/resolveIncludeFile.js'
 import { AsciidocContributionProvider } from '../extensionContributions.js'
-import { AsciidoctorWebViewConverter } from '../preview/asciidoctorWebViewConverter.js'
+import {
+  AsciidoctorWebViewConverter,
+  WEBVIEW_OUTFILESUFFIX,
+} from '../preview/asciidoctorWebViewConverter.js'
 import { register } from '../preview/highlightjs-adapter.js'
 import { AsciidocPreviewConfigurationManager } from '../preview/previewConfig.js'
 import { ExtensionContentSecurityPolicyArbiter } from '../security.js'
@@ -374,7 +377,7 @@ export class AsciidocEngine {
         ...(documentFilePath && { docfile: documentFilePath }),
         ...(documentBasename && { docname: documentBasename }),
         docfilesuffix: documentExtensionName,
-        filetype: asciidoctorWebViewConverter.outfilesuffix.substring(1), // remove the leading '.'
+        filetype: WEBVIEW_OUTFILESUFFIX.substring(1), // remove the leading '.'
         // Disable Asciidoctor's own data-uri embedding; the WebView converter
         // does it instead (see AsciidoctorWebViewConverter, gated on
         // `dataUriEnabled`). Asciidoctor.js 4.0 dropped Opal and reads via
