@@ -319,7 +319,11 @@ details > summary {
  * Table of contents & UI macros
  * -------------------------------------------------------------------- */
 
-#toc.toc {
+/* A body-placed TOC (the `toc::[]` macro, which can sit anywhere in the
+ * document) is boxed as a card so it reads as a self-contained block. A
+ * header-anchored TOC is instead bracketed by two rules (see the `#header …
+ * #toc` border-color rule below). */
+#content #toc {
   border: 1px solid var(--adoc-border);
   border-radius: var(--adoc-radius);
   background: var(--adoc-surface-1);
@@ -336,6 +340,32 @@ details > summary {
 
 #toc a:hover {
   color: var(--adoc-link-active);
+}
+
+/* Header / TOC structural separators. The base editor stylesheet draws them
+ * with `currentColor` — a harsh black (light theme) or white (dark) rule.
+ * Soften them to the subtle theme border, matching the treatment already
+ * applied to `#header .details` and the section-heading underlines. This also
+ * covers the `toc: left`/`right` sidebar (`#toc.toc2`), whose divider and
+ * collapsed bottom border were left at `currentColor`. */
+#header > h1:only-child,
+body.toc2 #header > h1:nth-last-child(2),
+#header > h1:first-child + #toc,
+#header #toc,
+#content > h1:first-child:not([class]) {
+  border-color: var(--adoc-border);
+}
+
+/* When a `toc: left`/`right` sidebar collapses below the title at narrow
+ * widths, the title's underline stacks against the TOC's own bottom border,
+ * leaving two rules a few lines apart. Drop the title's redundant one so the
+ * header and TOC read as a single banner with a single divider underneath. */
+@media screen and (max-width: 767.98px) {
+  body.toc2 #header > h1:only-child,
+  body.toc2 #header > h1:nth-last-child(2) {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
 }
 
 kbd {
