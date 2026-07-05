@@ -8,6 +8,7 @@ export { SaveDocbook } from './saveDocbook.js'
 export { SaveHTML } from './saveHTML.js'
 export { ShowAsciidoctorExtensionsTrustModeSelectorCommand } from './showAsciidoctorExtensionsTrustModeSelector.js'
 export { ShowAsciidoctorTemplatesTrustModeSelectorCommand } from './showAsciidoctorTemplatesTrustModeSelector.js'
+export { ShowCheatSheetCommand } from './showCheatSheet.js'
 export {
   ShowLockedPreviewToSideCommand,
   ShowPreviewCommand,

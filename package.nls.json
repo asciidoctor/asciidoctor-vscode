@@ -73,6 +73,7 @@
   "asciidoc.showLockedPreviewToSide.title": "Open Locked Preview to the Side",
   "asciidoc.showPreview.title": "Open Preview",
   "asciidoc.showPreviewSecuritySelector.title": "Manage Preview Security Settings",
+  "asciidoc.showCheatSheet.title": "Open AsciiDoc Cheat Sheet",
   "asciidoc.showSource.title": "Show Source",
   "asciidoc.toggleBold.title": "Toggle Bold",
   "asciidoc.toggleItalic.title": "Toggle Italic",

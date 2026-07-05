@@ -73,6 +73,7 @@
   "asciidoc.showLockedPreviewToSide.title": "Ouvrir une prévisualisation verrouillée sur le côté",
   "asciidoc.showPreview.title": "Ouvrir la prévisualisation",
   "asciidoc.showPreviewSecuritySelector.title": "Configurer les paramètres de sécurité de la prévisualisation",
+  "asciidoc.showCheatSheet.title": "Ouvrir l'aide-mémoire AsciiDoc",
   "asciidoc.showSource.title": "Afficher la source",
   "asciidoc.toggleBold.title": "Basculer en gras",
   "asciidoc.toggleItalic.title": "Basculer en italique",

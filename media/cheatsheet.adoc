@@ -1,0 +1,240 @@
+= AsciiDoc Cheat Sheet
+:toc: right
+:toclevels: 2
+:icons: font
+:source-highlighter: highlight.js
+:experimental:
+
+A quick reference for the most common AsciiDoc syntax, rendered by this extension.
+For the full language documentation, see https://docs.asciidoctor.org/asciidoc/latest/[the AsciiDoc Language docs].
+
+== Document header
+
+[source,asciidoc]
+----
+= Document Title
+Author Name <author@example.org>
+v1.0, 2026-01-01
+:toc:
+:icons: font
+----
+
+The header is optional. The first line, if it starts with a single `=`, is the document title.
+Attribute entries (`:name: value`) go below the author and revision lines.
+
+== Sections
+
+[source,asciidoc]
+----
+= Document Title (level 0)
+
+== Level 1
+
+=== Level 2
+
+==== Level 3
+----
+
+Add `[#custom-id]` on the line above a section to set an explicit anchor.
+
+== Paragraphs & line breaks
+
+[source,asciidoc]
+----
+A normal paragraph. Consecutive lines
+are joined into a single paragraph.
+
+Leave a blank line to start a new paragraph. +
+End a line with a space and a plus to force a hard line break.
+----
+
+== Text formatting
+
+[cols="1,1",options="header"]
+|===
+| Syntax | Result
+
+| `+*bold*+`            | *bold*
+| `+_italic_+`          | _italic_
+| `+`monospace`+`       | `monospace`
+| `+*_bold italic_*+`   | *_bold italic_*
+| `+^super^+`           | e = mc^2^
+| `+~sub~+`             | H~2~O
+| `+#highlight#+`       | #highlight#
+| `+*literal asterisks*+` | *literal asterisks*
+|===
+
+Use double markers (`+__italic__+`) to format inside a word: char__acter__s.
+
+== Lists
+
+.Unordered
+[source,asciidoc]
+----
+* Level 1
+** Level 2
+*** Level 3
+----
+
+.Ordered
+[source,asciidoc]
+----
+. Step one
+. Step two
+.. Sub-step
+----
+
+.Description
+[source,asciidoc]
+----
+Term:: Definition
+Another term:: Its definition
+----
+
+.Checklist
+[source,asciidoc]
+----
+* [x] Done
+* [ ] Not done yet
+----
+
+== Links & cross references
+
+[source,asciidoc]
+----
+https://asciidoctor.org[Asciidoctor]
+mailto:hi@example.org[Email us]
+link:report.pdf[Download the report]
+
+xref:other-file.adoc[Other document]
+See <<section-id,this section>>.
+----
+
+An autolink like https://example.org renders on its own. Wrap a URL in `\pass:[...]` or prefix it with a backslash to keep it as plain text.
+
+== Images
+
+[source,asciidoc]
+----
+image::sunset.jpg[Sunset, 640, 480]
+
+Inline icon image:icons/heart.png[Heart] in a sentence.
+----
+
+Set `:imagesdir: images` in the header to resolve image paths relative to a common folder.
+
+== Code & literal blocks
+
+.Source block with a language
+[source,asciidoc]
+....
+[source,ruby]
+----
+puts 'Hello, World!'
+----
+....
+
+.Literal block (verbatim, no substitutions)
+[source,asciidoc]
+----
+ Indent a line by one space for a literal line.
+
+....
+Or fence it with dots.
+....
+----
+
+Use `+`+backtick+`+` for inline code.
+
+== Blocks
+
+.Delimited block types
+[cols="1,2",options="header"]
+|===
+| Delimiter | Block type
+
+| `----`    | Listing / source
+| `....`    | Literal
+| `====`    | Example
+| `****`    | Sidebar
+| `____`    | Quote
+| `--`      | Open block
+| `////`    | Comment (not rendered)
+|===
+
+.Quote with attribution
+[source,asciidoc]
+----
+[quote,Albert Einstein]
+____
+Everything should be made as simple as possible, but not simpler.
+____
+----
+
+== Admonitions
+
+[source,asciidoc]
+----
+NOTE: Handy information.
+
+[WARNING]
+====
+A multi-line warning
+with several paragraphs.
+====
+----
+
+Available labels: `NOTE`, `TIP`, `IMPORTANT`, `WARNING`, `CAUTION`. Set
+`:icons: font` in the header to render them with icons.
+
+TIP: This admonition is rendered live by the extension.
+
+== Tables
+
+[source,asciidoc]
+----
+[cols="1,1",options="header"]
+|===
+| Column A | Column B
+
+| Cell A1  | Cell B1
+| Cell A2  | Cell B2
+|===
+----
+
+The `cols` attribute sets the number and width of columns; `options="header"`
+promotes the first row to a header.
+
+== Attributes
+
+[source,asciidoc]
+----
+:project: Asciidoctor
+
+Welcome to {project}!
+----
+
+Reference a defined attribute with `+{name}+`.
+Useful built-ins include `+{docdir}+`, `+{docname}+`, and `+{localdate}+`.
+
+== Includes
+
+[source,asciidoc]
+----
+\include::chapter-01.adoc[]
+\include::example.rb[lines=10..20]
+----
+
+Includes pull in the content of another file at conversion time.
+
+== Comments
+
+[source,asciidoc]
+----
+// A single-line comment.
+
+////
+A multi-line comment block
+that is never rendered.
+////
+----

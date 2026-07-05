@@ -218,6 +218,9 @@ export async function activate(context: vscode.ExtensionContext) {
       asciidoctorTemplatesTrustModeSelector,
     ),
   )
+  commandManager.register(
+    new commands.ShowCheatSheetCommand(previewManager, context.extensionUri),
+  )
   commandManager.register(new commands.OpenDocumentLinkCommand(asciidocLoader))
   commandManager.register(
     new commands.ExportAsPDF(asciidocEngine, context, previewManager),
