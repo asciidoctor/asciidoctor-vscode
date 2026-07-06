@@ -28,6 +28,25 @@ You can therefore override the setting for a single document from its header, or
 
 The resolution order, from highest to lowest precedence, is therefore: the document header, then the nearest `.asciidoctorconfig`, then the `asciidoc.extensions.kroki.serverUrl` setting, and finally the public `https://kroki.io` server.
 
+== VS Code for the Web
+
+Kroki diagrams also render in the web extension (for example on {url-vscode-dev}[vscode.dev]).
+The diagram is rendered by the browser, which loads it directly from the Kroki server, so the server must be reachable from the browser.
+
+An **HTTPS** Kroki server -- the public `https://kroki.io` or a self-hosted HTTPS instance -- works everywhere.
+
+An **HTTP** server is subject to the browser's https://developer.mozilla.org/en-US/docs/Web/Security/Mixed_content[mixed content] policy:
+
+* When the web editor is served over HTTPS (as vscode.dev is), the browser blocks diagrams loaded over plain HTTP -- including from `http://localhost` -- so an HTTP Kroki server cannot be used there. Point the extension at an HTTPS server instead.
+* When the web editor is itself served over HTTP (some self-hosted or development setups), an HTTP Kroki server works.
+
+[NOTE]
+====
+Lowering the preview security level (`AsciiDoc: Change Preview Security Settings`) relaxes the extension's own Content Security Policy, but it does not bypass the browser's mixed content blocking -- it therefore does not help load an HTTP diagram on an HTTPS page.
+====
+
+On the desktop (Node) extension there is no such restriction: an HTTP Kroki server, local or remote, works regardless of the server URL.
+
 == Privacy
 
 [WARNING]

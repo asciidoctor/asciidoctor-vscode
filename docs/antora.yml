@@ -11,6 +11,7 @@ asciidoc:
     url-kroki: https://kroki.io
     url-asciidoctor-kroki: https://github.com/ggrossetie/asciidoctor-kroki
     url-vscode-web: https://code.visualstudio.com/docs/editor/vscode-web
+    url-vscode-dev: https://vscode.dev
 nav:
 - modules/ROOT/nav.adoc
 - modules/spec/nav.adoc
