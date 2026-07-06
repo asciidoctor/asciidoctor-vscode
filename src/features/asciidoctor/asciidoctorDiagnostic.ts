@@ -24,18 +24,31 @@ function toDiagnosticSeverity(
   }
 }
 
+// Coerce an Asciidoctor log message to a string.
+// `MemoryLogger.getMessages()` is typed `any[]` upstream, so the message is too.
+//
+// Almost always `getText()` already returns a string. But an extension can log
+// a non-string payload (asciidoctor-kroki historically logged an object when a
+// diagram failed to render), and feeding a non-string straight into a
+// `vscode.Diagnostic.message` makes VS Code throw "message.replace is not a
+// function" when it renders the marker. Guarantee a string so a misbehaving
+// message can never crash the editor.
+function messageText(message: any): string {
+  const text = message.getText()
+  return typeof text === 'string' ? text : String(text ?? '')
+}
+
 // Mirror an Asciidoctor log message to the extension's "Asciidoctor" output
 // channel, preserving its severity. This happens for every message — including
 // the DEBUG/INFO ones kept out of the Problems panel — so the full Asciidoctor
 // log stays available for troubleshooting (visible through "Developer: Show
 // Logs…", filtered by the channel's log level).
-// `MemoryLogger.getMessages()` is typed `any[]` upstream, so the message is too.
 function logAsciidoctorMessage(message: any): void {
   const location = message.getSourceLocation()
   const where = location
     ? `${location.getFile() ?? '<stdin>'}:${location.getLineNumber()}`
     : undefined
-  const text = message.getText()
+  const text = messageText(message)
   const line = where ? `${where}: ${text}` : text
   switch (message.getSeverity()) {
     case 'DEBUG':
@@ -104,7 +117,7 @@ export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
           // output, never surfaced as a diagnostic
           return
         }
-        let errorMessage = error.getText()
+        let errorMessage = messageText(error)
         let sourceLine = 0
         let relatedFile = null
         const diagnosticSource = 'asciidoctor.js'
@@ -149,10 +162,10 @@ export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
               sourceRange = textDocument.lineAt(sourceLine).range
             }
           }
-        } else {
-          // generic error (e.g. :source-highlighter: coderay)
-          errorMessage = error.message
         }
+        // A generic error without a source location (e.g. :source-highlighter:
+        // coderay, or a failed Kroki fetch) keeps `errorMessage` as extracted
+        // above and is anchored to line 0.
         let diagnosticRelated = null
         if (relatedFile) {
           diagnosticRelated = [

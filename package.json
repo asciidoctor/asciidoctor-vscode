@@ -359,7 +359,10 @@
           "asciidoc.editor.drop.copyIntoWorkspace": {
             "type": "string",
             "default": "smart",
-            "enum": ["smart", "never"],
+            "enum": [
+              "smart",
+              "never"
+            ],
             "enumDescriptions": [
               "%asciidoc.editor.drop.copyIntoWorkspace.smart%",
               "%asciidoc.editor.drop.copyIntoWorkspace.never%"
@@ -376,7 +379,10 @@
           "asciidoc.editor.paste.copyIntoWorkspace": {
             "type": "string",
             "default": "smart",
-            "enum": ["smart", "never"],
+            "enum": [
+              "smart",
+              "never"
+            ],
             "enumDescriptions": [
               "%asciidoc.editor.paste.copyIntoWorkspace.smart%",
               "%asciidoc.editor.paste.copyIntoWorkspace.never%"
@@ -801,7 +807,7 @@
     "@antora/content-classifier": "3.1.15",
     "@asciidoctor/core": "~4.0",
     "@orcid/bibtex-parse-js": "0.0.25",
-    "asciidoctor-kroki": "1.0.0-beta.1",
+    "asciidoctor-kroki": "^1.0.0-beta.2",
     "html-entities": "^2.4.0",
     "js-yaml": "^4.1.0",
     "morphdom": "^2.7.8",
