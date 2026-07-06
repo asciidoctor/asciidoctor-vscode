@@ -60,4 +60,34 @@ describe('asciidoc.AsciidocLoader diagnostics', () => {
         .join(', ')}`,
     )
   })
+
+  // Defensive: an extension can log a message whose `getText()` does not return
+  // a string (asciidoctor-kroki historically logged an object payload when a
+  // diagram failed to render). A non-string `Diagnostic.message` makes VS Code
+  // throw "message.replace is not a function" while rendering the marker, so
+  // the reported message must always be coerced to a string.
+  test('reportErrors() always publishes a string diagnostic message', () => {
+    const uri = vscode.Uri.file('loader-non-string-message-diagnostic.adoc')
+    const diagnosticProvider = new AsciidoctorDiagnostic(
+      'test-non-string-message-diagnostics',
+    )
+    const fakeMemoryLogger = {
+      getMessages: () => [
+        {
+          message: { some: 'object' },
+          getSeverity: () => 'ERROR',
+          getText: () => ({ some: 'object' }), // not a string
+          getSourceLocation: () => undefined,
+        },
+      ],
+    }
+    diagnosticProvider.reportErrors(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      fakeMemoryLogger as any,
+      new InMemoryDocument(uri, '= Title\n'),
+    )
+    const diagnostics = vscode.languages.getDiagnostics(uri)
+    assert.equal(diagnostics.length, 1)
+    assert.equal(typeof diagnostics[0].message, 'string')
+  })
 })

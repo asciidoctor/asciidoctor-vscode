@@ -59,7 +59,11 @@ async function getReferencesFromFile(
   file: vscode.Uri,
 ): Promise<CrossReference[]> {
   const data = await vscode.workspace.fs.readFile(file)
-  return getReferencesFromContent(Buffer.from(data).toString('utf8'))
+  // `TextDecoder` works in both the Node desktop extension host and the browser
+  // extension host, unlike `Buffer` which is undefined in the web worker (it
+  // threw `ReferenceError: Buffer is not defined` on cross-reference
+  // completion in VS Code for the Web).
+  return getReferencesFromContent(new TextDecoder('utf-8').decode(data))
 }
 
 /**
