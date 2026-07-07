@@ -1,0 +1,5 @@
+A knight (((Sword, Broadsword, Excalibur))) of the realm.
+Quoted (((knight, "Arthur, King"))) term.
+Macro indexterm:[knight, "Arthur, King"] form.
+Attribute (((Sword, {edition}))) reference.
+Escaped \(((not an index term))) stays literal.
