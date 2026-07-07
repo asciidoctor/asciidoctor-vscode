@@ -8,9 +8,23 @@ import { join } from 'node:path'
 const nodeModules = join(process.cwd(), 'node_modules')
 const media = join(process.cwd(), 'media')
 
+// The preview imports the ESM entry (`mermaid.esm.min.mjs`) and the `.mjs`
+// chunks it lazily loads; that is all that runs at runtime. TypeScript
+// declarations, source maps, the unused UMD builds (`mermaid.js`,
+// `mermaid.min.js`) and READMEs are dev artifacts — ~63 MB for Mermaid alone —
+// so keep them out of `media/` and the packaged VSIX.
+function keep(src) {
+  return (
+    !src.endsWith('.d.ts') &&
+    !src.endsWith('.map') &&
+    !src.endsWith('.md') &&
+    !/[/\\]mermaid(\.min)?\.js$/.test(src)
+  )
+}
+
 function copy(src, dest) {
   rmSync(dest, { recursive: true, force: true })
-  cpSync(src, dest, { recursive: true })
+  cpSync(src, dest, { recursive: true, filter: keep })
 }
 
 // Full Mermaid bundle (lazy-loads its own diagram chunks).
@@ -39,5 +53,6 @@ for (const { pkg, entry, chunks } of addons) {
   cpSync(join(srcDist, entry), join(destDist, entry))
   cpSync(join(srcDist, 'chunks', chunks), join(destDist, 'chunks', chunks), {
     recursive: true,
+    filter: keep,
   })
 }
