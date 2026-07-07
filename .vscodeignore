@@ -1,13 +1,44 @@
+# Ignore everything by default, then re-include only what ships in the VSIX.
+#
+# NOTE on vsce semantics: patterns are split into an "ignore" and a "negate"
+# (`!`) list and the negate list ALWAYS wins, regardless of line order. A broad
+# `!dir/` therefore re-includes the whole subtree and a later `dir/sub/` ignore
+# has no effect. Keep the re-includes as narrow as possible instead.
+# vsce also only ever collects production dependencies from node_modules, so
+# devDependencies never reach here.
 **/*
+
 !images/icon.png
 !dist/
-!syntaxes/
 !snippets/
 !media/
-!node_modules/
 !package.json
 !package.nls*.json
 !en.json
-!*.md
+!/*.md
 !asciidoc-language-configuration.json
 !LICENSE
+
+# Grammar: only the generated grammar is registered at runtime (see
+# contributes.grammars). The base/source grammars, the generator and the
+# snapshot-test grammars/fixtures under syntaxes/tests are dev-only.
+!syntaxes/asciidoc.tmLanguage.json
+
+# The desktop build keeps dependencies external (tasks/build-ext.mjs uses
+# `packages: 'external'`), so production dependencies ship in the VSIX. Re-include
+# only the file types needed at runtime; this drops the TypeScript sources,
+# sourcemaps, docs and linter/test config that dependencies bundle (~800 files).
+!node_modules/**/*.js
+!node_modules/**/*.cjs
+!node_modules/**/*.mjs
+!node_modules/**/*.json
+!node_modules/**/*.node
+!node_modules/**/*.wasm
+!node_modules/**/*.css
+!node_modules/**/*.html
+!node_modules/**/*.yml
+!node_modules/**/*.yaml
+!node_modules/**/*.txt
+!node_modules/**/*.png
+!node_modules/**/LICENSE*
+!node_modules/**/license*

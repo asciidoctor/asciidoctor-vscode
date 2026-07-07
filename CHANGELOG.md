@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Infrastructure
+
+* Shrink the packaged VSIX from ~29 MB / 3825 files to ~14 MB / 2503 files by excluding artifacts that are never loaded at runtime. Two changes: (1) `.vscodeignore` was reworked around how `vsce` actually collects files — it already ships only production dependencies, and it splits ignore/negate patterns into two lists where a `!` negate always wins regardless of order, so a broad `!node_modules/`/`!syntaxes/` re-included the whole subtree and later ignores had no effect. The re-includes are now narrow: `syntaxes/` ships only the registered `asciidoc.tmLanguage.json` (dropping the base/source grammars, the generator and the `syntaxes/tests` snapshot fixtures), and `node_modules/` re-includes only the file types needed at runtime (dropping the bundled TypeScript sources, source maps, docs and linter/test config). (2) `tasks/copy-mermaid.mjs` now filters the Mermaid bundle it copies into `media/`, keeping the ESM entry (`mermaid.esm.min.mjs`) and its lazily loaded `.mjs` chunks but dropping the TypeScript declarations, source maps (~51 MB alone) and the unused UMD builds (`mermaid.js`, `mermaid.min.js`) — taking `media/mermaid` from ~76 MB to ~15 MB
+
 ## 4.0.0 (pre-release) (2026-07-07) - @ggrossetie
 
 ### Features
