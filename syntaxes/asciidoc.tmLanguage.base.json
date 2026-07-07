@@ -173,6 +173,12 @@
           "include": "#footnote-macro"
         },
         {
+          "include": "#indexterm-concealed"
+        },
+        {
+          "include": "#indexterm-flow"
+        },
+        {
           "include": "#image-macro"
         },
         {
@@ -862,6 +868,106 @@
             }
           ],
           "end": "(?<!\\\\)\\]|^$"
+        }
+      ]
+    },
+    "indexterm-concealed": {
+      "patterns": [
+        {
+          "comment": "concealed index term: (((primary, secondary, tertiary)))",
+          "name": "markup.other.indexterm.concealed.asciidoc",
+          "match": "(?<!\\\\)(\\(\\(\\()(.*?)(\\)\\)\\))",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.indexterm.begin.asciidoc"
+            },
+            "2": {
+              "patterns": [
+                {
+                  "include": "#attribute-reference"
+                }
+              ]
+            },
+            "3": {
+              "name": "punctuation.definition.indexterm.end.asciidoc"
+            }
+          }
+        },
+        {
+          "comment": "concealed index term macro: indexterm:[primary, secondary, tertiary]",
+          "name": "markup.other.indexterm.concealed.asciidoc",
+          "match": "(?<!\\\\)(indexterm)(:)(\\[)((?:\\\\\\]|[^\\]])*?)(\\])",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.asciidoc"
+            },
+            "2": {
+              "name": "punctuation.separator.asciidoc"
+            },
+            "3": {
+              "name": "punctuation.definition.indexterm.begin.asciidoc"
+            },
+            "4": {
+              "patterns": [
+                {
+                  "include": "#attribute-reference"
+                }
+              ]
+            },
+            "5": {
+              "name": "punctuation.definition.indexterm.end.asciidoc"
+            }
+          }
+        }
+      ]
+    },
+    "indexterm-flow": {
+      "patterns": [
+        {
+          "comment": "flow (visible) index term: ((primary)); reject a preceding ( so the inside of a concealed (((…))) (incl. escaped \\(((…))) ) is not matched",
+          "match": "(?<![\\\\(])(\\(\\()([^(].*?)(\\)\\))",
+          "captures": {
+            "1": {
+              "name": "punctuation.definition.indexterm.begin.asciidoc"
+            },
+            "2": {
+              "name": "markup.other.indexterm.flow.asciidoc",
+              "patterns": [
+                {
+                  "include": "#attribute-reference"
+                }
+              ]
+            },
+            "3": {
+              "name": "punctuation.definition.indexterm.end.asciidoc"
+            }
+          }
+        },
+        {
+          "comment": "flow (visible) index term macro: indexterm2:[primary]",
+          "match": "(?<!\\\\)(indexterm2)(:)(\\[)((?:\\\\\\]|[^\\]])*?)(\\])",
+          "captures": {
+            "1": {
+              "name": "entity.name.function.asciidoc"
+            },
+            "2": {
+              "name": "punctuation.separator.asciidoc"
+            },
+            "3": {
+              "name": "punctuation.definition.indexterm.begin.asciidoc"
+            },
+            "4": {
+              "name": "markup.other.indexterm.flow.asciidoc",
+              "patterns": [
+                {
+                  "include": "#attribute-reference"
+                }
+              ]
+            },
+            "5": {
+              "name": "punctuation.definition.indexterm.end.asciidoc"
+            }
+          }
         }
       ]
     },

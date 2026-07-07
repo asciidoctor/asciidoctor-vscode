@@ -4,7 +4,7 @@
 The extension enhances the editor with AsciiDoc-aware features.
 
 Syntax highlighting::
-AsciiDoc syntax is highlighted as you type, making documents easier to read and structure.
+AsciiDoc syntax is highlighted as you type, making documents easier to read and structure. You can recolor any construct — for example dim index terms. See <<customize-highlighting>>.
 
 Document outline and symbols::
 The structure of your document (sections, blocks) is exposed through the VS Code outline and the _Go to Symbol_ command (kbd:[Ctrl+Shift+O], Mac: kbd:[Cmd+Shift+O]).
@@ -69,3 +69,133 @@ Body-level attributes are only applied by Asciidoctor while it _converts_ a docu
 No hover is shown at all when the reference sits inside a verbatim block (for example a `----` listing or literal block) that does not run the `attributes` substitution. In that context Asciidoctor keeps `+{name}+` as literal text, so displaying a resolved value would be misleading. This matches the behaviour of attribute-reference auto-completion.
 
 Attribute names are case-insensitive, so `+{Version}+` and `+{version}+` resolve to the same value.
+
+[#customize-highlighting]
+== Customize syntax highlighting colors
+
+Syntax highlighting assigns every construct a _TextMate scope_ (a dotted name such as `markup.heading.asciidoc`). Your color theme maps scopes to colors, and you can override any of those colors — for a single scope or a whole family — without changing your theme, through the built-in `editor.tokenColorCustomizations` setting. This is how you recolor, emphasize, or dim any AsciiDoc construct.
+
+The workflow is always the same three steps: find the scope, open your settings, add a rule.
+
+[#find-the-scope]
+=== 1. Find the scope under the cursor
+
+. Put the cursor on the construct you want to recolor.
+. Run kbd:[Ctrl+Shift+P] (Mac: kbd:[Cmd+Shift+P]) and choose *Developer: Inspect Editor Tokens and Scopes*.
+. A hover appears listing the *textmate scopes* at that position, from the most general (bottom) to the most specific (top), together with the color the theme currently applies and the rule it comes from.
+
+The scope printed *at the top* is the most specific one — that is the one whose color actually wins. Copy the scope name you want to target from that list.
+
+[TIP]
+====
+When your override seems to have no effect, it is almost always because a *more specific* scope in the list carries the color. Colors are resolved most-specific-first, so a rule on a broad scope loses to the theme's rule on a deeper one. Either target the deeper scope, or use a descendant selector such as `outer.scope inner.scope` to win only inside that context.
+====
+
+[#open-settings]
+=== 2. Open your settings
+
+Run kbd:[Ctrl+Shift+P] (Mac: kbd:[Cmd+Shift+P]) → *Preferences: Open User Settings (JSON)* to edit `settings.json` directly (token color rules can only be expressed in JSON, not in the settings UI). Use *Open Workspace Settings (JSON)* instead if you want the colors to apply only to the current project.
+
+[#add-a-rule]
+=== 3. Add a token color rule
+
+Add an `editor.tokenColorCustomizations` block with one rule per scope (or list several scopes in a single rule's `scope` array):
+
+[source,json]
+----
+"editor.tokenColorCustomizations": {
+  "textMateRules": [
+    {
+      "scope": "markup.heading.asciidoc",
+      "settings": {
+        "foreground": "#c586c0",
+        "fontStyle": "bold"
+      }
+    }
+  ]
+}
+----
+
+`foreground` is a hex color; `fontStyle` accepts any combination of `italic`, `bold` and `underline` (or an empty string `""` to force _no_ style).
+
+[#scope-the-override]
+==== Limit the override to one theme (or one workspace)
+
+A rule placed directly under `textMateRules` applies to *every* color theme. Since a color that reads well in a dark theme is often wrong in a light one, you usually want the override to follow the theme. Nest `textMateRules` under the theme's name in square brackets to apply it only when that theme is active — and add as many theme blocks as you use:
+
+[source,json]
+----
+"editor.tokenColorCustomizations": {
+  "[Default Dark Modern]": {
+    "textMateRules": [
+      { "scope": "markup.other.indexterm.concealed.asciidoc",
+        "settings": { "foreground": "#6a6a6a", "fontStyle": "italic" } }
+    ]
+  },
+  "[Default Light Modern]": {
+    "textMateRules": [
+      { "scope": "markup.other.indexterm.concealed.asciidoc",
+        "settings": { "foreground": "#a0a0a0", "fontStyle": "italic" } }
+    ]
+  }
+}
+----
+
+The theme name is exactly the label shown in the theme picker (kbd:[Ctrl+K] kbd:[Ctrl+T]). Independently of theming, choosing *Open Workspace Settings (JSON)* in step 2 confines the whole override to the current project, while *Open User Settings (JSON)* makes it apply everywhere.
+
+[#dim-index-terms]
+== Example: dim index terms
+
+An https://docs.asciidoctor.org/asciidoc/latest/sections/user-index/[index term] adds an entry to the document index. The _concealed_ forms — `+(((primary, secondary, tertiary)))+` and `+indexterm:[…]+` — produce no visible text in the output; they only feed the index, so in the source they are pure noise you often want to *dim* to focus on the surrounding prose. The extension gives them dedicated scopes so you can:
+
+[cols="2,3",options="header"]
+|===
+| Construct | TextMate scope
+
+| Concealed term `+(((…)))+` / `+indexterm:[…]+` (the whole span)
+| `markup.other.indexterm.concealed.asciidoc`
+
+| Flow (visible) term `+((…))+` / `+indexterm2:[…]+` (the term text only)
+| `markup.other.indexterm.flow.asciidoc`
+
+| The `((` / `))` and `[` / `]` delimiters
+| `punctuation.definition.indexterm.begin.asciidoc` / `…end.asciidoc`
+
+| The `indexterm` / `indexterm2` macro name
+| `entity.name.function.asciidoc`
+|===
+
+To grey out the concealed index terms entirely (delimiters included), target the whole-span scope:
+
+[source,json]
+----
+"editor.tokenColorCustomizations": {
+  "textMateRules": [
+    {
+      "scope": "markup.other.indexterm.concealed.asciidoc",
+      "settings": {
+        "foreground": "#808080",
+        "fontStyle": "italic"
+      }
+    }
+  ]
+}
+----
+
+The _flow_ forms are deliberately split: the term itself is *visible text in the rendered document*, so it keeps a separate scope (`markup.other.indexterm.flow.asciidoc`) and stays legible, while only the surrounding `((` / `))` markers are exposed for dimming. To fade just those markers without touching the visible term, target the delimiters instead:
+
+[source,json]
+----
+{
+  "scope": [
+    "punctuation.definition.indexterm.begin.asciidoc",
+    "punctuation.definition.indexterm.end.asciidoc"
+  ],
+  "settings": { "foreground": "#808080" }
+}
+----
+
+[NOTE]
+====
+The parentheses of an index term are not tinted by VS Code's rainbow _bracket-pair colorization_: that feature is turned off for AsciiDoc, since `()`, `[]` and `<>` are ordinary characters in prose rather than nested code brackets. If you prefer the colored brackets, re-enable them for AsciiDoc with `"[asciidoc]": { "editor.bracketPairColorization.enabled": true }`.
+====

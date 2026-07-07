@@ -1,0 +1,3 @@
+The name ((Arthur)) appears in the text and the index.
+Macro indexterm2:[Lancelot] renders the term visibly.
+A ((visible {edition} term)) with attribute.
