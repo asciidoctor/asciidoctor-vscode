@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 4.0.0 (pre-release) (2026-07-07) - @ggrossetie
+
 ### Features
 
 * Add an "AsciiDoc: Open AsciiDoc Cheat Sheet" command that opens a concise, always-available syntax reference right inside the editor, so beginners no longer have to leave VS Code to look up the syntax (#297). The cheat sheet is authored in AsciiDoc and bundled with the extension (`media/cheatsheet.adoc`), then rendered through the regular preview pipeline — so it stays in sync with what the extension can actually render (dogfooding) and needs no bespoke viewer. It opens as a locked preview to the side, which keeps it pinned in place instead of being hijacked by whichever document is edited next. The command is available from the command palette even when no AsciiDoc file is open, so it works as a discoverable entry point to the syntax. Because the source is plain AsciiDoc, contributing to the reference is as simple as editing that file
