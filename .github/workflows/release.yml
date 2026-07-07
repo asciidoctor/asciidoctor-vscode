@@ -39,3 +39,16 @@ jobs:
           echo RELEASE_OVSX_TOKEN=${{ secrets['OVSX_TOKEN'] }} >> $GITHUB_ENV
       - name: Build, tag, and publish extension
         run: ./release.sh
+      - name: Announce release on Zulip
+        uses: zulip/github-actions-zulip/send-message@v1
+        with:
+          email: ${{ secrets.ZULIP_USERNAME }}
+          api-key: ${{ secrets.ZULIP_API_KEY }}
+          organization-url: 'https://asciidoctor.zulipchat.com'
+          to: '279652'
+          type: 'stream'
+          topic: 'releases'
+          content: |
+            Asciidoctor VS Code ${{ env.RELEASE_TAG }}${{ env.RELEASE_IS_PRERELEASE == 'true' && ' (pre-release)' || '' }} is out!
+
+            https://github.com/asciidoctor/asciidoctor-vscode/releases/tag/${{ env.RELEASE_TAG }}
