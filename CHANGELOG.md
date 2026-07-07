@@ -147,7 +147,7 @@
 * Extract the custom preview stylesheet path resolution out of the WebView converter's `fixHref` into a pure, `vscode`-free `resolveStyleUri` module and cover it with fast Node `test:unit` unit tests, locking in the behaviour of a custom `asciidoc.preview.style` in the VS Code Web editor (#651): an `http:`/`https:`/`file:` URL is passed through verbatim (rather than being resolved against the project path), and a relative path resolves under the workspace folder — working on the `vscode-vfs://` filesystem used by github.dev/vscode.dev. The scheme detection is now case-insensitive, matching the webview resource-root whitelist
 * Migrate from webpack to esbuild
 * Switch Node.js extension output to `.mjs` and remove `"type": "module"` from `package.json` to prevent VS Code web worker host from misidentifying the CJS browser bundle as ESM
-* Migrate to Asciidoctor.js 4.0.x (#999)
+* Migrate to Asciidoctor.js 4.0.x (#999) — a major rewrite that is asynchronous and no longer based on Opal — bumping `@asciidoctor/core` from 2.2.7 to 4.0.x and asciidoctor-kroki from 0.18.1 to 1.0.x
 * Raise the minimum VS Code version to 1.97 to use the finalized drag-and-drop and paste edit APIs (multiple drop/paste options with titles, and `registerDocumentPasteEditProvider`), needed for the copy-on-drop and paste-image features
 * Upgrade Mermaid from 10.9.0 to 11.15.0
 * Upgrade TypeScript from 4.9.5 to 5.x (#1003)
