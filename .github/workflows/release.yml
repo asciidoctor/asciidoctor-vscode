@@ -5,8 +5,12 @@ on:
       release-version:
         description: Enter version to release (e.g., 2.0.1).
         required: true
+      pre-release:
+        description: Publish as a pre-release (Marketplace, Open VSX and GitHub).
+        type: boolean
+        default: false
 
-run-name: Release ${{ inputs.release-version }} by @${{ github.actor }} 
+run-name: Release ${{ inputs.release-version }}${{ inputs.pre-release && ' (pre-release)' || '' }} by @${{ github.actor }}
 jobs:
   activate:
     runs-on: ubuntu-latest
@@ -30,6 +34,7 @@ jobs:
         run: |
           echo ${{ secrets[format('GH_TOKEN_{0}', github.actor)] }} | gh auth login --with-token
           echo RELEASE_VERSION=${{ github.event.inputs.release-version }} >> $GITHUB_ENV
+          echo PRERELEASE=${{ github.event.inputs.pre-release }} >> $GITHUB_ENV
           echo RELEASE_VSCE_TOKEN=${{ secrets['VSCE_TOKEN'] }} >> $GITHUB_ENV
           echo RELEASE_OVSX_TOKEN=${{ secrets['OVSX_TOKEN'] }} >> $GITHUB_ENV
       - name: Build, tag, and publish extension

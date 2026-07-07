@@ -27,7 +27,9 @@ git config --local user.email "$RELEASE_GIT_EMAIL"
   # > Support for this will arrive in the future.
   # https://code.visualstudio.com/api/working-with-extensions/publishing-extension#prerelease-extensions
   RELEASE_VERSION_WITHOUT_PRERELEASE=$(node -e "console.log(require('semver').coerce('$RELEASE_VERSION').version)")
-  PRERELEASE_VERSION=$(node -e "console.log(require('semver').parse('$RELEASE_VERSION').prerelease.length > 0)")
+  # A pre-release is signalled by the workflow's checkbox (PRERELEASE), and a
+  # semver pre-release suffix on the version is still honored as a fallback.
+  PRERELEASE_VERSION=$(node -e "const p = require('semver').parse('$RELEASE_VERSION'); console.log(process.env.PRERELEASE === 'true' || (p != null && p.prerelease.length > 0))")
   npm version $RELEASE_VERSION_WITHOUT_PRERELEASE --message "release $RELEASE_VERSION_WITHOUT_PRERELEASE [no ci]"
   git push origin $(git describe --tags --exact-match)
   npm run package
