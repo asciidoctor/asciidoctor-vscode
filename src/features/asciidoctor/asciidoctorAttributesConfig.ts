@@ -1,5 +1,5 @@
 import * as vscode from 'vscode'
-import { findDefaultWorkspaceFolderUri } from '../../core/workspace.js'
+import { resolveVariablesForDocument } from '../../core/variableSubstitutionContext.js'
 
 export class AsciidoctorAttributesConfig {
   public static getPreviewAttributes(documentUri?: vscode.Uri): {} {
@@ -12,18 +12,17 @@ export class AsciidoctorAttributesConfig {
       documentUri ?? null,
     )
     const attributes = asciidocPreviewConfig.get('asciidoctorAttributes', {})
-    const workspacePath =
-      vscode.env.uiKind === vscode.UIKind.Desktop
-        ? findDefaultWorkspaceFolderUri()?.fsPath
-        : findDefaultWorkspaceFolderUri()?.path
+    // Expand VS Code variables (`${workspaceFolder}`, `${workspaceFolder:Name}`,
+    // `${env:…}`, …) consistently with the rest of the extension. `${workspaceFolder}`
+    // resolves against the document's own workspace folder so multi-root
+    // workspaces behave predictably (#1154).
     Object.keys(attributes).forEach((key) => {
       const attributeValue = attributes[key]
       if (typeof attributeValue === 'string') {
-        attributes[key] =
-          workspacePath === undefined
-            ? attributeValue
-            : // biome-ignore lint/suspicious/noTemplateCurlyInString: magic-value used in the VS code settings
-              attributeValue.replace('${workspaceFolder}', workspacePath)
+        attributes[key] = resolveVariablesForDocument(
+          attributeValue,
+          documentUri,
+        )
       }
     })
     return {

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Features
+
+* Resolve VS Code path variables consistently across the extension's settings (#1154). The `${...}` placeholders VS Code substitutes in `settings.json` are not exposed to extensions, so each setting reimplemented its own expansion — and only the bare `${workspaceFolder}` was handled, resolved differently depending on the context (the preview's `asciidoctorAttributes` used the *first* workspace folder while the PDF export used the document's own folder, which drift apart in a multi-root workspace). Expansion is now centralised in a single helper used by both the preview attributes and the PDF export (output directory and the `asciidoctor-pdf`/`wkhtmltopdf` command paths). It resolves the named `${workspaceFolder:Name}` form, the deprecated `${workspaceRoot}` alias, `${workspaceFolderBasename}`, `${userHome}`, `${pathSeparator}` (and its `${/}` shorthand) and `${env:NAME}` in addition to the bare `${workspaceFolder}` — which now consistently resolves against the *document's own* workspace folder, so multi-root workspaces behave predictably. An unresolvable placeholder is left untouched rather than collapsing to an empty string. `${userHome}` is only available on the desktop host (there is no home directory on the web extension host)
+
 ### Documentation
 
 * Clarify the `asciidoc.useWorkspaceRootAsBaseDirectory` setting description regarding how relative paths resolve when it is enabled (#700). Because Asciidoctor ties `docdir` to the base directory, setting the base directory to the workspace root makes `{docdir}` resolve to the workspace root as well — so it cannot be used to reach a file sitting next to the current document, and *every* include/image path in the top-level document (even a same-folder one) must be written relative to the workspace root. Includes inside an already-included file keep resolving relative to that file. This behaviour is identical in the preview and in the PDF export; the wording previously left it ambiguous. Clarified in the setting description (all locales) and in a dedicated "Base directory resolution" section on the "Settings" documentation page
