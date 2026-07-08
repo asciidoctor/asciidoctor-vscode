@@ -7,6 +7,11 @@ import { v4 as uuidv4 } from 'uuid'
 import * as vscode from 'vscode'
 import { Command } from '../core/commandManager.js'
 import { logger } from '../core/logger.js'
+import {
+  resolveVariables,
+  type VariableResolutionContext,
+} from '../core/variableSubstitution.js'
+import { buildVariableResolutionContext } from '../core/variableSubstitutionContext.js'
 import { getWorkspaceFolder } from '../core/workspace.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
 import { AsciidocTextDocument } from '../features/asciidoctor/asciidocTextDocument.js'
@@ -49,6 +54,17 @@ export class ExportAsPDF implements Command {
     const workspacePath =
       workspaceFolder?.uri.fsPath ?? path.dirname(doc.uri.fsPath)
 
+    // Context used to expand VS Code variables (`${workspaceFolder}`,
+    // `${env:…}`, …) in configured command and output paths. `${workspaceFolder}`
+    // falls back to the document's own directory when the document is not part
+    // of any workspace folder, so the export still works outside a workspace
+    // (#749).
+    const variableContext: VariableResolutionContext = {
+      ...buildVariableResolutionContext(doc.uri),
+      documentWorkspaceFolder: workspacePath,
+      defaultWorkspaceFolder: workspacePath,
+    }
+
     // Compute the default output path. By default the PDF is written next to the
     // document, but `asciidoc.pdf.outputDirectory` can redirect it elsewhere
     // while keeping the document's base name (#868).
@@ -57,6 +73,7 @@ export class ExportAsPDF implements Command {
       baseDirectory,
       workspacePath,
       asciidocTextDocument.fileName + '.pdf',
+      variableContext,
     )
 
     // When `asciidoc.pdf.askOutputLocation` is disabled, skip the save dialog
@@ -94,6 +111,7 @@ ${text}`
       const asciidoctorPdfCommand = await this.resolveAsciidoctorPdfCommand(
         asciidocPdfConfig,
         workspacePath,
+        variableContext,
       )
       if (asciidoctorPdfCommand === undefined) {
         return
@@ -154,10 +172,9 @@ ${text}`
       if (wkhtmltopdfCommandPath === '') {
         wkhtmltopdfCommandPath = `wkhtmltopdf${process.platform === 'win32' ? '.exe' : ''}`
       } else {
-        wkhtmltopdfCommandPath = wkhtmltopdfCommandPath.replace(
-          // biome-ignore lint/suspicious/noTemplateCurlyInString: magic-value used in the VS code settings
-          '${workspaceFolder}',
-          workspacePath,
+        wkhtmltopdfCommandPath = resolveVariables(
+          wkhtmltopdfCommandPath,
+          variableContext,
         )
       }
       try {
@@ -248,16 +265,16 @@ ${text}`
   private async resolveAsciidoctorPdfCommand(
     asciidocPdfConfig,
     workspacePath,
+    variableContext: VariableResolutionContext,
   ): Promise<{ cwd: string; command: string } | undefined> {
     let asciidoctorPdfCommandPath = asciidocPdfConfig.get(
       'asciidoctorPdfCommandPath',
       '',
     )
     if (asciidoctorPdfCommandPath !== '') {
-      asciidoctorPdfCommandPath = asciidoctorPdfCommandPath.replace(
-        // biome-ignore lint/suspicious/noTemplateCurlyInString: magic-value used in the VS code settings
-        '${workspaceFolder}',
-        workspacePath,
+      asciidoctorPdfCommandPath = resolveVariables(
+        asciidoctorPdfCommandPath,
+        variableContext,
       )
       // use the command specified
       return {
@@ -571,14 +588,17 @@ export function _resolvePdfOutputPath(
   baseDirectory: string,
   workspacePath: string,
   pdfFileName: string,
+  variableContext?: VariableResolutionContext,
 ): string {
   if (!outputDirectory || outputDirectory.trim() === '') {
     return path.join(baseDirectory, pdfFileName)
   }
-  let directory = outputDirectory.replace(
-    // biome-ignore lint/suspicious/noTemplateCurlyInString: magic-value used in the VS code settings
-    '${workspaceFolder}',
-    workspacePath,
+  let directory = resolveVariables(
+    outputDirectory,
+    variableContext ?? {
+      documentWorkspaceFolder: workspacePath,
+      defaultWorkspaceFolder: workspacePath,
+    },
   )
   if (!path.isAbsolute(directory)) {
     directory = path.resolve(workspacePath, directory)
