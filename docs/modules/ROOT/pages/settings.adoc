@@ -134,9 +134,30 @@ A `kroki-server-url` attribute set in the document header or in an `.asciidoctor
 |Name |Description |Default
 
 |`asciidoc.useWorkspaceRootAsBaseDirectory`
-|When in a workspace, use the workspace root path as the base directory.
+|Resolve relative includes and images against the workspace root instead of the current file's directory. See <<base-directory>>.
 |`false`
 |===
+
+[#base-directory]
+=== Base directory resolution
+
+By default, Asciidoctor resolves the relative paths in a document (`include::`, `image::`, `pass:[link:]`, …) against the directory of the current file.
+Enabling `asciidoc.useWorkspaceRootAsBaseDirectory` sets Asciidoctor's *base directory* to the root of the workspace folder that contains the document instead.
+This is useful when several documents, spread across different folders, all reference a shared folder (for example `docs/_includes/`) with the same path.
+
+The setting is applied consistently to the preview, the HTML/DocBook export and the PDF export, so a document resolves the same way everywhere.
+
+[IMPORTANT]
+====
+When the setting is enabled, Asciidoctor ties the intrinsic `+{docdir}+` attribute to the base directory, so `+{docdir}+` resolves to the *workspace root*, not the folder containing the current file.
+As a result:
+
+* Every relative `include::`/`image::` path in the top-level document must be written relative to the workspace root — *including one that targets a file sitting next to the current document*.
+* `+{docdir}+` cannot be used to reach a sibling of the current file.
+* Includes located *inside* an already-included file are still resolved relative to that included file.
+
+Leaving the setting disabled (the default) is recommended: an explicit base directory is a known footgun that can break relative includes.
+====
 
 [#editor-defaults]
 == Editor defaults

@@ -82,7 +82,7 @@
   "asciidoc.trace.desc": "**非推奨:** AsciiDoc拡張のデバッグログを有効にします。",
   "asciidoc.useWorkspaceRoot.deprecationMessage": "本設定は、`#asciidoc.useWorkspaceRootAsBaseDirectory#`に置き換えられ、動作しません。",
   "asciidoc.useWorkspaceRoot.desc": "**非推奨:** ワークスペースのルートパスをベースディレクトリとして使用します。",
-  "asciidoc.useWorkspaceRootAsBaseDirectory.desc": "**詳細設定。** Asciidoctor のベースディレクトリを、現在のファイルのディレクトリから導出する代わりに、ワークスペースルートに設定します。ドキュメントがインクルードや画像を現在のファイルからの相対パスではなくワークスペースルートからの相対パスで参照している場合（たとえば、すべてのファイルから同じように参照される共有フォルダー `docs/_includes/`）にのみ有効にしてください。無効のまま（既定値）にすることを推奨します。ベースディレクトリを明示的に指定すると、相対インクルードが壊れる可能性がある既知の落とし穴です。プレビュー、HTML/DocBook エクスポート、PDF エクスポートに適用されます。",
+  "asciidoc.useWorkspaceRootAsBaseDirectory.desc": "**詳細設定。** Asciidoctor のベースディレクトリを、現在のファイルのディレクトリから導出する代わりに、ワークスペースルートに設定します。ドキュメントがインクルードや画像を現在のファイルからの相対パスではなくワークスペースルートからの相対パスで参照している場合（たとえば、すべてのファイルから同じように参照される共有フォルダー `docs/_includes/`）にのみ有効にしてください。有効にすると、トップレベルドキュメント内のすべてのインクルード/画像パスは（同じフォルダー内のファイルを指すものも含めて）ワークスペースルートからの相対パスで記述する必要があり、`{docdir}` はワークスペースルートを指します（現在のファイルと同じ場所にある別のファイルを参照するためには使用できません）。すでにインクルードされているファイル内のインクルードは、引き続きそのファイルからの相対パスで解決されます。無効のまま（既定値）にすることを推奨します。ベースディレクトリを明示的に指定すると、相対インクルードが壊れる可能性がある既知の落とし穴です。プレビュー、HTML/DocBook エクスポート、PDF エクスポートに適用されます。",
   "asciidoc.use_asciidoctorpdf.deprecationMessage": "本設定は、`#asciidoc.pdf.engine#`に置き換えられ、動作しません。",
   "asciidoc.use_asciidoctorpdf.desc": "**非推奨:** レンダラーにasciidoctor-pdfを使用します。",
   "asciidoc.use_kroki.deprecationMessage": "本設定は、`#asciidoc.extensions.enableKroki#`に置き換えられ、動作しません。",
