@@ -673,6 +673,7 @@
             "type": "boolean",
             "default": false,
             "markdownDescription": "%asciidoc.useWorkspaceRootAsBaseDirectory.desc%",
+            "markdownDeprecationMessage": "%asciidoc.useWorkspaceRootAsBaseDirectory.deprecation%",
             "order": 1,
             "scope": "resource"
           }
