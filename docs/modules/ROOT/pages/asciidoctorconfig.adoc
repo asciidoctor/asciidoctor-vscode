@@ -42,6 +42,7 @@ Both `.asciidoctorconfig` and `.asciidoctorconfig.adoc` are read.
 When both exist in the same directory, `.asciidoctorconfig.adoc` is applied after -- and therefore takes precedence over -- `.asciidoctorconfig`.
 ====
 
+[#multi-root-workspaces]
 == Multi-root workspaces
 
 In a https://code.visualstudio.com/docs/editor/multi-root-workspaces[multi-root workspace], the extension also reads an `.asciidoctorconfig` (or `.asciidoctorconfig.adoc`) sitting at the *root of the other workspace folders*.
@@ -74,6 +75,59 @@ Use it to point at resources from the configuration file with paths that stay co
 ----
 
 This is the portable, IDE-agnostic way to anchor paths -- prefer it over editor-specific variables such as `+${workspaceFolder}+`, so the same configuration file keeps working in other editors and with the Asciidoctor CLI.
+
+[#migrate-from-base-directory]
+== Migrate from `useWorkspaceRootAsBaseDirectory`
+
+The xref:settings.adoc#base-directory[`asciidoc.useWorkspaceRootAsBaseDirectory`] setting is *deprecated* and will be removed in a future release.
+It works by moving Asciidoctor's base directory to the workspace root so that documents scattered across folders can reference a shared folder with the same path.
+Overriding the base directory is a known footgun: it detaches `+{docdir}+` from the current file and forces *every* relative `include::`/`image::` path -- even one targeting a sibling of the document -- to be written relative to the workspace root.
+
+You can achieve the same shared-folder result without touching the base directory: keep the default base directory (the document's own folder) and anchor the shared paths on `+{asciidoctorconfigdir}+` instead.
+Because `+{asciidoctorconfigdir}+` is an absolute path, a document resolves those paths the same way wherever it lives -- and, unlike the setting, the configuration is portable to the Asciidoctor CLI and other editors.
+
+=== Single-folder workspace
+
+Say several documents in different folders all pull includes from `docs/_includes/` and images from `resources/`, and you relied on `useWorkspaceRootAsBaseDirectory` so each document could write those paths from the workspace root.
+
+Add an `.asciidoctorconfig` at the workspace root:
+
+----
+my-project/
+├── .asciidoctorconfig        <1>
+├── docs/
+│   └── _includes/
+├── resources/
+└── chapters/
+    └── intro.adoc            <2>
+----
+<1> Anchors the shared folders on the workspace root.
+<2> Keeps its own default base directory, so `+{docdir}+` still points at `chapters/`.
+
+[source,asciidoc]
+----
+:imagesdir: {asciidoctorconfigdir}/resources
+----
+
+Then reference the shared folders through the anchor -- write `+include::{asciidoctorconfigdir}/docs/_includes/legal.adoc[]+` instead of `include::docs/_includes/legal.adoc[]`, and images already resolve under the `imagesdir` set above.
+A path that targets a file *next to* the current document keeps working as a plain relative path, because the base directory was never moved.
+
+=== Multi-root workspace
+
+For the multi-root case -- documents under a `project1` folder that reference a `resources/` folder living in a different `work` folder -- put the `.asciidoctorconfig` at the root of the folder that holds the shared resources:
+
+----
+my.code-workspace
+├── work/                     <1>
+│   ├── .asciidoctorconfig
+│   └── resources/
+└── project1/                 <2>
+    └── guide.adoc
+----
+<1> The folder holding the shared resources; its `.asciidoctorconfig` is read for documents in every workspace folder (see xref:#multi-root-workspaces[]).
+<2> `guide.adoc` references the shared folder through `+{asciidoctorconfigdir}+`, e.g. `+image::{asciidoctorconfigdir}/resources/logo.png[]+`.
+
+This covers the shared-folder use case of a multi-root workspace without any base-directory setting: no `useWorkspaceRootAsBaseDirectory`, and no need to point the base directory at a named folder such as `+${workspaceFolder:work}+`.
 
 == Switch between configurations (e.g. web vs. print)
 

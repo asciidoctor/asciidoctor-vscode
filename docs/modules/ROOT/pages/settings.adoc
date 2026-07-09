@@ -134,7 +134,7 @@ A `kroki-server-url` attribute set in the document header or in an `.asciidoctor
 |Name |Description |Default
 
 |`asciidoc.useWorkspaceRootAsBaseDirectory`
-|Resolve relative includes and images against the workspace root instead of the current file's directory. See <<base-directory>>.
+|*(deprecated)* Resolve relative includes and images against the workspace root instead of the current file's directory. See <<base-directory>>.
 |`false`
 |===
 
@@ -157,6 +157,12 @@ As a result:
 * Includes located *inside* an already-included file are still resolved relative to that included file.
 
 Leaving the setting disabled (the default) is recommended: an explicit base directory is a known footgun that can break relative includes.
+====
+
+[WARNING]
+====
+This setting is *deprecated* and will be removed in a future release.
+Use an xref:asciidoctorconfig.adoc[`.asciidoctorconfig` file] to share a folder across documents instead -- see xref:asciidoctorconfig.adoc#migrate-from-base-directory[Migrate from `useWorkspaceRootAsBaseDirectory`] for the equivalent setup.
 ====
 
 [#editor-defaults]
