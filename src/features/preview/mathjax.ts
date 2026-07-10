@@ -51,7 +51,18 @@ MathJax = {
   // mhchem (\\ce, \\pu) ships the \`autoload\` map in the combined component but
   // its code is bundled separately; load it eagerly (like AsciiMath) rather than
   // relying on autoload's lazy fetch, which is unreliable in the offline WebView.
-  loader: { load: ['input/asciimath', '[tex]/mhchem'] },
+  //
+  // \`paths.fonts\` defaults to the public MathJax CDN when a \`window\` exists.
+  // mhchem registers its font extension under
+  // \`[fonts]/mathjax-mhchem-font-extension\`, so without this override the
+  // WebView fetches that component from the CDN — and when offline the failed
+  // load leaves \`startup.promise\` pending forever, so nothing gets typeset at
+  // all (#1160). Point \`[fonts]\` at the bundled fonts directory
+  // (tasks/copy-mathjax.mjs ships the extension there).
+  loader: {
+    load: ['input/asciimath', '[tex]/mhchem'],
+    paths: { fonts: '${resources.fontBase}' }
+  },
   output: {
     fontPath: '${resources.fontBase}/%%FONT%%'
   },
