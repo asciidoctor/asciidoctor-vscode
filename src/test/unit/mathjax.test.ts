@@ -47,8 +47,16 @@ describe('renderMathJax', () => {
 
   test('eagerly loads AsciiMath and mhchem, which the combined component omits', () => {
     const html = renderMathJax(true, 'none', 'NONCE', resources)
+    assert.ok(html.includes("load: ['input/asciimath', '[tex]/mhchem']"), html)
+  })
+
+  test('points the [fonts] loader path at the bundled fonts (not the CDN)', () => {
+    // mhchem loads its font extension from `[fonts]/mathjax-mhchem-font-extension`;
+    // without this override `[fonts]` defaults to cdn.jsdelivr.net and an offline
+    // WebView hangs on startup (#1160).
+    const html = renderMathJax(true, 'none', 'NONCE', resources)
     assert.ok(
-      html.includes("loader: { load: ['input/asciimath', '[tex]/mhchem'] }"),
+      html.includes("paths: { fonts: 'media/mathjax/output/fonts' }"),
       html,
     )
   })

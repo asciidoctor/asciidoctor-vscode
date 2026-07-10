@@ -57,3 +57,28 @@ cpSync(join(font, 'chtml', 'woff2'), join(fontDest, 'woff2'), {
 cpSync(join(font, 'chtml', 'dynamic'), join(fontDest, 'dynamic'), {
   recursive: true,
 })
+
+// mhchem font extension. When mhchem.js initializes it registers
+// `[mathjax-mhchem-extension]` as `[fonts]/mathjax-mhchem-font-extension` and
+// loads `chtml.js` from there. `[fonts]` defaults to cdn.jsdelivr.net, so the
+// preview would silently fetch it from the CDN — and hang all typesetting when
+// offline (#1160). The converter points `[fonts]` at `<base>/output/fonts`
+// instead, so ship the extension (component + its woff2) under that directory.
+const mhchemFontExt = join(
+  nodeModules,
+  '@mathjax',
+  'mathjax-mhchem-font-extension',
+)
+const mhchemFontExtDest = join(
+  dest,
+  'output',
+  'fonts',
+  'mathjax-mhchem-font-extension',
+)
+mkdirSync(mhchemFontExtDest, { recursive: true })
+cpSync(join(mhchemFontExt, 'chtml.js'), join(mhchemFontExtDest, 'chtml.js'))
+cpSync(
+  join(mhchemFontExt, 'chtml', 'woff2'),
+  join(mhchemFontExtDest, 'chtml', 'woff2'),
+  { recursive: true },
+)
