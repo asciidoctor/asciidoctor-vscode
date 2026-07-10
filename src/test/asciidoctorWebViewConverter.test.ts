@@ -718,6 +718,60 @@ See xref:my-table[xrefstyle=short] for more reference.
     )
   })
 
+  // The `data-shell` fingerprint hashes the document-driven parts of the
+  // webview shell (MathJax, syntax highlighter, docinfo, body classes…) that an
+  // incremental morph of `#preview-root` cannot update. The preview falls back
+  // to a full reload when it changes; see AsciidocPreview.doUpdate.
+  function readShellFingerprint(html: string): string {
+    const match = /\bdata-shell="([^"]*)"/.exec(html)
+    assert.ok(match, `expected a data-shell fingerprint in:\n${html}`)
+    return match[1]
+  }
+
+  test('Should keep the shell fingerprint stable across renders of an identical document', async () => {
+    const input = '= Title\n:stem:\n\nstem:[x^2]'
+    const first = await convertStandaloneWithFragment(input, undefined)
+    // The CSP nonce is derived from the clock: wait so the second render gets a
+    // different nonce, proving the fingerprint does not depend on it.
+    await new Promise((resolve) => setTimeout(resolve, 5))
+    const second = await convertStandaloneWithFragment(input, undefined)
+    assert.strictEqual(
+      readShellFingerprint(first),
+      readShellFingerprint(second),
+      'an identical document must produce the same shell fingerprint',
+    )
+  })
+
+  test('Should change the shell fingerprint when `stem` is toggled', async () => {
+    const without = await convertStandaloneWithFragment(
+      '= Title\n\nstem:[x^2]',
+      undefined,
+    )
+    const withStem = await convertStandaloneWithFragment(
+      '= Title\n:stem:\n\nstem:[x^2]',
+      undefined,
+    )
+    assert.notStrictEqual(
+      readShellFingerprint(without),
+      readShellFingerprint(withStem),
+      'toggling :stem: must change the shell fingerprint (MathJax must be (un)loaded by a full reload)',
+    )
+  })
+
+  test('Should change the shell fingerprint when `source-highlighter` is toggled', async () => {
+    const source = '[source,js]\n----\nconst x = 1\n----'
+    const without = await convertStandaloneWithFragment(source, undefined)
+    const withHighlighter = await convertStandaloneWithFragment(
+      `:source-highlighter: highlight.js\n\n${source}`,
+      undefined,
+    )
+    assert.notStrictEqual(
+      readShellFingerprint(without),
+      readShellFingerprint(withHighlighter),
+      'toggling :source-highlighter: must change the shell fingerprint (highlight.js must be (un)loaded by a full reload)',
+    )
+  })
+
   for (const testCase of testCases) {
     if (testCase.standalone) {
       test(testCase.title, async () =>

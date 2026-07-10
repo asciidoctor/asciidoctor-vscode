@@ -65,6 +65,15 @@ export class AsciidocPreview
   // A non-retained webview that gets destroyed while hidden would otherwise
   // reload that stale HTML when revealed.
   private webviewHtmlIsStale = false
+  // `data-shell` fingerprint of the last HTML handed to the webview. The
+  // converter hashes the document-driven parts of the shell that an incremental
+  // morph of `#preview-root` cannot update (the <head> scripts and styles, the
+  // <body> classes). When a document edit changes it — toggling `:stem:` or
+  // `:source-highlighter:`, a listing in a new language… — the update falls
+  // back to a full reload so MathJax/highlight.js are (un)loaded and every
+  // block is re-rendered consistently instead of leaving raw equations or a
+  // mix of stale and fresh block renderings.
+  private lastShellFingerprint: string | undefined
 
   public static async revive(
     webview: vscode.WebviewPanel,
@@ -564,6 +573,13 @@ export class AsciidocPreview
     // One-shot: consume the anchor so later refreshes of the same document do
     // not keep jumping back to it.
     this.pendingScrollToFragment = undefined
+    // A shell change (see lastShellFingerprint) cannot be applied by the
+    // incremental morph: force a full reload.
+    const shellFingerprint = /\bdata-shell="([^"]*)"/.exec(html)?.[1]
+    if (shellFingerprint !== this.lastShellFingerprint) {
+      this.needsFullReload = true
+      this.lastShellFingerprint = shellFingerprint
+    }
     if (this.needsFullReload) {
       // Full reload: rebuild the entire webview (shell + content).
       this.editor.webview.html = html

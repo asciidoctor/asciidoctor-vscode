@@ -122,4 +122,66 @@ describe('Refresh preview command', () => {
       'a forced refresh with fullReload disabled must morph, not reload (webview.html stays at the last full load)',
     )
   })
+
+  // Toggling `:stem:` or `:source-highlighter:` changes the webview shell (the
+  // <head> must load or unload MathJax / highlight.js), which the incremental
+  // morph of `#preview-root` cannot apply — equations would stay raw and code
+  // blocks would keep a stale highlighting. The converter fingerprints the
+  // shell in `data-shell`; when it changes between renders, the preview must
+  // fall back to a full reload even on the incremental path.
+  test('falls back to a full reload when the shell fingerprint changes', async () => {
+    let renders = 0
+    let shell = 'A'
+    const contentProvider = {
+      providePreviewHTML: async () => {
+        renders++
+        return `<html><body data-shell="${shell}">shell ${shell} render ${renders}</body></html>`
+      },
+    } as unknown as AsciidocContentProvider
+
+    const shellPreview = AsciidocPreview.create(
+      fileUri,
+      vscode.ViewColumn.One,
+      vscode.ViewColumn.Two,
+      true,
+      contentProvider,
+      new AsciidocPreviewConfigurationManager(),
+      new Logger(),
+      new AsciidocFileTopmostLineMonitor(),
+      getAsciidocExtensionContributions(extensionContext),
+    )
+    try {
+      const webviewHtml = () =>
+        (shellPreview as unknown as { editor: vscode.WebviewPanel }).editor
+          .webview.html
+
+      // Initial render: full load, fingerprint "A" is recorded.
+      shellPreview.update(fileUri)
+      await tick(300)
+      assert.match(webviewHtml(), /shell A render 1/)
+
+      // Unchanged shell on the incremental path: must morph, not reload.
+      shellPreview.refresh(true, false)
+      await tick(500)
+      assert.equal(renders, 2)
+      assert.match(
+        webviewHtml(),
+        /shell A render 1/,
+        'an unchanged shell fingerprint must keep the incremental morph',
+      )
+
+      // Changed shell on the incremental path: must fall back to a full reload.
+      shell = 'B'
+      shellPreview.refresh(true, false)
+      await tick(500)
+      assert.equal(renders, 3)
+      assert.match(
+        webviewHtml(),
+        /shell B render 3/,
+        'a changed shell fingerprint must force a full reload',
+      )
+    } finally {
+      shellPreview.dispose()
+    }
+  })
 })
