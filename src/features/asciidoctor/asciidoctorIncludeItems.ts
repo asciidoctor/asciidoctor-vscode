@@ -9,6 +9,12 @@ interface IncludeEntry {
 
 export interface IncludeItems extends Array<IncludeEntry> {}
 
+/** State stored on the include processor extension instance between renders. */
+interface FindIncludeProcessorState {
+  includeItems: IncludeItems
+  includeIndex: number
+}
+
 export interface AsciidoctorIncludeItemsProvider {
   activate(registry: Registry)
 
@@ -26,7 +32,7 @@ export class AsciidoctorIncludeItems
     this.findIncludeProcessorExtension = Extensions.newIncludeProcessor(
       'FindIncludeProcessorExtension',
       {
-        postConstruct: function () {
+        postConstruct: function (this: FindIncludeProcessorState) {
           this.includeItems = []
           this.includeIndex = 0
         },
@@ -34,7 +40,13 @@ export class AsciidoctorIncludeItems
         handles: function (_target) {
           return true
         },
-        process: function (doc, reader, target, attrs) {
+        process: function (
+          this: FindIncludeProcessorState,
+          doc,
+          reader,
+          target,
+          attrs,
+        ) {
           // We don't meaningfully process the includes, we just want to identify
           // their line number and path if they belong in the base document.
           //
@@ -73,11 +85,15 @@ export class AsciidoctorIncludeItems
   }
 
   get() {
-    return (this.findIncludeProcessorExtension as any).includeItems
+    return (
+      this.findIncludeProcessorExtension as unknown as FindIncludeProcessorState
+    ).includeItems
   }
 
   reset() {
-    ;(this.findIncludeProcessorExtension as any).includeIndex = 0
-    ;(this.findIncludeProcessorExtension as any).includeItems = []
+    const state = this
+      .findIncludeProcessorExtension as unknown as FindIncludeProcessorState
+    state.includeIndex = 0
+    state.includeItems = []
   }
 }
