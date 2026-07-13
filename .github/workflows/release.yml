@@ -40,7 +40,7 @@ jobs:
       - name: Build, tag, and publish extension
         run: ./release.sh
       - name: Announce release on Zulip
-        uses: zulip/github-actions-zulip/send-message@v1
+        uses: zulip/github-actions-zulip/send-message@v2
         with:
           email: ${{ secrets.ZULIP_USERNAME }}
           api-key: ${{ secrets.ZULIP_API_KEY }}
