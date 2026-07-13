@@ -7,6 +7,12 @@
     "target": "es2022",
     "outDir": "dist",
     "lib": ["dom", "es2022"],
+    "types": ["node"],
+    "noImplicitThis": true,
+    "strictFunctionTypes": true,
+    "strictBindCallApply": true,
+    "alwaysStrict": true,
+    "useUnknownInCatchVariables": true,
     "sourceMap": true,
     "rootDir": "."
   },

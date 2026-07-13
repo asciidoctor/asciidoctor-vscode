@@ -8,6 +8,11 @@ export interface AsciidoctorConfigProvider {
   activate(registry: Registry, documentUri: vscode.Uri): Promise<void>
 }
 
+/** State stored on the preprocessor extension instance between renders. */
+interface PrependConfigPreprocessorState {
+  asciidoctorConfigContent: string
+}
+
 /**
  * .asciidoctorconfig support.
  */
@@ -18,10 +23,10 @@ export class AsciidoctorConfig implements AsciidoctorConfigProvider {
     this.prependExtension = Extensions.newPreprocessor(
       'PrependConfigPreprocessorExtension',
       {
-        postConstruct: function () {
+        postConstruct: function (this: PrependConfigPreprocessorState) {
           this.asciidoctorConfigContent = ''
         },
-        process: function (doc, reader) {
+        process: function (this: PrependConfigPreprocessorState, doc, reader) {
           if (this.asciidoctorConfigContent.length > 0) {
             // otherwise an empty line at the beginning breaks level 0 detection
             reader.pushInclude(
@@ -47,12 +52,9 @@ export class AsciidoctorConfig implements AsciidoctorConfigProvider {
   ) {
     const asciidoctorConfigContent =
       await getAsciidoctorConfigContent(documentUri)
-    if (asciidoctorConfigContent !== undefined) {
-      ;(this.prependExtension as any).asciidoctorConfigContent =
-        asciidoctorConfigContent
-    } else {
-      ;(this.prependExtension as any).asciidoctorConfigContent = ''
-    }
+    const state = this
+      .prependExtension as unknown as PrependConfigPreprocessorState
+    state.asciidoctorConfigContent = asciidoctorConfigContent ?? ''
   }
 }
 
@@ -63,7 +65,7 @@ export async function getAsciidoctorConfigContent(
     | undefined = vscode.workspace.workspaceFolders?.map(
     (workspaceFolder) => workspaceFolder.uri,
   ),
-): Promise<String | undefined> {
+): Promise<string | undefined> {
   const directories = getConfigSearchDirectories(
     documentUri,
     workspaceFolderUris,

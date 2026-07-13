@@ -769,6 +769,7 @@
     "package": "npm run build && npm run build-web && vsce package",
     "deploy": "vsce publish -p",
     "lint": "npx @biomejs/biome check --write",
+    "typecheck": "tsc --noEmit",
     "format": "npx @biomejs/biome format --write",
     "pretest": "npm run build && npm run build-test",
     "test": "node ./src/test/runTest.mjs && npm run test:unit && npm run test:grammar",
