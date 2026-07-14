@@ -1,4 +1,4 @@
-export const range = function (min, max) {
+export const range = function (min: number, max?: number): number[] {
   // If only one number is provided, start at one
   if (max === undefined) {
     max = min

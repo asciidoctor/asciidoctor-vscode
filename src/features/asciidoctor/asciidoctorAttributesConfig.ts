@@ -11,7 +11,10 @@ export class AsciidoctorAttributesConfig {
       'asciidoc.preview',
       documentUri ?? null,
     )
-    const attributes = asciidocPreviewConfig.get('asciidoctorAttributes', {})
+    const attributes = asciidocPreviewConfig.get<Record<string, unknown>>(
+      'asciidoctorAttributes',
+      {},
+    )
     // Expand VS Code variables (`${workspaceFolder}`, `${workspaceFolder:Name}`,
     // `${env:…}`, …) consistently with the rest of the extension. `${workspaceFolder}`
     // resolves against the document's own workspace folder so multi-root

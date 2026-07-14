@@ -6,7 +6,7 @@ import builtinAttributes from './builtinDocumentAttribute.json' with {
 export class BuiltinDocumentAttributeProvider {
   private readonly completionItems = Object.keys(builtinAttributes).map(
     (key) => {
-      const value = builtinAttributes[key]
+      const value = builtinAttributes[key as keyof typeof builtinAttributes]
       const completionItem = new vscode.CompletionItem(
         { label: value.label, description: value.description },
         vscode.CompletionItemKind.Text,

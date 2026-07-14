@@ -1,4 +1,10 @@
-import { Extensions, Preprocessor, Registry } from '@asciidoctor/core'
+import {
+  Document,
+  Extensions,
+  Preprocessor,
+  Reader,
+  Registry,
+} from '@asciidoctor/core'
 import * as vscode from 'vscode'
 import { dir, exists } from '../../core/file.js'
 
@@ -26,7 +32,11 @@ export class AsciidoctorConfig implements AsciidoctorConfigProvider {
         postConstruct: function (this: PrependConfigPreprocessorState) {
           this.asciidoctorConfigContent = ''
         },
-        process: function (this: PrependConfigPreprocessorState, doc, reader) {
+        process: function (
+          this: PrependConfigPreprocessorState,
+          _doc: Document,
+          reader: Reader,
+        ) {
           if (this.asciidoctorConfigContent.length > 0) {
             // otherwise an empty line at the beginning breaks level 0 detection
             reader.pushInclude(

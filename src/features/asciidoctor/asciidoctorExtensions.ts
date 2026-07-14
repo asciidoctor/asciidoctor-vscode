@@ -90,7 +90,7 @@ export class AsciidoctorExtensions {
       .get('registerWorkspaceExtensions')
   }
 
-  private async registerExtensionsInWorkspace(registry) {
+  private async registerExtensionsInWorkspace(registry: Registry) {
     const extensionsTrusted = await this.confirmAsciidoctorExtensionsTrusted()
     if (!extensionsTrusted) {
       return

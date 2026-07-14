@@ -1,4 +1,4 @@
-import { Extensions, Registry } from '@asciidoctor/core'
+import { Document, Extensions, Reader, Registry } from '@asciidoctor/core'
 
 interface IncludeEntry {
   index: number
@@ -16,11 +16,11 @@ interface FindIncludeProcessorState {
 }
 
 export interface AsciidoctorIncludeItemsProvider {
-  activate(registry: Registry)
+  activate(registry: Registry): void
 
-  get()
+  get(): IncludeItems
 
-  reset()
+  reset(): void
 }
 
 export class AsciidoctorIncludeItems
@@ -36,16 +36,15 @@ export class AsciidoctorIncludeItems
           this.includeItems = []
           this.includeIndex = 0
         },
-        // @ts-ignore
-        handles: function (_target) {
+        handles: function (_target: string) {
           return true
         },
         process: function (
           this: FindIncludeProcessorState,
-          doc,
-          reader,
-          target,
-          attrs,
+          _doc: Document,
+          reader: Reader,
+          target: string,
+          attrs: Record<string, string>,
         ) {
           // We don't meaningfully process the includes, we just want to identify
           // their line number and path if they belong in the base document.
@@ -57,12 +56,10 @@ export class AsciidoctorIncludeItems
           // `docfile` is set; the previous `reader.path === '<stdin>'` test only
           // held when `docfile` was absent — with it set, the top-level reader
           // path becomes the file name instead of `<stdin>`.
-          // @ts-ignore
           if (reader.getIncludeDepth() === 0) {
             this.includeItems.push({
               index: this.includeIndex,
               name: target,
-              // @ts-ignore
               position: reader.lineno - 1,
               length: target.length,
             })

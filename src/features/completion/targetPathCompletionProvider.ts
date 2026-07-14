@@ -107,7 +107,7 @@ export class TargetPathCompletionProvider {
       // TODO: we should use `document.getAttributes()` (and remove built-in / unnecessary / unrelated attributes)
       const globalVariableDefinitions = documentText.match(/:\S+:.*/g)
 
-      let variablePathSubstitutions = []
+      let variablePathSubstitutions: vscode.CompletionItem[] = []
       // TODO: prevent editor.autoClosingBrackets at this point until finished inserting
       const editorConfig = vscode.workspace.getConfiguration('editor')
       const doAutoCloseBrackets =

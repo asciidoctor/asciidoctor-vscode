@@ -11,7 +11,9 @@ import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../features/security
 import { extensionContext } from './helper.js'
 import { createFile } from './workspaceHelper.js'
 
-function filterByLabel(label: string): (CompletionItem) => boolean {
+function filterByLabel(
+  label: string,
+): (item: vscode.CompletionItem) => boolean {
   return (item) => {
     if (item.label as vscode.CompletionItemLabel) {
       return (item.label as vscode.CompletionItemLabel).label === label
@@ -23,7 +25,7 @@ function filterByLabel(label: string): (CompletionItem) => boolean {
 async function findCompletionItems(
   uri: vscode.Uri,
   position: vscode.Position,
-  filter?: (completionItem) => boolean,
+  filter?: (completionItem: vscode.CompletionItem) => boolean,
 ) {
   const textDocument = await vscode.workspace.openTextDocument(uri)
   const asciidocLoader = new AsciidocLoader(

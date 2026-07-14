@@ -1,13 +1,6 @@
 import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
-import {
-  type Block,
-  type BlockProcessor,
-  type BlockProcessorDslInterface,
-  Extensions,
-  type Reader,
-  type Registry,
-} from '@asciidoctor/core'
+import { Extensions, type Registry } from '@asciidoctor/core'
 import {
   ASCIIDOCTOR_EXTENSIONS_CONTRIBUTION_POINT,
   type AsciidoctorExtensionContext,
@@ -233,21 +226,17 @@ describe('registerContributedAsciidoctorExtensions', () => {
       contributes: contributingPackageJSON,
       exports: {
         registerAsciidoctorExtensions(r: Registry) {
-          r.block(
-            'shout',
-            function (this: BlockProcessor & BlockProcessorDslInterface) {
-              const self = this
-              self.onContext('paragraph')
-              self.process((parent, reader) =>
-                self.createBlock(
-                  parent as Block,
-                  'paragraph',
-                  (reader as Reader).getLines().join('\n').toUpperCase(),
-                  {},
-                ),
-              )
-            },
-          )
+          r.block('shout', function () {
+            this.onContext('paragraph')
+            this.process((parent, reader) =>
+              this.createBlock(
+                parent,
+                'paragraph',
+                reader.getLines().join('\n').toUpperCase(),
+                {},
+              ),
+            )
+          })
         },
       },
     })

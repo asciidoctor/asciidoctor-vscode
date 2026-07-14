@@ -14,9 +14,9 @@ import { extensionContext } from './helper.js'
 import { createFile } from './workspaceHelper.js'
 
 class EmptyAsciidocContributions implements AsciidocContributions {
-  readonly previewScripts = []
-  readonly previewStyles = []
-  readonly previewResourceRoots = []
+  readonly previewScripts: vscode.Uri[] = []
+  readonly previewStyles: vscode.Uri[] = []
+  readonly previewResourceRoots: vscode.Uri[] = []
 }
 
 class AsciidocContributionProviderTest implements AsciidocContributionProvider {

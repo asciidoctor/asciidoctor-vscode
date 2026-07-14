@@ -1,4 +1,4 @@
-import { MemoryLogger } from '@asciidoctor/core'
+import { Cursor, MemoryLogger } from '@asciidoctor/core'
 import * as vscode from 'vscode'
 import { DiagnosticCollection } from 'vscode'
 import { SkinnyTextDocument } from '../../core/document.js'
@@ -109,7 +109,7 @@ export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
       null,
     )
     if (asciidocDebugConfig.get('enableErrorDiagnostics')) {
-      const diagnostics = []
+      const diagnostics: vscode.Diagnostic[] = []
       messages.forEach((error) => {
         const severity = toDiagnosticSeverity(error.getSeverity())
         if (severity === undefined) {
@@ -119,7 +119,7 @@ export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
         }
         let errorMessage = messageText(error)
         let sourceLine = 0
-        let relatedFile = null
+        let relatedFile: Cursor | null = null
         const diagnosticSource = 'asciidoctor.js'
         // allocate to line 0 in the absence of information
         let sourceRange = textDocument.lineAt(0).range

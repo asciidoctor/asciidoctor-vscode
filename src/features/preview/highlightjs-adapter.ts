@@ -142,7 +142,7 @@ function collectUsedLanguages(doc: any): string[] {
 }
 
 export function register(
-  highlightjsBuiltInSyntaxHighlighter,
+  highlightjsBuiltInSyntaxHighlighter: any,
   context: vscode.ExtensionContext,
   webviewPanel: WebviewResourceProvider,
 ) {
@@ -178,7 +178,7 @@ export function register(
         ? doc
             .getAttribute('highlightjs-languages')
             .split(',')
-            .map((lang) => lang.trim())
+            .map((lang: string) => lang.trim())
         : []
       // Languages detected in the document that are not part of the common
       // bundle, so they load automatically without any configuration.

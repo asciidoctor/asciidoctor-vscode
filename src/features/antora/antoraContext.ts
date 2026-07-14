@@ -1,4 +1,5 @@
 import ospath from 'node:path'
+import type { ContentCatalog } from '@antora/content-classifier'
 import * as vscode from 'vscode'
 import { Memento, Uri } from 'vscode'
 import { disposeAll } from '../../core/dispose.js'
@@ -112,7 +113,7 @@ export class AntoraDocumentContext {
 }
 
 export class AntoraContext {
-  constructor(public contentCatalog) {}
+  constructor(public contentCatalog: ContentCatalog) {}
 
   public async getResource(
     textDocumentUri: Uri,
