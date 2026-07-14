@@ -23,6 +23,9 @@ import {
 async function testGetAntoraConfig({
   asciidocPathUri,
   antoraConfigExpectedUri,
+}: {
+  asciidocPathUri: vscode.Uri
+  antoraConfigExpectedUri: vscode.Uri | undefined
 }) {
   const antoraConfigUri = await findAntoraConfigFile(asciidocPathUri)
   if (antoraConfigExpectedUri === undefined) {
@@ -40,8 +43,12 @@ async function testGetAntoraConfig({
 }
 
 describe('Antora support with multi-documentation components', () => {
-  const createdFiles = []
-  const testCases = []
+  const createdFiles: vscode.Uri[] = []
+  const testCases: {
+    title: string
+    asciidocPathSegments: string[]
+    antoraConfigExpectedPathSegments: string[] | undefined
+  }[] = []
   before(async () => {
     createdFiles.push(await createDirectory('docs'))
     const apiDocumentationComponentPaths = ['docs', 'multiComponents', 'api']
@@ -246,7 +253,7 @@ describe('Antora support with multi-documentation components', () => {
 
   test('Should handle symlink', async () => {
     if (os.platform() !== 'win32') {
-      const createdFiles = []
+      const createdFiles: vscode.Uri[] = []
       try {
         createdFiles.push(await createDirectory('antora-test'))
         await createDirectories(
@@ -313,7 +320,7 @@ describe('Antora support with multi-documentation components', () => {
 
 describe('Antora support with single documentation component', () => {
   test('Should build content catalog', async () => {
-    const createdFiles = []
+    const createdFiles: vscode.Uri[] = []
     try {
       createdFiles.push(await createDirectory('modules'))
       await createDirectories('modules', 'ROOT', 'pages')
@@ -357,7 +364,7 @@ describe('Antora support with single documentation component', () => {
 
 describe('Antora content catalog construction', () => {
   test('Should load contents of text resources but not of binary resources', async () => {
-    const createdFiles = []
+    const createdFiles: vscode.Uri[] = []
     try {
       createdFiles.push(await createDirectory('modules'))
       await createDirectories('modules', 'ROOT', 'pages')
@@ -429,7 +436,7 @@ describe('Antora content catalog construction', () => {
   })
 
   test('Should resolve a resource id to its absolute path', async () => {
-    const createdFiles = []
+    const createdFiles: vscode.Uri[] = []
     try {
       createdFiles.push(await createDirectory('modules'))
       await createDirectories('modules', 'ROOT', 'pages')
@@ -474,7 +481,7 @@ describe('Antora content catalog construction', () => {
   // Resolving the `example$` family resource id against the content catalog must
   // return the example file's contents.
   test('Should resolve an example$ include resource id to its contents', async () => {
-    const createdFiles = []
+    const createdFiles: vscode.Uri[] = []
     try {
       createdFiles.push(await createDirectory('modules'))
       await createDirectories('modules', 'ROOT', 'pages')
@@ -553,7 +560,7 @@ describe('Antora content catalog caching', () => {
   }
 
   test('Should reuse the cached content catalog across calls', async () => {
-    const createdFiles = []
+    const createdFiles: vscode.Uri[] = []
     try {
       const asciidocFile = await createSingleComponent(createdFiles)
       await enableAntoraSupport()
@@ -575,7 +582,7 @@ describe('Antora content catalog caching', () => {
   })
 
   test('Should rebuild the content catalog after the cache is cleared', async () => {
-    const createdFiles = []
+    const createdFiles: vscode.Uri[] = []
     try {
       const asciidocFile = await createSingleComponent(createdFiles)
       await enableAntoraSupport()

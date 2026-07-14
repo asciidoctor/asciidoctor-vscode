@@ -1,6 +1,9 @@
 'use strict'
 
 import ospath from 'node:path'
+import type { ContentCatalog, ResourceId } from '@antora/content-classifier'
+import type { Cursor } from '@asciidoctor/core'
+import type { AntoraConfig, AntoraResourceContext } from './antoraContext.js'
 
 const EXAMPLES_DIR_TOKEN = 'example$'
 const PARTIALS_DIR_TOKEN = 'partial$'
@@ -19,11 +22,11 @@ const RESOURCE_ID_DETECTOR_RX = /[$:@]/
  * @returns {Object} A map containing the file, path, and contents of the resolved file.
  */
 export function resolveIncludeFile(
-  target,
-  page,
-  cursor,
-  catalog,
-  antoraConfig,
+  target: string,
+  page: { src: AntoraResourceContext },
+  cursor: Pick<Cursor, 'file' | 'dir'>,
+  catalog: ContentCatalog,
+  antoraConfig: AntoraConfig | undefined,
 ) {
   const src = (cursor.file || {}).src || page.src
   let resolved
@@ -36,7 +39,7 @@ export function resolveIncludeFile(
       target.startsWith(EXAMPLES_DIR_TOKEN)
     ) {
       ;[family, relative] = splitOnce(target, '$')
-      if (relative.charAt() === '/') {
+      if (relative.charAt(0) === '/') {
         relative = relative.substr(1)
       }
       resolved = catalog.getById({
@@ -82,7 +85,7 @@ function extractResourceId({
   module: module_,
   family,
   relative,
-}) {
+}: ResourceId) {
   return { component, version, module: module_, family, relative }
 }
 
@@ -96,7 +99,7 @@ function extractResourceId({
  * @returns {String[]} A 2-element Array that contains the string before and after the separator, if
  * the separator is found, otherwise a single-element Array that contains the original string.
  */
-function splitOnce(string, separator) {
+function splitOnce(string: string, separator: string): string[] {
   const separatorIdx = string.indexOf(separator)
   return ~separatorIdx
     ? [string.substr(0, separatorIdx), string.substr(separatorIdx + 1)]

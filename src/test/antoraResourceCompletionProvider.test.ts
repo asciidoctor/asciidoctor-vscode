@@ -44,7 +44,7 @@ describe('AntoraResourceCompletionProvider', () => {
   }
 
   test('Should suggest images of the same and other modules after "image::"', async () => {
-    const createdFiles = []
+    const createdFiles: vscode.Uri[] = []
     try {
       const page = await createComponent(createdFiles)
       await enableAntoraSupport()
@@ -85,7 +85,7 @@ describe('AntoraResourceCompletionProvider', () => {
   })
 
   test('Should not append brackets when the macro already has them', async () => {
-    const createdFiles = []
+    const createdFiles: vscode.Uri[] = []
     try {
       createdFiles.push(await createDirectory('modules'))
       await createDirectories('modules', 'ROOT', 'pages')
@@ -121,7 +121,7 @@ describe('AntoraResourceCompletionProvider', () => {
   })
 
   test('Should suggest pages after "xref:"', async () => {
-    const createdFiles = []
+    const createdFiles: vscode.Uri[] = []
     try {
       const page = await createComponent(createdFiles)
       await enableAntoraSupport()
@@ -146,7 +146,7 @@ describe('AntoraResourceCompletionProvider', () => {
   })
 
   test('Should suggest the anchors of the referenced page after "xref:<page>#"', async () => {
-    const createdFiles = []
+    const createdFiles: vscode.Uri[] = []
     try {
       createdFiles.push(await createDirectory('modules'))
       await createDirectories('modules', 'ROOT', 'pages')
@@ -192,7 +192,7 @@ describe('AntoraResourceCompletionProvider', () => {
   })
 
   test('Should not suggest anything when Antora support is disabled', async () => {
-    const createdFiles = []
+    const createdFiles: vscode.Uri[] = []
     try {
       const page = await createComponent(createdFiles)
       await resetAntoraSupport()

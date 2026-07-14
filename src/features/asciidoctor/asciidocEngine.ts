@@ -1,4 +1,5 @@
 import {
+  AbstractBlock,
   Document as AsciidoctorDocument,
   ConverterFactory,
   Extensions,
@@ -401,7 +402,7 @@ export class AsciidocEngine {
 
     try {
       const document = await load(text, options)
-      const blocksWithLineNumber = document.findBy(function (b) {
+      const blocksWithLineNumber = document.findBy(function (b: AbstractBlock) {
         return typeof b.getLineNumber() !== 'undefined'
       })
       // Resolve the editor line for each block up front so content pulled in via

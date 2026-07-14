@@ -33,9 +33,9 @@ class TestWebviewResourceProvider implements WebviewResourceProvider {
 }
 
 class EmptyAsciidocContributions implements AsciidocContributions {
-  readonly previewScripts = []
-  readonly previewStyles = []
-  readonly previewResourceRoots = []
+  readonly previewScripts: vscode.Uri[] = []
+  readonly previewStyles: vscode.Uri[] = []
+  readonly previewResourceRoots: vscode.Uri[] = []
 }
 
 class AsciidocContributionProviderTest implements AsciidocContributionProvider {

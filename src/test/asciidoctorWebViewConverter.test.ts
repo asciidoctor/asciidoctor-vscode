@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import * as path from 'node:path'
 import { after, before, describe, test } from 'node:test'
 import {
+  AbstractBlock,
   convert as asciidoctorConvert,
   load as asciidoctorLoad,
   Extensions,
@@ -622,7 +623,7 @@ See xref:my-table[xrefstyle=short] for more reference.
     // (see asciidocEngine.ts) so the converter sees the same input as in a real
     // preview render.
     doc
-      .findBy((b) => typeof b.getLineNumber() !== 'undefined')
+      .findBy((b: AbstractBlock) => typeof b.getLineNumber() !== 'undefined')
       .forEach((b) => {
         b.addRole('data-line-' + b.getLineNumber())
         b.addRole('data-h-test')

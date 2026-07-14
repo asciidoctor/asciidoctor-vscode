@@ -1,6 +1,6 @@
 import fs from 'node:fs'
 import { posix as posixpath } from 'node:path'
-import * as contentClassifier from '@antora/content-classifier'
+import classifyContent from '@antora/content-classifier'
 import yaml from 'js-yaml'
 import * as vscode from 'vscode'
 import { FileType, Memento, Uri } from 'vscode'
@@ -15,8 +15,6 @@ import {
   AntoraDocumentContext,
   AntoraSupportManager,
 } from './antoraContext.js'
-
-const classifyContent = contentClassifier.default || contentClassifier
 
 const MAX_DEPTH_SEARCH_ANTORA_CONFIG = 100
 
@@ -210,9 +208,9 @@ async function buildAntoraConfigs(): Promise<AntoraConfig[]> {
       try {
         config =
           yaml.load(
-            Buffer.from(
+            new TextDecoder().decode(
               await vscode.workspace.fs.readFile(antoraConfigUri),
-            ).toString('utf8'),
+            ),
           ) || {}
       } catch (err) {
         logger.warn(

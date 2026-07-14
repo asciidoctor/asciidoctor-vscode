@@ -77,7 +77,7 @@ describe('asciidoc.AsciidocLoader diagnostics', () => {
           message: { some: 'object' },
           getSeverity: () => 'ERROR',
           getText: () => ({ some: 'object' }), // not a string
-          getSourceLocation: () => undefined,
+          getSourceLocation: (): undefined => undefined,
         },
       ],
     }

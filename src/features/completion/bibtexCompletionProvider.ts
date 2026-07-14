@@ -37,10 +37,8 @@ async function getCitationKeys(): Promise<string[]> {
     readFileSync(file.path).toString('utf-8'),
   )
   const bibtexJson = filesContent.map((content) => bibtexParse.toJSON(content))
-  const flatMap = (f, xs) => xs.reduce((r, x) => r.concat(f(x)), [])
-  return flatMap(
-    (jsons) => jsons.map((entries) => entries.citationKey),
-    bibtexJson,
+  return bibtexJson.flatMap((entries) =>
+    entries.map((entry) => entry.citationKey),
   )
 }
 

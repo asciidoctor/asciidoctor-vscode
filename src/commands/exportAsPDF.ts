@@ -263,8 +263,8 @@ ${text}`
   }
 
   private async resolveAsciidoctorPdfCommand(
-    asciidocPdfConfig,
-    workspacePath,
+    asciidocPdfConfig: vscode.WorkspaceConfiguration,
+    workspacePath: string,
     variableContext: VariableResolutionContext,
   ): Promise<{ cwd: string; command: string } | undefined> {
     let asciidoctorPdfCommandPath = asciidocPdfConfig.get(
@@ -466,7 +466,7 @@ function commandExists(
     ...options,
   })
   return new Promise(function (resolve, reject) {
-    const stdoutOutput = []
+    const stdoutOutput: Buffer[] = []
     childProcess.stdout.on('data', (data) => {
       stdoutOutput.push(data)
     })
@@ -519,7 +519,7 @@ function execute(
       env: getSpawnEnv(),
       ...options,
     })
-    const stderrOutput = []
+    const stderrOutput: Buffer[] = []
     childProcess.stderr.on('data', (data) => {
       stderrOutput.push(data)
     })
@@ -667,7 +667,7 @@ function createCoverFile(
   return tmpFilePath
 }
 
-function offerOpen(destination) {
+function offerOpen(destination: string) {
   // Saving the JSON that represents the document to a temporary JSON-file.
   vscode.window
     .showInformationMessage(

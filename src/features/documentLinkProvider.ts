@@ -101,8 +101,10 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
     // get includes from document text. These may be inside ifeval or ifdef but the line numbers are correct.
     const baseDocumentRegexIncludes = new Map()
     const results: vscode.DocumentLink[] = []
-    const anchors = {}
-    const xrefProxies = []
+    const anchors: { [key: string]: { lineNumber: number } } = {}
+    const xrefProxies: ((anchors: {
+      [key: string]: { lineNumber: number }
+    }) => vscode.DocumentLink)[] = []
     // Source line of every cross-reference target (sections — including their
     // auto-generated ids —, blocks and anchors) so a same-document `xref:` can
     // navigate to the target instead of being mistaken for a file path.

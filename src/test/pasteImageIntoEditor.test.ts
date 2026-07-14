@@ -65,7 +65,7 @@ function bitmapDataTransfer(
   }
   const item = { asFile: () => file } as unknown as vscode.DataTransferItem
   return {
-    get: () => undefined,
+    get: (): undefined => undefined,
     *[Symbol.iterator]() {
       yield [mime, item] as [string, vscode.DataTransferItem]
     },
