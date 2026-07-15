@@ -110,9 +110,10 @@ export async function activate(context: vscode.ExtensionContext) {
   )
   context.subscriptions.push(previewManager)
   context.subscriptions.push(new AsciidocCompletionProviders(asciidocLoader))
-  context.subscriptions.push(
-    AntoraSupportManager.getInstance(context.workspaceState),
+  const antoraSupportManager = AntoraSupportManager.getInstance(
+    context.workspaceState,
   )
+  context.subscriptions.push(antoraSupportManager)
   context.subscriptions.push(registerAntoraCacheInvalidation())
   context.subscriptions.push(
     vscode.languages.registerDefinitionProvider(
@@ -235,10 +236,18 @@ export async function activate(context: vscode.ExtensionContext) {
     new commands.SaveDocbook(asciidocEngine, previewManager),
   )
   commandManager.register(
-    new commands.EnableAntoraSupport(context.workspaceState, previewManager),
+    new commands.EnableAntoraSupport(
+      context.workspaceState,
+      previewManager,
+      antoraSupportManager,
+    ),
   )
   commandManager.register(
-    new commands.DisableAntoraSupport(context.workspaceState, previewManager),
+    new commands.DisableAntoraSupport(
+      context.workspaceState,
+      previewManager,
+      antoraSupportManager,
+    ),
   )
 
   const antoraSupportSetting = context.workspaceState.get(

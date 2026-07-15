@@ -15,17 +15,15 @@ See xref:#limitations[] for the known gaps.
 
 Antora support is enabled per workspace and is off by default.
 
-When the extension detects an `antora.yml` file while you open an AsciiDoc document, it prompts you to enable Antora support for the workspace.
-You can dismiss the prompt to keep it disabled.
-
-You can also toggle support at any time from the Command Palette:
+Toggle support at any time from the Command Palette:
 
 * *Enable Antora support in this workspace*
 * *Disable Antora support in this workspace*
 
 The choice is stored in the workspace state, so each workspace keeps its own setting.
 
-To stop the extension from prompting you when an `antora.yml` file is detected, set `asciidoc.antora.showEnableAntoraPrompt` to `false`.
+Alternatively, set `asciidoc.antora.showEnableAntoraPrompt` to `true` to be prompted to enable Antora support when the extension detects an `antora.yml` file while you open an AsciiDoc document.
+The prompt is disabled by default because detecting `antora.yml` requires a file system lookup every time a document opens.
 
 For Antora support to apply to a document, the document must live in a standard Antora content source layout, that is below `modules/<module>/pages/`, next to an `antora.yml` file that declares at least a `name` and a `version`.
 
@@ -77,7 +75,8 @@ The preview resolves Antora resource ids and includes, and applies the AsciiDoc 
 Antora support relies on a content catalog built from the files present in the current workspace.
 As a consequence:
 
-* Only content sources available locally in the workspace are taken into account. Remote content sources and the Antora playbook are not processed.
+* The Antora playbook is not processed, so content sources it declares — in particular remote content sources fetched from git repositories — are not aggregated. Only the files present in the workspace folders are taken into account.
+This is unrelated to remote development setups such as VS Code Remote - SSH: there the extension runs on the remote host, so the workspace files count as local content.
 * Component directories that are symbolic links are ignored.
 * The model is not yet fully covered, so some Antora behaviours may differ from a full Antora build.
 

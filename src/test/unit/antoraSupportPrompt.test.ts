@@ -28,6 +28,8 @@ function recordingPrompt(
     applies?: boolean
     /** The decision already on record (default none). */
     decision?: boolean
+    /** Whether the prompt is enabled by configuration (default `true`). */
+    promptEnabled?: boolean | (() => boolean)
   } = {},
 ): Recording {
   const calls = {
@@ -47,6 +49,12 @@ function recordingPrompt(
   }
   return {
     calls,
+    isPromptEnabled: () => {
+      if (typeof config.promptEnabled === 'function') {
+        return config.promptEnabled()
+      }
+      return config.promptEnabled ?? true
+    },
     appliesToAntora: async () => {
       calls.appliesToAntora++
       return config.applies ?? true
@@ -106,6 +114,38 @@ describe('createAntoraSupportPromptHandler', () => {
     assert.strictEqual(prompt.calls.setDecision.length, 0)
     assert.strictEqual(prompt.calls.enableFeatures, 0)
     assert.strictEqual(prompt.calls.dispose, 1)
+  })
+
+  test('does not even look for an Antora config when the prompt is disabled', async () => {
+    const prompt = recordingPrompt({ promptEnabled: false })
+    const handle = createAntoraSupportPromptHandler(prompt)
+
+    await handle('a.adoc')
+
+    // With the prompt turned off (the default), opening documents must not
+    // trigger the potentially expensive antora.yml lookup…
+    assert.strictEqual(prompt.calls.appliesToAntora, 0)
+    assert.strictEqual(prompt.calls.askToEnable, 0)
+    // …but the handler keeps listening: the user may enable the setting later
+    // in the session.
+    assert.strictEqual(prompt.calls.dispose, 0)
+  })
+
+  test('asks again once the prompt setting is turned on within the session', async () => {
+    let promptEnabled = false
+    const prompt = recordingPrompt({
+      answer: true,
+      promptEnabled: () => promptEnabled,
+    })
+    const handle = createAntoraSupportPromptHandler(prompt)
+
+    await handle('a.adoc')
+    assert.strictEqual(prompt.calls.askToEnable, 0)
+
+    promptEnabled = true
+    await handle('b.adoc')
+    assert.strictEqual(prompt.calls.askToEnable, 1)
+    assert.deepStrictEqual(prompt.calls.setDecision, [true])
   })
 
   test('does not prompt for a document outside an Antora project', async () => {

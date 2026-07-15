@@ -83,12 +83,26 @@ export function registerAntoraCacheInvalidation(): vscode.Disposable {
 
 function getAntoraConfigUris(): Promise<Uri[]> {
   if (antoraConfigUrisPromise === undefined) {
-    antoraConfigUrisPromise = Promise.resolve(findFiles('**/antora.yml')).catch(
-      (err) => {
+    antoraConfigUrisPromise = Promise.resolve(findFiles('**/antora.yml'))
+      .then((uris) => {
+        // Overlapping workspace folders (e.g. a repository and one of its
+        // subdirectories opened as two roots) surface the same antora.yml
+        // several times; the duplicates would register the same component
+        // version twice and break the content catalog build.
+        const seen = new Set<string>()
+        return uris.filter((uri) => {
+          const key = uri.toString()
+          if (seen.has(key)) {
+            return false
+          }
+          seen.add(key)
+          return true
+        })
+      })
+      .catch((err) => {
         antoraConfigUrisPromise = undefined
         throw err
-      },
-    )
+      })
   }
   return antoraConfigUrisPromise
 }
@@ -195,7 +209,11 @@ async function buildAntoraConfigs(): Promise<AntoraConfig[]> {
       }
       try {
         config =
-          yaml.load(await vscode.workspace.fs.readFile(antoraConfigUri)) || {}
+          yaml.load(
+            Buffer.from(
+              await vscode.workspace.fs.readFile(antoraConfigUri),
+            ).toString('utf8'),
+          ) || {}
       } catch (err) {
         logger.warn(
           `Unable to parse ${antoraConfigUri}, cause:` + err.toString(),
@@ -315,8 +333,44 @@ async function buildContentCatalog(): Promise<any> {
     {
       site: {},
     },
-    contentAggregate,
+    mergeDuplicateComponentVersions(contentAggregate),
   )
+}
+
+/**
+ * The classifier throws `Duplicate version detected` as soon as the aggregate
+ * holds two entries for the same component name and version — which happens
+ * when the workspace contains two copies of a component (e.g. a clone and its
+ * worktree, or overlapping folders in a multi-root workspace) — and that
+ * single collision would take the *whole* content catalog down. Antora proper
+ * merges such entries during aggregation, so do the same: keep the first
+ * descriptor and concatenate the files. Files are deduplicated by their path
+ * *within* the component (not their absolute path), so two copies of the same
+ * tree — where the classifier would throw on every duplicated page — collapse
+ * to the first copy.
+ */
+function mergeDuplicateComponentVersions(
+  contentAggregate: { name: string; version: string; files: any[] }[],
+): { name: string; version: string; files: any[] }[] {
+  const entriesByNameAndVersion = new Map<
+    string,
+    { name: string; version: string; files: any[] }
+  >()
+  for (const entry of contentAggregate) {
+    const key = `${entry.version}@${entry.name}`
+    const existing = entriesByNameAndVersion.get(key)
+    if (existing === undefined) {
+      entriesByNameAndVersion.set(key, entry)
+      continue
+    }
+    const knownPaths = new Set(existing.files.map((file) => file.path))
+    for (const file of entry.files) {
+      if (!knownPaths.has(file.path)) {
+        existing.files.push(file)
+      }
+    }
+  }
+  return [...entriesByNameAndVersion.values()]
 }
 
 export async function getAntoraDocumentContext(
