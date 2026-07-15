@@ -11,6 +11,12 @@
  */
 
 export interface AntoraSupportPrompt<TDocument> {
+  /**
+   * Whether the prompt is allowed to show at all (the
+   * `asciidoc.antora.showEnableAntoraPrompt` setting). Consulted on every
+   * opened document so the user can flip the setting without reloading.
+   */
+  isPromptEnabled: () => boolean
   /** Whether an Antora configuration applies to the just-opened document. */
   appliesToAntora: (document: TDocument) => Promise<boolean>
   /**
@@ -44,6 +50,11 @@ export function createAntoraSupportPromptHandler<TDocument>(
     // rather than asking again and overwriting it.
     if (prompt.getDecision() !== undefined) {
       prompt.dispose()
+      return
+    }
+    // The prompt is turned off by configuration: keep listening (the user may
+    // turn it back on within the session) but never ask.
+    if (!prompt.isPromptEnabled()) {
       return
     }
     // Only one prompt at a time. While a notification is pending (including when

@@ -32,6 +32,12 @@ export class AntoraConfig {
     this.contentSourceRootFsPath = ospath.dirname(uri.fsPath)
     if (config.version === true || config.version === undefined) {
       config.version = this.getVersionForPath(path)
+    } else if (config.version !== null && typeof config.version !== 'string') {
+      // An unquoted `version: 2.0` comes out of the YAML parser as a number;
+      // the content classifier requires a string (or null for an unversioned
+      // component) and would otherwise throw, taking the whole content
+      // catalog down with it.
+      config.version = String(config.version)
     }
   }
 
@@ -138,6 +144,7 @@ export class AntoraSupportManager implements vscode.Disposable {
   private static instance: AntoraSupportManager
   private static workspaceState: Memento
   private readonly _disposables: vscode.Disposable[] = []
+  private readonly _featureDisposables: vscode.Disposable[] = []
 
   private constructor() {}
 
@@ -160,6 +167,13 @@ export class AntoraSupportManager implements vscode.Disposable {
       // `createAntoraSupportPromptHandler` (asciidoctor/asciidoctor-vscode#896).
       const handleOpenedDocument =
         createAntoraSupportPromptHandler<vscode.TextDocument>({
+          // Checked before anything else so that, with the prompt disabled
+          // (the default), opening documents never triggers the potentially
+          // expensive antora.yml lookup.
+          isPromptEnabled: () =>
+            vscode.workspace
+              .getConfiguration('asciidoc.antora', null)
+              .get<boolean>('showEnableAntoraPrompt', false),
           appliesToAntora: (textDocument) => {
             // Convert Git URI to `file://` URI since the Git file system
             // provider produces unexpected results.
@@ -203,6 +217,14 @@ export class AntoraSupportManager implements vscode.Disposable {
       AntoraSupportManager.instance._disposables.push(
         onDidOpenAsciiDocFileAskAntoraSupport,
       )
+      // The extension is usually activated *because* an AsciiDoc document was
+      // just opened, so that document's open event has already fired and the
+      // listener above will never see it. Run the handler over the documents
+      // already open, otherwise a session where the user opens a single Antora
+      // page never shows the prompt.
+      for (const textDocument of vscode.workspace.textDocuments) {
+        handleOpenedDocument(textDocument)
+      }
     }
     return AntoraSupportManager.instance
   }
@@ -228,7 +250,16 @@ export class AntoraSupportManager implements vscode.Disposable {
     return false
   }
 
-  private registerFeatures(): void {
+  /**
+   * Register the features gated on Antora support (currently the `{` attributes
+   * completion). Idempotent, so enabling support again — e.g. through the
+   * "Enable Antora support" command after the prompt already enabled it — does
+   * not stack duplicate providers.
+   */
+  public registerFeatures(): void {
+    if (this._featureDisposables.length > 0) {
+      return
+    }
     const attributesCompletionProvider =
       vscode.languages.registerCompletionItemProvider(
         {
@@ -238,10 +269,17 @@ export class AntoraSupportManager implements vscode.Disposable {
         new AntoraCompletionProvider(),
         '{',
       )
-    this._disposables.push(attributesCompletionProvider)
+    this._featureDisposables.push(attributesCompletionProvider)
+  }
+
+  /** Tear down the features registered by {@link registerFeatures}. */
+  public unregisterFeatures(): void {
+    disposeAll(this._featureDisposables)
+    this._featureDisposables.length = 0
   }
 
   public dispose(): void {
+    this.unregisterFeatures()
     disposeAll(this._disposables)
   }
 }

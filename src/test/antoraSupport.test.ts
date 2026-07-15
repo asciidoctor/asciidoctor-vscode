@@ -597,3 +597,121 @@ describe('Antora content catalog caching', () => {
     }
   })
 })
+
+describe('Antora content catalog robustness', () => {
+  // Two antora.yml declaring the same component name and version — e.g. a clone
+  // and a copy of the same component, or overlapping folders in a multi-root
+  // workspace — used to make the classifier throw `Duplicate version detected`,
+  // taking the whole content catalog (and every Antora feature) down.
+  test('Should merge two content sources declaring the same component version', async () => {
+    const createdFiles = []
+    try {
+      createdFiles.push(await createDirectory('duplicated'))
+      await createDirectories('duplicated', 'main', 'modules', 'ROOT', 'pages')
+      await createDirectories('duplicated', 'copy', 'modules', 'ROOT', 'pages')
+      const asciidocFile = await createFile(
+        '= Hello World',
+        'duplicated',
+        'main',
+        'modules',
+        'ROOT',
+        'pages',
+        'index.adoc',
+      )
+      // The copy holds the same page (a collision the classifier would reject)
+      // plus a page of its own (which the merge must keep).
+      await createFile(
+        '= Hello World (copy)',
+        'duplicated',
+        'copy',
+        'modules',
+        'ROOT',
+        'pages',
+        'index.adoc',
+      )
+      await createFile(
+        '= Other',
+        'duplicated',
+        'copy',
+        'modules',
+        'ROOT',
+        'pages',
+        'other.adoc',
+      )
+      await createFile(
+        `name: duplicated\nversion: '1.0'\n`,
+        'duplicated',
+        'main',
+        'antora.yml',
+      )
+      await createFile(
+        `name: duplicated\nversion: '1.0'\n`,
+        'duplicated',
+        'copy',
+        'antora.yml',
+      )
+      await enableAntoraSupport()
+      const result = await getAntoraDocumentContext(
+        asciidocFile,
+        extensionContext.workspaceState,
+      )
+      assert.notStrictEqual(
+        result,
+        undefined,
+        'The Antora context must survive a duplicated component version',
+      )
+      const pages = result
+        .getContentCatalog()
+        .findBy({ component: 'duplicated', family: 'page' })
+      assert.deepStrictEqual(
+        pages.map((page) => page.src.relative).sort(),
+        ['index.adoc', 'other.adoc'],
+        'The pages of both content sources must be merged, keeping the first of the colliding copies',
+      )
+    } finally {
+      await removeFiles(createdFiles)
+      await resetAntoraSupport()
+    }
+  })
+
+  // An unquoted `version: 2.0` comes out of the YAML parser as a number; the
+  // classifier requires a string and used to throw, killing the whole catalog.
+  test('Should coerce a non-string component version instead of failing', async () => {
+    const createdFiles = []
+    try {
+      createdFiles.push(await createDirectory('numeric-version'))
+      await createDirectories('numeric-version', 'modules', 'ROOT', 'pages')
+      const asciidocFile = await createFile(
+        '= Hello World',
+        'numeric-version',
+        'modules',
+        'ROOT',
+        'pages',
+        'index.adoc',
+      )
+      await createFile(
+        `name: numver\nversion: 2.0\n`,
+        'numeric-version',
+        'antora.yml',
+      )
+      await enableAntoraSupport()
+      const result = await getAntoraDocumentContext(
+        asciidocFile,
+        extensionContext.workspaceState,
+      )
+      assert.notStrictEqual(
+        result,
+        undefined,
+        'The Antora context must survive a non-string component version',
+      )
+      assert.strictEqual(
+        result.resourceContext.version,
+        '2',
+        'The numeric version must be coerced to a string',
+      )
+    } finally {
+      await removeFiles(createdFiles)
+      await resetAntoraSupport()
+    }
+  })
+})
