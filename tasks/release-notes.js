@@ -6,7 +6,7 @@ const semver = require('semver')
 const pkg = require(ospath.join(__dirname, '..', 'package.json'))
 const { spawn } = require('child_process')
 const releaseTag = `v${pkg.version}`
-const releaseActor = process.env.GITHUB_ACTOR || 'mogztter'
+const releaseActor = process.env.GITHUB_ACTOR || 'ggrossetie'
 // `RELEASE_VERSION` keeps the original semver pre-release tag (e.g. 4.0.0-beta.1)
 // that `release.sh` coerces to `pkg.version` (4.0.0) for the marketplace/tag.
 const releaseVersion = process.env.RELEASE_VERSION || pkg.version

@@ -35,7 +35,7 @@ You can update the trust mode at any time with the *Manage Asciidoctor.js Extens
 == Example: asciidoctor-emoji
 
 You can write your own extension, or reuse an existing one.
-Here is how to use the https://github.com/mogztter/asciidoctor-emoji[asciidoctor-emoji] extension:
+Here is how to use the https://github.com/ggrossetie/asciidoctor-emoji[asciidoctor-emoji] extension:
 
 . Install the npm package in the workspace directory:
 +
