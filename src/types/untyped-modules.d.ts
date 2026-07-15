@@ -1,15 +1,6 @@
 // Hand-written declarations for dependencies that ship without types. They
 // only describe the (small) surface this extension actually uses.
 
-declare module 'asciidoctor-kroki' {
-  import type { Registry } from '@asciidoctor/core'
-
-  const kroki: {
-    register(registry: Registry, context?: object): void
-  }
-  export default kroki
-}
-
 declare module '@antora/content-classifier' {
   /** Identifier of a resource in the content catalog. */
   export interface ResourceId {

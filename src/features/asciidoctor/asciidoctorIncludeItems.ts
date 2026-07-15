@@ -1,4 +1,9 @@
-import { Document, Extensions, Reader, Registry } from '@asciidoctor/core'
+import {
+  Document,
+  Extensions,
+  PreprocessorReader,
+  Registry,
+} from '@asciidoctor/core'
 
 interface IncludeEntry {
   index: number
@@ -42,7 +47,7 @@ export class AsciidoctorIncludeItems
         process: function (
           this: FindIncludeProcessorState,
           _doc: Document,
-          reader: Reader,
+          reader: PreprocessorReader,
           target: string,
           attrs: Record<string, string>,
         ) {

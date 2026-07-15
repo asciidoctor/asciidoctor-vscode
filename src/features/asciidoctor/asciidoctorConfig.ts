@@ -2,7 +2,7 @@ import {
   Document,
   Extensions,
   Preprocessor,
-  Reader,
+  PreprocessorReader,
   Registry,
 } from '@asciidoctor/core'
 import * as vscode from 'vscode'
@@ -35,7 +35,7 @@ export class AsciidoctorConfig implements AsciidoctorConfigProvider {
         process: function (
           this: PrependConfigPreprocessorState,
           _doc: Document,
-          reader: Reader,
+          reader: PreprocessorReader,
         ) {
           if (this.asciidoctorConfigContent.length > 0) {
             // otherwise an empty line at the beginning breaks level 0 detection
