@@ -19,6 +19,10 @@ You can edit them from the VS Code Settings UI or directly in `settings.json`.
 |Interval in milliseconds between two consecutive preview updates. The value `0` updates the preview only on save.
 |`2000`
 
+|`asciidoc.preview.defaultStyle`
+|Built-in stylesheet used when `asciidoc.preview.style` is empty and the document does not set `stylesheet`/`stylesdir`. Possible values: `vscode`, `asciidoctor`, `antora`.
+|`vscode`
+
 |`asciidoc.preview.style`
 |A URL or local path to a CSS stylesheet that *replaces* the default preview stylesheet. When left empty, the preview falls back to the document's `stylesheet`/`stylesdir` attributes (see xref:preview.adoc#stylesheet-attribute[the `stylesheet` attribute]).
 |
@@ -28,7 +32,7 @@ You can edit them from the VS Code Settings UI or directly in `settings.json`.
 |`[]`
 
 |`asciidoc.preview.useEditorStyle`
-|Use the VS Code editor style instead of the default Asciidoctor style.
+|Deprecated. Use `asciidoc.preview.defaultStyle` instead.
 |
 
 |`asciidoc.preview.fontFamily`

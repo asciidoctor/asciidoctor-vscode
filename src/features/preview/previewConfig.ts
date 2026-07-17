@@ -1,6 +1,8 @@
 import * as vscode from 'vscode'
 import { getWorkspaceFolder } from '../../core/workspace.js'
 
+export type AsciidocPreviewDefaultStyle = 'vscode' | 'asciidoctor' | 'antora'
+
 export class AsciidocPreviewConfiguration {
   public static getForResource(resource: vscode.Uri) {
     return new AsciidocPreviewConfiguration(resource)
@@ -19,6 +21,7 @@ export class AsciidocPreviewConfiguration {
   public readonly fontFamily: string | undefined
   public readonly additionalStyles: string[]
   public readonly refreshInterval: number
+  public readonly defaultStyle: AsciidocPreviewDefaultStyle
   public readonly useEditorStylesheet: boolean
   public readonly previewStyle: string
   public readonly previewTemplates: string[]
@@ -82,10 +85,8 @@ export class AsciidocPreviewConfiguration {
       'preview.additionalStyles',
       [],
     )
-    this.useEditorStylesheet = asciidocConfig.get<boolean>(
-      'preview.useEditorStyle',
-      false,
-    )
+    this.defaultStyle = this.getDefaultStyle(asciidocConfig)
+    this.useEditorStylesheet = this.defaultStyle === 'vscode'
     this.previewStyle = asciidocConfig.get<string>('preview.style', '')
     this.previewTemplates = asciidocConfig.get<string[]>(
       'preview.templates',
@@ -95,6 +96,46 @@ export class AsciidocPreviewConfiguration {
       0.6,
       +asciidocConfig.get<number>('preview.refreshInterval', NaN),
     )
+  }
+
+  private getDefaultStyle(
+    asciidocConfig: vscode.WorkspaceConfiguration,
+  ): AsciidocPreviewDefaultStyle {
+    const configuredDefaultStyle =
+      asciidocConfig.inspect<AsciidocPreviewDefaultStyle>(
+        'preview.defaultStyle',
+      )
+    const defaultStyle =
+      configuredDefaultStyle?.workspaceFolderValue ??
+      configuredDefaultStyle?.workspaceValue ??
+      configuredDefaultStyle?.globalValue ??
+      configuredDefaultStyle?.defaultValue ??
+      'vscode'
+
+    if (
+      defaultStyle === 'vscode' ||
+      defaultStyle === 'asciidoctor' ||
+      defaultStyle === 'antora'
+    ) {
+      const hasExplicitDefaultStyle =
+        configuredDefaultStyle?.workspaceFolderValue !== undefined ||
+        configuredDefaultStyle?.workspaceValue !== undefined ||
+        configuredDefaultStyle?.globalValue !== undefined
+      if (hasExplicitDefaultStyle) {
+        return defaultStyle
+      }
+    }
+
+    const configuredUseEditorStyle = asciidocConfig.inspect<boolean>(
+      'preview.useEditorStyle',
+    )
+    const useEditorStyle =
+      configuredUseEditorStyle?.workspaceFolderValue ??
+      configuredUseEditorStyle?.workspaceValue ??
+      configuredUseEditorStyle?.globalValue ??
+      configuredUseEditorStyle?.defaultValue ??
+      true
+    return useEditorStyle ? 'vscode' : 'asciidoctor'
   }
 
   public isEqualTo(otherConfig: AsciidocPreviewConfiguration) {

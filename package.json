@@ -425,6 +425,23 @@
             "order": 5,
             "scope": "resource"
           },
+          "asciidoc.preview.defaultStyle": {
+            "type": "string",
+            "enum": [
+              "vscode",
+              "asciidoctor",
+              "antora"
+            ],
+            "enumDescriptions": [
+              "%asciidoc.preview.defaultStyle.vscode.desc%",
+              "%asciidoc.preview.defaultStyle.asciidoctor.desc%",
+              "%asciidoc.preview.defaultStyle.antora.desc%"
+            ],
+            "default": "vscode",
+            "markdownDescription": "%asciidoc.preview.defaultStyle.desc%",
+            "order": 4,
+            "scope": "resource"
+          },
           "asciidoc.preview.additionalStyles": {
             "type": "array",
             "items": {
@@ -439,7 +456,8 @@
             "type": "boolean",
             "default": true,
             "markdownDescription": "%asciidoc.preview.useEditorStyle.desc%",
-            "order": 4,
+            "markdownDeprecationMessage": "%asciidoc.preview.useEditorStyle.deprecationMessage%",
+            "order": 99,
             "scope": "resource"
           },
           "asciidoc.preview.fontFamily": {
