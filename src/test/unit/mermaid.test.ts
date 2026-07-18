@@ -45,3 +45,14 @@ describe('mermaidJSProcessor', () => {
     assert.match(html, /plain listing/)
   })
 })
+
+test('renders Mermaid blocks to embedded SVG for exported HTML', async () => {
+  const { renderMermaidDiagramsInHtml } = await import(
+    '../../features/preview/mermaidExport.js'
+  )
+  const html = await renderMermaidDiagramsInHtml(
+    '<html><body><pre class="mermaid">flowchart TD\nA-->B</pre></body></html>',
+  )
+  assert.match(html, /<div class="mermaid"><svg/)
+  assert.doesNotMatch(html, /<pre class="mermaid">/)
+})

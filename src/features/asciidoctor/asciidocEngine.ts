@@ -25,6 +25,7 @@ import { ExtensionContentSecurityPolicyArbiter } from '../security.js'
 import { AsciidocTextDocument } from './asciidocTextDocument.js'
 import { AsciidoctorAttributesConfig } from './asciidoctorAttributesConfig.js'
 import { AsciidoctorConfigProvider } from './asciidoctorConfig.js'
+import { renderMermaidDiagramsInHtml } from '../preview/mermaidExport.js'
 import { AsciidoctorExtensionsProvider } from './asciidoctorExtensions.js'
 import { AsciidoctorProcessor } from './asciidoctorProcessor.js'
 import { registerBrowserIncludeProcessor } from './browserIncludeSupport.js'
@@ -195,7 +196,10 @@ export class AsciidocEngine {
     const document = await load(textDocument.getText(), options)
     const output = await document.convert(options)
     return {
-      output,
+      output:
+        backend === 'html5'
+          ? await renderMermaidDiagramsInHtml(String(output))
+          : output,
       document,
     }
   }
