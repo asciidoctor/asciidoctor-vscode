@@ -4,11 +4,11 @@ import * as path from 'node:path'
 import * as vscode from 'vscode'
 import { Command } from '../core/commandManager.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
-import { AsciidocPreviewManager } from '../features/preview/previewManager.js'
 import {
   hasMermaidBlocks,
   injectMermaidExportScript,
 } from '../features/preview/mermaidExport.js'
+import { AsciidocPreviewManager } from '../features/preview/previewManager.js'
 import {
   resolveAsciidocDocument,
   WebviewContext,

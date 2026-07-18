@@ -1,11 +1,11 @@
 import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 import { convert, Extensions } from '@asciidoctor/core'
+import { mermaidJSProcessor } from '../../features/preview/mermaid.js'
 import {
   hasMermaidBlocks,
   injectMermaidExportScript,
 } from '../../features/preview/mermaidExport.js'
-import { mermaidJSProcessor } from '../../features/preview/mermaid.js'
 
 async function convertWithMermaid(input: string): Promise<string> {
   const registry = Extensions.create()
