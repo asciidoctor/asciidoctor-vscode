@@ -6,6 +6,10 @@ import { Command } from '../core/commandManager.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
 import { AsciidocPreviewManager } from '../features/preview/previewManager.js'
 import {
+  hasMermaidBlocks,
+  injectMermaidExportScript,
+} from '../features/preview/mermaidExport.js'
+import {
   resolveAsciidocDocument,
   WebviewContext,
 } from './resolveAsciidocDocument.js'
@@ -16,6 +20,7 @@ export class SaveHTML implements Command {
   constructor(
     private readonly engine: AsciidocEngine,
     private readonly previewManager: AsciidocPreviewManager,
+    private readonly extensionUri: vscode.Uri,
   ) {
     this.engine = engine
   }
@@ -38,7 +43,11 @@ export class SaveHTML implements Command {
       htmlPath = path.join(docPath.dir, docPath.name + '.html')
     }
 
-    const { output: html } = await this.engine.export(textDocument, 'html5')
+    const { output: exportedHtml } = await this.engine.export(
+      textDocument,
+      'html5',
+    )
+    const html = await this.withBundledMermaid(exportedHtml)
 
     fs.writeFile(htmlPath, html, function (err) {
       if (err) {
@@ -71,5 +80,24 @@ export class SaveHTML implements Command {
           }
         })
     })
+  }
+
+  private async withBundledMermaid(html: string): Promise<string> {
+    if (!hasMermaidBlocks(html)) {
+      return html
+    }
+    const mermaidBundle = await vscode.workspace.fs.readFile(
+      vscode.Uri.joinPath(
+        this.extensionUri,
+        'media',
+        'mermaid',
+        'export',
+        'mermaid-export.js',
+      ),
+    )
+    return injectMermaidExportScript(
+      html,
+      new TextDecoder().decode(mermaidBundle),
+    )
   }
 }

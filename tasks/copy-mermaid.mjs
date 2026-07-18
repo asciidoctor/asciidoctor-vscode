@@ -56,3 +56,13 @@ for (const { pkg, entry, chunks } of addons) {
     filter: keep,
   })
 }
+
+// The exported HTML is opened directly in a browser, outside the VS Code
+// WebView and without the media/ directory. Use Mermaid's standalone browser
+// build here: unlike the ESM entry, it has no dynamic imports, so inlining it
+// into the exported HTML will not try to fetch diagram chunks from file://.
+mkdirSync(join(media, 'mermaid', 'export'), { recursive: true })
+cpSync(
+  join(nodeModules, 'mermaid', 'dist', 'mermaid.min.js'),
+  join(media, 'mermaid', 'export', 'mermaid-export.js'),
+)

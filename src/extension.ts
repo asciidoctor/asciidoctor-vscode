@@ -231,7 +231,9 @@ export async function activate(context: vscode.ExtensionContext) {
   commandManager.register(new commands.ToggleBoldCommand())
   commandManager.register(new commands.ToggleItalicCommand())
   commandManager.register(new commands.ToggleMonospaceCommand())
-  commandManager.register(new commands.SaveHTML(asciidocEngine, previewManager))
+  commandManager.register(
+    new commands.SaveHTML(asciidocEngine, previewManager, context.extensionUri),
+  )
   commandManager.register(
     new commands.SaveDocbook(asciidocEngine, previewManager),
   )
