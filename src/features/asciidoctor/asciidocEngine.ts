@@ -20,12 +20,12 @@ import {
   WEBVIEW_OUTFILESUFFIX,
 } from '../preview/asciidoctorWebViewConverter.js'
 import { register } from '../preview/highlightjs-adapter.js'
+import { renderMermaidDiagramsInHtml } from '../preview/mermaidExport.js'
 import { AsciidocPreviewConfigurationManager } from '../preview/previewConfig.js'
 import { ExtensionContentSecurityPolicyArbiter } from '../security.js'
 import { AsciidocTextDocument } from './asciidocTextDocument.js'
 import { AsciidoctorAttributesConfig } from './asciidoctorAttributesConfig.js'
 import { AsciidoctorConfigProvider } from './asciidoctorConfig.js'
-import { renderMermaidDiagramsInHtml } from '../preview/mermaidExport.js'
 import { AsciidoctorExtensionsProvider } from './asciidoctorExtensions.js'
 import { AsciidoctorProcessor } from './asciidoctorProcessor.js'
 import { registerBrowserIncludeProcessor } from './browserIncludeSupport.js'
