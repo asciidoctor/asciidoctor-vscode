@@ -4,6 +4,7 @@ import * as vscode from 'vscode'
 import { Memento, Uri } from 'vscode'
 import { disposeAll } from '../../core/dispose.js'
 import { t as l10n_t } from '../../core/l10n.js'
+import { logger } from '../../core/logger.js'
 import AntoraCompletionProvider from './antoraCompletionProvider.js'
 import {
   antoraConfigFileExists,
@@ -125,15 +126,25 @@ export class AntoraContext {
     const contentSourceRootPath = antoraConfig.contentSourceRootFsPath
     const config = antoraConfig.config
     if (config.name === undefined) {
+      logger.debug(
+        `Antora: the configuration file at ${antoraConfig.uri.path} has no "name", ${textDocumentUri.path} cannot be associated with a component`,
+      )
       return undefined
     }
+    // Vinyl will normalize the path to a system-dependent path :(
+    const relativePath = ospath.relative(
+      contentSourceRootPath,
+      textDocumentUri.fsPath,
+    )
     const page = this.contentCatalog.getByPath({
       component: config.name,
       version: config.version,
-      // Vinyl will normalize the path to a system-dependent path :(
-      path: ospath.relative(contentSourceRootPath, textDocumentUri.fsPath),
+      path: relativePath,
     })
     if (page === undefined) {
+      logger.debug(
+        `Antora: no entry in the content catalog for component "${config.name}", version "${config.version}", path "${relativePath}" (looked up for ${textDocumentUri.path}). The document may be outside modules/*/{pages,partials,examples,...}, or it was not picked up when the content catalog was built (see the "Antora: resolved ... antora.yml" and "duplicate component" log lines above).`,
+      )
       return undefined
     }
     return page.src

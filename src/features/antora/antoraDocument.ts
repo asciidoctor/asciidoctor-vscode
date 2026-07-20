@@ -88,14 +88,25 @@ function getAntoraConfigUris(): Promise<Uri[]> {
         // several times; the duplicates would register the same component
         // version twice and break the content catalog build.
         const seen = new Set<string>()
-        return uris.filter((uri) => {
+        const duplicates: string[] = []
+        const uniqueUris = uris.filter((uri) => {
           const key = uri.toString()
           if (seen.has(key)) {
+            duplicates.push(uri.path)
             return false
           }
           seen.add(key)
           return true
         })
+        logger.debug(
+          `Antora: found ${uniqueUris.length} antora.yml file(s): [${uniqueUris.map((uri) => uri.path).join(', ')}]`,
+        )
+        if (duplicates.length > 0) {
+          logger.info(
+            `Antora: ignored ${duplicates.length} duplicate antora.yml match(es) surfaced by overlapping workspace folders: [${duplicates.join(', ')}]`,
+          )
+        }
+        return uniqueUris
       })
       .catch((err) => {
         antoraConfigUrisPromise = undefined
@@ -164,8 +175,11 @@ export async function antoraConfigFileExists(
         if (content.length > 0) {
           antoraConfig = antoraConfigUri
         }
-      } catch (_e) {
-        // ignore, assume that the file does not exist
+      } catch (err) {
+        // assume that the file does not exist
+        logger.debug(
+          `Antora: unable to read ${antoraConfigUri.path}, assuming it does not exist: ${err}`,
+        )
       }
       break
     }
@@ -202,7 +216,9 @@ async function buildAntoraConfigs(): Promise<AntoraConfig[]> {
           (FileType.Directory | FileType.SymbolicLink) ||
         parentDirectoryStat.type === FileType.SymbolicLink
       ) {
-        // ignore!
+        logger.debug(
+          `Antora: ignoring ${antoraConfigUri.path}, its parent directory is a symbolic link`,
+        )
         return undefined
       }
       try {
@@ -266,12 +282,18 @@ async function buildContentCatalog(): Promise<any> {
   const contentAggregate: { name: string; version: string; files: any[] }[] =
     await Promise.all(
       antoraConfigs
-        .filter(
-          (antoraConfig) =>
+        .filter((antoraConfig) => {
+          const hasNameAndVersion =
             antoraConfig.config !== undefined &&
             'name' in antoraConfig.config &&
-            'version' in antoraConfig.config,
-        )
+            'version' in antoraConfig.config
+          if (!hasNameAndVersion) {
+            logger.warn(
+              `Antora: ignoring the configuration file at ${antoraConfig.uri.path}, it is missing "name" or "version" — the corresponding component will not be part of the content catalog and its documents will not resolve xrefs/includes/attributes`,
+            )
+          }
+          return hasNameAndVersion
+        })
         .map(async (antoraConfig) => {
           const workspaceFolder = getWorkspaceFolder(antoraConfig.uri)
           const workspaceRelative = posixpath.relative(
@@ -327,11 +349,27 @@ async function buildContentCatalog(): Promise<any> {
           }
         }),
     )
+  const mergedContentAggregate =
+    mergeDuplicateComponentVersions(contentAggregate)
+  logger.debug(
+    `Antora: resolved ${antoraConfigs.length} antora.yml file(s) into ${mergedContentAggregate.length} component version(s) for the content catalog`,
+  )
   return classifyContent(
     {
       site: {},
     },
-    mergeDuplicateComponentVersions(contentAggregate),
+    mergedContentAggregate,
+  )
+}
+
+/**
+ * Best-effort description of where a content aggregate entry's files come
+ * from, for diagnostics only. Falls back to a placeholder when the entry has
+ * no files (e.g. an Antora component whose module directories are all empty).
+ */
+function describeContentRoot(entry: { files: any[] }): string {
+  return (
+    entry.files[0]?.base ?? '(unknown path — component has no content files)'
   )
 }
 
@@ -361,6 +399,9 @@ function mergeDuplicateComponentVersions(
       entriesByNameAndVersion.set(key, entry)
       continue
     }
+    logger.info(
+      `Antora: duplicate component detected for name "${entry.name}" and version "${entry.version}" — merging the content found at ${describeContentRoot(entry)} into the entry already found at ${describeContentRoot(existing)}. If this is unexpected, check for two antora.yml files sharing the same name/version, or overlapping workspace folders.`,
+    )
     const knownPaths = new Set(existing.files.map((file) => file.path))
     for (const file of entry.files) {
       if (!knownPaths.has(file.path)) {
@@ -385,6 +426,9 @@ export async function getAntoraDocumentContext(
     const antoraResourceContext =
       await antoraContext.getResource(textDocumentUri)
     if (antoraResourceContext === undefined) {
+      logger.debug(
+        `Antora: unable to resolve ${textDocumentUri.path} to an entry in the content catalog; Antora-specific features (xref/attribute completion, include resolution) will not be available for this document`,
+      )
       return undefined
     }
     return new AntoraDocumentContext(antoraContext, antoraResourceContext)

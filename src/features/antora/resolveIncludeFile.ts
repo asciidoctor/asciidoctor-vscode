@@ -3,6 +3,7 @@
 import ospath from 'node:path'
 import type { ContentCatalog, ResourceId } from '@antora/content-classifier'
 import type { Cursor } from '@asciidoctor/core'
+import { logger } from '../../core/logger.js'
 import type { AntoraConfig, AntoraResourceContext } from './antoraContext.js'
 
 const EXAMPLES_DIR_TOKEN = 'example$'
@@ -77,6 +78,9 @@ export function resolveIncludeFile(
       contents: (resolvedSrc.contents || resolved.contents || '').toString(),
     }
   }
+  logger.debug(
+    `Antora: unable to resolve include target "${target}" from component "${src.component}", version "${src.version}"${src.module ? `, module "${src.module}"` : ''} — the include directive will be left unresolved`,
+  )
 }
 
 function extractResourceId({
