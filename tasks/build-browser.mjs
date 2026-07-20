@@ -8,12 +8,23 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const replaceAntoraDocumentPlugin = {
   name: 'replace-antora-document',
   setup(build) {
-    build.onResolve({ filter: /antoraDocument\.js$/ }, (args) => ({
-      path: path.resolve(
-        args.resolveDir,
-        args.path.replace('antoraDocument.js', 'antoraDocumentBrowserShim.ts'),
-      ),
-    }))
+    const replacements = new Map([
+      ['antoraDocument.js', 'antoraDocumentBrowserShim.ts'],
+      ['mermaidExport.js', 'mermaidExport.browser.ts'],
+    ])
+    const escapedReplacements = [...replacements.keys()].map((m) =>
+      m.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'),
+    )
+    const filter = new RegExp(`(${escapedReplacements.join('|')})$`)
+    build.onResolve({ filter }, (args) => {
+      for (const [from, to] of replacements) {
+        if (args.path.endsWith(from)) {
+          return {
+            path: path.resolve(args.resolveDir, args.path.replace(from, to)),
+          }
+        }
+      }
+    })
   },
 }
 
