@@ -12,6 +12,13 @@ v2.1.0, 2026-06-24: A comprehensive sample to exercise the preview renderer
 :stem:
 :source-highlighter: highlight.js
 :imagesdir: images
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
 
 This document renders (rather than describes) as many AsciiDoc features as possible.
 Open it in the preview to verify how each element looks: typography, lists, tables,
