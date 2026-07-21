@@ -145,21 +145,13 @@ content`
 
     const toc = await provider.getToc()
     const ddEntry = toc.find((t) => t.text === 'Dungeons & Dragons')
-    assert.strictEqual(
-      ddEntry !== null,
-      true,
-      'should find an entry with title: Dungeons & Dragons',
-    )
+    assert.ok(ddEntry, 'should find an entry with title: Dungeons & Dragons')
     assert.deepStrictEqual(
       { text: ddEntry.text, slug: ddEntry.slug.value },
       { text: 'Dungeons & Dragons', slug: '_dungeons_dragons' },
     )
     const ldiEntry = toc.find((t) => t.text === 'Let’s do it!')
-    assert.strictEqual(
-      ldiEntry !== null,
-      true,
-      'should find an entry with title: Let’s do it!',
-    )
+    assert.ok(ldiEntry, 'should find an entry with title: Let’s do it!')
     assert.deepStrictEqual(
       { text: ldiEntry.text, slug: ldiEntry.slug.value },
       { text: 'Let’s do it!', slug: '_lets_do_it' },

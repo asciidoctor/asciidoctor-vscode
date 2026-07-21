@@ -89,7 +89,7 @@ export function resolveIncludeFile(
     } else {
       resolved = catalog.resolveResource(target, extractResourceId(src), 'page')
     }
-  } else {
+  } else if (antoraConfig !== undefined && cursor.dir !== undefined) {
     // bypassing resource ID resolution for relative include path is @deprecated; scheduled to be removed in Antora 4
     resolved = catalog.getByPath({
       component: src.component,
@@ -105,10 +105,12 @@ export function resolveIncludeFile(
   }
   if (resolved) {
     const resolvedSrc = resolved.src
+    // path/basename are optional in the ResourceId type only because they are
+    // absent from a *query* ResourceId; a classified file's src always has them.
     return {
       src: resolvedSrc,
-      file: resolvedSrc.path,
-      path: resolvedSrc.basename,
+      file: resolvedSrc.path!,
+      path: resolvedSrc.basename!,
       // NOTE src.contents holds AsciiDoc source for page marked as a partial
       // QUESTION should we only use src.contents if family is 'page' and mediaType is 'text/asciidoc'?
       contents: (resolvedSrc.contents || resolved.contents || '').toString(),

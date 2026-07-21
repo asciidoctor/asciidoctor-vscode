@@ -68,6 +68,7 @@ describe('AntoraResourceCompletionProvider', () => {
         'Must suggest the image of another module qualified with its module',
       )
       const logoItem = items.find((item) => item.label === 'logo.png')
+      assert.ok(logoItem, 'Must suggest the logo.png completion item')
       assert.strictEqual(
         logoItem.insertText instanceof vscode.SnippetString,
         true,
@@ -113,6 +114,7 @@ describe('AntoraResourceCompletionProvider', () => {
         new Position(0, 7), // between "image::" and "[]"
       )
       const logoItem = items.find((item) => item.label === 'logo.png')
+      assert.ok(logoItem, 'Must suggest the logo.png completion item')
       assert.strictEqual(logoItem.insertText, 'logo.png')
     } finally {
       await removeFiles(createdFiles)

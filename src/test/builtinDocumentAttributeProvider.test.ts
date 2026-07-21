@@ -61,7 +61,7 @@ describe('Builtin document attribute CompletionsProvider', () => {
     const items = await findCompletionItems(file, new Position(0, 9))
     assert.deepStrictEqual(
       items,
-      undefined,
+      [],
       'should not offer attributes for an inline colon',
     )
   })

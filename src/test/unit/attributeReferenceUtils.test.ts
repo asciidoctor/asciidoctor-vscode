@@ -15,7 +15,7 @@ describe('findNearestBlock', () => {
     const doc = await load('First paragraph.', OPTIONS)
     const block = findNearestBlock(doc, 1)
     assert.ok(block)
-    assert.strictEqual(block.getSourceLocation().getLineNumber(), 1)
+    assert.strictEqual(block.getSourceLocation()?.getLineNumber(), 1)
   })
 
   test('returns nearest block before the given line', async () => {
@@ -23,7 +23,7 @@ describe('findNearestBlock', () => {
     const doc = await load('First paragraph.\n\nSecond paragraph.', OPTIONS)
     const block = findNearestBlock(doc, 2) // empty line between the two paragraphs
     assert.ok(block)
-    assert.strictEqual(block.getSourceLocation().getLineNumber(), 1)
+    assert.strictEqual(block.getSourceLocation()?.getLineNumber(), 1)
   })
 
   test('returns undefined when line is before any block', async () => {
@@ -37,7 +37,7 @@ describe('findNearestBlock', () => {
     const doc = await load('First paragraph.\n\nSecond paragraph.', OPTIONS)
     const block = findNearestBlock(doc, 3)
     assert.ok(block)
-    assert.strictEqual(block.getSourceLocation().getLineNumber(), 3)
+    assert.strictEqual(block.getSourceLocation()?.getLineNumber(), 3)
   })
 
   test('returns a verbatim listing block at its delimiter line', async () => {

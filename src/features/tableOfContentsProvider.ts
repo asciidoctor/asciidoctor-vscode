@@ -99,7 +99,8 @@ export class TableOfContentsProvider {
           }
           line = currentIncludeLine
         } else {
-          const lineNumber = section.getLineNumber() // Asciidoctor is 1-based but can return 0 (probably a bug/limitation)
+          // Asciidoctor is 1-based but can return 0 or undefined (probably a bug/limitation)
+          const lineNumber = section.getLineNumber() ?? 0
           line = lineNumber > 0 ? lineNumber - 1 : 0
           lastHostLine = line
           insideIncludeRun = false
@@ -110,9 +111,9 @@ export class TableOfContentsProvider {
         line = Math.min(Math.max(line, 0), lastLine)
 
         return {
-          slug: new Slug(section.getId()),
-          text: htmlEntitiesDecode(section.getTitle()),
-          level: section.getLevel(),
+          slug: new Slug(section.getId() ?? ''),
+          text: htmlEntitiesDecode(section.getTitle() ?? ''),
+          level: section.getLevel() ?? 0,
           line,
           location: new vscode.Location(
             textDocument.uri,

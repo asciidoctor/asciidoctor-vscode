@@ -193,7 +193,7 @@ I want to link to xref:docB.adoc#other_anchor[]`,
     await removeFiles(createdFiles)
   })
 
-  const workspaceUri = getDefaultWorkspaceFolderUri()
+  const workspaceUri = getDefaultWorkspaceFolderUri()!
   const testCases = [
     {
       title:

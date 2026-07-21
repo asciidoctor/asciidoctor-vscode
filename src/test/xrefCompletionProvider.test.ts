@@ -17,7 +17,8 @@ describe('Xref CompletionsProvider', () => {
   let createdFiles: vscode.Uri[] = []
   let xrefProvider: XrefCompletionProvider
   beforeEach(() => {
-    workspaceUri = getDefaultWorkspaceFolderUri()
+    // The test suite always runs with a workspace folder open.
+    workspaceUri = getDefaultWorkspaceFolderUri()!
     xrefProvider = new XrefCompletionProvider(
       new AsciidocLoader(
         new AsciidoctorConfig(),

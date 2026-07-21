@@ -115,7 +115,8 @@ export class TargetPathCompletionProvider {
       if (globalVariableDefinitions) {
         variablePathSubstitutions = globalVariableDefinitions
           .map((variableDef) => {
-            const label = variableDef.match(/:\S+:/g)[0].replace(/:/g, '')
+            // variableDef itself matched `:\S+:.*`, so a `:\S+:` prefix match always exists.
+            const label = variableDef.match(/:\S+:/g)![0].replace(/:/g, '')
             if (label !== 'imagesdir') {
               return {
                 label: `{${label}}`,
@@ -126,7 +127,7 @@ export class TargetPathCompletionProvider {
             }
             return undefined
           })
-          .filter((e) => e) // remove undefined
+          .filter((e) => e !== undefined) // remove undefined
       }
 
       return [

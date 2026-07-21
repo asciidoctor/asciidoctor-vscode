@@ -412,7 +412,8 @@ export class AsciidocEngine {
       const mainFile = (document as any).getSourceLocation?.()?.getFile?.()
       const sourceLines = resolveBlockSourceLines(
         blocksWithLineNumber.map((block) => ({
-          lineNumber: block.getLineNumber(),
+          // Guaranteed defined by the blocksWithLineNumber filter above.
+          lineNumber: block.getLineNumber()!,
           file: (block as any).getSourceLocation?.()?.getFile?.(),
         })),
         mainFile,
@@ -435,7 +436,7 @@ export class AsciidocEngine {
         document,
       }
     } catch (e) {
-      vscode.window.showErrorMessage(e.toString())
+      vscode.window.showErrorMessage(String(e))
       throw e
     }
   }

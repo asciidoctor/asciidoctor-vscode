@@ -45,7 +45,10 @@ class AsciidocContributionProviderTest implements AsciidocContributionProvider {
     this.extensionUri = extensionUri
   }
 
-  onContributionsChanged: vscode.Event<this>
+  onContributionsChanged: vscode.Event<this> = () =>
+    new vscode.Disposable(() => {
+      // noop
+    })
 
   readonly contributions = new EmptyAsciidocContributions()
 

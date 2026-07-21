@@ -136,9 +136,10 @@ export async function findAntoraConfigFile(
     applicableConfigUriByDocumentPath.set(cacheKey, undefined)
     return undefined
   }
+  // matchedConfigPath was derived from antoraConfigUris.map(uri => uri.path) above.
   const matchedConfigUri = antoraConfigUris.find(
     (uri) => uri.path === matchedConfigPath,
-  )
+  )!
   logger.trace(
     `Found an Antora configuration file at ${matchedConfigUri.path} for the AsciiDoc document ${textDocumentUri.path}`,
   )
@@ -153,7 +154,7 @@ export async function antoraConfigFileExists(
     vscode.workspace.getWorkspaceFolder(textDocumentUri)?.uri
   let currentDirectoryUri = dir(textDocumentUri, workspaceFolderUri)
   let depth = 0
-  let antoraConfig: vscode.Uri
+  let antoraConfig: vscode.Uri | undefined
   while (
     currentDirectoryUri !== undefined &&
     depth < MAX_DEPTH_SEARCH_ANTORA_CONFIG
@@ -229,14 +230,12 @@ async function buildAntoraConfigs(): Promise<AntoraConfig[]> {
             ),
           ) || {}
       } catch (err) {
-        logger.warn(
-          `Unable to parse ${antoraConfigUri}, cause:` + err.toString(),
-        )
+        logger.warn(`Unable to parse ${antoraConfigUri}, cause:` + String(err))
       }
       return new AntoraConfig(antoraConfigUri, config)
     }),
   )
-  return antoraConfigs.filter((c) => c) // filter undefined
+  return antoraConfigs.filter((c): c is AntoraConfig => c !== undefined)
 }
 
 export async function getAntoraConfig(
@@ -251,7 +250,7 @@ export async function getAntoraConfig(
     config = yaml.load(fs.readFileSync(antoraConfigUri.fsPath, 'utf8')) || {}
   } catch (err) {
     logger.warn(
-      `Unable to parse ${antoraConfigUri.fsPath}, cause:` + err.toString(),
+      `Unable to parse ${antoraConfigUri.fsPath}, cause:` + String(err),
     )
   }
   return new AntoraConfig(antoraConfigUri, config)
@@ -279,76 +278,85 @@ function getContentCatalog(): Promise<any> {
 
 async function buildContentCatalog(): Promise<any> {
   const antoraConfigs = await getAntoraConfigs()
-  const contentAggregate: { name: string; version: string; files: any[] }[] =
-    await Promise.all(
-      antoraConfigs
-        .filter((antoraConfig) => {
-          const hasNameAndVersion =
-            antoraConfig.config !== undefined &&
-            'name' in antoraConfig.config &&
-            'version' in antoraConfig.config
-          if (!hasNameAndVersion) {
-            logger.warn(
-              `Antora: ignoring the configuration file at ${antoraConfig.uri.path}, it is missing "name" or "version" — the corresponding component will not be part of the content catalog and its documents will not resolve xrefs/includes/attributes`,
-            )
-          }
-          return hasNameAndVersion
-        })
-        .map(async (antoraConfig) => {
-          const workspaceFolder = getWorkspaceFolder(antoraConfig.uri)
-          const workspaceRelative = posixpath.relative(
-            workspaceFolder.uri.path,
-            antoraConfig.contentSourceRootPath,
+  const contentAggregateWithGaps: (
+    | { name: string; version: string; files: any[] }
+    | undefined
+  )[] = await Promise.all(
+    antoraConfigs
+      .filter((antoraConfig) => {
+        const hasNameAndVersion =
+          antoraConfig.config !== undefined &&
+          'name' in antoraConfig.config &&
+          'version' in antoraConfig.config
+        if (!hasNameAndVersion) {
+          logger.warn(
+            `Antora: ignoring the configuration file at ${antoraConfig.uri.path}, it is missing "name" or "version" — the corresponding component will not be part of the content catalog and its documents will not resolve xrefs/includes/attributes`,
           )
-          const globPattern =
-            'modules/*/{attachments,examples,images,pages,partials,assets}/**'
-          const contentSourceRootPath = antoraConfig.contentSourceRootPath
-          const files = await Promise.all(
-            (
-              await findFiles(
-                `${workspaceRelative ? `${workspaceRelative}/` : ''}${globPattern}`,
-              )
-            ).map(async (file) => {
-              const relativePath = posixpath.relative(
-                contentSourceRootPath,
-                file.path,
-              )
-              // Only AsciiDoc/text resources can be pulled into a page; loading
-              // the bytes of images & attachments would waste time and memory.
-              const contents = isTextResource(relativePath)
-                ? Buffer.from(await vscode.workspace.fs.readFile(file))
-                : EMPTY_CONTENTS
-              return {
-                base: contentSourceRootPath,
-                path: relativePath,
-                contents,
+        }
+        return hasNameAndVersion
+      })
+      .map(async (antoraConfig) => {
+        const workspaceFolder = getWorkspaceFolder(antoraConfig.uri)
+        if (workspaceFolder === undefined) {
+          logger.warn(
+            `Antora: unable to resolve the workspace folder for ${antoraConfig.uri.path}, the corresponding component will not be part of the content catalog`,
+          )
+          return undefined
+        }
+        const workspaceRelative = posixpath.relative(
+          workspaceFolder.uri.path,
+          antoraConfig.contentSourceRootPath,
+        )
+        const globPattern =
+          'modules/*/{attachments,examples,images,pages,partials,assets}/**'
+        const contentSourceRootPath = antoraConfig.contentSourceRootPath
+        const files = await Promise.all(
+          (
+            await findFiles(
+              `${workspaceRelative ? `${workspaceRelative}/` : ''}${globPattern}`,
+            )
+          ).map(async (file) => {
+            const relativePath = posixpath.relative(
+              contentSourceRootPath,
+              file.path,
+            )
+            // Only AsciiDoc/text resources can be pulled into a page; loading
+            // the bytes of images & attachments would waste time and memory.
+            const contents = isTextResource(relativePath)
+              ? Buffer.from(await vscode.workspace.fs.readFile(file))
+              : EMPTY_CONTENTS
+            return {
+              base: contentSourceRootPath,
+              path: relativePath,
+              contents,
+              extname: posixpath.extname(file.path),
+              stem: posixpath.basename(file.path, posixpath.extname(file.path)),
+              src: {
+                abspath: file.path,
+                basename: posixpath.basename(file.path),
+                editUrl: '',
                 extname: posixpath.extname(file.path),
+                path: file.path,
                 stem: posixpath.basename(
                   file.path,
                   posixpath.extname(file.path),
                 ),
-                src: {
-                  abspath: file.path,
-                  basename: posixpath.basename(file.path),
-                  editUrl: '',
-                  extname: posixpath.extname(file.path),
-                  path: file.path,
-                  stem: posixpath.basename(
-                    file.path,
-                    posixpath.extname(file.path),
-                  ),
-                },
-              }
-            }),
-          )
-          return {
-            name: antoraConfig.config.name,
-            version: antoraConfig.config.version,
-            ...antoraConfig.config,
-            files,
-          }
-        }),
-    )
+              },
+            }
+          }),
+        )
+        return {
+          name: antoraConfig.config.name,
+          version: antoraConfig.config.version,
+          ...antoraConfig.config,
+          files,
+        }
+      }),
+  )
+  const contentAggregate = contentAggregateWithGaps.filter(
+    (entry): entry is { name: string; version: string; files: any[] } =>
+      entry !== undefined,
+  )
   const mergedContentAggregate =
     mergeDuplicateComponentVersions(contentAggregate)
   logger.debug(

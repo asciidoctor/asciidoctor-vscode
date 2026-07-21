@@ -232,7 +232,8 @@ describe('Antora support with multi-documentation components', () => {
     await removeFiles(createdFiles)
   })
 
-  const workspaceUri = getDefaultWorkspaceFolderUri()
+  // The test suite always runs with a workspace folder open.
+  const workspaceUri = getDefaultWorkspaceFolderUri()!
   for (const testCase of testCases) {
     test(testCase.title, async () =>
       testGetAntoraConfig({
@@ -288,6 +289,7 @@ describe('Antora support with multi-documentation components', () => {
           asciidocFile,
           workspaceState,
         )
+        assert.ok(result, 'AntoraDocumentContext must not be undefined')
         const components = result.getComponents()
         assert.strictEqual(
           components !== undefined,
@@ -344,6 +346,7 @@ describe('Antora support with single documentation component', () => {
         asciidocFile,
         workspaceState,
       )
+      assert.ok(result, 'AntoraDocumentContext must not be undefined')
       const images = result.getImages()
       assert.strictEqual(
         images !== undefined,
@@ -404,28 +407,21 @@ describe('Antora content catalog construction', () => {
         asciidocFile,
         extensionContext.workspaceState,
       )
+      assert.ok(result, 'AntoraDocumentContext must not be undefined')
       const contentCatalog = result.getContentCatalog()
 
       const partial = contentCatalog.findBy({ family: 'partial' })[0]
+      assert.ok(partial, 'Partial must be present in the content catalog')
       assert.strictEqual(
-        partial !== undefined,
-        true,
-        'Partial must be present in the content catalog',
-      )
-      assert.strictEqual(
-        partial.contents.toString(),
+        partial.contents?.toString(),
         'Reusable introduction',
         'Contents of text resources (partials) must be loaded in the catalog',
       )
 
       const image = contentCatalog.findBy({ family: 'image' })[0]
+      assert.ok(image, 'Image must be present in the content catalog')
       assert.strictEqual(
-        image !== undefined,
-        true,
-        'Image must be present in the content catalog',
-      )
-      assert.strictEqual(
-        image.contents.length,
+        image.contents?.length,
         0,
         'Contents of binary resources (images) must not be loaded in the catalog',
       )
@@ -464,6 +460,7 @@ describe('Antora content catalog construction', () => {
         asciidocFile,
         extensionContext.workspaceState,
       )
+      assert.ok(result, 'AntoraDocumentContext must not be undefined')
       const resolved = result.resolveAntoraResourceIds('mountain.jpeg', 'image')
       assert.strictEqual(
         resolved,
@@ -510,9 +507,8 @@ describe('Antora content catalog construction', () => {
         asciidocFile,
         extensionContext.workspaceState,
       )
-      assert.notStrictEqual(
+      assert.ok(
         result,
-        undefined,
         'An Antora document context must be established for the page',
       )
       const resolved = resolveIncludeFile(
@@ -524,9 +520,8 @@ describe('Antora content catalog construction', () => {
         result.getContentCatalog(),
         undefined,
       )
-      assert.notStrictEqual(
+      assert.ok(
         resolved,
-        undefined,
         'The example$ resource id must resolve to a catalog entry',
       )
       assert.strictEqual(
@@ -570,6 +565,8 @@ describe('Antora content catalog caching', () => {
         asciidocFile,
         workspaceState,
       )
+      assert.ok(first, 'AntoraDocumentContext must not be undefined')
+      assert.ok(second, 'AntoraDocumentContext must not be undefined')
       assert.strictEqual(
         first.getContentCatalog(),
         second.getContentCatalog(),
@@ -593,6 +590,8 @@ describe('Antora content catalog caching', () => {
         asciidocFile,
         workspaceState,
       )
+      assert.ok(first, 'AntoraDocumentContext must not be undefined')
+      assert.ok(second, 'AntoraDocumentContext must not be undefined')
       assert.notStrictEqual(
         first.getContentCatalog(),
         second.getContentCatalog(),
@@ -662,9 +661,8 @@ describe('Antora content catalog robustness', () => {
         asciidocFile,
         extensionContext.workspaceState,
       )
-      assert.notStrictEqual(
+      assert.ok(
         result,
-        undefined,
         'The Antora context must survive a duplicated component version',
       )
       const pages = result
@@ -706,9 +704,8 @@ describe('Antora content catalog robustness', () => {
         asciidocFile,
         extensionContext.workspaceState,
       )
-      assert.notStrictEqual(
+      assert.ok(
         result,
-        undefined,
         'The Antora context must survive a non-string component version',
       )
       assert.strictEqual(
