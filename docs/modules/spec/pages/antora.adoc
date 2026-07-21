@@ -83,7 +83,7 @@ An editor SHOULD:
 
 When Antora support is active, an editor SHOULD apply the Antora UI theme (or a reasonable approximation) to the preview, including:
 
-* Antora-bundled stylesheets
+* Built-in stylesheets that approximate the Antora Default UI while preserving the preview document structure
 * Light/dark mode support where the theme provides it
 
 == Multi-Repository Support
