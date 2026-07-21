@@ -129,12 +129,13 @@ For *HTML-based exports* the detection does not apply: list the extra languages 
 [#styling]
 == Styling
 
-By default, the preview uses the VS Code editor theme (`workbench.colorTheme`).
-
-* To use the default Asciidoctor style instead, set `asciidoc.preview.useEditorStyle` to `false`.
+* `asciidoc.preview.defaultStyle` picks the built-in stylesheet used when neither `asciidoc.preview.style` nor the document's own `stylesheet`/`stylesdir` attributes are set: `vscode` (follows the VS Code editor theme, `workbench.colorTheme`), `asciidoctor` (the plain Asciidoctor.js stylesheet), `antora` (approximates the Antora Default UI), or `github` (approximates GitHub's Markdown rendering; like `vscode`, it follows the active VS Code color theme rather than needing a separate light/dark choice).
+* The default is *Automatic* (an empty value): it follows the deprecated `asciidoc.preview.useEditorStyle` setting (`vscode` unless that is set to `false`, in which case `asciidoctor`), and automatically switches to `antora` when xref:spec:antora.adoc[Antora support] is active for the document. Choosing any style explicitly — including `vscode` — always overrides this.
 * To *replace* the stylesheet with your own, set `asciidoc.preview.style`.
 * To *extend* the style without losing the defaults, add your stylesheets to `asciidoc.preview.additionalStyles`. They are layered on top of the base style (default or custom), in order, so they take precedence — ideal for tweaking a few rules while keeping the built-in look.
 * To define custom templates, set `asciidoc.preview.templates`.
+
+`asciidoc.preview.useEditorStyle` is deprecated in favor of `asciidoc.preview.defaultStyle`; its value is still honored as long as `defaultStyle` is left at *Automatic*.
 
 See xref:settings.adoc#preview[the preview settings] for the full list of options.
 
