@@ -87,7 +87,7 @@ export class AsciidoctorExtensions {
   private isAsciidoctorExtensionsRegistrationEnabled(): boolean {
     return vscode.workspace
       .getConfiguration('asciidoc.extensions', null)
-      .get('registerWorkspaceExtensions')
+      .get('registerWorkspaceExtensions', false)
   }
 
   private async registerExtensionsInWorkspace(registry: Registry) {
@@ -103,7 +103,7 @@ export class AsciidoctorExtensions {
         const extjs = require(extPath)
         extjs.register(registry)
       } catch (e) {
-        vscode.window.showErrorMessage(extPath + ': ' + e.toString())
+        vscode.window.showErrorMessage(extPath + ': ' + String(e))
       }
     }
   }

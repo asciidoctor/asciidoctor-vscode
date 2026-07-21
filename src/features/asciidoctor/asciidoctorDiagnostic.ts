@@ -143,21 +143,16 @@ export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
             sourceRange = textDocument.lineAt(sourceLine).range
           } else {
             //error is coming from an included file
-            relatedFile = error.getSourceLocation()
+            relatedFile = error.getSourceLocation() ?? null
             // try to find the 'include' directive responsible from the info provided by Asciidoctor.js
-            sourceLine = textDocument
-              .getText()
-              .split('\n')
-              .indexOf(
-                textDocument
-                  .getText()
-                  .split('\n')
-                  .find(
-                    (str) =>
-                      str.startsWith('include') &&
-                      str.includes(relatedFile.path),
-                  ),
-              )
+            const relatedFilePath = relatedFile?.path
+            const lines = textDocument.getText().split('\n')
+            const includeLine = lines.find(
+              (str) =>
+                str.startsWith('include') && str.includes(relatedFilePath),
+            )
+            sourceLine =
+              includeLine === undefined ? -1 : lines.indexOf(includeLine)
             if (sourceLine !== -1) {
               sourceRange = textDocument.lineAt(sourceLine).range
             }

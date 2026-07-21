@@ -128,6 +128,9 @@ export function similarArrayMatch(
         options.delete(key)
       }
     })
-    return options.get(Math.min(...options.keys()))
+    // Every offset can be discarded above if none produces a strictly
+    // increasing match; fall back to the unmatched candidates rather than
+    // returning nothing.
+    return options.get(Math.min(...options.keys())) ?? candidateItems
   }
 }

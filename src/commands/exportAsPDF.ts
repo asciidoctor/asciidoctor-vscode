@@ -42,6 +42,14 @@ export class ExportAsPDF implements Command {
     }
     const asciidocTextDocument = AsciidocTextDocument.fromTextDocument(doc)
     const baseDirectory = asciidocTextDocument.baseDir
+    if (baseDirectory === undefined) {
+      // Only unset in the browser extension host, where PDF export (which
+      // shells out to asciidoctor-pdf/wkhtmltopdf) is not supported anyway.
+      await vscode.window.showErrorMessage(
+        'Exporting to PDF is not supported in this environment.',
+      )
+      return
+    }
 
     const asciidocPdfConfig = vscode.workspace.getConfiguration('asciidoc.pdf')
 
@@ -467,7 +475,8 @@ function commandExists(
   })
   return new Promise(function (resolve, reject) {
     const stdoutOutput: Buffer[] = []
-    childProcess.stdout.on('data', (data) => {
+    // stdout is only null when stdio overrides it away; none of our call sites do.
+    childProcess.stdout!.on('data', (data) => {
       stdoutOutput.push(data)
     })
     childProcess.on('close', function (code) {
@@ -520,7 +529,8 @@ function execute(
       ...options,
     })
     const stderrOutput: Buffer[] = []
-    childProcess.stderr.on('data', (data) => {
+    // stderr is only null when stdio overrides it away; none of our call sites do.
+    childProcess.stderr!.on('data', (data) => {
       stderrOutput.push(data)
     })
     childProcess.on('close', function (code) {
@@ -538,8 +548,9 @@ function execute(
       reject(decorateSpawnError(err, command, options))
     })
     if (input !== undefined) {
-      childProcess.stdin.write(input)
-      childProcess.stdin.end()
+      // stdin is only null when stdio overrides it away; none of our call sites do.
+      childProcess.stdin!.write(input)
+      childProcess.stdin!.end()
     }
   })
 }
@@ -652,9 +663,10 @@ function createCoverFile(
   baseDir: string,
   document: AsciidoctorDocument,
 ) {
+  // Looking up our own extension id always resolves once we're running.
   const extensionContext = vscode.extensions.getExtension(
     'asciidoctor.asciidoctor-vscode',
-  )
+  )!
   const coverHtmlContent = _generateCoverHtmlContent(
     titlePageLogo,
     baseDir,
@@ -674,7 +686,7 @@ function offerOpen(destination: string) {
       'Successfully converted to ' + path.basename(destination),
       'Open File',
     )
-    .then((label: string) => {
+    .then((label: string | undefined) => {
       if (label === 'Open File') {
         switch (process.platform) {
           // Use backticks for unix systems to run the open command directly

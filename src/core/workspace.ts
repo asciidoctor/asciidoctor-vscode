@@ -39,6 +39,9 @@ export function findDefaultWorkspaceFolderUri(): Uri | undefined {
 
 export function getDefaultWorkspaceFolderUri(): Uri | undefined {
   const workspaceFolders = getWorkspaceFolders()
+  if (!workspaceFolders || workspaceFolders.length === 0) {
+    return undefined
+  }
   return normalizeUri(workspaceFolders[0].uri)
 }
 

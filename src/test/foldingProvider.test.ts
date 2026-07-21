@@ -121,5 +121,8 @@ async function getFoldsForDocument(fileContents: string) {
       extensionContext,
     ),
   )
-  return provider.provideFoldingRanges(doc, undefined)
+  return provider.provideFoldingRanges(
+    doc,
+    new vscode.CancellationTokenSource().token,
+  )
 }

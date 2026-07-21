@@ -38,7 +38,9 @@ async function getCitationKeys(): Promise<string[]> {
   )
   const bibtexJson = filesContent.map((content) => bibtexParse.toJSON(content))
   return bibtexJson.flatMap((entries) =>
-    entries.map((entry) => entry.citationKey),
+    entries
+      .map((entry) => entry.citationKey)
+      .filter((citationKey) => citationKey !== undefined),
   )
 }
 

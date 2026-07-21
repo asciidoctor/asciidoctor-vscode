@@ -128,6 +128,7 @@ See xref:test.adoc#first-section[]
 `)
     assert.strictEqual(links.length, 1)
     const [link] = links
+    assert.ok(link.target)
     assert.strictEqual(link.target.scheme, 'command')
     assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
     assert.strictEqual(
@@ -152,6 +153,7 @@ See xref:test.adoc#second-section[]
 `)
     assert.strictEqual(links.length, 1)
     const [link] = links
+    assert.ok(link.target)
     assert.strictEqual(link.target.scheme, 'command')
     assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
     assert.strictEqual(
@@ -170,6 +172,7 @@ See xref:_block_image[].
 `)
     assert.strictEqual(links.length, 1)
     const [link] = links
+    assert.ok(link.target)
     assert.strictEqual(link.target.scheme, 'command')
     assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
     // `_block_image` is the auto-generated id of the "Block Image" section on
@@ -189,6 +192,7 @@ See <<_block_image>>.
 `)
     assert.strictEqual(links.length, 1)
     const [link] = links
+    assert.ok(link.target)
     assert.strictEqual(link.target.scheme, 'command')
     assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
     assert.strictEqual(
@@ -209,6 +213,7 @@ See <<the-anchor,the label>>.
 `)
     assert.strictEqual(links.length, 1)
     const [link] = links
+    assert.ok(link.target)
     assert.strictEqual(
       link.target.query,
       JSON.stringify({ path: '/test.adoc', fragment: 'L3' }),
@@ -225,6 +230,7 @@ See <<Getting Started>>.
 `)
     assert.strictEqual(links.length, 1)
     const [link] = links
+    assert.ok(link.target)
     assert.strictEqual(
       link.target.query,
       JSON.stringify({ path: '/test.adoc', fragment: 'L3' }),
@@ -239,6 +245,7 @@ You can refer to a URL such as https://github.com/asciidoctor/asciidoctor-vscode
 `)
     assert.strictEqual(links.length, 1)
     const [link] = links
+    assert.ok(link.target)
     assert.deepStrictEqual(
       link.target.toString(),
       'https://github.com/asciidoctor/asciidoctor-vscode/',
@@ -254,6 +261,7 @@ Filters are created as RPN filters (Reverse Polish notation [https://wikipedia.o
 `)
     assert.strictEqual(links.length, 1)
     const [link] = links
+    assert.ok(link.target)
     assert.deepStrictEqual(
       link.target.toString(),
       'https://wikipedia.org/wiki/Reverse_Polish_notation',
@@ -269,6 +277,7 @@ Asciidoctor.js is published as a npm package at <https://www.npmjs.com/package/@
 `)
     assert.strictEqual(links.length, 1)
     const [link] = links
+    assert.ok(link.target)
     assert.deepStrictEqual(
       link.target.toString(true),
       'https://www.npmjs.com/package/@asciidoctor/core',
@@ -287,6 +296,7 @@ https://asciidoc.org[test]
     // valid link on the line above).
     assert.strictEqual(links.length, 1)
     const [link] = links
+    assert.ok(link.target)
     assert.deepStrictEqual(link.target.toString(), 'https://asciidoc.org/')
     assertRangeEqual(link.range, new vscode.Range(2, 0, 2, 20))
   })
@@ -298,6 +308,7 @@ See link:other.adoc#section[the section].
 `)
     assert.strictEqual(links.length, 1)
     const [link] = links
+    assert.ok(link.target)
     assert.strictEqual(link.target.scheme, 'command')
     assert.deepStrictEqual(link.target.path, '_asciidoc.openDocumentLink')
     assert.strictEqual(
@@ -315,6 +326,7 @@ See link:other.adoc[other].
 `)
     assert.strictEqual(links.length, 1)
     const [link] = links
+    assert.ok(link.target)
     assert.strictEqual(link.target.scheme, 'command')
     assert.strictEqual(
       link.target.query,
@@ -331,6 +343,7 @@ See link:https://example.com/page[example].
     // not add a second, overlapping link for it.
     assert.strictEqual(links.length, 1)
     const [link] = links
+    assert.ok(link.target)
     assert.strictEqual(link.target.toString(), 'https://example.com/page')
   })
 

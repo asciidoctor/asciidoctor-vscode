@@ -155,7 +155,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
       if (line.startsWith('[[') && line.endsWith(']]')) {
         const inlineAnchorFound = line.match(inlineAnchorRx)
         if (inlineAnchorFound) {
-          const inlineAnchorId = inlineAnchorFound.groups.id
+          const inlineAnchorId = inlineAnchorFound.groups!.id
           anchors[`${textDocument.uri.path}#${inlineAnchorId}`] = {
             lineNumber: lineNumber + 1,
           }
@@ -166,8 +166,8 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
         if (xrefsFound) {
           for (const xrefFound of xrefsFound) {
             const index = xrefFound.index
-            const target = xrefFound.groups.target
-            const fragment = xrefFound.groups.fragment || ''
+            const target = xrefFound.groups!.target
+            const fragment = xrefFound.groups!.fragment || ''
             const originalTarget = `${target}${fragment}`
             const range = new vscode.Range(
               // exclude xref: prefix
@@ -227,8 +227,8 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
       if (line.includes('link:')) {
         for (const linkFound of line.matchAll(linkRx)) {
           const index = linkFound.index
-          const target = linkFound.groups.target
-          const fragment = linkFound.groups.fragment || ''
+          const target = linkFound.groups!.target
+          const fragment = linkFound.groups!.fragment || ''
           // URLs (`link:https://…[]`) are already linked through `urlRx`; only
           // add navigation for links that point at a local file.
           if (getUriForLinkWithKnownExternalScheme(target)) {
@@ -275,7 +275,7 @@ export default class LinkProvider implements vscode.DocumentLinkProvider {
       if (line.includes('<<')) {
         for (const internalRefFound of line.matchAll(internalRefRx)) {
           const index = internalRefFound.index
-          const target = internalRefFound.groups.target
+          const target = internalRefFound.groups!.target
           // An interdocument shorthand (`<<file.adoc#id>>`) is left to the
           // xref/file handling above; here we only navigate same-document
           // references (an id, an auto-generated section id, or a reftext).

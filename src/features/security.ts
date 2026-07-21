@@ -246,10 +246,9 @@ export class AsciidoctorExtensionsSecurityPolicyArbiter {
     return this.setAllowAsciidoctorExtensions(true)
   }
 
-  public asciidoctorExtensionsAuthorsTrusted(): boolean {
+  public asciidoctorExtensionsAuthorsTrusted(): boolean | undefined {
     return this.context.workspaceState.get<boolean>(
       this.trustAsciidoctorExtensionsAuthorsKey,
-      undefined,
     )
   }
 
@@ -352,7 +351,6 @@ export class AsciidoctorTemplatesSecurityPolicyArbiter {
   public asciidoctorTemplatesAuthorsTrusted(): boolean | undefined {
     return this.context.workspaceState.get<boolean>(
       this.trustAsciidoctorTemplatesAuthorsKey,
-      undefined,
     )
   }
 

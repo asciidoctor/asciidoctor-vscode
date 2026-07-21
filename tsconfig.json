@@ -8,12 +8,7 @@
     "outDir": "dist",
     "lib": ["dom", "es2022"],
     "types": ["node"],
-    "noImplicitAny": true,
-    "noImplicitThis": true,
-    "strictFunctionTypes": true,
-    "strictBindCallApply": true,
-    "alwaysStrict": true,
-    "useUnknownInCatchVariables": true,
+    "strict": true,
     "sourceMap": true,
     "rootDir": "."
   },

@@ -40,7 +40,10 @@ class EmptyAsciidocContributions implements AsciidocContributions {
 
 class AsciidocContributionProviderTest implements AsciidocContributionProvider {
   readonly extensionUri: vscode.Uri
-  onContributionsChanged: vscode.Event<this>
+  onContributionsChanged: vscode.Event<this> = () =>
+    new vscode.Disposable(() => {
+      // noop
+    })
   readonly contributions = new EmptyAsciidocContributions()
 
   constructor(extensionUri: vscode.Uri) {
@@ -86,7 +89,7 @@ describe('asciidoc.preview.templates resolution', () => {
   })
 
   test('resolves a relative configured path against the workspace folder', async () => {
-    const workspaceUri = getDefaultWorkspaceFolderUri()
+    const workspaceUri = getDefaultWorkspaceFolderUri()!
     const textDocument = await createFile('= Test', 'template-relative.adoc')
     createdFiles.push(textDocument)
     await vscode.workspace
@@ -114,7 +117,7 @@ describe('asciidoc.preview.templates resolution', () => {
   })
 
   test('auto-discovers `.asciidoctor/templates` at the workspace folder root once trusted', async () => {
-    const workspaceUri = getDefaultWorkspaceFolderUri()
+    const workspaceUri = getDefaultWorkspaceFolderUri()!
     await createDirectories('.asciidoctor', 'templates')
     createdFiles.push(vscode.Uri.joinPath(workspaceUri, '.asciidoctor'))
     await createFile(
@@ -137,7 +140,7 @@ describe('asciidoc.preview.templates resolution', () => {
   })
 
   test('skips the auto-discovered `.asciidoctor/templates` when the authors are not trusted', async () => {
-    const workspaceUri = getDefaultWorkspaceFolderUri()
+    const workspaceUri = getDefaultWorkspaceFolderUri()!
     await createDirectories('.asciidoctor', 'templates')
     createdFiles.push(vscode.Uri.joinPath(workspaceUri, '.asciidoctor'))
     await createFile(
@@ -155,7 +158,7 @@ describe('asciidoc.preview.templates resolution', () => {
   })
 
   test('does not duplicate a configured path that is also auto-discovered', async () => {
-    const workspaceUri = getDefaultWorkspaceFolderUri()
+    const workspaceUri = getDefaultWorkspaceFolderUri()!
     await createDirectories('.asciidoctor', 'templates')
     createdFiles.push(vscode.Uri.joinPath(workspaceUri, '.asciidoctor'))
     await createFile(
@@ -203,7 +206,7 @@ describe('asciidoc.preview.templates rendering', () => {
     ).trustAsciidoctorTemplatesAuthors()
     await createDirectories('.asciidoctor', 'templates')
     createdFiles.push(
-      vscode.Uri.joinPath(getDefaultWorkspaceFolderUri(), '.asciidoctor'),
+      vscode.Uri.joinPath(getDefaultWorkspaceFolderUri()!, '.asciidoctor'),
     )
     // A pure-JS template needs no external engine: Asciidoctor requires the file
     // and calls its default export as `render({ node })`.
@@ -236,7 +239,7 @@ describe('asciidoc.preview.templates rendering', () => {
   test('renders paragraphs with a template from a relative configured path', async () => {
     await createDirectories('my-templates')
     createdFiles.push(
-      vscode.Uri.joinPath(getDefaultWorkspaceFolderUri(), 'my-templates'),
+      vscode.Uri.joinPath(getDefaultWorkspaceFolderUri()!, 'my-templates'),
     )
     createdFiles.push(
       await createFile(

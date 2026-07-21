@@ -102,7 +102,7 @@ function getLines(attrs: Record<string, any>): number[] | undefined {
     const lines = attrs.lines
     if (lines) {
       const linenums: (number | typeof Infinity)[] = []
-      let filtered: boolean
+      let filtered = false
       ;(~lines.indexOf(',') ? lines.split(',') : lines.split(';'))
         .filter((it: string) => it)
         .forEach((linedef: string) => {
@@ -176,7 +176,7 @@ function filterLinesByLineNumbers(
   linenums: (number | typeof Infinity)[],
 ): [string[], number] {
   let lineNum = 0
-  let startLineNum: number
+  let startLineNum = 0
   let selectRest: boolean
   const lines: string[] = []
   file.contents.split(NEWLINE_RX).some((line: string) => {
@@ -211,7 +211,7 @@ function filterLinesByTags(
   sourceCursor: any,
 ): [string[], number] {
   let selectingDefault: boolean
-  let selecting: boolean
+  let selecting: boolean | undefined
   let wildcard: boolean
   const globstar = tags.get('**')
   const star = tags.get('*')
@@ -240,11 +240,11 @@ function filterLinesByTags(
   }
 
   const lines: string[] = []
-  const tagStack: [string, boolean, number][] = []
+  const tagStack: [string | undefined, boolean | undefined, number][] = []
   const foundTags: string[] = []
-  let activeTag: string
+  let activeTag: string | undefined
   let lineNum = 0
-  let startLineNum: number
+  let startLineNum = 0
   file.contents.split(NEWLINE_RX).forEach((line: string) => {
     lineNum++
     let m: RegExpMatchArray | null

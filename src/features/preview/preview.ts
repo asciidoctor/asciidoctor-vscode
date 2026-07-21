@@ -29,7 +29,11 @@ export class AsciidocPreview
   public static viewType = 'asciidoc.preview'
 
   private _resource: vscode.Uri
-  private _resourceColumn: vscode.ViewColumn
+  // Never assigned by either `create()` or `revive()` — the `resourceColumn`
+  // parameter `create()` accepts is not threaded into the constructor — so
+  // `resourceColumn` below always falls back to its default. Pre-existing;
+  // not touched here since fixing it changes preview column placement.
+  private _resourceColumn: vscode.ViewColumn = vscode.ViewColumn.One
   private _locked: boolean
 
   private readonly editor: vscode.WebviewPanel
@@ -170,7 +174,10 @@ export class AsciidocPreview
     this._locked = locked
     this.editor = webview
     this.config = vscode.workspace.getConfiguration('asciidoc', this.resource)
-    this.refreshInterval = this.config.get<number>('preview.refreshInterval')
+    this.refreshInterval = this.config.get<number>(
+      'preview.refreshInterval',
+      2000,
+    )
 
     this.editor.onDidDispose(
       () => {
@@ -417,7 +424,10 @@ export class AsciidocPreview
   public updateConfiguration() {
     if (this._previewConfigurations.hasConfigurationChanged(this._resource)) {
       this.config = vscode.workspace.getConfiguration('asciidoc', this.resource)
-      this.refreshInterval = this.config.get<number>('preview.refreshInterval')
+      this.refreshInterval = this.config.get<number>(
+        'preview.refreshInterval',
+        2000,
+      )
       // The document text is unchanged, so this must be a *forced* refresh:
       // otherwise `doUpdate()` throttles it and then skips it on the
       // unchanged-version early-return, and the new settings never take effect

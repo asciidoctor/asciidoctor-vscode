@@ -38,7 +38,8 @@ async function collectIncludeContents(
     { dirUri: Uri.joinPath(rootUri, '..'), text: rootText },
   ]
   while (queue.length > 0) {
-    const { dirUri, text } = queue.shift()
+    // Non-null: guarded by the `queue.length > 0` loop condition above.
+    const { dirUri, text } = queue.shift()!
     INCLUDE_DIRECTIVE_RX.lastIndex = 0
     let match: RegExpExecArray | null
     while ((match = INCLUDE_DIRECTIVE_RX.exec(text)) !== null) {

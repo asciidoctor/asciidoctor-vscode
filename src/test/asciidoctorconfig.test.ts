@@ -25,7 +25,10 @@ class EmptyAsciidocContributions implements AsciidocContributions {
 
 class AsciidocContributionProviderTest implements AsciidocContributionProvider {
   readonly extensionUri: vscode.Uri
-  onContributionsChanged: vscode.Event<this>
+  onContributionsChanged: vscode.Event<this> = () =>
+    new vscode.Disposable(() => {
+      // noop
+    })
   readonly contributions = new EmptyAsciidocContributions()
 
   constructor(extensionUri: vscode.Uri) {
@@ -95,7 +98,7 @@ describe('asciidoc.Asciidoctorconfig', () => {
     const createdFiles: vscode.Uri[] = []
 
     before(async () => {
-      const workspaceUri = getDefaultWorkspaceFolderUri()
+      const workspaceUri = getDefaultWorkspaceFolderUri()!
 
       createdFiles.push(
         await createFileWithContentAtWorkspaceRoot(
@@ -181,7 +184,7 @@ describe('asciidoc.Asciidoctorconfig', () => {
     const createdFiles: vscode.Uri[] = []
 
     before(async () => {
-      const workspaceUri = getDefaultWorkspaceFolderUri()
+      const workspaceUri = getDefaultWorkspaceFolderUri()!
       const configFileName = '.asciidoctorconfig'
       const rootConfigFile = vscode.Uri.joinPath(workspaceUri, configFileName)
       await vscode.workspace.fs.writeFile(
@@ -287,7 +290,7 @@ describe('asciidoc.Asciidoctorconfig', () => {
     })
 
     test('config at another workspace folder root is applied with the lowest precedence', async () => {
-      const workspaceUri = getDefaultWorkspaceFolderUri()
+      const workspaceUri = getDefaultWorkspaceFolderUri()!
       // Track the top-level directories so they are cleaned up recursively.
       createdFiles.push(vscode.Uri.joinPath(workspaceUri, 'shared-config-root'))
       createdFiles.push(vscode.Uri.joinPath(workspaceUri, 'docs-root'))

@@ -8,6 +8,15 @@ import {
 import { clearAntoraCache } from '../features/antora/antoraDocument.js'
 import { extensionContext } from './helper.js'
 
+// The test suite always runs with a workspace folder open.
+function requireDefaultWorkspaceFolderUri(): vscode.Uri {
+  const uri = getDefaultWorkspaceFolderUri()
+  if (uri === undefined) {
+    throw new Error('Expected a default workspace folder to be open')
+  }
+  return uri
+}
+
 export async function removeFiles(files: vscode.Uri[]) {
   clearAntoraCache()
   for (const file of files) {
@@ -35,7 +44,7 @@ export async function createFile(
   ...pathSegments: string[]
 ): Promise<vscode.Uri> {
   const file = vscode.Uri.joinPath(
-    getDefaultWorkspaceFolderUri(),
+    requireDefaultWorkspaceFolderUri(),
     ...pathSegments,
   )
   await vscode.workspace.fs.writeFile(file, Buffer.from(content))
@@ -50,7 +59,7 @@ export async function createDirectories(
   for (const pathSegment of pathSegments) {
     currentPath.push(pathSegment)
     const dir = vscode.Uri.joinPath(
-      getDefaultWorkspaceFolderUri(),
+      requireDefaultWorkspaceFolderUri(),
       ...currentPath,
     )
     try {
@@ -74,7 +83,7 @@ export async function createDirectory(
   ...pathSegments: string[]
 ): Promise<vscode.Uri> {
   const dir = vscode.Uri.joinPath(
-    getDefaultWorkspaceFolderUri(),
+    requireDefaultWorkspaceFolderUri(),
     ...pathSegments,
   )
   await vscode.workspace.fs.createDirectory(dir)
@@ -85,7 +94,7 @@ export async function createLink(
   existingPathSegments: string[],
   newPathSegments: string[],
 ): Promise<vscode.Uri> {
-  const workspaceUri = getDefaultWorkspaceFolderUri()
+  const workspaceUri = requireDefaultWorkspaceFolderUri()
   const existingPath = vscode.Uri.joinPath(
     workspaceUri,
     ...existingPathSegments,
