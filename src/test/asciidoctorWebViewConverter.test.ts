@@ -15,7 +15,10 @@ import { AntoraDocumentContext } from '../features/antora/antoraContext.js'
 import { AsciidocContributions } from '../features/extensionContributions.js'
 import { AsciidoctorWebViewConverter } from '../features/preview/asciidoctorWebViewConverter.js'
 import { mermaidJSProcessor } from '../features/preview/mermaid.js'
-import { AsciidocPreviewConfigurationManager } from '../features/preview/previewConfig.js'
+import {
+  AsciidocPreviewConfigurationManager,
+  type AsciidocPreviewDefaultStyle,
+} from '../features/preview/previewConfig.js'
 import { createDirectory, createFile, removeFiles } from './workspaceHelper.js'
 
 class TestWebviewResourceProvider implements WebviewResourceProvider {
@@ -540,20 +543,32 @@ See xref:my-table[xrefstyle=short] for more reference.
   async function convertStandaloneWithFragment(
     input: string,
     fragment: string | undefined,
+    defaultStyle?: AsciidocPreviewDefaultStyle,
+    antoraDocumentContext?: AntoraDocumentContext,
   ): Promise<string> {
     const file = await vscode.workspace.openTextDocument(
       vscode.Uri.joinPath(workspaceUri, 'asciidoctorWebViewConverterTest.adoc'),
     )
+    const config =
+      new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(
+        file.uri,
+      )
+    if (defaultStyle !== undefined) {
+      const testConfig = config as unknown as {
+        defaultStyle: AsciidocPreviewDefaultStyle
+        defaultStyleExplicit: boolean
+      }
+      testConfig.defaultStyle = defaultStyle
+      testConfig.defaultStyleExplicit = true
+    }
     const converter = new AsciidoctorWebViewConverter(
       file,
       new TestWebviewResourceProvider(),
       2,
       false,
       new TestAsciidocContributions(),
-      new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(
-        file.uri,
-      ),
-      undefined,
+      config,
+      antoraDocumentContext,
       undefined, // line
       null, // state
       undefined, // krokiServerUrl
@@ -719,6 +734,161 @@ See xref:my-table[xrefstyle=short] for more reference.
     )
   })
 
+  test('Should use the VS Code preview stylesheet by default', async () => {
+    const html = await convertStandaloneWithFragment(
+      '= Title\n\nSome content',
+      undefined,
+      'vscode',
+    )
+    assert.ok(
+      html.includes('asciidoctor-editor.css'),
+      `expected the VS Code preview stylesheet in:\n${html}`,
+    )
+    assert.ok(
+      html.includes('asciidoctor-editor-enhancements.css'),
+      `expected the VS Code preview stylesheet enhancements in:\n${html}`,
+    )
+    assert.ok(
+      !html.includes('asciidoctor-default.css'),
+      `expected the Asciidoctor default stylesheet to be absent in:\n${html}`,
+    )
+  })
+
+  test('Should use the Asciidoctor.js stylesheet when selected', async () => {
+    const html = await convertStandaloneWithFragment(
+      '= Title\n\nSome content',
+      undefined,
+      'asciidoctor',
+    )
+    assert.ok(
+      html.includes('asciidoctor-default.css'),
+      `expected the Asciidoctor.js stylesheet in:\n${html}`,
+    )
+    assert.ok(
+      !html.includes('asciidoctor-editor.css'),
+      `expected the VS Code preview stylesheet to be absent in:\n${html}`,
+    )
+  })
+
+  test('Should use the Antora-inspired stylesheet when selected', async () => {
+    const html = await convertStandaloneWithFragment(
+      '= Title\n\nSome content',
+      undefined,
+      'antora',
+    )
+    assert.ok(
+      html.includes('asciidoctor-default.css') &&
+        html.includes('asciidoctor-antora.css'),
+      `expected the Asciidoctor default base and Antora stylesheet in:\n${html}`,
+    )
+    assert.ok(
+      html.indexOf('asciidoctor-default.css') <
+        html.indexOf('asciidoctor-antora.css'),
+      `expected the Antora stylesheet to be layered after the default base in:\n${html}`,
+    )
+    assert.ok(
+      !html.includes('asciidoctor-editor.css'),
+      `expected the VS Code preview stylesheet to be absent in:\n${html}`,
+    )
+  })
+
+  test('Should auto-select the Antora-inspired stylesheet when Antora support is active and no style was chosen', async () => {
+    const html = await convertStandaloneWithFragment(
+      '= Title\n\nSome content',
+      undefined,
+      undefined,
+      createAntoraDocumentContextStub(undefined),
+    )
+    assert.ok(
+      html.includes('asciidoctor-default.css') &&
+        html.includes('asciidoctor-antora.css'),
+      `expected the Antora stylesheet to be auto-selected in:\n${html}`,
+    )
+    assert.ok(
+      !html.includes('asciidoctor-editor.css'),
+      `expected the VS Code preview stylesheet to be absent in:\n${html}`,
+    )
+  })
+
+  test('Should auto-select the Antora-inspired stylesheet when the deprecated useEditorStyle is false and Antora support is active', async () => {
+    // Neither value of the legacy useEditorStyle boolean expresses an
+    // opinion about Antora, so it must not block auto-detection the way an
+    // explicit `defaultStyle` would (see the previous test).
+    await vscode.workspace
+      .getConfiguration('asciidoc', null)
+      .update('preview.useEditorStyle', false)
+    try {
+      const html = await convertStandaloneWithFragment(
+        '= Title\n\nSome content',
+        undefined,
+        undefined,
+        createAntoraDocumentContextStub(undefined),
+      )
+      assert.ok(
+        html.includes('asciidoctor-antora.css'),
+        `expected the Antora stylesheet to be auto-selected in:\n${html}`,
+      )
+    } finally {
+      await vscode.workspace
+        .getConfiguration('asciidoc', null)
+        .update('preview.useEditorStyle', undefined)
+    }
+  })
+
+  test('Should keep an explicitly selected stylesheet even when Antora support is active', async () => {
+    const html = await convertStandaloneWithFragment(
+      '= Title\n\nSome content',
+      undefined,
+      'github',
+      createAntoraDocumentContextStub(undefined),
+    )
+    assert.ok(
+      html.includes('asciidoctor-github-colors.css'),
+      `expected the explicitly selected github stylesheet in:\n${html}`,
+    )
+    assert.ok(
+      !html.includes('asciidoctor-antora.css'),
+      `expected the Antora stylesheet to stay absent in:\n${html}`,
+    )
+  })
+
+  test('Should stamp the resolved preview style on the body element', async () => {
+    const html = await convertStandaloneWithFragment(
+      '= Title\n\nSome content',
+      undefined,
+      'github',
+    )
+    assert.ok(
+      html.includes('data-preview-style="github"'),
+      `expected the resolved preview style on <body> in:\n${html}`,
+    )
+  })
+
+  test('Should use the github stylesheet when selected', async () => {
+    const html = await convertStandaloneWithFragment(
+      '= Title\n\nSome content',
+      undefined,
+      'github',
+    )
+    assert.ok(
+      html.includes('asciidoctor-default.css') &&
+        html.includes('asciidoctor-github-colors.css') &&
+        html.includes('asciidoctor-github.css'),
+      `expected the Asciidoctor default base, GitHub color tokens, and GitHub stylesheet in:\n${html}`,
+    )
+    assert.ok(
+      html.indexOf('asciidoctor-default.css') <
+        html.indexOf('asciidoctor-github-colors.css') &&
+        html.indexOf('asciidoctor-github-colors.css') <
+          html.indexOf('asciidoctor-github.css'),
+      `expected the GitHub stylesheets to be layered after the default base in:\n${html}`,
+    )
+    assert.ok(
+      !html.includes('asciidoctor-editor.css'),
+      `expected the VS Code preview stylesheet to be absent in:\n${html}`,
+    )
+  })
+
   // The `data-shell` fingerprint hashes the document-driven parts of the
   // webview shell (MathJax, syntax highlighter, docinfo, body classes…) that an
   // incremental morph of `#preview-root` cannot update. The preview falls back
@@ -770,6 +940,22 @@ See xref:my-table[xrefstyle=short] for more reference.
       readShellFingerprint(without),
       readShellFingerprint(withHighlighter),
       'toggling :source-highlighter: must change the shell fingerprint (highlight.js must be (un)loaded by a full reload)',
+    )
+  })
+
+  test('Should change the shell fingerprint when Antora support (and the auto-selected style) toggles', async () => {
+    const input = '= Title\n\nSome content'
+    const withoutAntora = await convertStandaloneWithFragment(input, undefined)
+    const withAntora = await convertStandaloneWithFragment(
+      input,
+      undefined,
+      undefined,
+      createAntoraDocumentContextStub(undefined),
+    )
+    assert.notStrictEqual(
+      readShellFingerprint(withoutAntora),
+      readShellFingerprint(withAntora),
+      'toggling Antora support must change the shell fingerprint (the auto-selected stylesheet must be (un)loaded by a full reload)',
     )
   })
 
