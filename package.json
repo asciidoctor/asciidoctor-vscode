@@ -425,6 +425,34 @@
             "order": 5,
             "scope": "resource"
           },
+          "asciidoc.preview.defaultStyle": {
+            "type": "string",
+            "enum": [
+              "",
+              "vscode",
+              "asciidoctor",
+              "antora",
+              "github"
+            ],
+            "enumItemLabels": [
+              "%asciidoc.preview.defaultStyle.auto.label%",
+              "vscode",
+              "asciidoctor",
+              "antora",
+              "github"
+            ],
+            "enumDescriptions": [
+              "%asciidoc.preview.defaultStyle.auto.desc%",
+              "%asciidoc.preview.defaultStyle.vscode.desc%",
+              "%asciidoc.preview.defaultStyle.asciidoctor.desc%",
+              "%asciidoc.preview.defaultStyle.antora.desc%",
+              "%asciidoc.preview.defaultStyle.github.desc%"
+            ],
+            "default": "",
+            "markdownDescription": "%asciidoc.preview.defaultStyle.desc%",
+            "order": 4,
+            "scope": "resource"
+          },
           "asciidoc.preview.additionalStyles": {
             "type": "array",
             "items": {
@@ -439,7 +467,8 @@
             "type": "boolean",
             "default": true,
             "markdownDescription": "%asciidoc.preview.useEditorStyle.desc%",
-            "order": 4,
+            "markdownDeprecationMessage": "%asciidoc.preview.useEditorStyle.deprecationMessage%",
+            "order": 99,
             "scope": "resource"
           },
           "asciidoc.preview.fontFamily": {
@@ -749,9 +778,10 @@
     ]
   },
   "scripts": {
-    "copy-fonts:all": "npm run copy-fonts:noto-serif && npm run copy-fonts:open-sans && npm run copy-fonts:roboto-mono",
+    "copy-fonts:all": "npm run copy-fonts:noto-serif && npm run copy-fonts:open-sans && npm run copy-fonts:roboto && npm run copy-fonts:roboto-mono",
     "copy-fonts:noto-serif": "cp -r node_modules/@fontsource/noto-serif/files/noto-serif-all-400-italic.woff media/fonts && cp -r node_modules/@fontsource/noto-serif/files/noto-serif-all-400-normal.woff media/fonts && cp -r node_modules/@fontsource/noto-serif/files/noto-serif-all-700-normal.woff media/fonts && cp -r node_modules/@fontsource/noto-serif/files/noto-serif-all-700-italic.woff media/fonts",
     "copy-fonts:open-sans": "cp -r node_modules/@fontsource/open-sans/files/open-sans-latin-variable-full-italic.woff2 media/fonts && cp -r node_modules/@fontsource/open-sans/files/open-sans-latin-variable-full-normal.woff2 media/fonts",
+    "copy-fonts:roboto": "cp -r node_modules/@fontsource/roboto/files/roboto-latin-400-normal.woff2 media/fonts && cp -r node_modules/@fontsource/roboto/files/roboto-latin-400-italic.woff2 media/fonts && cp -r node_modules/@fontsource/roboto/files/roboto-latin-500-normal.woff2 media/fonts && cp -r node_modules/@fontsource/roboto/files/roboto-latin-500-italic.woff2 media/fonts",
     "copy-fonts:roboto-mono": "cp -r node_modules/@fontsource/roboto-mono/files/roboto-mono-latin-variable-wghtOnly-italic.woff2 media/fonts && cp -r node_modules/@fontsource/roboto-mono/files/roboto-mono-latin-variable-wghtOnly-normal.woff2 media/fonts",
     "copy-font-awesome": "cp -r node_modules/font-awesome/fonts media/font-awesome && cp -r node_modules/font-awesome/css media/font-awesome",
     "copy-mathjax": "node tasks/copy-mathjax.mjs",
@@ -781,6 +811,7 @@
     "@biomejs/biome": "2.5.0",
     "@fontsource/noto-serif": "4.5.11",
     "@fontsource/open-sans": "4.5.14",
+    "@fontsource/roboto": "4.5.8",
     "@fontsource/roboto-mono": "4.5.10",
     "@highlightjs/cdn-assets": "~11.11.0",
     "@mathjax/mathjax-mhchem-font-extension": "^4.1.2",
