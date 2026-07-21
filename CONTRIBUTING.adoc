@@ -69,6 +69,16 @@ IMPORTANT: In development, you will need to disable security because resources a
 
 TIP: Looking at the browser's Web Developer tools can often help locate errors.
 
+== Commit Messages
+
+This project uses https://www.conventionalcommits.org/[Conventional Commits].
+Prefix each commit message with a type, and an optional scope, e.g.:
+
+ fix(preview): honor asciidoc.preview.defaultStyle when useEditorStyle is unset
+
+Common types include `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, and `ci`.
+Keep commits focused: a commit that only fixes a typo in an earlier, unmerged commit of the same pull request should be squashed into it rather than kept as a separate `fix` commit.
+
 == Updating The Grammar
 
 The grammar is maintained directly in this repository.
