@@ -1,6 +1,27 @@
 import * as vscode from 'vscode'
 import { getWorkspaceFolder } from '../../core/workspace.js'
 
+// Single source of truth for the valid `asciidoc.preview.defaultStyle`
+// values (must match the enum in package.json): the type is derived from
+// this array instead of duplicated, so validating an untrusted runtime
+// value (e.g. a hand-edited settings.json) only requires checking
+// membership here, with no separate list to keep in sync.
+const ASCIIDOC_PREVIEW_DEFAULT_STYLES = [
+  'vscode',
+  'asciidoctor',
+  'antora',
+  'github',
+] as const
+
+export type AsciidocPreviewDefaultStyle =
+  (typeof ASCIIDOC_PREVIEW_DEFAULT_STYLES)[number]
+
+function isAsciidocPreviewDefaultStyle(
+  value: string,
+): value is AsciidocPreviewDefaultStyle {
+  return (ASCIIDOC_PREVIEW_DEFAULT_STYLES as readonly string[]).includes(value)
+}
+
 export class AsciidocPreviewConfiguration {
   public static getForResource(resource: vscode.Uri) {
     return new AsciidocPreviewConfiguration(resource)
@@ -19,7 +40,15 @@ export class AsciidocPreviewConfiguration {
   public readonly fontFamily: string | undefined
   public readonly additionalStyles: string[]
   public readonly refreshInterval: number
-  public readonly useEditorStylesheet: boolean
+  public readonly defaultStyle: AsciidocPreviewDefaultStyle
+  // Whether `defaultStyle` came from an explicit `preview.defaultStyle`
+  // setting, as opposed to falling back to the deprecated
+  // `preview.useEditorStyle` boolean. Antora auto-detection (see
+  // AsciidoctorWebViewConverter.resolveEffectiveDefaultStyle) only kicks in
+  // when this is false: an explicit choice — including an explicit
+  // `vscode` — always wins, but neither value of the legacy boolean should
+  // block auto-detection, since neither expresses an opinion about Antora.
+  public readonly defaultStyleExplicit: boolean
   public readonly previewStyle: string
   public readonly previewTemplates: string[]
 
@@ -82,10 +111,9 @@ export class AsciidocPreviewConfiguration {
       'preview.additionalStyles',
       [],
     )
-    this.useEditorStylesheet = asciidocConfig.get<boolean>(
-      'preview.useEditorStyle',
-      false,
-    )
+    const defaultStyleResolution = this.resolveDefaultStyle(asciidocConfig)
+    this.defaultStyle = defaultStyleResolution.style
+    this.defaultStyleExplicit = defaultStyleResolution.explicit
     this.previewStyle = asciidocConfig.get<string>('preview.style', '')
     this.previewTemplates = asciidocConfig.get<string[]>(
       'preview.templates',
@@ -95,6 +123,31 @@ export class AsciidocPreviewConfiguration {
       0.6,
       +asciidocConfig.get<number>('preview.refreshInterval', NaN),
     )
+  }
+
+  // The schema default for `preview.defaultStyle` is `''` ("Automatic"),
+  // distinct from every real style value (including 'vscode', which is also
+  // the *effective* default via the legacy fallback below). That distinction
+  // matters in the Settings UI: if 'vscode' were both the schema default and
+  // a selectable value, a dropdown already showing 'vscode' as the inherited
+  // default may not register a "change" — and so not persist anything — when
+  // the user picks the identical-looking 'vscode' entry on purpose. With a
+  // dedicated empty default, picking any real style is always a change from
+  // what was already displayed.
+  private resolveDefaultStyle(asciidocConfig: vscode.WorkspaceConfiguration): {
+    style: AsciidocPreviewDefaultStyle
+    explicit: boolean
+  } {
+    const defaultStyle = asciidocConfig.get<string>('preview.defaultStyle', '')
+    if (isAsciidocPreviewDefaultStyle(defaultStyle)) {
+      return { style: defaultStyle, explicit: true }
+    }
+
+    const useEditorStyle = asciidocConfig.get<boolean>(
+      'preview.useEditorStyle',
+      true,
+    )
+    return { style: useEditorStyle ? 'vscode' : 'asciidoctor', explicit: false }
   }
 
   public isEqualTo(otherConfig: AsciidocPreviewConfiguration) {
