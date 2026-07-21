@@ -1,0 +1,658 @@
+/*
+ * GitHub-style preview layer.
+ *
+ * This stylesheet is loaded after `asciidoctor-default.css` and
+ * `asciidoctor-github-colors.css`. It adapts the Asciidoctor preview DOM to a
+ * GitHub Markdown-like presentation while keeping the preview self-contained.
+ */
+
+body {
+  background: var(--github-canvas-default);
+  color: var(--github-fg-default);
+  font-family: var(
+    --asciidoc-font-family,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    "Noto Sans",
+    Helvetica,
+    Arial,
+    sans-serif
+  );
+}
+
+#header,
+#content,
+#footnotes,
+#footer {
+  max-width: 980px;
+}
+
+#header,
+#content,
+#footnotes {
+  color: var(--github-fg-default);
+}
+
+/* AsciiDoc's `[.lead]` role (and the auto-"lead" first preamble paragraph)
+ * has no Markdown equivalent, so GitHub's renderer doesn't enlarge it —
+ * `asciidoctor-default.css`'s `.paragraph.lead > p` rule bumps the font-size
+ * *and* sets a near-black color that goes invisible on the dark canvas
+ * tokens; neutralize both so it reads as a plain paragraph. `1.0625rem`
+ * (not `1em`) matches the actual size a plain `<p>` gets from `p, ... {
+ * font-size: 1.0625rem }` — `1em` resolves against the *wrapping div's*
+ * inherited size (the plain 14px body base), which is smaller. */
+.paragraph.lead > p,
+#preamble > .sectionbody > [class="paragraph"]:first-of-type p {
+  font-size: 1.0625rem;
+  color: var(--github-fg-default);
+}
+
+/* The author/revision byline under the title (`asciidoctor-default.css`'s
+ * `#header .details`) is near-black (`rgba(0, 0, 0, .6/.85)`), so without an
+ * override it is effectively invisible against the dark canvas tokens. */
+#header .details {
+  color: var(--github-fg-muted);
+  border-bottom-color: var(--github-border-muted);
+}
+
+#header .details br + span.author::before {
+  color: var(--github-fg-muted);
+}
+
+#header .details span.email a {
+  color: var(--github-accent-fg);
+}
+
+a,
+#toc a {
+  color: var(--github-accent-fg);
+  text-decoration: none;
+}
+
+a:hover,
+a:focus,
+#toc a:hover,
+#toc a:focus {
+  text-decoration: underline;
+}
+
+#header > h1:first-child,
+#content > h1:first-child:not([class]),
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+#toctitle,
+.sidebarblock > .content > .title {
+  color: var(--github-fg-default);
+  font-family: inherit;
+  font-weight: 600;
+  line-height: 1.25;
+  word-spacing: normal;
+}
+
+#header > h1:first-child,
+#content > h1:first-child:not([class]),
+h1,
+h2 {
+  border-bottom: 1px solid var(--github-border-muted);
+  padding-bottom: 0.3em;
+}
+
+/* GitHub doesn't separate consecutive top-level sections with a rule —
+ * asciidoctor-default.css adds one between every `.sect1` sibling pair. */
+.sect1 + .sect1 {
+  border-top: 0;
+}
+
+@media screen and (min-width: 768px) {
+  .sect1 {
+    padding-bottom: 0;
+  }
+}
+
+/* `rem`, not `em`: headings inherit their font-size context from `body`
+ * (`--asciidoc-font-size`, defaulting to the 14px editor font size), while
+ * paragraph text is pinned to a fixed `1.0625rem` off the 16px root (see
+ * above) — two disconnected baselines that threw off every heading-to-body
+ * ratio GitHub actually uses (e.g. h2 came out ~1.24× body instead of
+ * GitHub's 1.5×). Sizing every heading in `rem` anchors it to the same root
+ * paragraph text is already anchored to, restoring GitHub's proportions.
+ * Margins move from the default stylesheet's relative `1em`/`.5em` (14px/7px
+ * off that same small base) to GitHub's fixed 24px/16px for the same reason. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-top: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+h1,
+#header > h1:first-child,
+#content > h1:first-child:not([class]) {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.5rem;
+}
+
+h3,
+#toctitle {
+  font-size: 1.25rem;
+}
+
+/* Unlike every other `.title` this selector group shares with (which sizes
+ * to h3), GitHub has no sidebar concept to size the title against — it's
+ * just the block's first line of plain, body-sized text. */
+.sidebarblock > .content > .title {
+  font-size: 1.0625rem;
+}
+
+h4 {
+  font-size: 1rem;
+}
+
+/* Only h6 is muted in GitHub's heading scale — h5 just steps the size down
+ * while staying full-contrast (it was incorrectly muted here too). */
+h5 {
+  font-size: 0.875rem;
+}
+
+h6 {
+  color: var(--github-fg-muted);
+  font-size: 0.85rem;
+}
+
+hr {
+  background-color: var(--github-border-default);
+  border: 0;
+  height: 0.25em;
+}
+
+/* Every block title/caption (image captions, example/listing/table titles,
+ * list titles, …) shares this one asciidoctor-default.css selector, which
+ * sets a decorative serif italic font and a reddish-brown color — GitHub has
+ * no such concept and renders a `.title` div as plain, full-contrast body
+ * text, so all of it — including the font-family — is neutralized here. */
+.subheader,
+.admonitionblock td.content > .title,
+.audioblock > .title,
+.exampleblock > .title,
+.imageblock > .title,
+.listingblock > .title,
+.literalblock > .title,
+.stemblock > .title,
+.openblock > .title,
+.paragraph > .title,
+.quoteblock > .title,
+table.tableblock > .title,
+.verseblock > .title,
+.videoblock > .title,
+.dlist > .title,
+.olist > .title,
+.ulist > .title,
+.qlist > .title,
+.hdlist > .title {
+  color: var(--github-fg-default);
+  font-family: inherit;
+  font-style: normal;
+  font-weight: normal;
+}
+
+/* GitHub's own blockquote: `padding: 0 1em` gives the text room between it
+ * and the border — asciidoctor-default.css's `.quoteblock blockquote { padding:
+ * 0 }` leaves text sitting flush against it. The verse box supplies its own
+ * padding (below) and needs no left-accent bar of its own. */
+blockquote,
+.quoteblock {
+  background: transparent;
+  border-left: 0.25em solid var(--github-border-default);
+  color: var(--github-fg-muted);
+  padding-left: 1em;
+}
+
+.verseblock {
+  border: 0;
+  color: var(--github-fg-muted);
+}
+
+/* asciidoctor-default.css italicizes, justifies and enlarges (1.15rem, vs.
+ * the 1.0625rem plain paragraphs get) quote text — GitHub's blockquote is
+ * plain upright, ragged-right, body-sized text. */
+.quoteblock blockquote,
+.quoteblock p {
+  color: inherit;
+  font-size: 1.0625rem;
+  font-style: normal;
+  text-align: left;
+  word-spacing: normal;
+}
+
+.quoteblock blockquote::before {
+  content: none;
+}
+
+/* Full-contrast (not muted) to read as the quote's own text, not a caption —
+ * matching GitHub, where the byline sits right under the quote, tight
+ * against it, with the *next* block pushed further away instead. Also
+ * body-sized: asciidoctor-default.css shrinks it to .9375em, GitHub doesn't. */
+.quoteblock .attribution,
+.verseblock .attribution {
+  color: var(--github-fg-default);
+  font-size: 1.0625rem;
+  font-style: normal;
+  text-align: left;
+  margin-top: 0.5em;
+  margin-bottom: 1.25em;
+}
+
+/* The second attribution line (`cite`, e.g. a work's title) is near-black
+ * in asciidoctor-default.css, same as every other unreadable-on-dark text
+ * fixed above. `font-style: normal` resets the browser's default UA italic
+ * for `<cite>`, which asciidoctor-default.css never overrides either. */
+.quoteblock .attribution cite,
+.verseblock .attribution cite {
+  color: var(--github-fg-default);
+  font-style: normal;
+}
+
+/* Asciidoctor renders `[verse]` content as a literal `<pre>`; GitHub applies
+ * its plain <pre> styling indiscriminately (monospace font, boxed canvas)
+ * rather than treating verse as prose the way asciidoctor-default.css does. */
+.verseblock pre {
+  background-color: var(--github-canvas-subtle);
+  border-radius: 6px;
+  color: inherit;
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo,
+    monospace;
+  /* asciidoctor-default.css sizes this at 1.15rem, same oversized-vs-body
+   * mismatch as the blockquote text above; 85% matches the other pre/code
+   * blocks (see `.literalblock pre` etc.) this now visually resembles. */
+  font-size: 85%;
+  font-weight: normal;
+  padding: 1em;
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo,
+    monospace;
+}
+
+:not(pre):not([class^="L"]) > code {
+  background-color: var(--github-neutral-muted);
+  border-radius: 6px;
+  color: var(--github-fg-default);
+  font-size: 85%;
+  padding: 0.2em 0.4em;
+}
+
+kbd {
+  background-color: var(--github-canvas-subtle);
+  border: solid 1px var(--github-border-default);
+  border-bottom-color: var(--github-fg-subtle);
+  border-radius: 6px;
+  box-shadow: inset 0 -1px 0 var(--github-fg-subtle);
+  color: var(--github-fg-default);
+}
+
+/* asciidoctor-default.css carries a `.vscode-dark`/`.vscode-high-contrast`-
+ * scoped `kbd` color rule (meant for the 'vscode' style) that's more
+ * specific than the plain-element rule above, so it wins in dark mode
+ * regardless of load order — same class of bug as the code-block background
+ * above. The `+` between chained keys (`kbd:[Ctrl,S]`) is a plain text node
+ * inside `.keyseq`, whose own near-black `color` isn't overridden anywhere. */
+.vscode-dark kbd,
+.vscode-high-contrast kbd {
+  color: var(--github-fg-default);
+}
+
+.keyseq {
+  color: var(--github-fg-default);
+}
+
+.menuseq,
+.menuref {
+  color: var(--github-fg-default);
+  font-weight: 600;
+}
+
+.literalblock pre,
+.listingblock > .content > pre:not(.highlight),
+.listingblock > .content > pre[class="highlight"],
+.listingblock > .content > pre[class^="highlight "] {
+  border: 0;
+  border-radius: 6px;
+  box-shadow: none;
+  color: var(--github-fg-default);
+  font-size: 85%;
+  line-height: 1.45;
+}
+
+/* Every code block — plain (`.literalblock`, or a `.listingblock` with no
+ * `source-highlighter`) or syntax-highlighted (`pre.highlightjs`) — sits on
+ * `--github-canvas-code` (`#151b23` dark / `#f6f8fa` light), matching
+ * GitHub. The highlight.js output is `<pre class="highlightjs highlight">`:
+ * neither `[class="highlight"]` nor `[class^="highlight "]` above actually
+ * matches that (it's a two-token class list, not a `"highlight "`-prefixed
+ * string), so this uses a real class selector instead. */
+.literalblock pre,
+.listingblock > .content > pre:not(.highlight),
+.listingblock > .content > pre.highlight {
+  background-color: var(--github-canvas-code);
+}
+
+/* The `background-color` above paints the `<pre>`, but a highlight.js theme
+ * (media/highlightjs/styles/*.css) sets its own background directly on the
+ * `<code class="hljs">` child, which visually sits on top of it. Worse,
+ * asciidoctor-default.css's `.vscode-dark code, .vscode-dark kbd { background:
+ * var(--vscode-textCodeBlock-background, #2d2d2d) }` — a blanket rule for
+ * *every* `<code>`, meant for the 'vscode' style's inline code — is more
+ * specific than the hljs theme's own `.hljs` class rule and wins over it too,
+ * so the highlighted block's background stayed VS Code's `#2d2d2d` fallback
+ * regardless of what either of the above set. Override the `<code>` itself,
+ * specifically enough to beat both. */
+.listingblock pre.highlightjs > code {
+  background-color: var(--github-canvas-code);
+}
+
+/* asciidoctor-default.css carries a `.vscode-dark`/`.vscode-high-contrast`-
+ * scoped background (`var(--vscode-editor-background)`, meant for the
+ * 'vscode' style) on this exact selector, which is more specific than the
+ * plain-class rules above and so wins over them in dark mode — repeat it
+ * here (with the same `pre.highlight` fix) to actually override it. */
+.vscode-dark .literalblock pre,
+.vscode-dark .listingblock > .content > pre:not(.highlight),
+.vscode-dark .listingblock > .content > pre.highlight,
+.vscode-high-contrast .literalblock pre,
+.vscode-high-contrast .listingblock > .content > pre:not(.highlight),
+.vscode-high-contrast .listingblock > .content > pre.highlight {
+  background: var(--github-canvas-code);
+}
+
+.listingblock .hljs-comment,
+.listingblock .hljs-quote {
+  color: var(--github-prettylights-comment);
+}
+
+.listingblock .hljs-keyword,
+.listingblock .hljs-selector-tag,
+.listingblock .hljs-subst {
+  color: var(--github-prettylights-keyword);
+}
+
+.listingblock .hljs-literal,
+.listingblock .hljs-number,
+.listingblock .hljs-tag .hljs-attr,
+.listingblock .hljs-template-variable,
+.listingblock .hljs-variable {
+  color: var(--github-prettylights-constant);
+}
+
+.listingblock .hljs-doctag,
+.listingblock .hljs-string {
+  color: var(--github-prettylights-string);
+}
+
+.listingblock .hljs-section,
+.listingblock .hljs-selector-id,
+.listingblock .hljs-title {
+  color: var(--github-prettylights-entity);
+}
+
+/* GitHub applies no special styling to example or sidebar blocks either —
+ * same "no AsciiDoc-specific CSS" pattern as admonitions/TOC above. Both
+ * render as plain, unboxed paragraph flow with just the title line above. */
+.exampleblock > .content,
+.sidebarblock {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--github-fg-default);
+  padding: 0;
+}
+
+.sidebarblock > .content > .title {
+  text-align: left;
+}
+
+/*
+ * GitHub doesn't special-case AsciiDoc admonitions the way it does Markdown
+ * `> [!NOTE]` Alerts: its renderer applies no admonition-aware CSS at all, so
+ * an `.admonitionblock` shows up as a bare Asciidoctor icon/content table
+ * styled only by GitHub's generic <table> rules (a uniform border around
+ * every cell, plain text, no accent color). Match that here rather than
+ * inventing an Alert-style treatment the real github.com output doesn't
+ * have. (A GitHub-specific look *is* available by author choice — see the
+ * `ifdef::env-github[]` emoji `*-caption` convention in showcase.adoc — but
+ * that only takes effect on github.com itself, since it depends on the
+ * `env-github` attribute GitHub's own renderer sets.)
+ */
+.admonitionblock > table {
+  border: 1px solid var(--github-border-default);
+  /* asciidoctor-default.css sets `border-collapse: separate`, which doubles
+   * up the table's own border with each cell's adjoining border into a
+   * visibly thicker line — GitHub's plain <table> rule collapses them into
+   * one shared hairline. */
+  border-collapse: collapse;
+  background: var(--github-canvas-default);
+}
+
+.admonitionblock > table td.icon,
+.admonitionblock > table td.content {
+  border: 1px solid var(--github-border-default);
+  background: transparent;
+  color: var(--github-fg-default);
+}
+
+/* `width: 1%` (paired with `white-space: nowrap`) is the standard shrink-to-
+ * fit hack for an auto-layout table cell: with the table at `width: 100%`
+ * (asciidoctor-default.css), plain `width: auto` still lets the browser hand
+ * the icon column more space than its content needs, unlike GitHub's own
+ * table where the label column hugs the caption word and the content column
+ * absorbs the rest. */
+.admonitionblock > table td.icon {
+  width: 1%;
+  text-align: left;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+/* Undo the oversized, drop-shadowed, individually-colored Font Awesome
+ * glyphs and show the plain caption word instead — GitHub's own table CSS
+ * has nothing to say about `.icon-*`, so what renders there is literally
+ * the browser's fallback for an unstyled `<i>` tag: the caption text, since
+ * `icons=font` was never honoured by GitHub's renderer to begin with.
+ *
+ * `font-size: 1.0625rem` matches `p, blockquote, dt, td.content, ... {
+ * font-size: 1.0625rem }` in asciidoctor-default.css: that rule boosts the
+ * *content* cell's text above the plain 14px body base but was never given a
+ * `td.icon` counterpart, so without this the caption renders visibly smaller
+ * than the text next to it. */
+.admonitionblock td.icon [class^="fa icon-"] {
+  font-family: inherit;
+  font-size: 1.0625rem;
+  font-weight: normal;
+  text-shadow: none;
+  color: var(--github-fg-default);
+}
+
+/* asciidoctor-default.css sets `color`/`text-shadow` directly on each
+ * `::before` (not just on the `<i>` above), and a pseudo-element's own rule
+ * always wins over inheriting that property from its host — so `content`
+ * alone isn't enough here, `color`/`text-shadow` must be reset per selector
+ * too. */
+.admonitionblock td.icon .icon-note::before {
+  content: "Note";
+  color: inherit;
+  text-shadow: none;
+}
+
+.admonitionblock td.icon .icon-tip::before {
+  content: "Tip";
+  color: inherit;
+  text-shadow: none;
+}
+
+.admonitionblock td.icon .icon-important::before {
+  content: "Important";
+  color: inherit;
+  text-shadow: none;
+}
+
+.admonitionblock td.icon .icon-warning::before {
+  content: "Warning";
+  color: inherit;
+  text-shadow: none;
+}
+
+.admonitionblock td.icon .icon-caution::before {
+  content: "Caution";
+  color: inherit;
+  text-shadow: none;
+}
+
+table.tableblock {
+  background-color: var(--github-canvas-default);
+  color: var(--github-fg-default);
+}
+
+/*
+ * `table tr th, table tr td { color: rgba(0, 0, 0, .8) }` in
+ * asciidoctor-default.css targets cells directly, so it always wins over
+ * the color inherited from `table.tableblock` above — this rule needs to
+ * match `td`/`th` directly (not just the table) to actually override it.
+ * Matching the exact same selector (not just `table.tableblock`) also
+ * catches every other table Asciidoctor generates from non-table markup —
+ * a callout list (`.colist > table`) and a description list rendered
+ * horizontally (`.hdlist > table`) — which otherwise kept the same
+ * near-black, unreadable-on-dark text.
+ */
+table tr th,
+table tr td {
+  color: var(--github-fg-default);
+}
+
+/* Even more specific than the pair above (4 chained elements vs. 3), so it
+ * still wins over them despite loading first in asciidoctor-default.css —
+ * same specificity-over-source-order trap as the rest of this file. */
+table thead tr th,
+table thead tr td,
+table tfoot tr th,
+table tfoot tr td {
+  color: var(--github-fg-default);
+}
+
+table.tableblock,
+table.tableblock > * > tr > * {
+  border-color: var(--github-border-default);
+}
+
+table.tableblock tfoot,
+table.stripes-all > tbody > tr,
+table.stripes-even > tbody > tr:nth-of-type(even),
+table.stripes-odd > tbody > tr:nth-of-type(odd),
+table.stripes-hover > tbody > tr:hover {
+  background: var(--github-canvas-subtle);
+}
+
+/* GitHub's table header has no fill — just bold text (already applied by
+ * asciidoctor-default.css's `table thead th, table tfoot th`) — so unlike
+ * `tfoot` above, `thead` doesn't get the canvas-subtle background. */
+table.tableblock thead {
+  background: transparent;
+}
+
+/* GitHub stripes every table by default (`tr:nth-child(2n)`), not just
+ * ones opted into Asciidoctor's `%stripes-even` (etc.) option — the rule
+ * above only covers that opt-in case. */
+table.tableblock > tbody > tr:nth-of-type(even) {
+  background: var(--github-canvas-subtle);
+}
+
+/* A `h`-column-spec cell (a `<th>` inside `tbody`, e.g. "Header-style cell"
+ * in a mixed table) otherwise keeps asciidoctor-default.css's own shaded
+ * background (`tbody tr th { background: #f7f8f7 }`) — GitHub gives it no
+ * more than the bold weight any `<th>` gets. */
+tbody tr th {
+  background: transparent;
+}
+
+/* `tbody tr th, tbody tr th p, tfoot tr th, tfoot tr th p { color: rgba(0, 0,
+ * 0, .8) }` in asciidoctor-default.css is more specific than the plain
+ * `table tr th`/`table thead tr th` fixes above for a `<th>` whose content is
+ * wrapped in a `<p class="tableblock">` — which, unlike a thead `<th>`, a
+ * tbody one (e.g. "Header-style cell") always is — so the paragraph's own
+ * near-black color still won regardless of theme. */
+tbody tr th p,
+tfoot tr th p {
+  color: var(--github-fg-default);
+}
+
+/* asciidoctor-default.css strips the inline-code pill (background/padding)
+ * when it's the only thing in a table cell — GitHub keeps it, as seen in the
+ * `id`/`name`/`active` cells of a table with inline code. */
+p.tableblock > code:only-child {
+  background: var(--github-neutral-muted);
+  border-radius: 6px;
+  padding: 0.2em 0.4em;
+}
+
+/* Asciidoctor stretches a table to the full column width (the `stretch`
+ * class) unless the author opts into `%autowidth` — GitHub's tables are
+ * always sized to their content instead, so make that the default here. */
+table.tableblock.stretch {
+  width: auto;
+}
+
+/* GitHub's own TOC-like navigation (e.g. the "In this article" panel on
+ * docs.github.com) is unboxed: no border, no distinct background, just
+ * generously spaced text. `#toc.toc2` (the `toc: left`/`toc: right` fixed
+ * sidebar) and `#content #toc` (a `toc::[]` macro box) each carry a more
+ * specific border/background rule in asciidoctor-default.css than plain
+ * `#toc`, so they must be repeated here to actually win. */
+#toc,
+#toc.toc2,
+#content #toc {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+
+#toc {
+  padding: 1.5em 0;
+}
+
+#toc.toc2 {
+  padding: 1.5em 1.25em;
+}
+
+#content #toc {
+  padding: 1.25em 1.5em;
+  margin-bottom: 1.5em;
+}
+
+#toc ul {
+  color: var(--github-fg-muted);
+}
+
+#footnotes {
+  color: var(--github-fg-muted);
+}
+
+#footer {
+  background-color: var(--github-canvas-default);
+  color: var(--github-fg-muted);
+}
