@@ -837,7 +837,7 @@
     "semver": "^7.3.7",
     "sinon": "^22.0.0",
     "textmate-grammar-test": "^0.7.0",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.0"
   },
   "dependencies": {
     "@antora/content-classifier": "3.1.15",
