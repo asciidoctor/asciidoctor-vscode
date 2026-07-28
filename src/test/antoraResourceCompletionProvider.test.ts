@@ -14,6 +14,7 @@ import {
   enableAntoraSupport,
   removeFiles,
   resetAntoraSupport,
+  setSiteManifestPath,
 } from './workspaceHelper.js'
 
 describe('AntoraResourceCompletionProvider', () => {
@@ -210,6 +211,137 @@ describe('AntoraResourceCompletionProvider', () => {
     } finally {
       await removeFiles(createdFiles)
       await resetAntoraSupport()
+    }
+  })
+
+  function buildSiteManifest() {
+    return {
+      url: 'https://docs.example.org',
+      components: {
+        other: {
+          title: 'Other',
+          latest: '1.0',
+          versions: {
+            '1.0': {
+              url: '/other/1.0/index.html',
+              pages: [
+                {
+                  path: 'index.adoc',
+                  url: '/other/1.0/index.html',
+                  title: 'Other Home',
+                },
+              ],
+            },
+          },
+        },
+        // Same component/version as the local workspace fixture (`docs@1.0`):
+        // the local copy must win, so no completion item should ever be
+        // sourced from this entry.
+        docs: {
+          title: 'Docs',
+          latest: '1.0',
+          versions: {
+            '1.0': {
+              url: '/docs/1.0/index.html',
+              pages: [
+                {
+                  path: 'stale.adoc',
+                  url: '/docs/1.0/stale.html',
+                  title: 'Stale (must not be suggested)',
+                },
+              ],
+            },
+          },
+        },
+      },
+    }
+  }
+
+  test('Should suggest pages of a remote component after "xref:"', async () => {
+    const createdFiles: vscode.Uri[] = []
+    try {
+      const page = await createComponent(createdFiles)
+      createdFiles.push(
+        await createFile(
+          JSON.stringify(buildSiteManifest()),
+          'site-manifest.json',
+        ),
+      )
+      await setSiteManifestPath('site-manifest.json')
+      await enableAntoraSupport()
+      const provider = new AntoraResourceCompletionProvider(
+        extensionContext.workspaceState,
+      )
+      const document = await vscode.workspace.openTextDocument(page)
+      const items = await provider.provideCompletionItems(
+        document,
+        new Position(1, 5), // after "xref:"
+      )
+      const labels = items.map((item) => item.label)
+      assert.strictEqual(
+        labels.includes('1.0@other::index.adoc'),
+        true,
+        'Must suggest the page of the remote-only component',
+      )
+      assert.strictEqual(
+        labels.some((label) => String(label).includes('stale')),
+        false,
+        'Must not suggest a remote page for a component/version already present locally',
+      )
+    } finally {
+      await removeFiles(createdFiles)
+      await resetAntoraSupport()
+      await setSiteManifestPath('')
+    }
+  })
+
+  test('Should not suggest remote pages after "image::" or "include::"', async () => {
+    const createdFiles: vscode.Uri[] = []
+    try {
+      createdFiles.push(await createDirectory('modules'))
+      await createDirectories('modules', 'ROOT', 'pages')
+      const page = await createFile(
+        'image::\ninclude::',
+        'modules',
+        'ROOT',
+        'pages',
+        'no-remote.adoc',
+      )
+      createdFiles.push(page)
+      createdFiles.push(
+        await createFile(`name: docs\nversion: '1.0'\n`, 'antora.yml'),
+      )
+      createdFiles.push(
+        await createFile(
+          JSON.stringify(buildSiteManifest()),
+          'site-manifest.json',
+        ),
+      )
+      await setSiteManifestPath('site-manifest.json')
+      await enableAntoraSupport()
+      const provider = new AntoraResourceCompletionProvider(
+        extensionContext.workspaceState,
+      )
+      const document = await vscode.workspace.openTextDocument(page)
+      const imageItems = await provider.provideCompletionItems(
+        document,
+        new Position(0, 7), // after "image::"
+      )
+      const includeItems = await provider.provideCompletionItems(
+        document,
+        new Position(1, 9), // after "include::"
+      )
+      assert.strictEqual(
+        [...imageItems, ...includeItems].some((item) =>
+          String(item.label).includes('other'),
+        ),
+        false,
+        'A remote page has no contents, so it must not be offered for image:: or include::',
+      )
+    } finally {
+      await removeFiles(createdFiles)
+      await resetAntoraSupport()
+      await setSiteManifestPath('')
     }
   })
 })

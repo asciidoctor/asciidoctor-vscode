@@ -120,3 +120,15 @@ export async function resetAntoraSupport() {
     undefined,
   )
 }
+
+/**
+ * Point `asciidoc.antora.siteManifestPath` at a workspace-relative path (or
+ * clear it with an empty string), for the duration of a test scenario. Callers
+ * must reset it back to `''` in a `finally` block.
+ */
+export async function setSiteManifestPath(path: string) {
+  await vscode.workspace
+    .getConfiguration('asciidoc.antora', null)
+    .update('siteManifestPath', path, vscode.ConfigurationTarget.Workspace)
+  clearAntoraCache()
+}

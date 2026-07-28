@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
+import sinon from 'sinon'
 import * as vscode from 'vscode'
 import { CancellationTokenSource, Position } from 'vscode'
 // Note: the pure `findAntoraResourceMacroAt` matching logic is unit-tested in
@@ -14,6 +15,7 @@ import {
   enableAntoraSupport,
   removeFiles,
   resetAntoraSupport,
+  setSiteManifestPath,
 } from './workspaceHelper.js'
 
 describe('AntoraResourceDefinitionProvider', () => {
@@ -98,6 +100,78 @@ describe('AntoraResourceDefinitionProvider', () => {
     } finally {
       await removeFiles(createdFiles)
       await resetAntoraSupport()
+    }
+  })
+
+  test('Should open the published page when a page resource id only resolves against the remote site manifest', async () => {
+    const createdFiles: vscode.Uri[] = []
+    const openExternal = sinon.stub(vscode.env, 'openExternal')
+    try {
+      createdFiles.push(await createDirectory('modules'))
+      await createDirectories('modules', 'ROOT', 'pages')
+      const page = await createFile(
+        'xref:other::index.adoc[]',
+        'modules',
+        'ROOT',
+        'pages',
+        'remote-source.adoc',
+      )
+      createdFiles.push(page)
+      createdFiles.push(
+        await createFile(`name: docs\nversion: '1.0'\n`, 'antora.yml'),
+      )
+      createdFiles.push(
+        await createFile(
+          JSON.stringify({
+            url: 'https://docs.example.org',
+            components: {
+              other: {
+                title: 'Other',
+                latest: '1.0',
+                versions: {
+                  '1.0': {
+                    url: '/other/1.0/index.html',
+                    pages: [
+                      {
+                        path: 'index.adoc',
+                        url: '/other/1.0/index.html',
+                        title: 'Other Home',
+                      },
+                    ],
+                  },
+                },
+              },
+            },
+          }),
+          'site-manifest.json',
+        ),
+      )
+      await setSiteManifestPath('site-manifest.json')
+      await enableAntoraSupport()
+      const provider = new AntoraResourceDefinitionProvider(
+        extensionContext.workspaceState,
+      )
+      const document = await vscode.workspace.openTextDocument(page)
+      const definition = await provider.provideDefinition(
+        document,
+        new Position(0, 10), // inside the "other::index.adoc" resource id
+        new CancellationTokenSource().token,
+      )
+      assert.strictEqual(
+        definition,
+        undefined,
+        'There is no local file to navigate to for a remote-only resource id',
+      )
+      assert.strictEqual(openExternal.calledOnce, true)
+      assert.strictEqual(
+        openExternal.firstCall.args[0].toString(),
+        'https://docs.example.org/other/1.0/index.html',
+      )
+    } finally {
+      openExternal.restore()
+      await removeFiles(createdFiles)
+      await resetAntoraSupport()
+      await setSiteManifestPath('')
     }
   })
 })
