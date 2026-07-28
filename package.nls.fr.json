@@ -2,6 +2,7 @@
   "asciidoc.antora.enableAntoraSupport.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.antora.showEnableAntoraPrompt#` et n'a plus aucun effet.",
   "asciidoc.antora.enableAntoraSupport.desc": "Active le support [Antora](https://antora.org/).",
   "asciidoc.antora.showEnableAntoraPrompt.desc": "Affiche une fenêtre contextuelle permettant d'activer le support [Antora](https://antora.org/) quand un fichier antora.yml est trouvé.",
+  "asciidoc.antora.siteManifestPath.desc": "Chemin relatif à l'espace de travail vers un fichier `site-manifest.json` généré par [Antora Atlas](https://gitlab.com/antora/atlas), utilisé pour résoudre et compléter les cibles `xref:` qui pointent vers un composant Antora publié ailleurs et ne faisant pas partie de cet espace de travail. Un composant/version déjà présent dans l'espace de travail est toujours prioritaire sur le manifeste, celui-ci n'étant qu'un instantané pris au moment de sa génération.",
   "asciidoc.antora.title": "Antora",
   "asciidoc.asciidoctorpdf_command.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.pdf.asciidoctorPdfCommandPath#` + `#asciidoc.pdf.asciidoctorPdfCommandArgs#` et n'a plus aucun effet.",
   "asciidoc.asciidoctorpdf_command.desc": "**Obsolète** : Chemin complet vers le binaire/exécutable `asciidoctor-pdf`.",
