@@ -70,6 +70,30 @@ declare module '@antora/content-classifier' {
   export default classifyContent
 }
 
+declare module '@antora/content-classifier/util/parse-resource-id' {
+  /** The parsed form of a contextual resource id spec (e.g. `2.0@cli:commands:page.adoc`). */
+  export interface ParsedResourceId {
+    component?: string
+    version?: string
+    module?: string
+    family?: string
+    relative: string
+  }
+
+  function parseResourceId(
+    spec: string,
+    ctx?: {
+      component?: string
+      version?: string
+      module?: string
+      relative?: string
+    },
+    defaultFamily?: string,
+    permittedFamilies?: string[],
+  ): ParsedResourceId | undefined
+  export default parseResourceId
+}
+
 declare module '@orcid/bibtex-parse-js' {
   export interface BibtexEntry {
     citationKey?: string

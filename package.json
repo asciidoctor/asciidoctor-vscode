@@ -749,6 +749,11 @@
             "type": "boolean",
             "default": false,
             "markdownDescription": "%asciidoc.antora.showEnableAntoraPrompt.desc%"
+          },
+          "asciidoc.antora.siteManifestPath": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "%asciidoc.antora.siteManifestPath.desc%"
           }
         }
       }

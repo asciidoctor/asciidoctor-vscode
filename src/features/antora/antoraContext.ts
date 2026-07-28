@@ -12,6 +12,7 @@ import {
   getAttributes,
 } from './antoraDocument.js'
 import { createAntoraSupportPromptHandler } from './antoraSupportPrompt.js'
+import { RemoteAntoraCatalog, RemoteResource } from './siteManifest.js'
 
 export interface AntoraResourceContext {
   component: string
@@ -69,6 +70,13 @@ export class AntoraDocumentContext {
     public resourceContext: AntoraResourceContext,
   ) {}
 
+  /**
+   * Resolve a resource id to the file it points at. Returns an `abspath` for a
+   * resource found in the local content catalog, or the published page's
+   * absolute URL when it only resolves against the remote site manifest (see
+   * {@link AntoraContext.resolveRemoteResourceId}) — callers must check
+   * `isRemoteUrl` on the result to tell the two apart.
+   */
   public resolveAntoraResourceIds(
     id: string,
     defaultFamily: string,
@@ -82,7 +90,21 @@ export class AntoraDocumentContext {
     if (resource) {
       return resource.src?.abspath
     }
-    return undefined
+    return this.antoraContext.resolveRemoteResourceId(
+      id,
+      this.resourceContext,
+      defaultFamily,
+    )?.url
+  }
+
+  /**
+   * Pages known only through the remote site manifest (see
+   * `asciidoc.antora.siteManifestPath`), excluding any component/version pair
+   * already present in the local content catalog. Used to offer `xref:`
+   * completion across component boundaries the workspace does not contain.
+   */
+  public getRemotePages(): RemoteResource[] {
+    return this.antoraContext.getRemotePages()
   }
 
   /**
@@ -114,7 +136,51 @@ export class AntoraDocumentContext {
 }
 
 export class AntoraContext {
-  constructor(public contentCatalog: ContentCatalog) {}
+  constructor(
+    public contentCatalog: ContentCatalog,
+    private readonly remoteCatalog?: RemoteAntoraCatalog,
+  ) {}
+
+  /**
+   * Component/version pairs already present in the local content catalog, keyed
+   * `component@version`. The remote site manifest is only ever consulted for a
+   * component/version pair *outside* this set: a workspace copy of a component
+   * is always the freshest truth, while the manifest is a snapshot taken at
+   * generation time (and, unlike the workspace, cannot be re-checked for
+   * individual missing pages without treating the whole component as stale).
+   */
+  private getLocalComponentVersions(): Set<string> {
+    const keys = new Set<string>()
+    for (const component of this.contentCatalog.getComponents()) {
+      for (const version of component.versions) {
+        keys.add(`${component.name}@${version.version ?? ''}`)
+      }
+    }
+    return keys
+  }
+
+  public resolveRemoteResourceId(
+    id: string,
+    ctx: AntoraResourceContext,
+    defaultFamily: string,
+  ): RemoteResource | undefined {
+    if (this.remoteCatalog === undefined) {
+      return undefined
+    }
+    return this.remoteCatalog.resolveResourceId(
+      id,
+      ctx,
+      defaultFamily,
+      this.getLocalComponentVersions(),
+    )
+  }
+
+  public getRemotePages(): RemoteResource[] {
+    if (this.remoteCatalog === undefined) {
+      return []
+    }
+    return this.remoteCatalog.findPages(this.getLocalComponentVersions())
+  }
 
   public async getResource(
     textDocumentUri: Uri,

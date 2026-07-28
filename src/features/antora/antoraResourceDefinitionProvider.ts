@@ -1,6 +1,7 @@
 import * as vscode from 'vscode'
 import { getAntoraDocumentContext } from './antoraDocument.js'
 import { matchAntoraResourceMacroAt } from './antoraResourceMacro.js'
+import { isRemoteUrl } from './siteManifest.js'
 
 export interface AntoraResourceMacro {
   /** The resource id to resolve, without any `#fragment`. */
@@ -72,13 +73,22 @@ export class AntoraResourceDefinitionProvider
     if (antoraDocumentContext === undefined) {
       return undefined
     }
-    const abspath = antoraDocumentContext.resolveAntoraResourceIds(
+    const target = antoraDocumentContext.resolveAntoraResourceIds(
       macro.id,
       macro.family,
     )
-    if (abspath === undefined) {
+    if (target === undefined) {
       return undefined
     }
-    return new vscode.Location(abspathToUri(abspath), new vscode.Position(0, 0))
+    if (isRemoteUrl(target)) {
+      // The resource id only resolves against the remote site manifest (see
+      // asciidoc.antora.siteManifestPath): there is no local file to navigate
+      // to, so open the published page in the browser instead. VS Code's
+      // definition Location expects a text document, which a bare http(s) URI
+      // is not, so this is a side effect rather than a returned Location.
+      await vscode.env.openExternal(vscode.Uri.parse(target))
+      return undefined
+    }
+    return new vscode.Location(abspathToUri(target), new vscode.Position(0, 0))
   }
 }

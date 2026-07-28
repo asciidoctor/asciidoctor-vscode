@@ -89,6 +89,41 @@ export class AntoraResourceCompletionProvider
         })
       }
     }
+    // The site manifest (asciidoc.antora.siteManifestPath) only ever lists
+    // pages, and only for a component/version pair the local content catalog
+    // does not already have (see AntoraContext.getLocalComponentVersions) — so
+    // there is no risk of shadowing a local suggestion with a stale remote one.
+    // A remote page has no contents to pull into an `include::`, so it is only
+    // offered for `xref:`.
+    if (macroContext.macro === 'xref') {
+      for (const remote of antoraDocumentContext.getRemotePages()) {
+        const ids = buildResourceIds(
+          {
+            component: remote.component,
+            version: remote.version,
+            module: remote.module,
+            family: 'page',
+            relative: remote.path,
+          },
+          current,
+          macroContext.defaultFamily,
+        )
+        ids.forEach((id, index) => {
+          const item = new vscode.CompletionItem(
+            id,
+            KIND_BY_FAMILY.page ?? vscode.CompletionItemKind.Reference,
+          )
+          item.detail =
+            `page · ${remote.component} ${remote.version} · remote`.trim()
+          item.range = replaceRange
+          item.insertText = hasClosingBracket
+            ? id
+            : new vscode.SnippetString(`${id}[$0]`)
+          item.sortText = `remote_${remote.path}_${index}`
+          items.push(item)
+        })
+      }
+    }
     return items
   }
 
