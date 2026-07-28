@@ -2,6 +2,7 @@
   "asciidoc.antora.enableAntoraSupport.deprecationMessage": "Diese Einstellung wurde durch `#asciidoc.antora.showEnableAntoraPrompt#` ersetzt und hat keine Auswirkungen mehr.",
   "asciidoc.antora.enableAntoraSupport.desc": "Aktiviert die [Antora](https://antora.org/)-Unterstützung.",
   "asciidoc.antora.showEnableAntoraPrompt.desc": "Zeigt eine Eingabeaufforderung zum Aktivieren der [Antora](https://antora.org/)-Unterstützung an, wenn eine antora.yml-Datei erkannt wird.",
+  "asciidoc.antora.siteManifestPath.desc": "Arbeitsbereich-relativer Pfad zu einer von [Antora Atlas](https://gitlab.com/antora/atlas) generierten `site-manifest.json`-Datei, die verwendet wird, um `xref:`-Ziele aufzulösen und zu vervollständigen, die auf eine anderswo veröffentlichte, nicht im Arbeitsbereich enthaltene Antora-Komponente verweisen. Eine im Arbeitsbereich bereits vorhandene Komponente/Version hat immer Vorrang vor dem Manifest, da dieses nur eine zum Erstellungszeitpunkt erzeugte Momentaufnahme ist.",
   "asciidoc.antora.title": "Antora",
   "asciidoc.asciidoctorpdf_command.deprecationMessage": "Diese Einstellung wurde durch `#asciidoc.pdf.asciidoctorPdfCommandPath#` + `#asciidoc.pdf.asciidoctorPdfCommandArgs#` ersetzt und hat keine Auswirkungen mehr.",
   "asciidoc.asciidoctorpdf_command.desc": "**Veraltet**: Vollständiger Pfad zur `asciidoctor-pdf`-Binärdatei/ausführbaren Datei.",

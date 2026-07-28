@@ -2,6 +2,7 @@
   "asciidoc.antora.enableAntoraSupport.deprecationMessage": "本設定は、`#asciidoc.antora.showEnableAntoraPrompt#`に置き換えられ、動作しません。",
   "asciidoc.antora.enableAntoraSupport.desc": "[Antora](https://antora.org/)サポートを有効にします。",
   "asciidoc.antora.showEnableAntoraPrompt.desc": "antora.ymlファイルを検出したときに、[Antora](https://antora.org/)サポートを確認するプロンプトを表示します。",
+  "asciidoc.antora.siteManifestPath.desc": "[Antora Atlas](https://gitlab.com/antora/atlas) が生成する `site-manifest.json` ファイルへの、ワークスペースからの相対パスです。このワークスペースに含まれておらず別の場所に公開されている Antora コンポーネントを指す `xref:` ターゲットの解決および補完に使用されます。マニフェストは生成時点のスナップショットに過ぎないため、ワークスペース内に既に存在するコンポーネント/バージョンが常にマニフェストより優先されます。",
   "asciidoc.antora.title": "Antora",
   "asciidoc.asciidoctorpdf_command.deprecationMessage": "本設定は、`#asciidoc.pdf.asciidoctorPdfCommandPath#` + `#asciidoc.pdf.asciidoctorPdfCommandArgs#`に置き換えられ、動作しません。",
   "asciidoc.asciidoctorpdf_command.desc": "**非推奨:** Asciidoctor PDFの実行バイナリのフルパスを指定します。",
