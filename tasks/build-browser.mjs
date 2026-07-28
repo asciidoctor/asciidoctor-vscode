@@ -30,6 +30,7 @@ const emptyModulePlugin = {
       'node:stream',
       'node:child_process',
       'node:child_process',
+      'node:module',
     ]
     const escapedModules = modules.map((m) => m.replace(/[/]/g, '\\/'))
     const filter = new RegExp(`^(${escapedModules.join('|')})$`)

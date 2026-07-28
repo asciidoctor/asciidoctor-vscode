@@ -2,6 +2,7 @@ import { Registry } from '@asciidoctor/core'
 import kroki from 'asciidoctor-kroki'
 import * as vscode from 'vscode'
 import { findFiles } from '../../core/findFiles.js'
+import { requireFresh } from '../../core/requireExtension.js'
 import { mermaidJSProcessor } from '../preview/mermaid.js'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
 import {
@@ -99,8 +100,9 @@ export class AsciidoctorExtensions {
     for (const extfile of extfiles) {
       const extPath = extfile.fsPath
       try {
-        delete require.cache[extPath]
-        const extjs = require(extPath)
+        const extjs = requireFresh(extPath) as {
+          register(registry: Registry): void
+        }
         extjs.register(registry)
       } catch (e) {
         vscode.window.showErrorMessage(extPath + ': ' + String(e))
