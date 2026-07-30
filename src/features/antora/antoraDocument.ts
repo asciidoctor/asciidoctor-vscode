@@ -1,7 +1,7 @@
 import fs from 'node:fs'
 import { posix as posixpath } from 'node:path'
 import classifyContent from '@antora/content-classifier'
-import yaml from 'js-yaml'
+import { load } from 'js-yaml'
 import * as vscode from 'vscode'
 import { FileType, Memento, Uri } from 'vscode'
 import { dir, exists } from '../../core/file.js'
@@ -269,7 +269,7 @@ async function buildAntoraConfigs(): Promise<AntoraConfig[]> {
       }
       try {
         config =
-          yaml.load(
+          load(
             new TextDecoder().decode(
               await vscode.workspace.fs.readFile(antoraConfigUri),
             ),
@@ -292,7 +292,7 @@ export async function getAntoraConfig(
   }
   let config = {}
   try {
-    config = yaml.load(fs.readFileSync(antoraConfigUri.fsPath, 'utf8')) || {}
+    config = load(fs.readFileSync(antoraConfigUri.fsPath, 'utf8')) || {}
   } catch (err) {
     logger.warn(
       `Unable to parse ${antoraConfigUri.fsPath}, cause:` + String(err),
