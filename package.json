@@ -2,7 +2,7 @@
   "name": "asciidoctor-vscode",
   "displayName": "%displayName%",
   "description": "%description%",
-  "version": "4.2.1",
+  "version": "4.2.2-dev",
   "publisher": "asciidoctor",
   "author": "Guillaume Grossetie <ggrossetie@yuzutech.fr>",
   "contributors": [

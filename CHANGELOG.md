@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 4.2.1 (2026-07-31) - @ggrossetie
+
 ### Features
 
 * Add `asciidoc.pdf.outputPath`, a configurable template for the full PDF export path (e.g. `${workspaceFolder}/out/${relativeFileDirnameFlat}-${fileBasenameNoExtension}.pdf`), so each user can pick their own output layout — next to the source, one flat folder, or mirroring the source structure — instead of the single directory imposed by `asciidoc.pdf.outputDirectory` (#1159)
