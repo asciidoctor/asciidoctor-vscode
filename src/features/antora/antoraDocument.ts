@@ -1,5 +1,5 @@
 import fs from 'node:fs'
-import { posix as posixpath } from 'node:path'
+import nodePath, { posix as posixpath } from 'node:path'
 import classifyContent from '@antora/content-classifier'
 import { load } from 'js-yaml'
 import * as vscode from 'vscode'
@@ -7,7 +7,11 @@ import { FileType, Memento, Uri } from 'vscode'
 import { dir, exists } from '../../core/file.js'
 import { findFiles } from '../../core/findFiles.js'
 import { logger } from '../../core/logger.js'
-import { getWorkspaceFolder } from '../../core/workspace.js'
+import { resolveVariablesForDocument } from '../../core/variableSubstitutionContext.js'
+import {
+  getWorkspaceFolder,
+  getWorkspaceFolders,
+} from '../../core/workspace.js'
 import { findApplicableAntoraConfigPath } from './antoraConfigMatcher.js'
 import {
   AntoraConfig,
@@ -70,6 +74,43 @@ function getSiteManifestPathSetting(): string {
 }
 
 /**
+ * Resolve `${workspaceFolder}` and friends (see {@link resolveVariablesForDocument})
+ * in the configured `asciidoc.antora.siteManifestPath`, consistently with every
+ * other path-like setting in the extension. Returns `undefined` when the setting
+ * is empty.
+ */
+function getResolvedSiteManifestPath(): string | undefined {
+  const siteManifestPath = getSiteManifestPathSetting()
+  return siteManifestPath
+    ? resolveVariablesForDocument(siteManifestPath)
+    : undefined
+}
+
+/**
+ * Resolve the URI of the file configured through `asciidoc.antora.siteManifestPath`.
+ * The setting is a path, not a glob (unlike `antora.yml`/`modules/**`), so it is
+ * resolved directly against the filesystem rather than through a workspace-scoped
+ * search — the manifest may legitimately live outside the workspace (e.g. a
+ * sibling checkout) or be gitignored, neither of which `vscode.workspace.findFiles`
+ * would ever find. A relative path resolves against the first workspace folder,
+ * matching the fallback `resolveVariablesForDocument` itself uses for a bare
+ * `${workspaceFolder}`.
+ */
+function resolveSiteManifestUri(): Uri | undefined {
+  const resolvedPath = getResolvedSiteManifestPath()
+  if (!resolvedPath) {
+    return undefined
+  }
+  if (nodePath.isAbsolute(resolvedPath)) {
+    return Uri.file(resolvedPath)
+  }
+  const workspaceFolder = getWorkspaceFolders()?.[0]
+  return workspaceFolder === undefined
+    ? undefined
+    : Uri.joinPath(workspaceFolder.uri, resolvedPath)
+}
+
+/**
  * Watch the file currently configured through `asciidoc.antora.siteManifestPath`,
  * so edits to it invalidate the cache the same way `antora.yml`/`modules/**` edits
  * do. Returns `undefined` when the setting is empty (nothing to watch).
@@ -77,11 +118,18 @@ function getSiteManifestPathSetting(): string {
 function createSiteManifestWatcher(
   invalidate: () => void,
 ): vscode.Disposable | undefined {
-  const siteManifestPath = getSiteManifestPathSetting()
-  if (!siteManifestPath) {
+  const uri = resolveSiteManifestUri()
+  if (uri === undefined) {
     return undefined
   }
-  const watcher = vscode.workspace.createFileSystemWatcher(siteManifestPath)
+  // Use a `RelativePattern` (rather than a bare string) so the watcher works even
+  // when the manifest lives outside any workspace folder.
+  const watcher = vscode.workspace.createFileSystemWatcher(
+    new vscode.RelativePattern(
+      Uri.joinPath(uri, '..'),
+      posixpath.basename(uri.path),
+    ),
+  )
   watcher.onDidCreate(invalidate)
   watcher.onDidChange(invalidate)
   watcher.onDidDelete(invalidate)
@@ -486,15 +534,14 @@ function getRemoteCatalog(): Promise<RemoteAntoraCatalog | undefined> {
  * is not a valid site manifest.
  */
 async function loadRemoteCatalog(): Promise<RemoteAntoraCatalog | undefined> {
-  const siteManifestPath = getSiteManifestPathSetting()
-  if (!siteManifestPath) {
+  const resolvedPath = getResolvedSiteManifestPath()
+  if (!resolvedPath) {
     return undefined
   }
-  const uris = await findFiles(siteManifestPath)
-  const uri = uris[0]
-  if (uri === undefined) {
+  const uri = resolveSiteManifestUri()
+  if (uri === undefined || !(await exists(uri))) {
     logger.warn(
-      `Antora: unable to find the site manifest at "${siteManifestPath}" (asciidoc.antora.siteManifestPath); remote xref resolution will not be available`,
+      `Antora: unable to find the site manifest at "${resolvedPath}" (asciidoc.antora.siteManifestPath); remote xref resolution will not be available`,
     )
     return undefined
   }

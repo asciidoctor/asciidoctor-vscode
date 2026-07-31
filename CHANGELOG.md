@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Bug fixes
+
+* Resolve `${workspaceFolder}` and other VS Code path variables in `asciidoc.antora.siteManifestPath`, consistently with other path settings; also stop resolving the manifest through a workspace-scoped file search, which silently failed for paths outside the workspace or excluded by `.gitignore`
+
 ## 4.2.0 (pre-release) (2026-07-30) - @ggrossetie
 
 ### Features
