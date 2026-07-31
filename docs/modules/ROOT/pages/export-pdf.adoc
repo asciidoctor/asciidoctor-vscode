@@ -22,6 +22,7 @@ When set to `false`, the export skips the save dialog and writes the PDF directl
 Directory where the PDF is written.
 When empty, the PDF is saved next to the document.
 The exported file always keeps the document name with a `.pdf` extension.
+Ignored when `asciidoc.pdf.outputPath` is set.
 
 The output directory is resolved as follows:
 
@@ -46,6 +47,36 @@ For a quick save-and-regenerate workflow, set both options, for example in `.vsc
 
 Each export then overwrites `build/pdf/<document-name>.pdf` without any prompt.
 ====
+
+[#output-path]
+=== Custom output path template
+
+`asciidoc.pdf.outputDirectory` always keeps the PDF next to a single directory under the document's own name, which mirrors none of the source layout and can overwrite files that happen to share a base name (for example `intro.adoc` in two different subfolders).
+
+`asciidoc.pdf.outputPath` (default empty) lets you template the *full* output path -- directory and file name -- instead, so you can pick your own layout.
+When set, it takes precedence over `asciidoc.pdf.outputDirectory`.
+
+It supports the same `+${workspaceFolder}+` variable as `outputDirectory`, plus:
+
+* `+${file}+`, `+${fileDirname}+`, `+${fileBasename}+`, `+${fileBasenameNoExtension}+`, `+${fileExtname}+` -- derived from the document's own path;
+* `+${relativeFile}+`, `+${relativeFileDirname}+` -- the same, relative to the workspace folder;
+* `+${relativeFileDirnameFlat}+` -- `+${relativeFileDirname}+` with its path separators replaced by `-`, so a nested directory such as `docs/api` becomes `docs-api` instead of creating subfolders.
+
+As with `outputDirectory`, a relative result is resolved against the workspace folder (or the document's own directory outside a workspace), and the destination directory is created automatically.
+
+[cols="1,2"]
+|===
+|Goal |Template
+
+|Next to the source (the default, equivalent to leaving both settings empty)
+|`+${fileDirname}/${fileBasenameNoExtension}.pdf+`
+
+|One flat output folder, no name collisions
+|`+${workspaceFolder}/out/${relativeFileDirnameFlat}-${fileBasenameNoExtension}.pdf+`
+
+|Mirror the source folder structure
+|`+${workspaceFolder}/out/${relativeFileDirname}/${fileBasenameNoExtension}.pdf+`
+|===
 
 Because these settings have a `resource` scope, they can be configured per workspace folder.
 

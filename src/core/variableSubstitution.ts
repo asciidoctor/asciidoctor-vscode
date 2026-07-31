@@ -46,6 +46,12 @@ export interface VariableResolutionContext {
 
   /** Environment variables, used to resolve `${env:NAME}`. */
   env?: Record<string, string | undefined>
+
+  /**
+   * Absolute path of the current document, used for `${file}` and the
+   * `${file*}` / `${relativeFile*}` variables it derives (#1159).
+   */
+  file?: string
 }
 
 // Matches `${name}` and `${name:argument}`. The name captures anything that is
@@ -107,9 +113,58 @@ function resolveVariable(
       return argument === undefined
         ? undefined
         : (context.env?.[argument] ?? '')
+    case 'file':
+      return context.file
+    case 'fileDirname':
+      return context.file === undefined ? undefined : dirname(context.file)
+    case 'fileBasename':
+      return context.file === undefined ? undefined : basename(context.file)
+    case 'fileBasenameNoExtension':
+      return context.file === undefined
+        ? undefined
+        : stripExtname(basename(context.file))
+    case 'fileExtname':
+      return context.file === undefined
+        ? undefined
+        : extname(basename(context.file))
+    case 'relativeFile':
+      return relativeFile(context)
+    case 'relativeFileDirname': {
+      const rel = relativeFile(context)
+      return rel === undefined ? undefined : dirname(rel)
+    }
+    // Not a standard VS Code variable: this extension resolves output path
+    // templates itself, so it can offer a variable that flattens a nested
+    // relative directory (e.g. `docs/api`) into a single filename-safe
+    // segment (`docs-api`) — useful to fan documents from different
+    // subfolders into one flat output directory without collisions (#1159).
+    case 'relativeFileDirnameFlat': {
+      const rel = relativeFile(context)
+      const dir = rel === undefined ? undefined : dirname(rel)
+      return dir === undefined ? undefined : dir.replace(/[\\/]+/g, '-')
+    }
     default:
       return undefined
   }
+}
+
+function relativeFile(context: VariableResolutionContext): string | undefined {
+  if (context.file === undefined) {
+    return undefined
+  }
+  const folder =
+    context.documentWorkspaceFolder ?? context.defaultWorkspaceFolder
+  const normalizedFolder = folder?.replace(/[\\/]+$/, '')
+  if (
+    normalizedFolder === undefined ||
+    !context.file.startsWith(normalizedFolder)
+  ) {
+    // No workspace folder is available, or the document does not live under
+    // the resolved one; fall back to the file's own basename rather than an
+    // absolute path leaking through a "relative" variable.
+    return basename(context.file)
+  }
+  return context.file.slice(normalizedFolder.length).replace(/^[\\/]+/, '')
 }
 
 // Last path segment, tolerant of both `/` and `\` separators and of trailing
@@ -118,4 +173,25 @@ function basename(folder: string): string {
   const trimmed = folder.replace(/[\\/]+$/, '')
   const lastSep = Math.max(trimmed.lastIndexOf('/'), trimmed.lastIndexOf('\\'))
   return lastSep === -1 ? trimmed : trimmed.slice(lastSep + 1)
+}
+
+// Directory portion of a path, tolerant of both `/` and `\` separators.
+// Returns '' when there is no separator (e.g. a bare relative file name).
+function dirname(pathValue: string): string {
+  const trimmed = pathValue.replace(/[\\/]+$/, '')
+  const lastSep = Math.max(trimmed.lastIndexOf('/'), trimmed.lastIndexOf('\\'))
+  return lastSep === -1 ? '' : trimmed.slice(0, lastSep)
+}
+
+// File extension including the leading dot, or '' when there is none. A
+// leading dot with no other dot (e.g. `.gitignore`) is not treated as an
+// extension, matching Node's `path.extname`.
+function extname(fileBasename: string): string {
+  const dot = fileBasename.lastIndexOf('.')
+  return dot <= 0 ? '' : fileBasename.slice(dot)
+}
+
+function stripExtname(fileBasename: string): string {
+  const ext = extname(fileBasename)
+  return ext === '' ? fileBasename : fileBasename.slice(0, -ext.length)
 }

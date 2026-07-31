@@ -74,15 +74,27 @@ export class ExportAsPDF implements Command {
     }
 
     // Compute the default output path. By default the PDF is written next to the
-    // document, but `asciidoc.pdf.outputDirectory` can redirect it elsewhere
-    // while keeping the document's base name (#868).
-    const defaultPdfPath = _resolvePdfOutputPath(
-      asciidocPdfConfig.get<string>('outputDirectory', ''),
-      baseDirectory,
-      workspacePath,
-      asciidocTextDocument.fileName + '.pdf',
-      variableContext,
-    )
+    // document. `asciidoc.pdf.outputPath` takes precedence when set: it is a full
+    // path template (e.g. `${workspaceFolder}/out/${relativeFileDirnameFlat}-${fileBasenameNoExtension}.pdf`)
+    // that lets each user pick their own output layout instead of one imposed
+    // structure (#1159). Otherwise, the older `asciidoc.pdf.outputDirectory` can
+    // redirect the output directory elsewhere while keeping the document's base
+    // name (#868).
+    const outputPathTemplate = asciidocPdfConfig.get<string>('outputPath', '')
+    const defaultPdfPath =
+      outputPathTemplate.trim() === ''
+        ? _resolvePdfOutputPath(
+            asciidocPdfConfig.get<string>('outputDirectory', ''),
+            baseDirectory,
+            workspacePath,
+            asciidocTextDocument.fileName + '.pdf',
+            variableContext,
+          )
+        : _resolvePdfOutputPathFromTemplate(
+            outputPathTemplate,
+            workspacePath,
+            variableContext,
+          )
 
     // When `asciidoc.pdf.askOutputLocation` is disabled, skip the save dialog
     // and write directly to the default path, overwriting any existing file.
@@ -615,6 +627,28 @@ export function _resolvePdfOutputPath(
     directory = path.resolve(workspacePath, directory)
   }
   return path.join(directory, pdfFileName)
+}
+
+/**
+ * Resolve the absolute path of the exported PDF file from a full path
+ * template (`asciidoc.pdf.outputPath`), e.g.
+ * `${fileDirname}/${fileBasenameNoExtension}.pdf` or
+ * `${workspaceFolder}/out/${relativeFileDirnameFlat}-${fileBasenameNoExtension}.pdf`.
+ *
+ * Unlike `_resolvePdfOutputPath`, the template is expected to spell out the
+ * whole file path — including the file name and extension — rather than just
+ * a directory, so callers pick their own layout instead of always keeping the
+ * document's base name in a single configured directory (#1159).
+ */
+export function _resolvePdfOutputPathFromTemplate(
+  outputPathTemplate: string,
+  workspacePath: string,
+  variableContext: VariableResolutionContext,
+): string {
+  const resolved = resolveVariables(outputPathTemplate, variableContext)
+  return path.isAbsolute(resolved)
+    ? resolved
+    : path.resolve(workspacePath, resolved)
 }
 
 export function _generateCoverHtmlContent(

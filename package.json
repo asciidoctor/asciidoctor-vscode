@@ -657,11 +657,18 @@
             "order": 6,
             "scope": "resource"
           },
+          "asciidoc.pdf.outputPath": {
+            "type": "string",
+            "default": "",
+            "markdownDescription": "%asciidoc.pdf.outputPath.desc%",
+            "order": 7,
+            "scope": "resource"
+          },
           "asciidoc.pdf.askOutputLocation": {
             "type": "boolean",
             "default": true,
             "markdownDescription": "%asciidoc.pdf.askOutputLocation.desc%",
-            "order": 7,
+            "order": 8,
             "scope": "resource"
           }
         }

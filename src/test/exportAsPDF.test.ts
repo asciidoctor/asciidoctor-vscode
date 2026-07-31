@@ -7,6 +7,7 @@ import * as vscode from 'vscode'
 import {
   _generateCoverHtmlContent,
   _resolvePdfOutputPath,
+  _resolvePdfOutputPathFromTemplate,
   _resolvePdfThemesArgs,
   decorateSpawnError,
   getSpawnEnv,
@@ -92,6 +93,65 @@ Kismet R. Lee <kismet@asciidoctor.org>`)
           'doc.pdf',
         ),
         path.join(workspacePath, 'build', 'doc.pdf'),
+      )
+    })
+  })
+
+  describe('_resolvePdfOutputPathFromTemplate (#1159)', () => {
+    const workspacePath = path.resolve(path.sep, 'work')
+    const file = path.join(workspacePath, 'docs', 'api', 'index.adoc')
+    const variableContext = {
+      documentWorkspaceFolder: workspacePath,
+      defaultWorkspaceFolder: workspacePath,
+      pathSeparator: path.sep,
+      file,
+    }
+
+    test('resolves a template next to the document', () => {
+      assert.strictEqual(
+        _resolvePdfOutputPathFromTemplate(
+          // biome-ignore lint/suspicious/noTemplateCurlyInString: testing literal placeholders
+          '${fileDirname}/${fileBasenameNoExtension}.pdf',
+          workspacePath,
+          variableContext,
+        ),
+        path.join(workspacePath, 'docs', 'api', 'index.pdf'),
+      )
+    })
+
+    test('resolves a template that mirrors the source folder structure', () => {
+      assert.strictEqual(
+        _resolvePdfOutputPathFromTemplate(
+          // biome-ignore lint/suspicious/noTemplateCurlyInString: testing literal placeholders
+          '${workspaceFolder}/out/${relativeFileDirname}/${fileBasenameNoExtension}.pdf',
+          workspacePath,
+          variableContext,
+        ),
+        path.join(workspacePath, 'out', 'docs', 'api', 'index.pdf'),
+      )
+    })
+
+    test('resolves a template that flattens the source folder into one output directory', () => {
+      assert.strictEqual(
+        _resolvePdfOutputPathFromTemplate(
+          // biome-ignore lint/suspicious/noTemplateCurlyInString: testing literal placeholders
+          '${workspaceFolder}/out/${relativeFileDirnameFlat}-${fileBasenameNoExtension}.pdf',
+          workspacePath,
+          variableContext,
+        ),
+        path.join(workspacePath, 'out', 'docs-api-index.pdf'),
+      )
+    })
+
+    test('keeps an absolute resolved path untouched', () => {
+      const absoluteTemplate = path.join(path.sep, 'exports', 'out.pdf')
+      assert.strictEqual(
+        _resolvePdfOutputPathFromTemplate(
+          absoluteTemplate,
+          workspacePath,
+          variableContext,
+        ),
+        absoluteTemplate,
       )
     })
   })

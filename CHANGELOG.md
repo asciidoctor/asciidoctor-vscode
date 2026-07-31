@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Features
+
+* Add `asciidoc.pdf.outputPath`, a configurable template for the full PDF export path (e.g. `${workspaceFolder}/out/${relativeFileDirnameFlat}-${fileBasenameNoExtension}.pdf`), so each user can pick their own output layout — next to the source, one flat folder, or mirroring the source structure — instead of the single directory imposed by `asciidoc.pdf.outputDirectory` (#1159)
+
 ### Bug fixes
 
 * Resolve `${workspaceFolder}` and other VS Code path variables in `asciidoc.antora.siteManifestPath`, consistently with other path settings; also stop resolving the manifest through a workspace-scoped file search, which silently failed for paths outside the workspace or excluded by `.gitignore`
