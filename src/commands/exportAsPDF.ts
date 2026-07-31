@@ -646,9 +646,12 @@ export function _resolvePdfOutputPathFromTemplate(
   variableContext: VariableResolutionContext,
 ): string {
   const resolved = resolveVariables(outputPathTemplate, variableContext)
-  return path.isAbsolute(resolved)
-    ? resolved
-    : path.resolve(workspacePath, resolved)
+  // `path.resolve` also normalizes the result, collapsing the `/` separators
+  // used in the template (and coming from `${...}` variables such as
+  // `${relativeFileDirname}`) into `\` on Windows. Using `path.isAbsolute` +
+  // returning `resolved` as-is for an already-absolute path would skip that
+  // normalization and leave mixed separators (#1159).
+  return path.resolve(workspacePath, resolved)
 }
 
 export function _generateCoverHtmlContent(
