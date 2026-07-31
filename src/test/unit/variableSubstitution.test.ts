@@ -99,7 +99,97 @@ describe('resolveVariables', () => {
   })
 
   test('leaves an unknown variable untouched', () => {
-    assert.strictEqual(resolveVariables('${file}/x', context), '${file}/x')
+    assert.strictEqual(resolveVariables('${bogus}/x', context), '${bogus}/x')
+  })
+
+  describe('file variables (#1159)', () => {
+    const fileContext: VariableResolutionContext = {
+      ...context,
+      file: '/home/jane/project-b/docs/api/index.adoc',
+    }
+
+    test('resolves ${file}', () => {
+      assert.strictEqual(
+        resolveVariables('${file}', fileContext),
+        '/home/jane/project-b/docs/api/index.adoc',
+      )
+    })
+
+    test('resolves ${fileDirname}', () => {
+      assert.strictEqual(
+        resolveVariables('${fileDirname}', fileContext),
+        '/home/jane/project-b/docs/api',
+      )
+    })
+
+    test('resolves ${fileBasename}', () => {
+      assert.strictEqual(
+        resolveVariables('${fileBasename}', fileContext),
+        'index.adoc',
+      )
+    })
+
+    test('resolves ${fileBasenameNoExtension}', () => {
+      assert.strictEqual(
+        resolveVariables('${fileBasenameNoExtension}', fileContext),
+        'index',
+      )
+    })
+
+    test('resolves ${fileExtname}', () => {
+      assert.strictEqual(
+        resolveVariables('${fileExtname}', fileContext),
+        '.adoc',
+      )
+    })
+
+    test('resolves ${relativeFile} against the document workspace folder', () => {
+      assert.strictEqual(
+        resolveVariables('${relativeFile}', fileContext),
+        'docs/api/index.adoc',
+      )
+    })
+
+    test('resolves ${relativeFileDirname}', () => {
+      assert.strictEqual(
+        resolveVariables('${relativeFileDirname}', fileContext),
+        'docs/api',
+      )
+    })
+
+    test('resolves ${relativeFileDirname} to an empty string for a top-level file', () => {
+      assert.strictEqual(
+        resolveVariables('[${relativeFileDirname}]', {
+          ...fileContext,
+          file: '/home/jane/project-b/index.adoc',
+        }),
+        '[]',
+      )
+    })
+
+    test('resolves ${relativeFileDirnameFlat} by flattening path separators into dashes', () => {
+      assert.strictEqual(
+        resolveVariables('${relativeFileDirnameFlat}', fileContext),
+        'docs-api',
+      )
+    })
+
+    test('falls back to the file basename for ${relativeFile} when there is no workspace folder', () => {
+      assert.strictEqual(
+        resolveVariables('${relativeFile}', {
+          file: '/home/jane/project-b/docs/api/index.adoc',
+        }),
+        'index.adoc',
+      )
+    })
+
+    test('leaves ${file} and friends untouched when no file is available', () => {
+      assert.strictEqual(resolveVariables('${file}', context), '${file}')
+      assert.strictEqual(
+        resolveVariables('${fileBasenameNoExtension}', context),
+        '${fileBasenameNoExtension}',
+      )
+    })
   })
 
   test('leaves ${workspaceFolder} untouched when no folder is available', () => {

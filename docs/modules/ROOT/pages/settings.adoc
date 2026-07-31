@@ -100,11 +100,15 @@ You can edit them from the VS Code Settings UI or directly in `settings.json`.
 |`[]`
 
 |`asciidoc.pdf.outputDirectory`
-|Directory where the exported PDF is written. When empty, the PDF is saved next to the document. A relative path is resolved against the workspace folder (or the document directory when there is no workspace); `+${workspaceFolder}+` is supported. The directory is created if it does not exist. See xref:export-pdf.adoc#output-location[Output location].
+|Directory where the exported PDF is written. When empty, the PDF is saved next to the document. A relative path is resolved against the workspace folder (or the document directory when there is no workspace); `+${workspaceFolder}+` is supported. The directory is created if it does not exist. Ignored when `asciidoc.pdf.outputPath` is set. See xref:export-pdf.adoc#output-location[Output location].
+|`""`
+
+|`asciidoc.pdf.outputPath`
+|Template for the full output path of the exported PDF, including the file name, overriding `asciidoc.pdf.outputDirectory` when set. Supports `+${workspaceFolder}+`, `+${file}+`, `+${fileDirname}+`, `+${fileBasename}+`, `+${fileBasenameNoExtension}+`, `+${fileExtname}+`, `+${relativeFile}+`, `+${relativeFileDirname}+` and `+${relativeFileDirnameFlat}+`. See xref:export-pdf.adoc#output-path[Custom output path template].
 |`""`
 
 |`asciidoc.pdf.askOutputLocation`
-|Ask for the output location every time a PDF is exported. When disabled, the PDF is written directly to `asciidoc.pdf.outputDirectory` (or next to the document) without prompting, overwriting any existing file.
+|Ask for the output location every time a PDF is exported. When disabled, the PDF is written directly to `asciidoc.pdf.outputPath` or `asciidoc.pdf.outputDirectory` (or next to the document) without prompting, overwriting any existing file.
 |`true`
 |===
 

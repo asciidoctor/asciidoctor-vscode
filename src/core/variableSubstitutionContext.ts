@@ -47,6 +47,7 @@ export function buildVariableResolutionContext(
     userHome: isBrowserEnvironment() ? undefined : os.homedir(),
     pathSeparator: path.sep,
     env: process.env,
+    file: documentUri ? pathOf(documentUri) : undefined,
   }
 }
 
