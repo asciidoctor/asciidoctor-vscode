@@ -646,12 +646,17 @@ export function _resolvePdfOutputPathFromTemplate(
   variableContext: VariableResolutionContext,
 ): string {
   const resolved = resolveVariables(outputPathTemplate, variableContext)
-  // `path.resolve` also normalizes the result, collapsing the `/` separators
-  // used in the template (and coming from `${...}` variables such as
-  // `${relativeFileDirname}`) into `\` on Windows. Using `path.isAbsolute` +
-  // returning `resolved` as-is for an already-absolute path would skip that
-  // normalization and leave mixed separators (#1159).
-  return path.resolve(workspacePath, resolved)
+  // The template (and variables such as `${relativeFileDirname}`) may mix `/`
+  // with the platform separator, e.g. `D:\work\docs\api/index.pdf` on
+  // Windows. `path.normalize` cleans that up without changing an
+  // already-absolute path's meaning; `path.resolve` is only used for a
+  // relative result, since — unlike `normalize` — it would otherwise anchor a
+  // drive-relative Windows path (e.g. `\exports\out.pdf`, no drive letter) to
+  // the current working directory's drive instead of leaving it untouched
+  // (#1159).
+  return path.isAbsolute(resolved)
+    ? path.normalize(resolved)
+    : path.resolve(workspacePath, resolved)
 }
 
 export function _generateCoverHtmlContent(
