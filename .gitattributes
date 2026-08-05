@@ -4,3 +4,7 @@
 # add a trailing CR and break the snapshot comparison.
 syntaxes/tests/snap/**/*.adoc text eol=lf
 syntaxes/tests/snap/**/*.snap text eol=lf
+
+# Avoid merge conflicts on CHANGELOG.md when multiple branches add entries
+# to the Unreleased section concurrently.
+CHANGELOG.md merge=union
