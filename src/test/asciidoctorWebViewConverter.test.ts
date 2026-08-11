@@ -646,7 +646,7 @@ See xref:my-table[xrefstyle=short] for more reference.
     const html = (await doc.convert(options)) as unknown as string
     assert.match(
       html,
-      /<div class="data-line-\d+ data-h-test"><pre class='mermaid'>graph TD\n {2}A --> B<\/pre><\/div>/,
+      /<div class="data-line-\d+ data-h-test"><div class="imageblock mermaidblock">\n<div class="content">\n<pre class='mermaid'>graph TD\n {2}A --> B<\/pre>\n<\/div>\n<\/div><\/div>/,
       `expected the Mermaid passthrough wrapped with its roles in:\n${html}`,
     )
   })

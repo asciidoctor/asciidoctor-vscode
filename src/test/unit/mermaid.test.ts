@@ -18,6 +18,8 @@ describe('mermaidJSProcessor', () => {
     const html = await convertWithMermaid(
       '[mermaid]\n----\ngraph TD\n  A --> B\n----',
     )
+    assert.match(html, /<div class="imageblock mermaidblock">/)
+    assert.match(html, /<div class="content">/)
     assert.match(html, /<pre class='mermaid'>graph TD\n {2}A --> B<\/pre>/)
   })
 
@@ -36,6 +38,34 @@ describe('mermaidJSProcessor', () => {
     assert.ok(
       html.includes("<pre class='mermaid'>A-->B & C</pre>"),
       `expected raw diagram text, got: ${html}`,
+    )
+  })
+
+  test('renders a block title as a figure title like Kroki image blocks', async () => {
+    const html = await convertWithMermaid(
+      '.My *Diagram*\n[mermaid]\n----\ngraph TD\n  A --> B\n----',
+    )
+    assert.match(
+      html,
+      /<div class="title">Figure 1\. My <strong>Diagram<\/strong><\/div>/,
+    )
+  })
+
+  test('honors figure caption settings for titled Mermaid blocks', async () => {
+    const html = await convertWithMermaid(
+      ':figure-caption!:\n\n.My Diagram\n[mermaid]\n----\ngraph TD\n  A --> B\n----',
+    )
+    assert.match(html, /<div class="title">My Diagram<\/div>/)
+    assert.doesNotMatch(html, /Figure 1\./)
+  })
+
+  test('places block id and roles on the imageblock wrapper', async () => {
+    const html = await convertWithMermaid(
+      '[#diagram.overview]\n[mermaid]\n----\ngraph TD\n  A --> B\n----',
+    )
+    assert.match(
+      html,
+      /<div id="diagram" class="imageblock mermaidblock overview">/,
     )
   })
 
