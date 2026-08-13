@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 import { convert, Extensions } from '@asciidoctor/core'
+import { addMermaidToHtmlExport } from '../../features/asciidoctor/mermaidExport.js'
 import { mermaidJSProcessor } from '../../features/preview/mermaid.js'
 
 async function convertWithMermaid(input: string): Promise<string> {
@@ -10,7 +11,30 @@ async function convertWithMermaid(input: string): Promise<string> {
     extension_registry: registry,
     safe: 'safe',
   })
-  return String(output)
+  return addMermaidToHtmlExport(String(output))
+}
+
+async function convertWithMermaidAndCaptionRewrite(
+  input: string,
+): Promise<string> {
+  const registry = Extensions.create()
+  registry.block('mermaid', mermaidJSProcessor())
+  ;(registry as any).treeProcessor(function (this: any) {
+    this.process(function (document: any) {
+      document
+        .findBy(
+          (node: any) =>
+            node.getContext?.() === 'image' && node.hasRole?.('mermaidblock'),
+        )
+        .forEach((block: any) => block.setCaption('Diagram 7. '))
+      return document
+    })
+  })
+  const output = await convert(input, {
+    extension_registry: registry,
+    safe: 'safe',
+  })
+  return addMermaidToHtmlExport(String(output))
 }
 
 describe('mermaidJSProcessor', () => {
@@ -49,6 +73,14 @@ describe('mermaidJSProcessor', () => {
       html,
       /<div class="title">Figure 1\. My <strong>Diagram<\/strong><\/div>/,
     )
+  })
+
+  test('lets tree processors rewrite the caption like a Kroki image block', async () => {
+    const html = await convertWithMermaidAndCaptionRewrite(
+      '.My Diagram\n[mermaid]\n----\ngraph TD\n  A --> B\n----',
+    )
+    assert.match(html, /<div class="title">Diagram 7\. My Diagram<\/div>/)
+    assert.doesNotMatch(html, /Figure 1\. My Diagram/)
   })
 
   test('honors figure caption settings for titled Mermaid blocks', async () => {

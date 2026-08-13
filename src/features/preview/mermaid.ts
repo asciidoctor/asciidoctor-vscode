@@ -4,8 +4,23 @@ import type {
   Reader,
 } from '@asciidoctor/core'
 
-function escapeAttribute(value: string): string {
-  return value.replace(/&/g, '&amp;').replace(/"/g, '&quot;')
+export const MERMAID_SOURCE_DATA_URI_PREFIX = 'data:text/vnd.mermaid;base64,'
+
+export function encodeMermaidSource(source: string): string {
+  return `${MERMAID_SOURCE_DATA_URI_PREFIX}${Buffer.from(source, 'utf8').toString('base64')}`
+}
+
+export function decodeMermaidSource(target: unknown): string | undefined {
+  if (
+    typeof target !== 'string' ||
+    !target.startsWith(MERMAID_SOURCE_DATA_URI_PREFIX)
+  ) {
+    return undefined
+  }
+  return Buffer.from(
+    target.slice(MERMAID_SOURCE_DATA_URI_PREFIX.length),
+    'base64',
+  ).toString('utf8')
 }
 
 export function mermaidJSProcessor() {
@@ -21,31 +36,22 @@ export function mermaidJSProcessor() {
         typeof attrs.caption === 'string' ? attrs.caption : undefined
       const role = typeof attrs.role === 'string' ? attrs.role : undefined
       const blockId = typeof attrs.id === 'string' ? attrs.id : undefined
-      const titleBlock = this.createBlock(parent, 'pass', '', attrs)
+      const blockAttrs = { ...attrs }
+      blockAttrs.role = role ? `mermaidblock ${role}` : 'mermaidblock'
+      blockAttrs.target = encodeMermaidSource(reader.getString())
+      blockAttrs.alt = title || 'Mermaid diagram'
+      delete blockAttrs.title
+      delete blockAttrs.caption
+      delete blockAttrs.opts
+      const block = (this as any).createImageBlock(parent, blockAttrs)
       if (title) {
-        titleBlock.title = title
+        block.title = title
       }
-      await titleBlock.precomputeTitle()
-      titleBlock.assignCaption(caption, 'figure')
-
-      const classNames = ['imageblock', 'mermaidblock']
-      if (role) {
-        classNames.push(...role.split(/\s+/).filter(Boolean))
+      if (blockId) {
+        block.id = blockId
       }
-      const id = blockId ? ` id="${escapeAttribute(blockId)}"` : ''
-      const captionedTitle = titleBlock.hasTitle()
-        ? `\n<div class="title">${titleBlock.captionedTitle()}</div>`
-        : ''
-      const passAttrs = { ...attrs }
-      delete passAttrs.id
-      delete passAttrs.role
-
-      return this.createBlock(
-        parent,
-        'pass',
-        `<div${id} class="${escapeAttribute(classNames.join(' '))}">\n<div class="content">\n<pre class='mermaid'>${reader.getString()}</pre>\n</div>${captionedTitle}\n</div>`,
-        passAttrs,
-      )
+      block.assignCaption(caption, 'figure')
+      return block
     }) as any)
   }
 }
