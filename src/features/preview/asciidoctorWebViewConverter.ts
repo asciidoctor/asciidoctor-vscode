@@ -18,6 +18,7 @@ import { AsciidocContributions } from '../extensionContributions.js'
 import { AsciidocPreviewSecurityLevel } from '../security.js'
 import { buildCustomStyleSheetLinks } from './customStyles.js'
 import { renderMathJax } from './mathjax.js'
+import { MERMAID_SOURCE_DATA_URI_PREFIX } from './mermaid.js'
 import {
   AsciidocPreviewConfiguration,
   type AsciidocPreviewDefaultStyle,
@@ -734,8 +735,8 @@ ${footnoteItems.join('\n')}
     // live in separate packages that must be registered before mermaid runs:
     //   - the ELK layout engine (`layout: elk`) via registerLayoutLoaders
     //   - the ZenUML diagram (`zenuml`) via registerExternalDiagrams
-    // We disable startOnLoad and call run() ourselves so the registrations are
-    // guaranteed to complete before any diagram is detected and rendered.
+    // We disable startOnLoad and render diagrams ourselves so the registrations
+    // are guaranteed to complete before any diagram is rendered.
     return `<!--suppress JSAnnotator -->
 <script type="module" nonce="${nonce}">
     import mermaid from '${mermaidSrc}';
@@ -750,14 +751,48 @@ ${footnoteItems.join('\n')}
     mermaid.registerLayoutLoaders(elkLayouts);
     await mermaid.registerExternalDiagrams([zenuml]);
     mermaid.initialize({startOnLoad: false, theme: dark ? 'dark' : 'default'});
+
+    // A [mermaid] block is emitted as a regular image whose src is the
+    // diagram source, base64-encoded (see mermaid.ts) — modeling it as an
+    // Asciidoctor image block, rather than writing rendered markup server-side,
+    // is what gives it a figure title/caption for free and lets tree processors
+    // (e.g. asciidoctor-numbered-captions) rewrite that caption like they do for
+    // Kroki diagrams. Decode and render it here, client-side, with the real
+    // Mermaid API, and swap the <img> for the resulting SVG.
+    const MERMAID_SOURCE_PREFIX = ${JSON.stringify(MERMAID_SOURCE_DATA_URI_PREFIX)};
+    let mermaidRenderCount = 0;
+    async function renderMermaidImage(img) {
+      const base64 = img.getAttribute('src').slice(MERMAID_SOURCE_PREFIX.length);
+      const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
+      const source = new TextDecoder().decode(bytes);
+      const id = 'mermaid-diagram-' + (mermaidRenderCount++);
+      const { svg, bindFunctions } = await mermaid.render(id, source);
+      const container = document.createElement('div');
+      container.className = 'mermaid';
+      container.innerHTML = svg;
+      img.replaceWith(container);
+      bindFunctions?.(container);
+    }
     // Expose a re-render hook so incremental preview updates can render only the
-    // Mermaid diagrams that were added or changed (run() skips already-processed
-    // nodes), instead of reloading the whole webview.
+    // Mermaid diagrams that were added or changed, instead of reloading the
+    // whole webview. nodes are the changed blocks (or [document.body] for the
+    // initial full-page render); each may itself be a Mermaid <img>, or contain
+    // one or more nested inside.
     window.__asciidocRenderMermaid = async (nodes) => {
-      try {
-        await mermaid.run(nodes && nodes.length ? { nodes } : undefined);
-      } catch (e) {
-        console.error('Mermaid rendering failed', e);
+      const selector = 'img[src^="' + MERMAID_SOURCE_PREFIX + '"]';
+      const images = new Set();
+      for (const node of nodes && nodes.length ? nodes : [document.body]) {
+        if (node.matches?.(selector)) {
+          images.add(node);
+        }
+        node.querySelectorAll?.(selector).forEach((img) => images.add(img));
+      }
+      for (const img of images) {
+        try {
+          await renderMermaidImage(img);
+        } catch (e) {
+          console.error('Mermaid rendering failed', e);
+        }
       }
     };
     await window.__asciidocRenderMermaid();

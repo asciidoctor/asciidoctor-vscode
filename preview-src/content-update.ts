@@ -135,18 +135,7 @@ function reprocess(blocks: Element[], anchorLine: number | undefined) {
 
   const renderMermaid = (window as any).__asciidocRenderMermaid
   if (typeof renderMermaid === 'function') {
-    const mermaidNodes: Element[] = []
-    for (const block of blocks) {
-      if (block.matches('.mermaid')) {
-        mermaidNodes.push(block)
-      }
-      block
-        .querySelectorAll('.mermaid')
-        .forEach((node) => mermaidNodes.push(node))
-    }
-    if (mermaidNodes.length) {
-      renderMermaid(mermaidNodes)
-    }
+    renderMermaid(blocks)
   }
 
   // Re-pin once any image in a changed block finishes loading (loading reflows

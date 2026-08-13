@@ -597,14 +597,14 @@ See xref:my-table[xrefstyle=short] for more reference.
     assert.strictEqual(readDataSettings(html).fragment, undefined)
   })
 
-  // A passthrough block (here a [mermaid] diagram) is emitted verbatim by the
-  // base converter, which dropped the `data-line-*`/`data-h-*` roles the engine
-  // attaches to every source block. Without them the incremental preview update
-  // could neither anchor the diagram to a source line nor detect it as
-  // unchanged, so every edit reverted the rendered diagram back to raw source
-  // until a click forced a full refresh. The converter now wraps passthrough
-  // content in an element carrying those roles.
-  test('Should preserve data-line/data-h roles around a passthrough (Mermaid) block', async () => {
+  // A [mermaid] diagram is modeled as an Asciidoctor image block (see
+  // mermaid.ts) rendered through the default image converter, so it must keep
+  // the `data-line-*`/`data-h-*` roles the engine attaches to every source
+  // block (see asciidocEngine.ts), which the incremental preview update relies
+  // on (see content-update.ts): without a `data-line-*` ancestor the block is
+  // never recorded as changed, and without a `data-h-*` hash morphdom cannot
+  // tell it is unchanged.
+  test('Should preserve data-line/data-h roles on a Mermaid image block', async () => {
     const file = await vscode.workspace.openTextDocument(
       vscode.Uri.joinPath(workspaceUri, 'asciidoctorWebViewConverterTest.adoc'),
     )
@@ -646,8 +646,8 @@ See xref:my-table[xrefstyle=short] for more reference.
     const html = (await doc.convert(options)) as unknown as string
     assert.match(
       html,
-      /<div class="data-line-\d+ data-h-test"><pre class='mermaid'>graph TD\n {2}A --> B<\/pre><\/div>/,
-      `expected the Mermaid passthrough wrapped with its roles in:\n${html}`,
+      /<div class="imageblock mermaidblock data-line-\d+ data-h-test">\n<div class="content">\n<img src="data:text\/vnd\.mermaid;base64,[^"]+" alt="Mermaid diagram">\n<\/div>\n<\/div>/,
+      `expected the Mermaid image block to keep its roles in:\n${html}`,
     )
   })
 
