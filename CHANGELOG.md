@@ -6,6 +6,7 @@
 
 * Replace a raw NUL byte in `asciidoctorWebViewConverter.ts` with the `\x00` escape sequence, so Git and GitHub stop treating the file as binary (no functional change)
 * Render the block title and caption (e.g. `Figure 1. My Diagram`) on `[mermaid]` blocks in the preview, instead of silently dropping them (#1186)
+* Fix inline code (`` `backticks` ``) being unreadable in the preview under some VS Code themes; the text color no longer pairs a theme token calibrated for a different background (#1190)
 
 ## 4.2.1 (2026-07-31) - @ggrossetie
 

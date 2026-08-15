@@ -120,9 +120,14 @@ figcaption,
  * Inline code & code blocks
  * -------------------------------------------------------------------- */
 
+/* Text color intentionally isn't `--vscode-textPreformat-foreground`: that
+ * token is calibrated by theme authors against `textPreformat.background`
+ * (a translucent overlay), not against the opaque `--adoc-code-bg` used
+ * here — pairing the two can leave inline code unreadable in some themes
+ * (#1190). `--adoc-fg` matches what VS Code's own Markdown preview does. */
 :not(pre):not([class^="L"]) > code {
   background: var(--adoc-code-bg);
-  color: var(--vscode-textPreformat-foreground, inherit);
+  color: var(--adoc-fg);
   border: 1px solid color-mix(in srgb, var(--adoc-fg) 10%, transparent);
   padding: 0.12em 0.4em;
 }
