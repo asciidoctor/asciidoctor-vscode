@@ -18,7 +18,7 @@ import { AsciidocContributions } from '../extensionContributions.js'
 import { AsciidocPreviewSecurityLevel } from '../security.js'
 import { buildCustomStyleSheetLinks } from './customStyles.js'
 import { renderMathJax } from './mathjax.js'
-import { MERMAID_SOURCE_DATA_URI_PREFIX } from './mermaid.js'
+import { mermaidClientRenderScript } from './mermaid.js'
 import {
   AsciidocPreviewConfiguration,
   type AsciidocPreviewDefaultStyle,
@@ -759,41 +759,14 @@ ${footnoteItems.join('\n')}
     // (e.g. asciidoctor-numbered-captions) rewrite that caption like they do for
     // Kroki diagrams. Decode and render it here, client-side, with the real
     // Mermaid API, and swap the <img> for the resulting SVG.
-    const MERMAID_SOURCE_PREFIX = ${JSON.stringify(MERMAID_SOURCE_DATA_URI_PREFIX)};
-    let mermaidRenderCount = 0;
-    async function renderMermaidImage(img) {
-      const base64 = img.getAttribute('src').slice(MERMAID_SOURCE_PREFIX.length);
-      const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-      const source = new TextDecoder().decode(bytes);
-      const id = 'mermaid-diagram-' + (mermaidRenderCount++);
-      const { svg, bindFunctions } = await mermaid.render(id, source);
-      const container = document.createElement('div');
-      container.className = 'mermaid';
-      container.innerHTML = svg;
-      img.replaceWith(container);
-      bindFunctions?.(container);
-    }
+    ${mermaidClientRenderScript()}
     // Expose a re-render hook so incremental preview updates can render only the
     // Mermaid diagrams that were added or changed, instead of reloading the
     // whole webview. nodes are the changed blocks (or [document.body] for the
     // initial full-page render); each may itself be a Mermaid <img>, or contain
     // one or more nested inside.
     window.__asciidocRenderMermaid = async (nodes) => {
-      const selector = 'img[src^="' + MERMAID_SOURCE_PREFIX + '"]';
-      const images = new Set();
-      for (const node of nodes && nodes.length ? nodes : [document.body]) {
-        if (node.matches?.(selector)) {
-          images.add(node);
-        }
-        node.querySelectorAll?.(selector).forEach((img) => images.add(img));
-      }
-      for (const img of images) {
-        try {
-          await renderMermaidImage(img);
-        } catch (e) {
-          console.error('Mermaid rendering failed', e);
-        }
-      }
+      await renderMermaidImages(nodes && nodes.length ? nodes : [document.body]);
     };
     await window.__asciidocRenderMermaid();
   </script>`
