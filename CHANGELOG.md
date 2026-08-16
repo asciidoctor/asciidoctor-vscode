@@ -5,6 +5,7 @@
 ### Bug fixes
 
 * Replace a raw NUL byte in `asciidoctorWebViewConverter.ts` with the `\x00` escape sequence, so Git and GitHub stop treating the file as binary (no functional change)
+* Render the block title and caption (e.g. `Figure 1. My Diagram`) on `[mermaid]` blocks in the preview, instead of silently dropping them (#1186)
 
 ## 4.2.1 (2026-07-31) - @ggrossetie
 
