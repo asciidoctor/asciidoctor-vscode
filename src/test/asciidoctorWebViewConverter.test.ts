@@ -149,6 +149,12 @@ link:help.adoc[]
     createdFiles.push(await createDirectory('docs'))
     await createFile('', 'docs', 'modules', 'ROOT', 'pages', 'dummy.adoc')
     createdFiles.push(asciidocFile)
+    createdFiles.push(
+      await createFile(
+        '<script src="docinfo-marker.js"></script>',
+        'docinfo.html',
+      ),
+    )
 
     createdFiles.push(
       await createFile(
@@ -956,6 +962,28 @@ See xref:my-table[xrefstyle=short] for more reference.
       readShellFingerprint(withoutAntora),
       readShellFingerprint(withAntora),
       'toggling Antora support must change the shell fingerprint (the auto-selected stylesheet must be (un)loaded by a full reload)',
+    )
+  })
+
+  test('Should declare <base href> before any injected docinfo content (#1195)', async () => {
+    // A relative `src`/`href` inside docinfo.html is resolved by the browser
+    // against whatever base is in effect when the parser reaches it. If
+    // <base> is emitted after the docinfo content, elements parsed earlier
+    // (e.g. a <script src>) resolve against the webview's own synthetic
+    // address instead of the previewed document, and 404/403.
+    const html = await convertStandaloneWithFragment(
+      ':docinfo: shared\n\nSome content',
+      undefined,
+    )
+    const baseIndex = html.indexOf('<base href')
+    const docinfoIndex = html.indexOf('docinfo-marker.js')
+    assert.ok(
+      baseIndex !== -1 && docinfoIndex !== -1,
+      `expected both <base href> and the docinfo content in:\n${html}`,
+    )
+    assert.ok(
+      baseIndex < docinfoIndex,
+      `expected <base href> to precede docinfo content so its relative URLs resolve correctly:\n${html}`,
     )
   })
 

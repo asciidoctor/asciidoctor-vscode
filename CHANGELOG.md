@@ -8,6 +8,7 @@
 * Render the block title and caption (e.g. `Figure 1. My Diagram`) on `[mermaid]` blocks in the preview, instead of silently dropping them (#1186)
 * Fix inline code (`` `backticks` ``) being unreadable in the preview under some VS Code themes; the text color no longer pairs a theme token calibrated for a different background (#1190)
 * Render Mermaid diagrams in exported HTML the same way as the preview, instead of leaving them as unrendered images (#1170)
+* Fix relative resources (e.g. `<script src="…">`) referenced from a `docinfo.html` file failing to load in the preview with a 403 error; the `<base>` tag is now declared before the docinfo content is injected, instead of after (#1195)
 
 ## 4.2.1 (2026-07-31) - @ggrossetie
 

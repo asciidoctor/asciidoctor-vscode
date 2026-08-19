@@ -377,11 +377,16 @@ export class AsciidoctorWebViewConverter {
           data-settings="${escapeAttribute(JSON.stringify(this.initialData))}"
           data-strings="${escapeAttribute(JSON.stringify(previewStrings))}"
           data-state="${escapeAttribute(JSON.stringify(this.state))}">
+        <!-- Must precede any element that can carry a relative URL (docinfo in
+        particular, injected verbatim below): the webview's default document
+        base is its own synthetic vscode-webview:// address, not the
+        previewed file's location, so a <script src>/<img src> parsed before
+        <base> resolves against the wrong origin and 403s (#1195). -->
+        <base href="${webviewResourceProvider.asWebviewUri(this.textDocument.uri)}">
         <script src="${this.extensionResourcePath('pre.js')}" nonce="${nonce}"></script>
         ${this.getStyles(node, webviewResourceProvider, this.textDocument.uri, this.config, effectiveStyle, this.state)}
         ${syntaxHighlighterHeadContent}
         ${docinfo}
-        <base href="${webviewResourceProvider.asWebviewUri(this.textDocument.uri)}">
       </head>
       <body${node.getId() ? ` id="${node.getId()}"` : ''} class="${bodyCssClasses}" data-shell="${shellFingerprint}" data-vscode-context="${vscodeContext}" data-preview-style="${effectiveStyle}">
         <div id="preview-root">
