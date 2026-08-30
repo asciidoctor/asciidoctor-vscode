@@ -14,11 +14,13 @@ import { logger } from '../../core/logger.js'
 import { WebviewResourceProvider } from '../../core/resources.js'
 import { getWorkspaceFolder } from '../../core/workspace.js'
 import { AntoraDocumentContext } from '../antora/antoraContext.js'
+import { restorePlantUmlImageBlocks } from '../asciidoctor/plantumlExport.js'
 import { AsciidocContributions } from '../extensionContributions.js'
 import { AsciidocPreviewSecurityLevel } from '../security.js'
 import { buildCustomStyleSheetLinks } from './customStyles.js'
 import { renderMathJax } from './mathjax.js'
 import { mermaidClientRenderScript } from './mermaid.js'
+import { plantUmlClientRenderScript } from './plantuml.js'
 import {
   AsciidocPreviewConfiguration,
   type AsciidocPreviewDefaultStyle,
@@ -173,6 +175,10 @@ function getCspForResource(
       rule,
       'https:',
       `'nonce-${nonce}'`,
+      // @plantuml/core initializes its bundled Viz.js / Graphviz WebAssembly at
+      // runtime. `wasm-unsafe-eval` permits WASM compilation without opening
+      // the broader JavaScript `unsafe-eval` surface.
+      "'wasm-unsafe-eval'",
       'https://*.vscode-cdn.net/',
     ],
     'style-src': ["'self'", rule, 'https:', "'unsafe-inline'", 'data:'],
@@ -327,7 +333,7 @@ export class AsciidoctorWebViewConverter {
       const headerDocinfo = await node.getDocinfo('header')
       const footerDocinfo = await node.getDocinfo('footer')
       const docinfo = await node.getDocinfo()
-      const content = await node.getContent()
+      const content = restorePlantUmlImageBlocks(await node.getContent())
       // Context consumed by the `webview/context` menu contribution (see
       // package.json) and by the export commands to target the previewed
       // document. `preventDefaultContextMenuItems` suppresses VS Code's native
@@ -403,6 +409,7 @@ export class AsciidoctorWebViewConverter {
         ${syntaxHighlighterFooterContent}
         ${mathJaxMarkup}
         ${this.generateMermaid(webviewResourceProvider, nonce)}
+        ${this.generatePlantUml(webviewResourceProvider, nonce)}
         ${footerDocinfo}
       </body>
       </html>`
@@ -774,6 +781,43 @@ ${footnoteItems.join('\n')}
       await renderMermaidImages(nodes && nodes.length ? nodes : [document.body]);
     };
     await window.__asciidocRenderMermaid();
+  </script>`
+  }
+
+  private generatePlantUml(
+    webviewResourceProvider: WebviewResourceProvider,
+    nonce: string,
+  ) {
+    const vizSrc = webviewResourceProvider.asMediaWebViewSrc(
+      'media',
+      '@plantuml',
+      'core',
+      'viz-global.js',
+    )
+    const plantumlSrc = webviewResourceProvider.asMediaWebViewSrc(
+      'media',
+      '@plantuml',
+      'core',
+      'plantuml.js',
+    )
+    return `<!--suppress JSAnnotator -->
+<script src="${vizSrc}" nonce="${nonce}"></script>
+<script type="module" nonce="${nonce}">
+    import { render } from '${plantumlSrc}';
+    // The 'vscode' and 'github' preview styles track the active VS Code color
+    // theme (see asciidoctor-github-colors.css); 'asciidoctor' and 'antora'
+    // are always light, independent of the editor's theme.
+    const previewStyle = document.body.dataset.previewStyle;
+    const dark = (previewStyle === 'vscode' || previewStyle === 'github')
+      && (document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast'));
+    ${plantUmlClientRenderScript()}
+    // @plantuml/core renders asynchronously and uses shared engine state, so
+    // serialize diagrams in this webview. The exposed hook lets incremental
+    // preview updates re-render only blocks that were added or changed.
+    window.__asciidocRenderPlantUml = async (nodes) => {
+      await renderPlantUmlDiagrams(nodes && nodes.length ? nodes : [document.body], dark ? { dark: true } : undefined);
+    };
+    await window.__asciidocRenderPlantUml();
   </script>`
   }
 
