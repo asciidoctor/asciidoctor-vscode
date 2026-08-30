@@ -4,6 +4,7 @@ import * as vscode from 'vscode'
 import { findFiles } from '../../core/findFiles.js'
 import { requireFresh } from '../../core/requireExtension.js'
 import { mermaidJSProcessor } from '../preview/mermaid.js'
+import { plantumlJSProcessor } from '../preview/plantuml.js'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
 import {
   type AsciidoctorExtensionContext,
@@ -36,6 +37,8 @@ export class AsciidoctorExtensions {
       .get('enableKroki')
     if (enableKroki) {
       kroki.register(registry)
+    } else if (context?.mode !== 'load') {
+      registry.block('plantuml', plantumlJSProcessor())
     }
     registry.block('mermaid', mermaidJSProcessor())
     if (context !== undefined) {
