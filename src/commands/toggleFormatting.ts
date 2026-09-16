@@ -1,5 +1,6 @@
 import * as vscode from 'vscode'
 import { Command } from '../core/commandManager.js'
+import { isAsciidocFile } from '../core/file.js'
 
 // Toggle an AsciiDoc inline formatting marker (`*` bold, `_` italic, `` ` ``
 // monospace) over the selection(s), like the bold/italic shortcuts of a word
@@ -18,7 +19,12 @@ import { Command } from '../core/commandManager.js'
 // the surrounding marks are not).
 export async function toggleInlineFormatting(marker: string): Promise<void> {
   const editor = vscode.window.activeTextEditor
-  if (!editor) {
+  // The marks are AsciiDoc syntax, so they are only applied to AsciiDoc
+  // documents. The keybindings are already restricted to AsciiDoc through their
+  // `when` clause, but the commands can also be reached without them (Command
+  // Palette, `executeCommand`, a user rebinding without a `when` clause): in
+  // other languages the toggle must leave the document untouched (#1199).
+  if (!editor || !isAsciidocFile(editor.document)) {
     return
   }
   const document = editor.document
