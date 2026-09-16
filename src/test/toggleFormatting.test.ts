@@ -6,10 +6,11 @@ import { toggleInlineFormatting } from '../commands/toggleFormatting.js'
 async function withEditor(
   content: string,
   selection: vscode.Selection,
+  language = 'asciidoc',
 ): Promise<vscode.TextEditor> {
   const document = await vscode.workspace.openTextDocument({
     content,
-    language: 'asciidoc',
+    language,
   })
   const editor = await vscode.window.showTextDocument(document)
   editor.selection = selection
@@ -77,5 +78,15 @@ describe('asciidoc.toggleInlineFormatting', () => {
     const editor = await withEditor('foo bar baz', lineSelection(0, 3, 8))
     await toggleInlineFormatting('*')
     assert.strictEqual(editor.document.getText(), 'foo *bar* baz')
+  })
+
+  test('leaves a non-AsciiDoc document untouched', async () => {
+    const editor = await withEditor(
+      'foo bar baz',
+      lineSelection(0, 4, 7),
+      'markdown',
+    )
+    await toggleInlineFormatting('*')
+    assert.strictEqual(editor.document.getText(), 'foo bar baz')
   })
 })

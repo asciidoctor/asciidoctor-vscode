@@ -297,6 +297,18 @@
         {
           "command": "asciidoc.enableAntoraSupport",
           "when": "!antoraSupportEnabled"
+        },
+        {
+          "command": "asciidoc.toggleBold",
+          "when": "editorLangId == asciidoc"
+        },
+        {
+          "command": "asciidoc.toggleItalic",
+          "when": "editorLangId == asciidoc"
+        },
+        {
+          "command": "asciidoc.toggleMonospace",
+          "when": "editorLangId == asciidoc"
         }
       ]
     },
