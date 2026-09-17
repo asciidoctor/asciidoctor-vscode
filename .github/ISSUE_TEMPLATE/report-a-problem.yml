@@ -1,0 +1,94 @@
+# You may preview this template in VS Code with the [GitHub Issue Template Preview](https://marketplace.visualstudio.com/items?itemName=ReesPozzi.github-issue-template-preview) extension.
+name: Bug Report
+description: If something isn't working the way you expect it to
+type: 'bug'
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide details about:
+  - type: textarea
+    id: try
+    attributes:
+      label: What you're trying to do
+      description: Provide steps to reproduce the issue and, if applicable, add screenshots to make it easier to understand.
+    validations:
+      required: true
+  - type: textarea
+    id: gap
+    attributes:
+      label: What happened
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected to happen
+    validations:
+      required: true
+  - type: upload
+    id: sample
+    attributes:
+      label: Sample content
+      description: Please share relevant sample content. Or better yet, provide a link to a [minimal reproducible example](https://stackoverflow.com/help/minimal-reproducible-example).
+    validations:
+      required: false
+  - type: input
+    id: extensionver
+    attributes:
+      label: Extension version
+      description: Share the installed extension version (<kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd> or <kbd>Cmd</kbd> + <kbd>Shift</kbd> + <kbd>X</kbd> on macOS).
+      placeholder: 4.2.2
+    validations:
+      required: true
+  - type: textarea
+    id: systeminfo
+    attributes:
+      label: System information
+      description: We'll also need your system information (get it under _Help_ -> _About_ in VS Code).
+      placeholder: |
+        <details>
+        <summary>System information</summary>
+
+        Version: 1.136.1 (user setup)
+        Commit: a44adf7f53e00964ab890f9f8758a334f1fc15bc
+        Date: 2026-09-03T05:06:41Z
+        Electron: 42.10.0
+        ElectronBuildId: 15109253
+        Chromium: 148.0.7778.280
+        Node.js: 24.18.1
+        V8: 14.8.178.38-electron.0
+        @github/copilot: 1.0.81-0
+        @github/copilot-sdk: 1.0.11
+        OS: Windows_NT arm64 10.0.26200
+        </details>
+      value: |
+        <details>
+        <summary>System information</summary>
+
+        <!-- Replace this line with your system information.  The empty line before is necessary to ensure the as-is rendering of possible new line(s). -->
+        </details>
+    validations:
+      required: true
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        The extension also writes logs that often point straight at the cause. To capture them:
+
+        1. Run *Developer: Set Log Level...* from the Command Palette, choose *Asciidoctor*, then pick *Trace*.
+        2. Reproduce the problem.
+        3. Open the Output panel (_View_ -> _Output_) and select *Asciidoctor* in the channel dropdown.
+        4. Copy the relevant lines into the issue.
+      value: |
+        <details>
+        <summary>Logs</summary>
+
+        ```log
+        Replace this line with the relevant lines from the Output panel.  The empty line before is necessary to ensure the as-is rendering of possible new line(s).
+        ```
+        </details>
+    validations:
+      required: true

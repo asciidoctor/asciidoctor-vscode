@@ -1,0 +1,28 @@
+# You may preview this template in VS Code with the [GitHub Issue Template Preview](https://marketplace.visualstudio.com/items?itemName=ReesPozzi.github-issue-template-preview) extension.
+name: Feature Request
+description: Suggest a formal proposal for an enhancement
+type: 'feature'
+
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide details about:
+  - type: textarea
+    id: try
+    attributes:
+      label: What you're trying to do
+    validations:
+      required: true
+  - type: textarea
+    id: gap
+    attributes:
+      label: Why you can't use this extension for this
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: How you think this extension could handle this
+    validations:
+      required: true
