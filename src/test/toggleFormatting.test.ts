@@ -80,13 +80,55 @@ describe('asciidoc.toggleInlineFormatting', () => {
     assert.strictEqual(editor.document.getText(), 'foo *bar* baz')
   })
 
-  test('leaves a non-AsciiDoc document untouched', async () => {
-    const editor = await withEditor(
-      'foo bar baz',
-      lineSelection(0, 4, 7),
-      'markdown',
-    )
-    await toggleInlineFormatting('*')
-    assert.strictEqual(editor.document.getText(), 'foo bar baz')
+  // The toggles are restricted to AsciiDoc documents (#1199). The guard is a
+  // language check rather than an extension check, so it is exercised against a
+  // few of the languages a user may have focused when pressing Ctrl+B, and with
+  // each of the three markers.
+
+  for (const language of [
+    'markdown',
+    'plaintext',
+    'json',
+    'yaml',
+    'latex',
+    'typescript',
+  ]) {
+    for (const [name, marker] of [
+      ['bold', '*'],
+      ['italic', '_'],
+      ['monospace', '`'],
+    ]) {
+      test(`leaves a ${language} document untouched when toggling ${name}`, async () => {
+        const editor = await withEditor(
+          'foo bar baz',
+          lineSelection(0, 4, 7),
+          language,
+        )
+        await toggleInlineFormatting(marker)
+        assert.strictEqual(editor.document.getText(), 'foo bar baz')
+      })
+    }
+  }
+
+  for (const command of [
+    'asciidoc.toggleBold',
+    'asciidoc.toggleItalic',
+    'asciidoc.toggleMonospace',
+  ]) {
+    test(`${command} leaves a non-AsciiDoc document untouched`, async () => {
+      const editor = await withEditor(
+        'foo bar baz',
+        lineSelection(0, 4, 7),
+        'markdown',
+      )
+      await vscode.commands.executeCommand(command)
+      assert.strictEqual(editor.document.getText(), 'foo bar baz')
+    })
+  }
+
+  test('asciidoc.toggleBold still wraps the selection in an AsciiDoc document', async () => {
+    const editor = await withEditor('foo bar baz', lineSelection(0, 4, 7))
+    await vscode.commands.executeCommand('asciidoc.toggleBold')
+    assert.strictEqual(editor.document.getText(), 'foo *bar* baz')
   })
 })
