@@ -30,6 +30,7 @@ import { AsciidoctorProcessor } from './asciidoctorProcessor.js'
 import { registerBrowserIncludeProcessor } from './browserIncludeSupport.js'
 import { ResolverIncludeProcessor } from './includeProcessor.js'
 import { addMermaidToHtmlExport } from './mermaidExport.js'
+import { addPlantUmlToHtmlExport } from './plantumlExport.js'
 import { resolveBlockSourceLines } from './sourceLineMapping.js'
 import { getTemplateDirs } from './templateDirs.js'
 
@@ -197,7 +198,7 @@ export class AsciidocEngine {
     const convertedOutput = String(await document.convert(options))
     const output =
       backend === 'html5'
-        ? addMermaidToHtmlExport(convertedOutput)
+        ? addPlantUmlToHtmlExport(addMermaidToHtmlExport(convertedOutput))
         : convertedOutput
     return {
       output,

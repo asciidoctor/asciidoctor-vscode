@@ -4,10 +4,10 @@ import { containsKrokiDiagram } from '../../features/preview/krokiDiagram.js'
 
 describe('containsKrokiDiagram', () => {
   const positives: [string, string][] = [
-    ['a plain diagram block', '= Doc\n\n[plantuml]\n....\na -> b\n....\n'],
+    ['a plain diagram block', '= Doc\n\n[graphviz]\n....\ndigraph {}\n....\n'],
     [
       'a diagram block with extra attributes',
-      '[plantuml, diagram, svg]\n....\na -> b\n....\n',
+      '[graphviz, diagram, svg]\n....\ndigraph {}\n....\n',
     ],
     ['another diagram type', '[graphviz]\n----\ndigraph {}\n----\n'],
     ['a short diagram name', '[d2]\n----\nx -> y\n----\n'],
@@ -28,6 +28,7 @@ describe('containsKrokiDiagram', () => {
   const negatives: [string, string][] = [
     ['a document without diagrams', '= Doc\n\nSome *text* and a list.\n'],
     ['mermaid, which is always rendered', '[mermaid]\n....\ngraph TD;\n....\n'],
+    ['plantuml, which is rendered locally', '[plantuml]\n....\na -> b\n....\n'],
     [
       'a source block whose language is a diagram name',
       '[source,plantuml]\n----\na -> b\n----\n',

@@ -116,10 +116,10 @@ function outermost(elements: Set<Element>): Element[] {
 }
 
 /**
- * Re-run the asynchronous post-processors (highlight.js, Mermaid, MathJax) on
- * the blocks that were added or changed by the morph, then re-pin the preview
- * to `anchorLine` once MathJax — which lays out asynchronously and shifts
- * heights — has finished.
+ * Re-run the asynchronous post-processors (highlight.js, Mermaid, PlantUML,
+ * MathJax) on the blocks that were added or changed by the morph, then re-pin
+ * the preview to `anchorLine` once MathJax — which lays out asynchronously and
+ * shifts heights — has finished.
  */
 function reprocess(blocks: Element[], anchorLine: number | undefined) {
   if (blocks.length === 0) {
@@ -136,6 +136,45 @@ function reprocess(blocks: Element[], anchorLine: number | undefined) {
   const renderMermaid = (window as any).__asciidocRenderMermaid
   if (typeof renderMermaid === 'function') {
     renderMermaid(blocks)
+  }
+
+  const renderPlantUml = (window as any).__asciidocRenderPlantUml
+  if (typeof renderPlantUml === 'function') {
+    const plantumlNodes: Element[] = []
+    for (const block of blocks) {
+      if (block.matches('.plantuml')) {
+        plantumlNodes.push(block)
+      }
+      block
+        .querySelectorAll('.plantuml')
+        .forEach((node) => plantumlNodes.push(node))
+    }
+    if (plantumlNodes.length) {
+      const renderResult = renderPlantUml(plantumlNodes)
+      if (renderResult && typeof renderResult.then === 'function') {
+        beginAsyncRender()
+        let released = false
+        const release = () => {
+          if (released) {
+            return
+          }
+          released = true
+          endAsyncRender()
+        }
+        renderResult
+          .then(() => {
+            resetCodeLineElements()
+            if (typeof anchorLine === 'number' && !isNaN(anchorLine)) {
+              scrollToLine(anchorLine)
+            }
+          })
+          .catch((err: unknown) => {
+            debugLog('PlantUML render failed', err)
+          })
+          .finally(release)
+        setTimeout(release, 10000)
+      }
+    }
   }
 
   // Re-pin once any image in a changed block finishes loading (loading reflows
@@ -231,8 +270,9 @@ function scheduleMathDrain(anchorLine: number | undefined) {
  * in place instead of reloading the whole webview.
  *
  * Blocks whose source is unchanged (same `data-h-*` hash) are left untouched,
- * preserving their already-rendered MathJax / Mermaid / highlight.js / image
- * output. The scroll position is kept stable across the update.
+ * preserving their already-rendered MathJax / Mermaid / PlantUML /
+ * highlight.js / image output. The scroll position is kept stable across the
+ * update.
  *
  * Returns `true` when the morph was applied, `false` when the caller should
  * fall back to a full reload.

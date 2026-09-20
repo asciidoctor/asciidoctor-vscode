@@ -5,10 +5,8 @@
  * extension is disabled (asciidoctor/asciidoctor-vscode#480).
  */
 
-// Diagram block styles / block-macro names registered by asciidoctor-kroki,
-// minus `mermaid`, which the extension always renders through its own block
-// processor (so enabling Kroki is not needed for it). Keep in sync with
-// asciidoctor-kroki's list.
+// Diagram block styles / block-macro names registered by asciidoctor-kroki.
+// Keep in sync with asciidoctor-kroki's list.
 export const KROKI_DIAGRAM_NAMES = [
   'actdiag',
   'blockdiag',
@@ -41,10 +39,20 @@ export const KROKI_DIAGRAM_NAMES = [
   'wireviz',
 ]
 
+// Mermaid and PlantUML block styles are rendered by the extension's preview
+// without Kroki. PlantUML block macros still need Kroki because they resolve a
+// diagram source file rather than carrying the source in the block body.
+const LOCALLY_RENDERED_BLOCK_STYLES = new Set(['mermaid', 'plantuml'])
+
 // Longest names first so the alternation matches e.g. `vegalite` before `vega`
 // (otherwise `[vegalite]` would be tested against `vega` first and, although it
 // backtracks, keeping the order explicit is clearer).
-const alternation = [...KROKI_DIAGRAM_NAMES]
+const blockStyleAlternation = KROKI_DIAGRAM_NAMES.filter(
+  (name) => !LOCALLY_RENDERED_BLOCK_STYLES.has(name),
+)
+  .sort((a, b) => b.length - a.length)
+  .join('|')
+const blockMacroAlternation = [...KROKI_DIAGRAM_NAMES]
   .sort((a, b) => b.length - a.length)
   .join('|')
 
@@ -57,15 +65,18 @@ const alternation = [...KROKI_DIAGRAM_NAMES]
 // class after the name in the block-style form guards against matching a longer
 // word that merely starts with a diagram name (e.g. `[plantumlish]`).
 const DIAGRAM_BLOCK_STYLE = new RegExp(
-  `^\\[(?:${alternation})(?:[,#.\\]])`,
+  `^\\[(?:${blockStyleAlternation})(?:[,#.\\]])`,
   'm',
 )
-const DIAGRAM_BLOCK_MACRO = new RegExp(`^(?:${alternation})::\\S*\\[`, 'm')
+const DIAGRAM_BLOCK_MACRO = new RegExp(
+  `^(?:${blockMacroAlternation})::\\S*\\[`,
+  'm',
+)
 
 /**
  * Whether the AsciiDoc source contains at least one diagram block that Kroki
- * can render (Mermaid excluded, since it is always rendered). Deliberately a
- * cheap textual scan: it may occasionally match a diagram-looking line inside a
+ * can render (locally rendered block styles excluded). Deliberately a cheap
+ * textual scan: it may occasionally match a diagram-looking line inside a
  * verbatim block, which is acceptable for a one-time discovery hint.
  */
 export function containsKrokiDiagram(text: string): boolean {
