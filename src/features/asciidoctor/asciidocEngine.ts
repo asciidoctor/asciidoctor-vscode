@@ -393,6 +393,16 @@ export class AsciidocEngine {
         // `vscode.workspace.fs` can read the file. Embedding through the VS Code
         // FS API covers every host uniformly.
         '!data-uri': '',
+        // Because `data-uri` is unset above, asciidoctor-kroki would not see it
+        // during `load()` and, when `:kroki-fetch-diagram:` is set, would write
+        // diagram files into the workspace (#1208). Forward `data-uri` through
+        // `kroki-data-uri@` so asciidoctor-kroki returns a `data:` URI directly
+        // without writing a file to disk.
+        ...(dataUriEnabled &&
+          !('kroki-data-uri' in attributes) &&
+          !('!kroki-data-uri' in attributes) && {
+            'kroki-data-uri@': '',
+          }),
       },
       backend: 'webview-html5',
       extension_registry: registry,

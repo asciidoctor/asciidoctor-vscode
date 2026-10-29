@@ -4,6 +4,7 @@
 
 ### Bug fixes
 
+* Prevent the preview from writing `asciidoctor-kroki` diagram files into the workspace when `data-uri` is set alongside `:kroki-fetch-diagram:`: the preview unsets `data-uri` to handle image embedding itself, so it now forwards `kroki-data-uri@` to `asciidoctor-kroki` instead (#1208)
 * Keep the inline formatting toggles (`asciidoc.toggleBold`, `asciidoc.toggleItalic`, `asciidoc.toggleMonospace`) strictly limited to AsciiDoc documents: they are hidden from the Command Palette in other languages and now leave the document untouched when they are invoked outside AsciiDoc (#1199)
 
 ## 4.2.2 (2026-08-19) - @ggrossetie
