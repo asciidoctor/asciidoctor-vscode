@@ -116,6 +116,8 @@ const previewStrings = {
   cspAlertMessageTitle: l10nT('preview.securityMessage.title'),
 
   cspAlertMessageLabel: l10nT('preview.securityMessage.label'),
+
+  staleImageTitle: l10nT('preview.staleImage.title'),
 }
 
 /**

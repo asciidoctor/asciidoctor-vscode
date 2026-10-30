@@ -18,6 +18,7 @@
   "preview.securityMessage.label": "Security warning: Content disabled.",
   "preview.securityMessage.text": "Some content in this document has been disabled.",
   "preview.securityMessage.title": "Potentially unsafe content was disabled in this preview.",
+  "preview.staleImage.title": "This image could not be updated: the previous version is displayed.",
   "preview.styleLoadError.message": "Could not load style 'asciidoc.preview.style': {0}.",
   "preview.unlocked.title": "Preview {0}",
   "security.asciidoctorExtensionsTrustModeSelector.title": "Select trust mode for Asciidoctor.js extensions in this workspace.",

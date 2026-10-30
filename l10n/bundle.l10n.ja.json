@@ -18,6 +18,7 @@
   "preview.securityMessage.label": "コンテンツ無効化のセキュリティ警告",
   "preview.securityMessage.text": "このドキュメントの一部のコンテンツを無効にします。",
   "preview.securityMessage.title": "プレビューで、安全ではないコンテンツを無効にしています。安全ではないコンテンツやスクリプトを有効化するには、プレビューのセキュリティ設定を許可に変更してください。",
+  "preview.staleImage.title": "この画像を更新できませんでした。以前のバージョンを表示しています。",
   "preview.styleLoadError.message": "'asciidoc.preview.style'のスタイルシートを読み込めませんでした: {0}",
   "preview.unlocked.title": "プレビュー {0}",
   "security.asciidoctorExtensionsTrustModeSelector.title": "Asciidoctor.js拡張の信頼モードの選択",
