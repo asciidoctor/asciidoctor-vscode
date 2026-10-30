@@ -89,7 +89,7 @@ xref:save-docbook.adoc[DocBook] export is not affected: DocBook is a semantic fo
 Likewise, PDFs generated with the `asciidoctor-pdf` engine rely on the Ruby toolchain's own highlighters (for example Rouge).
 
 The built-in highlighter is a *soft default*: a document that declares its own `:source-highlighter:` keeps it.
-To change or disable the highlighter globally, use the `asciidoc.preview.asciidoctorAttributes` setting:
+To change or disable the highlighter in the preview, use the `asciidoc.preview.asciidoctorAttributes` setting:
 
 * pick another highlighter, for example:
 +
@@ -108,6 +108,9 @@ To change or disable the highlighter globally, use the `asciidoc.preview.asciido
 }
 ----
 
+This setting only applies to the preview, not to exports.
+To change the highlighter for both, set the `source-highlighter` attribute in the document header or in an xref:asciidoctorconfig.adoc[`.asciidoctorconfig`] file, or disable it there with `:!source-highlighter:`.
+
 === Supported languages
 
 The preview detects the languages used in your source blocks and loads the matching Highlight.js grammar automatically, so any of the https://highlightjs.org/download[languages supported by Highlight.js] works without configuration -- you don't need `:highlightjs-languages:`.
@@ -118,7 +121,8 @@ Use the canonical Highlight.js language name.
 For example, Highlight.js has no `zsh` grammar; use `bash` instead.
 ====
 
-For *HTML-based exports* the detection does not apply: list the extra languages you need with the `highlightjs-languages` attribute (a comma-separated list), either in the document header or through the `asciidoc.preview.asciidoctorAttributes` setting.
+For *HTML-based exports* the detection does not apply: list the extra languages you need with the `highlightjs-languages` attribute (a comma-separated list), either in the document header or in an xref:asciidoctorconfig.adoc[`.asciidoctorconfig`] file.
+The `asciidoc.preview.asciidoctorAttributes` setting does not apply to exports.
 
 [source,asciidoc]
 ----
