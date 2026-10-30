@@ -2,8 +2,10 @@
 :description: How to contribute to the AsciiDoc extension.
 
 Contributions are welcome.
-Clone the repository, commit your changes, and open a pull request.
+Create an issue to discuss your change first, then clone the repository, commit your changes, and open a pull request.
 In the pull request description, clearly highlight what you changed.
+
+The full set of rules (commit messages, changelog, tests, localization) is described in the {url-repo}/blob/main/CONTRIBUTING.adoc[contributing guide].
 
 [NOTE]
 ====
@@ -13,7 +15,7 @@ Do not update the extension version -- maintainers do this when a new version is
 == Documentation changes
 
 You are free to fix typos and errors, and to add or improve descriptions.
-If you have a larger style change in mind, please open an issue (or a dedicated pull request) first so it can be discussed.
+As with any other change, please create an issue first so it can be discussed.
 
 == Credits
 
