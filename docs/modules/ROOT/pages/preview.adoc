@@ -89,12 +89,12 @@ xref:save-docbook.adoc[DocBook] export is not affected: DocBook is a semantic fo
 Likewise, PDFs generated with the `asciidoctor-pdf` engine rely on the Ruby toolchain's own highlighters (for example Rouge).
 
 The built-in highlighter is a *soft default*: a document that declares its own `:source-highlighter:` keeps it.
-To disable highlighting in the preview, set an empty value in the `asciidoc.preview.asciidoctorAttributes` setting:
+To disable highlighting in the preview, unset the attribute in the `asciidoc.preview.asciidoctorAttributes` setting, with a trailing `!` in its name:
 
 [source,json]
 ----
 "asciidoc.preview.asciidoctorAttributes": {
-  "source-highlighter": ""
+  "source-highlighter!": ""
 }
 ----
 

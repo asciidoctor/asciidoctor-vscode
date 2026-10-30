@@ -9,6 +9,10 @@
 * Generate the nonce of the preview's Content Security Policy from a secure random source instead of the clock, so that a document cannot guess it to run inline scripts (#1214)
 * Keep the inline formatting toggles (`asciidoc.toggleBold`, `asciidoc.toggleItalic`, `asciidoc.toggleMonospace`) strictly limited to AsciiDoc documents: they are hidden from the Command Palette in other languages and now leave the document untouched when they are invoked outside AsciiDoc (#1199)
 
+### Documentation
+
+* Clarify that `asciidoc.preview.asciidoctorAttributes` does not configure the source highlighter of exports, and disable highlighting by unsetting the attribute rather than with an empty value (#1218)
+
 ## 4.2.2 (2026-08-19) - @ggrossetie
 
 ### Bug fixes
