@@ -13,6 +13,7 @@
 
 ### Bug fixes
 
+* Fully reload the preview on each update when the document has docinfo content, so that its scripts run again instead of leaving raw content on the page, for instance formulas rendered by KaTeX (#1205)
 * Do not write the diagrams fetched with `:kroki-fetch-diagram:` into the workspace when `data-uri` is set: the preview now embeds them directly (#1208)
 * Stop running asciidoctor-kroki during the diagnostics and language-features parse, which sent each diagram to the Kroki server on every edit and, with `kroki-fetch-diagram`, wrote images into the workspace even with the preview closed. Diagram errors no longer appear in the Problems panel, but remain visible in the preview (#1221)
 * Use Highlight.js in the preview whatever the value of `source-highlighter`, as it is the only highlighter available there, instead of leaving source blocks without highlighting when the value is, for example, `rouge`, `coderay` or `pygments` (#1217)
