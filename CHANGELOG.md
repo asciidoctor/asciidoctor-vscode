@@ -5,6 +5,7 @@
 ### Features
 
 * Render [Lini](https://lini.rs) diagrams through Kroki (requires Kroki 0.34.0 or later), by upgrading `asciidoctor-kroki` to 2.0.0 (#1208)
+* Render `[plantuml]` blocks in the preview and in exported HTML without Kroki, using `@plantuml/core`, when `asciidoc.extensions.enableKroki` is disabled. Exported HTML loads the renderer from a CDN (#1188)
 
 ### Improvements
 
@@ -13,6 +14,7 @@
 
 ### Bug fixes
 
+* Stop rendering Mermaid diagrams again on every preview update, including edits elsewhere in the document (#1188)
 * Do not write the diagrams fetched with `:kroki-fetch-diagram:` into the workspace when `data-uri` is set: the preview now embeds them directly (#1208)
 * Stop running asciidoctor-kroki during the diagnostics and language-features parse, which sent each diagram to the Kroki server on every edit and, with `kroki-fetch-diagram`, wrote images into the workspace even with the preview closed. Diagram errors no longer appear in the Problems panel, but remain visible in the preview (#1221)
 * Use Highlight.js in the preview whatever the value of `source-highlighter`, as it is the only highlighter available there, instead of leaving source blocks without highlighting when the value is, for example, `rouge`, `coderay` or `pygments` (#1217)

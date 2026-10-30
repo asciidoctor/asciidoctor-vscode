@@ -1,5 +1,5 @@
 = Diagram integration
-:description: Render diagrams in the preview through Kroki and asciidoctor-kroki.
+:description: Render diagrams in the preview through Kroki and asciidoctor-kroki, or PlantUML locally.
 
 The extension supports a wide range of diagrams -- from BPMN to Graphviz, PlantUML, and Vega -- through {url-kroki}[Kroki] and {url-asciidoctor-kroki}[asciidoctor-kroki].
 
@@ -10,8 +10,28 @@ You can see the full range of supported diagram types on the https://kroki.io/#s
 Diagram rendering is disabled by default (see <<Privacy>>).
 Set the `asciidoc.extensions.enableKroki` setting to `true` to enable it.
 
-The first time you preview a document that contains a diagram Kroki can render while the extension is disabled, a one-time notification points it out and offers to enable Kroki (or to open this page).
+The first time you preview a document that contains a diagram only Kroki can render while the extension is disabled, a one-time notification points it out and offers to enable Kroki (or to open this page).
 The notification is shown at most once; enabling Kroki always remains an explicit choice.
+
+== Render PlantUML without Kroki
+
+While Kroki is disabled, `[plantuml]` blocks are rendered locally, in the preview and without any server, by https://www.npmjs.com/package/@plantuml/core[@plantuml/core].
+
+[plantuml]
+....
+Alice -> Bob : Hello
+....
+
+The `@startuml` and `@enduml` lines are optional.
+In an exported HTML file, the diagrams are rendered when the file is opened, by a renderer loaded from the jsDelivr CDN: the browser must be able to reach it.
+A DocBook export keeps the source of the diagram as a listing.
+
+Local rendering has the following limitations, which require enabling Kroki:
+
+* The `plantuml::diagram.puml[]` block macro is not supported.
+* `!include` cannot read local files, and the PlantUML standard library (`!include <C4/C4_Container>`, for instance) is not available. This also applies to the `kroki-plantuml-include` attribute, which is ignored.
+* The PlantUML icons (`+<&heart>+`, `+<:smile:>+`) cannot be loaded and make the diagram fail.
+* Diagrams are always rendered as SVG: the `format` attribute and the `kroki-default-format` attribute are ignored, as are the options passed to Kroki, such as `theme`. Use the PlantUML `!theme` directive instead.
 
 == Use your own Kroki server
 

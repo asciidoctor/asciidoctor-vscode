@@ -4,6 +4,7 @@ import * as vscode from 'vscode'
 import { findFiles } from '../../core/findFiles.js'
 import { requireFresh } from '../../core/requireExtension.js'
 import { mermaidJSProcessor } from '../preview/mermaid.js'
+import { plantumlJSProcessor } from '../preview/plantuml.js'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
 import {
   type AsciidoctorExtensionContext,
@@ -38,8 +39,12 @@ export class AsciidoctorExtensions {
     // never rendered, yet it runs on every edit. With Kroki registered, it would
     // send each diagram to the server and, with `kroki-fetch-diagram`, write the
     // images into the workspace.
-    if (enableKroki && context?.mode !== 'load') {
-      registerKroki(registry)
+    if (enableKroki) {
+      if (context?.mode !== 'load') {
+        registerKroki(registry)
+      }
+    } else {
+      registry.block('plantuml', plantumlJSProcessor())
     }
     registry.block('mermaid', mermaidJSProcessor())
     if (context !== undefined) {

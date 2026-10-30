@@ -42,10 +42,20 @@ export const KROKI_DIAGRAM_NAMES = [
   'wireviz',
 ]
 
+// `[plantuml]` blocks are rendered by the extension without Kroki. A PlantUML
+// block macro still needs Kroki: it references a diagram file instead of carrying
+// the source in its body.
+const LOCALLY_RENDERED_BLOCK_STYLES = new Set(['plantuml'])
+
 // Longest names first so the alternation matches e.g. `vegalite` before `vega`
 // (otherwise `[vegalite]` would be tested against `vega` first and, although it
 // backtracks, keeping the order explicit is clearer).
-const alternation = [...KROKI_DIAGRAM_NAMES]
+const blockMacroAlternation = [...KROKI_DIAGRAM_NAMES]
+  .sort((a, b) => b.length - a.length)
+  .join('|')
+const blockStyleAlternation = KROKI_DIAGRAM_NAMES.filter(
+  (name) => !LOCALLY_RENDERED_BLOCK_STYLES.has(name),
+)
   .sort((a, b) => b.length - a.length)
   .join('|')
 
@@ -58,14 +68,18 @@ const alternation = [...KROKI_DIAGRAM_NAMES]
 // class after the name in the block-style form guards against matching a longer
 // word that merely starts with a diagram name (e.g. `[plantumlish]`).
 const DIAGRAM_BLOCK_STYLE = new RegExp(
-  `^\\[(?:${alternation})(?:[,#.\\]])`,
+  `^\\[(?:${blockStyleAlternation})(?:[,#.\\]])`,
   'm',
 )
-const DIAGRAM_BLOCK_MACRO = new RegExp(`^(?:${alternation})::\\S*\\[`, 'm')
+const DIAGRAM_BLOCK_MACRO = new RegExp(
+  `^(?:${blockMacroAlternation})::\\S*\\[`,
+  'm',
+)
 
 /**
  * Whether the AsciiDoc source contains at least one diagram block that Kroki
- * can render (Mermaid excluded, since it is always rendered). Deliberately a
+ * can render (Mermaid and `[plantuml]` blocks excluded, since the extension renders
+ * them itself). Deliberately a
  * cheap textual scan: it may occasionally match a diagram-looking line inside a
  * verbatim block, which is acceptable for a one-time discovery hint.
  */
