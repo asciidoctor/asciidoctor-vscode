@@ -87,7 +87,7 @@ puts 'Hello, World!'
 This also applies to HTML-based exports (xref:save-html.adoc[HTML] and the `wkhtmltopdf` engine of xref:export-pdf.adoc[Export as PDF]).
 xref:save-docbook.adoc[DocBook] export is not affected: DocBook is a semantic format, so source highlighting is left to the DocBook publishing toolchain.
 Likewise, PDFs generated with the `asciidoctor-pdf` engine rely on the Ruby toolchain's own highlighters (for example Rouge).
-The preview itself does not support Rouge: when `source-highlighter` is set to `rouge`, it uses Highlight.js instead.
+Highlight.js is the only highlighter available in the preview: it is used whatever the value of `source-highlighter` (for example `rouge`), unless highlighting is disabled.
 
 The built-in highlighter is a *soft default*: a document that declares its own `:source-highlighter:` keeps it.
 To change or disable the highlighter globally, use the `asciidoc.preview.asciidoctorAttributes` setting:

@@ -59,8 +59,8 @@ async function renderPreview(documentUri: vscode.Uri) {
   }
 }
 
-// Rouge is not supported in the preview, which falls back to Highlight.js.
-describe('source-highlighter set to rouge in the preview', () => {
+// Highlight.js is the only source highlighter available in the preview.
+describe('source-highlighter in the preview', () => {
   let createdFiles: vscode.Uri[] = []
 
   afterEach(async () => {
@@ -79,16 +79,24 @@ describe('source-highlighter set to rouge in the preview', () => {
     assert.equal(sourceHighlighter, 'highlight.js')
   }
 
-  test('falls back to Highlight.js when set in the document header', async () => {
-    const document = await createFile(
-      `= Doc\n:source-highlighter: rouge\n\n${SOURCE_BLOCK}`,
-      'rouge-header.adoc',
-    )
-    createdFiles.push(document)
-    await assertHighlightJs(document)
-  })
+  async function assertDisabled(documentUri: vscode.Uri) {
+    const { html, sourceHighlighter } = await renderPreview(documentUri)
+    assert.ok(!html.includes('hljs'), html)
+    assert.ok(!sourceHighlighter, `unexpected value: ${sourceHighlighter}`)
+  }
 
-  test('falls back to Highlight.js when set in .asciidoctorconfig', async () => {
+  for (const value of ['rouge', 'coderay', 'pygments', 'prettify', 'unknown']) {
+    test(`resolves ${value} to Highlight.js when set in the document header`, async () => {
+      const document = await createFile(
+        `= Doc\n:source-highlighter: ${value}\n\n${SOURCE_BLOCK}`,
+        `highlighter-header-${value}.adoc`,
+      )
+      createdFiles.push(document)
+      await assertHighlightJs(document)
+    })
+  }
+
+  test('resolves any value to Highlight.js when set in .asciidoctorconfig', async () => {
     const configFile = await createFile(
       ':source-highlighter: rouge',
       '.asciidoctorconfig',
@@ -96,31 +104,51 @@ describe('source-highlighter set to rouge in the preview', () => {
     createdFiles.push(configFile)
     const document = await createFile(
       `= Doc\n\n${SOURCE_BLOCK}`,
-      'rouge-config.adoc',
+      'highlighter-config.adoc',
     )
     createdFiles.push(document)
     await assertHighlightJs(document)
   })
 
-  test('falls back to Highlight.js when set in asciidoctorAttributes', async () => {
+  test('resolves any value to Highlight.js when set in asciidoctorAttributes', async () => {
     await vscode.workspace
       .getConfiguration('asciidoc.preview', null)
       .update('asciidoctorAttributes', { 'source-highlighter': 'rouge' })
     const document = await createFile(
       `= Doc\n\n${SOURCE_BLOCK}`,
-      'rouge-setting.adoc',
+      'highlighter-setting.adoc',
     )
     createdFiles.push(document)
     await assertHighlightJs(document)
   })
 
-  test('keeps another highlighter set in the document header', async () => {
+  test('uses Highlight.js when nothing sets the attribute', async () => {
     const document = await createFile(
-      `= Doc\n:source-highlighter: prettify\n\n${SOURCE_BLOCK}`,
-      'other-highlighter.adoc',
+      `= Doc\n\n${SOURCE_BLOCK}`,
+      'highlighter-default.adoc',
     )
     createdFiles.push(document)
-    const { sourceHighlighter } = await renderPreview(document)
-    assert.equal(sourceHighlighter, 'prettify')
+    await assertHighlightJs(document)
+  })
+
+  test('keeps highlighting disabled when the attribute is unset in the document header', async () => {
+    const document = await createFile(
+      `= Doc\n:!source-highlighter:\n\n${SOURCE_BLOCK}`,
+      'highlighter-unset.adoc',
+    )
+    createdFiles.push(document)
+    await assertDisabled(document)
+  })
+
+  test('keeps highlighting disabled when the attribute is empty in asciidoctorAttributes', async () => {
+    await vscode.workspace
+      .getConfiguration('asciidoc.preview', null)
+      .update('asciidoctorAttributes', { 'source-highlighter': '' })
+    const document = await createFile(
+      `= Doc\n\n${SOURCE_BLOCK}`,
+      'highlighter-empty.adoc',
+    )
+    createdFiles.push(document)
+    await assertDisabled(document)
   })
 })
