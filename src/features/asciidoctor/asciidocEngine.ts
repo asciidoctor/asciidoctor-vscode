@@ -247,10 +247,6 @@ export class AsciidocEngine {
       'source-highlighter',
       'rouge',
     )
-    if (isRougeSourceHighlighterEnabled) {
-      // Force the source highlighter to Highlight.js (since Rouge is not supported)
-      document.setAttribute('source-highlighter', 'highlight.js')
-    }
     const krokiServerUrl =
       document.getAttribute('kroki-server-url') || 'https://kroki.io'
     // Detected from the header-only parse: the preview embeds images itself when
@@ -343,6 +339,11 @@ export class AsciidocEngine {
       attributes: {
         ...attributes,
         ...antoraAttributes,
+        // Force the source highlighter to Highlight.js (since Rouge is not
+        // supported): a hard attribute, so it also wins over the document header.
+        ...(isRougeSourceHighlighterEnabled && {
+          'source-highlighter': 'highlight.js',
+        }),
         'vscode-theme': isDarkTheme ? 'dark' : 'light',
         // The following attributes are "intrinsic attributes" but they are not set when the input is a string
         // like we are doing, in that case it is expected that the attributes are set here for the API:
