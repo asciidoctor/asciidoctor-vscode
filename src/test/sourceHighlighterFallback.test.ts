@@ -140,6 +140,18 @@ describe('source-highlighter in the preview', () => {
     await assertDisabled(document)
   })
 
+  test('keeps highlighting disabled when the attribute is unset in asciidoctorAttributes', async () => {
+    await vscode.workspace
+      .getConfiguration('asciidoc.preview', null)
+      .update('asciidoctorAttributes', { 'source-highlighter!': '' })
+    const document = await createFile(
+      `= Doc\n\n${SOURCE_BLOCK}`,
+      'highlighter-unset-setting.adoc',
+    )
+    createdFiles.push(document)
+    await assertDisabled(document)
+  })
+
   test('keeps highlighting disabled when the attribute is empty in asciidoctorAttributes', async () => {
     await vscode.workspace
       .getConfiguration('asciidoc.preview', null)
