@@ -18,6 +18,7 @@
   "preview.securityMessage.label": "Alerte de sécurité : contenu désactivé",
   "preview.securityMessage.text": "Certains contenus ont été désactivés dans ce document",
   "preview.securityMessage.title": "Du contenu potentiellement nuisible a été désactivé dans la prévisualisation. Configurer les paramètres de sécurité de la prévisualisation afin d'autoriser ces contenus.",
+  "preview.staleImage.title": "Impossible de mettre à jour cette image : la version précédente est affichée.",
   "preview.styleLoadError.message": "Impossible de charger la feuille de style 'asciidoc.preview.style' : {0}",
   "preview.unlocked.title": "Prévisualisation {0}",
   "security.asciidoctorExtensionsTrustModeSelector.title": "Sélectionner le niveau de confiance adapté aux extensions Asciidoctor.js présentes dans cet espace de travail.",

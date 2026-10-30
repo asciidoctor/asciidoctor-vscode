@@ -1,4 +1,5 @@
 import morphdom from 'morphdom'
+import { deferImageUpdate } from './deferred-image.js'
 import {
   beginAsyncRender,
   endAsyncRender,
@@ -8,6 +9,7 @@ import {
   suppressScrollEcho,
 } from './scroll-sync.js'
 import { getSettings } from './settings.js'
+import { getStrings } from './strings.js'
 
 declare const MathJax: any
 
@@ -227,6 +229,25 @@ function scheduleMathDrain(anchorLine: number | undefined) {
 }
 
 /**
+ * Run a DOM mutation that happens long after the update (a diagram can take a
+ * while to load), reading the source line at the top of the viewport right before
+ * it so that a scroll made in the meantime is not undone.
+ */
+function keepViewport(mutate: () => void) {
+  const line = getEditorLineNumberForPageOffset(window.scrollY)
+  mutate()
+  resetCodeLineElements()
+  if (line !== null) {
+    scrollToLine(line)
+  }
+}
+
+const deferredImageOptions = {
+  keepViewport,
+  staleTitle: () => getStrings().staleImageTitle,
+}
+
+/**
  * Apply a freshly rendered document to the preview by morphing `#preview-root`
  * in place instead of reloading the whole webview.
  *
@@ -271,6 +292,16 @@ export function updatePreviewContent(html: string): boolean {
 
   morphdom(currentRoot, newRoot, {
     onBeforeElUpdated(fromEl: Element, toEl: Element) {
+      if (
+        fromEl.tagName === 'IMG' &&
+        deferImageUpdate(
+          fromEl as HTMLImageElement,
+          toEl as HTMLImageElement,
+          deferredImageOptions,
+        )
+      ) {
+        return false
+      }
       if (fromEl.isEqualNode(toEl)) {
         return false
       }

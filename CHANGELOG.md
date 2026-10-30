@@ -8,6 +8,7 @@
 
 ### Improvements
 
+* Keep displaying a diagram or an image in the preview until its new version is loaded, instead of moving the page when it fails to load, for instance on a syntax error while typing a Kroki diagram. If the new version cannot be loaded, the previous one stays dimmed (#1225)
 * Support `:kroki-fetch-diagram:` in VS Code for the Web, where fetched diagrams are embedded as data URIs instead of being replaced by an error block, by upgrading `asciidoctor-kroki` to 2.0.0 (#1208)
 * Keep downloaded diagrams in a persistent cache (`~/.cache/kroki` by default), so that unchanged diagrams with `:kroki-fetch-diagram:` are no longer downloaded again. Set `:kroki-cache: false` to disable it, or `:kroki-cache-dir:` to move it (#1208)
 
