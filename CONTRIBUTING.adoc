@@ -2,6 +2,19 @@
 
 This guide describes how to develop changes for this Visual Studio Code plugin and how to test them locally.
 
+== Contribution Process
+
+. Create an issue before creating a pull request, whatever the size of the change, so that it can be discussed first.
+A pull request without an issue may be rejected.
+. Make your changes on a separate branch, following the <<Commit Messages,commit message conventions>>.
+. Add or update the tests, see <<Tests and Checks>>.
+. Update the <<Changelog,changelog>> if the change is visible to users.
+. Update the <<Localization,localized strings>> and the <<Documentation,documentation>> if the change affects them.
+. Create a pull request that clearly describes what changed and why, and that contains `resolves #XXX` to automatically close the issue.
+Keep it focused on a single topic.
+
+Do not update the extension version: maintainers do this when a new version is released.
+
 == Prerequisites
 
 Before developing changes, install the following prerequisites:
@@ -77,7 +90,47 @@ Prefix each commit message with a type, and an optional scope, e.g.:
  fix(preview): honor asciidoc.preview.defaultStyle when useEditorStyle is unset
 
 Common types include `feat`, `fix`, `docs`, `test`, `refactor`, `chore`, and `ci`.
+Mark a breaking change with a `!` after the type or scope, e.g. `feat(preview)!: remove the legacy style option`.
+Use the commit body to explain why the change is needed, and reference the issue in the footer, e.g. `Fixes #1195`.
 Keep commits focused: a commit that only fixes a typo in an earlier, unmerged commit of the same pull request should be squashed into it rather than kept as a separate `fix` commit.
+
+== Changelog
+
+Any change visible to users (new feature, bug fix, changed behavior, new or updated setting, deprecation...) must be described in `CHANGELOG.md` in the same pull request.
+Purely internal changes, such as a refactoring or a change that only affects the tests or the CI, do not need an entry.
+
+Add the entry under the `## Unreleased` heading, in the matching section, creating it if necessary: `Breaking changes`, `Deprecations`, `Features`, `Improvements`, `Bug fixes`, `Performance`, `Documentation` or `Infrastructure`.
+Write it from the point of view of users, in one or two sentences, and end it with the issue number:
+
+ * Render the block title and caption on `[mermaid]` blocks in the preview, instead of silently dropping them (#1186)
+
+== Tests and Checks
+
+New features and bug fixes must come with tests.
+Tests that need the VS Code API live in `src/test/`, and tests that don't live in `src/test/unit/`.
+
+Before creating a pull request, make sure that the following commands succeed, as the CI runs them on Linux and Windows (lint and format on Linux only):
+
+ $ npm run lint
+ $ npm run format
+ $ npm run build-web
+ $ npm t
+
+NOTE: `npm run lint` and `npm run format` rewrite the files they fix, so commit the result.
+
+The extension runs on both the desktop and the web clients: code must not rely on Node.js APIs without taking the web client into account.
+
+== Localization
+
+Strings displayed to users must be localized, and their translations must be kept in sync in the same pull request:
+
+* The strings declared in `package.json` (commands, settings descriptions...) live in `package.nls.json`, translated in `package.nls.de.json`, `package.nls.fr.json` and `package.nls.ja.json`.
+* The strings used in the code through `vscode.l10n.t` live in `l10n/bundle.l10n.json`, translated in `l10n/bundle.l10n.de.json`, `l10n/bundle.l10n.fr.json` and `l10n/bundle.l10n.ja.json`.
+
+== Documentation
+
+The user documentation lives under `docs/modules/ROOT/pages/`.
+Update it when you add a feature or a setting, or when you change a documented behavior.
 
 == Updating The Grammar
 
