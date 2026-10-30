@@ -30,6 +30,7 @@ Local rendering has the following limitations, which require enabling Kroki:
 
 * The `plantuml::diagram.puml[]` block macro is not supported.
 * `!include` cannot read local files, and the PlantUML standard library (`!include <C4/C4_Container>`, for instance) is not available. This also applies to the `kroki-plantuml-include` attribute, which is ignored.
+* The PlantUML icons (`+<&heart>+`, `+<:smile:>+`) cannot be loaded and make the diagram fail.
 * Diagrams are always rendered as SVG: the `format` attribute and the `kroki-default-format` attribute are ignored, as are the options passed to Kroki, such as `theme`. Use the PlantUML `!theme` directive instead.
 
 == Use your own Kroki server
