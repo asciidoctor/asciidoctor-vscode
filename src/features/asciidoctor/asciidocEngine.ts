@@ -243,10 +243,6 @@ export class AsciidocEngine {
       extension_registry: headerOnlyRegistry,
       header_only: true,
     })
-    const isRougeSourceHighlighterEnabled = document.isAttribute(
-      'source-highlighter',
-      'rouge',
-    )
     const krokiServerUrl =
       document.getAttribute('kroki-server-url') || 'https://kroki.io'
     // Detected from the header-only parse: the preview embeds images itself when
@@ -339,9 +335,11 @@ export class AsciidocEngine {
       attributes: {
         ...attributes,
         ...antoraAttributes,
-        // Force the source highlighter to Highlight.js (since Rouge is not
-        // supported): a hard attribute, so it also wins over the document header.
-        ...(isRougeSourceHighlighterEnabled && {
+        // Highlight.js is the only source highlighter available in the preview:
+        // resolve any value to it, unless highlighting is disabled (unset or
+        // empty). A hard attribute, so it also wins over the document header.
+        ...((antoraAttributes['source-highlighter'] ??
+          document.getAttribute('source-highlighter')) && {
           'source-highlighter': 'highlight.js',
         }),
         'vscode-theme': isDarkTheme ? 'dark' : 'light',
