@@ -123,6 +123,44 @@ describe('Refresh preview command', () => {
     )
   })
 
+  // A docinfo script runs only when the page loads (#1205).
+  test('always does a full reload when the document has docinfo content', async () => {
+    let renders = 0
+    const contentProvider = {
+      providePreviewHTML: async () => {
+        renders++
+        return `<html><body data-shell="A" data-has-docinfo>render ${renders}</body></html>`
+      },
+    } as unknown as AsciidocContentProvider
+
+    const docinfoPreview = AsciidocPreview.create(
+      fileUri,
+      vscode.ViewColumn.One,
+      vscode.ViewColumn.Two,
+      true,
+      contentProvider,
+      new AsciidocPreviewConfigurationManager(),
+      new Logger(),
+      new AsciidocFileTopmostLineMonitor(),
+      getAsciidocExtensionContributions(extensionContext),
+    )
+    try {
+      docinfoPreview.update(fileUri)
+      await tick(300)
+
+      docinfoPreview.refresh(true, false)
+      await tick(500)
+      assert.equal(renders, 2)
+      assert.match(
+        (docinfoPreview as unknown as { editor: vscode.WebviewPanel }).editor
+          .webview.html,
+        /render 2/,
+      )
+    } finally {
+      docinfoPreview.dispose()
+    }
+  })
+
   // Toggling `:stem:` or `:source-highlighter:` changes the webview shell (the
   // <head> must load or unload MathJax / highlight.js), which the incremental
   // morph of `#preview-root` cannot apply — equations would stay raw and code
