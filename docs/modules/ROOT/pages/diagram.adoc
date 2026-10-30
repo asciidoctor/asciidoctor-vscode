@@ -26,7 +26,19 @@ You can therefore override the setting for a single document from its header, or
 :kroki-server-url: https://kroki.example.org
 ----
 
-The resolution order, from highest to lowest precedence, is therefore: the document header, then the nearest `.asciidoctorconfig`, then the `asciidoc.extensions.kroki.serverUrl` setting, and finally the public `https://kroki.io` server.
+The attribute can also be set in the `asciidoc.preview.asciidoctorAttributes` setting, which is useful when the server depends on the environment (for example in a Dev Container, where `localhost` is the container itself).
+Like any attribute passed through this setting, `kroki-server-url` is locked and cannot be overridden by the document, whereas `kroki-server-url@` (with a trailing `@`) can.
+
+The resolution order in the preview, from highest to lowest precedence, is therefore:
+
+. `kroki-server-url` in the `asciidoc.preview.asciidoctorAttributes` setting
+. the document header
+. the nearest `.asciidoctorconfig`
+. `kroki-server-url@` in the `asciidoc.preview.asciidoctorAttributes` setting
+. the `asciidoc.extensions.kroki.serverUrl` setting
+. the public `https://kroki.io` server
+
+Exports (HTML, PDF and DocBook) do not read `asciidoc.preview.asciidoctorAttributes`, so only the document header, the nearest `.asciidoctorconfig`, the `asciidoc.extensions.kroki.serverUrl` setting and the public server apply to them, in that order.
 
 == VS Code for the Web
 

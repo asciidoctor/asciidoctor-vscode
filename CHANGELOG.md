@@ -4,7 +4,7 @@
 
 ### Bug fixes
 
-* Honor a `kroki-server-url` set in `asciidoc.preview.asciidoctorAttributes` when `asciidoc.extensions.kroki.serverUrl` is also set, and apply `asciidoc.extensions.kroki.serverUrl` to the diagnostics and language-features parse as well (#1207)
+* Honor a `kroki-server-url` set in `asciidoc.preview.asciidoctorAttributes` when `asciidoc.extensions.kroki.serverUrl` is also set, and apply `asciidoc.extensions.kroki.serverUrl` to the diagnostics and language-features parse as well (#1207). A `kroki-server-url` set in that setting is locked, so it also takes precedence over the document header and `.asciidoctorconfig`; use `kroki-server-url@` to let them override it. Exports do not read `asciidoc.preview.asciidoctorAttributes` and are unchanged
 * Keep the inline formatting toggles (`asciidoc.toggleBold`, `asciidoc.toggleItalic`, `asciidoc.toggleMonospace`) strictly limited to AsciiDoc documents: they are hidden from the Command Palette in other languages and now leave the document untouched when they are invoked outside AsciiDoc (#1199)
 
 ## 4.2.2 (2026-08-19) - @ggrossetie
