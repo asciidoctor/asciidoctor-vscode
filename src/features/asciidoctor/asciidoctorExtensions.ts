@@ -34,7 +34,11 @@ export class AsciidoctorExtensions {
     const enableKroki = vscode.workspace
       .getConfiguration('asciidoc.extensions', null)
       .get('enableKroki')
-    if (enableKroki) {
+    // The `load` parse backs diagnostics and language features: its output is
+    // never rendered, yet it runs on every edit. With Kroki registered, it would
+    // send each diagram to the server and, with `kroki-fetch-diagram`, write the
+    // images into the workspace.
+    if (enableKroki && context?.mode !== 'load') {
       kroki.register(registry)
     }
     registry.block('mermaid', mermaidJSProcessor())
