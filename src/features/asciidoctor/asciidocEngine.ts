@@ -27,6 +27,7 @@ import { AsciidoctorAttributesConfig } from './asciidoctorAttributesConfig.js'
 import { AsciidoctorConfigProvider } from './asciidoctorConfig.js'
 import { AsciidoctorExtensionsProvider } from './asciidoctorExtensions.js'
 import { AsciidoctorProcessor } from './asciidoctorProcessor.js'
+import { hashBlockSource } from './blockSignature.js'
 import { registerBrowserIncludeProcessor } from './browserIncludeSupport.js'
 import { ResolverIncludeProcessor } from './includeProcessor.js'
 import { addMermaidToHtmlExport } from './mermaidExport.js'
@@ -36,75 +37,6 @@ import { getTemplateDirs } from './templateDirs.js'
 export type AsciidoctorBuiltInBackends = 'html5' | 'docbook5'
 
 const previewConfigurationManager = new AsciidocPreviewConfigurationManager()
-
-/**
- * Build a stable signature string for a block, used to detect whether its
- * content changed between two renders. Most blocks expose their raw source;
- * tables do not, so their signature is derived from their cells (otherwise a
- * table containing math would never be skipped and would re-typeset on every
- * keystroke, including edits elsewhere). Returns `undefined` when no usable
- * signature is available (the block is then always re-rendered, which is safe).
- */
-function blockSignature(block: any): string | undefined {
-  let source: string
-  try {
-    source = typeof block.getSource === 'function' ? block.getSource() : ''
-  } catch {
-    return undefined
-  }
-  if (source) {
-    return source
-  }
-
-  if (
-    typeof block.getNodeName === 'function' &&
-    block.getNodeName() === 'table'
-  ) {
-    try {
-      const rows = block.rows
-      if (!rows) {
-        return undefined
-      }
-      const parts: string[] = []
-      for (const section of [rows.head, rows.body, rows.foot]) {
-        if (!section) {
-          continue
-        }
-        for (const row of section) {
-          for (const cell of row) {
-            parts.push(
-              typeof cell.getText === 'function' ? cell.getText() : cell.text,
-            )
-          }
-        }
-      }
-      return parts.length ? parts.join('') : undefined
-    } catch {
-      return undefined
-    }
-  }
-
-  return undefined
-}
-
-/**
- * Compute a short, stable hash of a block's signature.
- *
- * Used to tag rendered blocks so the preview can morph incrementally and skip
- * blocks whose content did not change between two renders.
- */
-function hashBlockSource(block: any): string | undefined {
-  const signature = blockSignature(block)
-  if (!signature) {
-    return undefined
-  }
-  // djb2
-  let hash = 5381
-  for (let i = 0; i < signature.length; i++) {
-    hash = (hash * 33) ^ signature.charCodeAt(i)
-  }
-  return (hash >>> 0).toString(36)
-}
 
 export class AsciidocEngine {
   constructor(
