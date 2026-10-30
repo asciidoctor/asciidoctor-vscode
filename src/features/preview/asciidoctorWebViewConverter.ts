@@ -17,6 +17,7 @@ import { AntoraDocumentContext } from '../antora/antoraContext.js'
 import { AsciidocContributions } from '../extensionContributions.js'
 import { AsciidocPreviewSecurityLevel } from '../security.js'
 import { buildCustomStyleSheetLinks } from './customStyles.js'
+import { krokiServerCspSource } from './krokiDiagram.js'
 import { renderMathJax } from './mathjax.js'
 import { mermaidClientRenderScript } from './mermaid.js'
 import { generateNonce } from './nonce.js'
@@ -149,7 +150,7 @@ function getCspForResource(
   webviewResourceProvider: WebviewResourceProvider,
   securityLevel: AsciidocPreviewSecurityLevel,
   // `Array.prototype.join` renders `undefined` entries as an empty string, so
-  // an unset Kroki server URL simply contributes no extra CSP source.
+  // an unset or invalid Kroki server URL simply contributes no extra CSP source.
   krokiServerUrl: string | undefined,
   nonce: string,
 ): string {
@@ -159,17 +160,18 @@ function getCspForResource(
     return '<meta http-equiv="Content-Security-Policy" content="">'
   }
   const rule = webviewResourceProvider.cspSource
+  const krokiSource = krokiServerCspSource(krokiServerUrl)
   const rules = {
     'default-src': ["'none'"],
-    'img-src': ["'self'", rule, 'https:', 'data:', krokiServerUrl],
+    'img-src': ["'self'", rule, 'https:', 'data:', krokiSource],
     // `image::foo.svg[opts=interactive]` renders as `<object data="foo.svg">`.
     // Chromium treats an <object> that navigates to an SVG/HTML document as a
     // nested browsing context gated by `frame-src` (falling back to
     // `child-src`/`default-src` when unset), not just `object-src` — without
     // this the interactive SVG silently fails to load in the webview.
-    'object-src': ["'self'", rule, 'https:', 'data:', krokiServerUrl],
-    'frame-src': ["'self'", rule, 'https:', 'data:', krokiServerUrl],
-    'media-src': ["'self'", rule, 'https:', 'data:', krokiServerUrl],
+    'object-src': ["'self'", rule, 'https:', 'data:', krokiSource],
+    'frame-src': ["'self'", rule, 'https:', 'data:', krokiSource],
+    'media-src': ["'self'", rule, 'https:', 'data:', krokiSource],
     'script-src': [
       rule,
       'https:',

@@ -329,4 +329,31 @@ describe('asciidoc.extensions.kroki.serverUrl', () => {
       'asciidoc.preview.asciidoctorAttributes should take precedence in AsciidocLoader too',
     )
   })
+
+  test('a malformed URL cannot inject directives into the CSP', async () => {
+    const document = await createFile(
+      "= Doc\n:kroki-server-url: x; script-src 'unsafe-inline' *\n\ndiagram",
+      'kroki-csp-injection.adoc',
+    )
+    createdFiles.push(document)
+    const csp = await renderCsp(document)
+    assert.ok(!csp.includes("unsafe-inline' *"), csp)
+    assert.equal(
+      csp.split(';').filter((rule) => rule.trim().startsWith('script-src'))
+        .length,
+      1,
+      'the CSP should contain a single script-src directive',
+    )
+  })
+
+  test('the CSP only allows the origin of the Kroki server', async () => {
+    const document = await createFile(
+      '= Doc\n:kroki-server-url: http://kroki-path:9000/kroki/\n\ndiagram',
+      'kroki-csp-origin.adoc',
+    )
+    createdFiles.push(document)
+    const csp = await renderCsp(document)
+    assert.ok(csp.includes('http://kroki-path:9000;'), csp)
+    assert.ok(!csp.includes('/kroki/'), csp)
+  })
 })
