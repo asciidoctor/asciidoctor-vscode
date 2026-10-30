@@ -1,3 +1,5 @@
+import { PLANTUML_SOURCE_DATA_URI_PREFIX } from '../src/features/preview/plantuml.js'
+
 // The next version of each displayed image, loading or failed to load. Kept after
 // a failure so that an edit elsewhere in the document does not request it again.
 const nextImages = new WeakMap<HTMLImageElement, HTMLImageElement>()
@@ -28,8 +30,8 @@ export function deferImageUpdate(
   if (
     !src ||
     src === fromEl.getAttribute('src') ||
-    // Available at once. It also covers the Mermaid placeholder, which must reach
-    // the DOM to be rendered.
+    // Available at once. It also covers the Mermaid and PlantUML placeholders,
+    // which must reach the DOM to be rendered.
     src.startsWith('data:') ||
     // Would not load until it is in the viewport, so it would never be ready.
     toEl.getAttribute('loading') === 'lazy'
@@ -62,5 +64,36 @@ export function deferImageUpdate(
       swap()
     }
   })
+  return true
+}
+
+/**
+ * Keep displaying a rendered PlantUML diagram until its new version is ready: the
+ * placeholder of the new version waits, hidden, next to it, and the render swaps
+ * them in one go (see plantUmlClientRenderScript() in plantuml.ts). Morphing would
+ * replace the diagram with a broken placeholder image on every keystroke, and the
+ * block would collapse until the render ends.
+ *
+ * Returns `true` when the update of the children of `fromEl` is taken care of,
+ * `false` when the caller should morph them as usual.
+ */
+export function deferPlantUmlUpdate(fromEl: Element, toEl: Element): boolean {
+  const displayed = fromEl.firstElementChild
+  const placeholder = toEl.firstElementChild
+  if (
+    !displayed?.matches('.plantuml') ||
+    toEl.childElementCount !== 1 ||
+    placeholder?.tagName !== 'IMG' ||
+    !placeholder
+      .getAttribute('src')
+      ?.startsWith(PLANTUML_SOURCE_DATA_URI_PREFIX)
+  ) {
+    return false
+  }
+  // A placeholder still waiting is out of date: its render will be dropped.
+  displayed.nextElementSibling?.remove()
+  const next = document.importNode(placeholder, false) as HTMLImageElement
+  next.style.display = 'none'
+  displayed.after(next)
   return true
 }

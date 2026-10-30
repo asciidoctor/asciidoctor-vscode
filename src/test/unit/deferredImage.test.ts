@@ -1,6 +1,10 @@
 import assert from 'node:assert/strict'
 import { afterEach, beforeEach, describe, test } from 'node:test'
-import { deferImageUpdate } from '../../../preview-src/deferred-image.js'
+import {
+  deferImageUpdate,
+  deferPlantUmlUpdate,
+} from '../../../preview-src/deferred-image.js'
+import { PLANTUML_SOURCE_DATA_URI_PREFIX } from '../../features/preview/plantuml.js'
 
 type FakeImage = HTMLImageElement & {
   attrs: Record<string, string>
@@ -173,5 +177,77 @@ describe('deferImageUpdate', () => {
     imported[0].resolveDecode()
     await flush()
     assert.equal(from.replacedBy, undefined)
+  })
+})
+
+describe('deferPlantUmlUpdate', () => {
+  const placeholder = (source: string) => ({
+    tagName: 'IMG',
+    style: {} as Record<string, string>,
+    removed: false,
+    getAttribute: () => `${PLANTUML_SOURCE_DATA_URI_PREFIX}${source}`,
+    remove() {
+      this.removed = true
+    },
+  })
+  const parent = (...children: any[]) =>
+    ({
+      firstElementChild: children[0] ?? null,
+      childElementCount: children.length,
+    }) as unknown as Element
+  const displayed = (waiting?: any) => {
+    const element: any = {
+      nextElementSibling: waiting ?? null,
+      matches: (selector: string) => selector === '.plantuml',
+      after(next: any) {
+        element.nextElementSibling = next
+      },
+    }
+    return element
+  }
+
+  beforeEach(() => {
+    ;(globalThis as any).document = {
+      importNode: (node: unknown) => ({ ...(node as object) }),
+    }
+  })
+
+  afterEach(() => {
+    delete (globalThis as any).document
+  })
+
+  test('adds the new version, hidden, next to the displayed diagram', () => {
+    const diagram = displayed()
+    assert.equal(
+      deferPlantUmlUpdate(parent(diagram), parent(placeholder('new'))),
+      true,
+    )
+    assert.equal(diagram.nextElementSibling.style.display, 'none')
+    assert.match(diagram.nextElementSibling.getAttribute(), /new$/)
+  })
+
+  test('replaces a new version still waiting', () => {
+    const waiting = placeholder('old')
+    const diagram = displayed(waiting)
+    // The fake does not detach the sibling, `after` overwrites it.
+    deferPlantUmlUpdate(parent(diagram), parent(placeholder('new')))
+    assert.equal(waiting.removed, true)
+    assert.match(diagram.nextElementSibling.getAttribute(), /new$/)
+  })
+
+  test('morphs as usual when nothing is displayed yet', () => {
+    const image = {
+      matches: () => false,
+    }
+    assert.equal(
+      deferPlantUmlUpdate(parent(image), parent(placeholder('new'))),
+      false,
+    )
+  })
+
+  test('morphs as usual when the block is no longer a PlantUML diagram', () => {
+    const other = { tagName: 'IMG', getAttribute: () => 'data:image/png,AA' }
+    assert.equal(deferPlantUmlUpdate(parent(displayed()), parent(other)), false)
+    assert.equal(deferPlantUmlUpdate(parent(displayed()), parent()), false)
   })
 })

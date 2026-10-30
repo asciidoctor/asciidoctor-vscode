@@ -54,7 +54,7 @@ window.onload = () => {
 
 /**
  * Restore the scroll position of a freshly loaded page and keep it there until
- * the page has settled. Images, MathJax and Mermaid change the height of the
+ * the page has settled. Images, MathJax and diagrams change the height of the
  * page as they load: the resulting scroll events do not reflect a move of the
  * user, so they must neither reach the editor nor overwrite the saved position.
  */

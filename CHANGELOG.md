@@ -5,6 +5,7 @@
 ### Features
 
 * Render [Lini](https://lini.rs) diagrams through Kroki (requires Kroki 0.34.0 or later), by upgrading `asciidoctor-kroki` to 2.0.0 (#1208)
+* Render `[plantuml]` blocks in the preview and in exported HTML without Kroki, using `@plantuml/core`, when `asciidoc.extensions.enableKroki` is disabled. Exported HTML loads the renderer from a CDN, and PDF exports with `wkhtmltopdf` keep the source of the diagram (#1188)
 
 ### Improvements
 

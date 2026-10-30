@@ -7,16 +7,44 @@ import {
 
 describe('containsKrokiDiagram', () => {
   const positives: [string, string][] = [
-    ['a plain diagram block', '= Doc\n\n[plantuml]\n....\na -> b\n....\n'],
+    ['a plain diagram block', '= Doc\n\n[graphviz]\n....\ndigraph {}\n....\n'],
     [
       'a diagram block with extra attributes',
-      '[plantuml, diagram, svg]\n....\na -> b\n....\n',
+      '[graphviz, diagram, svg]\n....\ndigraph {}\n....\n',
     ],
     ['another diagram type', '[graphviz]\n----\ndigraph {}\n----\n'],
     ['a Lini diagram', '[lini]\n----\nbox\n----\n'],
     ['a short diagram name', '[d2]\n----\nx -> y\n----\n'],
     ['a diagram with an id', '[erd#my-erd]\n----\n----\n'],
     ['a block macro form', 'plantuml::diagram.puml[]\n'],
+    [
+      'a [plantuml] block with an !include',
+      '[plantuml]\n----\n!include <C4/C4_Container>\n----\n',
+    ],
+    [
+      'a [plantuml] block with an icon',
+      '[plantuml]\n....\nA : <&heart>\n....\n',
+    ],
+    [
+      'a [plantuml] block with an emoji',
+      '[plantuml]\n----\nA : <:smile:>\n----\n',
+    ],
+    [
+      'a [plantuml] block with a colored emoji',
+      '[plantuml]\n----\nA : <#red:smile:>\n----\n',
+    ],
+    [
+      'a titled [plantuml] block with attributes and an !includeurl',
+      '[plantuml,target,svg]\n.Title\n----\n@startuml\n  !includeurl https://x/y\n@enduml\n----\n',
+    ],
+    [
+      'a [plantuml] block with Windows line endings',
+      '[plantuml]\r\n----\r\n!include <C4/C4>\r\n----\r\n',
+    ],
+    [
+      'a second [plantuml] block that needs Kroki',
+      '[plantuml]\n----\nA -> B\n----\n\n[plantuml]\n----\nA : <&heart>\n----\n',
+    ],
     ['a block macro with attributes', 'graphviz::graph.dot[format=svg]\n'],
     [
       'a longer name that shares a prefix (vegalite vs vega)',
@@ -32,6 +60,15 @@ describe('containsKrokiDiagram', () => {
   const negatives: [string, string][] = [
     ['a document without diagrams', '= Doc\n\nSome *text* and a list.\n'],
     ['mermaid, which is always rendered', '[mermaid]\n....\ngraph TD;\n....\n'],
+    ['plantuml, which is rendered locally', '[plantuml]\n....\na -> b\n....\n'],
+    [
+      'an !include after the end of a [plantuml] block',
+      '[plantuml]\n----\na -> b\n----\n\n----\n!include x\n----\n',
+    ],
+    [
+      'a [source,plantuml] block with an !include',
+      '[source,plantuml]\n----\n!include x\n----\n',
+    ],
     [
       'a source block whose language is a diagram name',
       '[source,plantuml]\n----\na -> b\n----\n',
