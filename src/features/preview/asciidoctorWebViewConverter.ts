@@ -116,6 +116,8 @@ const previewStrings = {
   cspAlertMessageTitle: l10nT('preview.securityMessage.title'),
 
   cspAlertMessageLabel: l10nT('preview.securityMessage.label'),
+
+  staleImageTitle: l10nT('preview.staleImage.title'),
 }
 
 /**
@@ -363,7 +365,11 @@ export class AsciidoctorWebViewConverter {
           headerDocinfo,
           footerDocinfo,
           mathJaxMarkup,
-          bodyCssClasses,
+          // A document with a title gets a `data-h-*` role like any block, so a
+          // hash of its whole source lands on <body>. It must stay out of the
+          // fingerprint, or each edit would reload the webview instead of
+          // morphing it.
+          bodyCssClasses.replace(/\bdata-h-\S+/g, ''),
           node.getId() || '',
           this.resolveDocumentStylesheet(node),
           node.isAttribute('icons', 'font') ? 'icons-font' : '',

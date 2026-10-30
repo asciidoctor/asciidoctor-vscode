@@ -18,6 +18,7 @@
   "preview.securityMessage.label": "Sicherheitswarnung: Inhalte deaktiviert.",
   "preview.securityMessage.text": "Einige Inhalte in diesem Dokument wurden deaktiviert.",
   "preview.securityMessage.title": "Potentiell unsichere Inhalte wurden in dieser Vorschau deaktiviert.",
+  "preview.staleImage.title": "Dieses Bild konnte nicht aktualisiert werden: Die vorherige Version wird angezeigt.",
   "preview.styleLoadError.message": "Stilvorlage 'asciidoc.preview.style' kann nicht geladen werden: {0}.",
   "preview.unlocked.title": "Vorschau {0}",
   "security.asciidoctorExtensionsTrustModeSelector.title": "Einschränkungen für Asciidoctor.js-Erweiterungen in diesem Arbeitsbereich auswählen.",

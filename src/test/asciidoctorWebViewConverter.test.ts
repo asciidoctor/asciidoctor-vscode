@@ -920,6 +920,27 @@ See xref:my-table[xrefstyle=short] for more reference.
     )
   })
 
+  test('Should keep the shell fingerprint stable when the content hash on the document changes', async () => {
+    const render = (role: string) =>
+      convertStandaloneWithFragment(
+        `= Title\n:role: ${role}\n\ntext`,
+        undefined,
+      )
+    const first = await render('data-line-1 data-h-first')
+    const second = await render('data-line-1 data-h-second')
+    assert.match(first, /<body[^>]* class="[^"]*data-h-first/)
+    assert.strictEqual(
+      readShellFingerprint(first),
+      readShellFingerprint(second),
+      'an edit must not force a full reload',
+    )
+    assert.notStrictEqual(
+      readShellFingerprint(first),
+      readShellFingerprint(await render('other-role')),
+      'the other body classes must still be part of the fingerprint',
+    )
+  })
+
   test('Should use a new random nonce on each render, shared by the CSP and the scripts', async () => {
     const readNonce = (html: string): string => {
       const scriptMatch = /<script [^>]*nonce="([^"]*)"/.exec(html)
