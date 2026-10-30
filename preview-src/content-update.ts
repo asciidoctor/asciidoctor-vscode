@@ -1,5 +1,6 @@
 import morphdom from 'morphdom'
 import { deferImageUpdate } from './deferred-image.js'
+import { syncLineAnchors } from './line-anchors.js'
 import {
   beginAsyncRender,
   endAsyncRender,
@@ -309,7 +310,11 @@ export function updatePreviewContent(html: string): boolean {
       // source, but its content hash is identical: keep the rendered version.
       const fromHash = blockHash(fromEl)
       const toHash = blockHash(toEl)
-      return !(fromHash && toHash && fromHash === toHash)
+      if (fromHash && toHash && fromHash === toHash) {
+        syncLineAnchors(fromEl, toEl)
+        return false
+      }
+      return true
     },
     onElUpdated(el: Element) {
       record(el)
