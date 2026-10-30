@@ -3,7 +3,9 @@ import { afterEach, describe, test } from 'node:test'
 import * as vscode from 'vscode'
 import { WebviewResourceProvider } from '../core/resources.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
+import { AsciidocLoader } from '../features/asciidoctor/asciidocLoader.js'
 import { AsciidoctorConfig } from '../features/asciidoctor/asciidoctorConfig.js'
+import { AsciidoctorDiagnostic } from '../features/asciidoctor/asciidoctorDiagnostic.js'
 import { AsciidoctorExtensions } from '../features/asciidoctor/asciidoctorExtensions.js'
 import {
   AsciidocContributionProvider,
@@ -58,16 +60,38 @@ function newEngine(): AsciidocEngine {
   )
 }
 
-async function renderCsp(documentUri: vscode.Uri): Promise<string> {
-  const { html } = await newEngine().convertFromUri(
+function newLoader(): AsciidocLoader {
+  return new AsciidocLoader(
+    new AsciidoctorConfig(),
+    new AsciidoctorExtensions(
+      AsciidoctorExtensionsSecurityPolicyArbiter.activate(extensionContext),
+    ),
+    new AsciidoctorDiagnostic('test-kroki-loader-diagnostics'),
+    extensionContext,
+  )
+}
+
+async function renderPreview(
+  documentUri: vscode.Uri,
+): Promise<{ csp: string; krokiServerUrl: string | undefined }> {
+  const { html, document } = await newEngine().convertFromUri(
     documentUri,
     extensionContext,
     new TestWebviewResourceProvider(),
   )
   // The resolved Kroki server URL is added to the preview's Content Security
-  // Policy allow-list; asserting on it exercises the whole resolution chain.
+  // Policy allow-list (from the header-only parse), while the main conversion
+  // resolves it on `document`; asserting on both covers both parse passes.
   const match = html.match(/Content-Security-Policy" content="([^"]*)"/)
-  return match ? match[1] : ''
+  return {
+    csp: match ? match[1] : '',
+    krokiServerUrl: document?.getAttribute('kroki-server-url'),
+  }
+}
+
+async function renderCsp(documentUri: vscode.Uri): Promise<string> {
+  const { csp } = await renderPreview(documentUri)
+  return csp
 }
 
 // The setting is only meaningful for a non-`https:` server: the CSP already
@@ -84,6 +108,9 @@ describe('asciidoc.extensions.kroki.serverUrl', () => {
     await vscode.workspace
       .getConfiguration('asciidoc.extensions', null)
       .update('kroki.serverUrl', undefined)
+    await vscode.workspace
+      .getConfiguration('asciidoc.preview', null)
+      .update('asciidoctorAttributes', undefined)
   })
 
   test('falls back to the public server when nothing sets the URL', async () => {
@@ -173,6 +200,133 @@ describe('asciidoc.extensions.kroki.serverUrl', () => {
     assert.ok(
       !csp.includes('http://kroki-config:9000'),
       'the .asciidoctorconfig value should not leak into the CSP when the header wins',
+    )
+  })
+
+  test('asciidoc.preview.asciidoctorAttributes takes precedence over the setting (#1207)', async () => {
+    await vscode.workspace
+      .getConfiguration('asciidoc.extensions', null)
+      .update('kroki.serverUrl', 'http://kroki-setting:9000')
+    await vscode.workspace
+      .getConfiguration('asciidoc.preview', null)
+      .update('asciidoctorAttributes', {
+        'kroki-server-url': 'http://kroki-attr:9000',
+      })
+    const document = await createFile(
+      '= Doc\n\ndiagram',
+      'kroki-attr-over-setting.adoc',
+    )
+    createdFiles.push(document)
+    const { csp, krokiServerUrl } = await renderPreview(document)
+    assert.equal(
+      krokiServerUrl,
+      'http://kroki-attr:9000',
+      'the main preview conversion should resolve kroki-server-url from asciidoctorAttributes',
+    )
+    assert.ok(
+      csp.includes('http://kroki-attr:9000'),
+      'the CSP should allow the server from asciidoctorAttributes',
+    )
+    assert.ok(
+      !csp.includes('http://kroki-setting:9000'),
+      'the setting value should not leak into the CSP when asciidoctorAttributes wins',
+    )
+  })
+
+  test('a hard kroki-server-url in asciidoc.preview.asciidoctorAttributes stays locked when the setting is set (#1207)', async () => {
+    await vscode.workspace
+      .getConfiguration('asciidoc.extensions', null)
+      .update('kroki.serverUrl', 'http://kroki-setting:9000')
+    await vscode.workspace
+      .getConfiguration('asciidoc.preview', null)
+      .update('asciidoctorAttributes', {
+        'kroki-server-url': 'http://kroki-attr:9000',
+      })
+    const configFile = await createFile(
+      ':kroki-server-url: http://kroki-config:9000',
+      '.asciidoctorconfig',
+    )
+    createdFiles.push(configFile)
+    const document = await createFile(
+      '= Doc\n:kroki-server-url: http://kroki-header:9000\n\ndiagram',
+      'kroki-hard-attr-stays-locked.adoc',
+    )
+    createdFiles.push(document)
+    const { csp, krokiServerUrl } = await renderPreview(document)
+    assert.equal(
+      krokiServerUrl,
+      'http://kroki-attr:9000',
+      'a hard kroki-server-url in asciidoctorAttributes should not be downgraded to a soft entry by the setting',
+    )
+    assert.ok(
+      csp.includes('http://kroki-attr:9000'),
+      'the CSP should allow the locked asciidoctorAttributes server',
+    )
+    assert.ok(
+      !csp.includes('http://kroki-config:9000') &&
+        !csp.includes('http://kroki-header:9000') &&
+        !csp.includes('http://kroki-setting:9000'),
+      'overridden values should not leak into the CSP',
+    )
+  })
+
+  test('a soft kroki-server-url@ in asciidoc.preview.asciidoctorAttributes beats the setting but yields to .asciidoctorconfig (#1207)', async () => {
+    await vscode.workspace
+      .getConfiguration('asciidoc.extensions', null)
+      .update('kroki.serverUrl', 'http://kroki-setting:9000')
+    await vscode.workspace
+      .getConfiguration('asciidoc.preview', null)
+      .update('asciidoctorAttributes', {
+        'kroki-server-url@': 'http://kroki-soft-attr:9000',
+      })
+    const document = await createFile(
+      '= Doc\n\ndiagram',
+      'kroki-soft-attr-over-setting.adoc',
+    )
+    createdFiles.push(document)
+    const withoutConfig = await renderPreview(document)
+    assert.equal(withoutConfig.krokiServerUrl, 'http://kroki-soft-attr:9000')
+    assert.ok(withoutConfig.csp.includes('http://kroki-soft-attr:9000'))
+
+    const configFile = await createFile(
+      ':kroki-server-url: http://kroki-config:9000',
+      '.asciidoctorconfig',
+    )
+    createdFiles.push(configFile)
+    const withConfig = await renderPreview(document)
+    assert.equal(withConfig.krokiServerUrl, 'http://kroki-config:9000')
+    assert.ok(withConfig.csp.includes('http://kroki-config:9000'))
+  })
+
+  test('AsciidocLoader applies the setting and honors asciidoctorAttributes precedence (#1207)', async () => {
+    await vscode.workspace
+      .getConfiguration('asciidoc.extensions', null)
+      .update('kroki.serverUrl', 'http://kroki-setting:9000')
+    const documentUri = await createFile(
+      '= Doc\n\ndiagram',
+      'kroki-loader.adoc',
+    )
+    createdFiles.push(documentUri)
+    const textDocument = await vscode.workspace.openTextDocument(documentUri)
+    const loader = newLoader()
+
+    const docFromSetting = await loader.load(textDocument)
+    assert.equal(
+      docFromSetting.getAttribute('kroki-server-url'),
+      'http://kroki-setting:9000',
+      'AsciidocLoader should apply asciidoc.extensions.kroki.serverUrl as a soft default',
+    )
+
+    await vscode.workspace
+      .getConfiguration('asciidoc.preview', null)
+      .update('asciidoctorAttributes', {
+        'kroki-server-url': 'http://kroki-attr:9000',
+      })
+    const docFromAttr = await loader.load(textDocument)
+    assert.equal(
+      docFromAttr.getAttribute('kroki-server-url'),
+      'http://kroki-attr:9000',
+      'asciidoc.preview.asciidoctorAttributes should take precedence in AsciidocLoader too',
     )
   })
 })

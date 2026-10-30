@@ -32,9 +32,42 @@ export class AsciidoctorAttributesConfig {
       'env-vscode': '',
       env: 'vscode',
       'relfilesuffix@': '.adoc',
+      ...AsciidoctorAttributesConfig.defaultKrokiServerUrl(
+        documentUri,
+        attributes,
+      ),
       ...AsciidoctorAttributesConfig.defaultSourceHighlighter(attributes),
       ...attributes,
     }
+  }
+
+  /**
+   * Read the dedicated `asciidoc.extensions.kroki.serverUrl` setting (#480) and
+   * return it as a soft default (`kroki-server-url@`).
+   *
+   * The `@` suffix is what lets a value set in the document header or in an
+   * `.asciidoctorconfig` file take precedence over the setting.
+   *
+   * Returns an empty object when the setting is empty, so the public
+   * `https://kroki.io` server is used when nothing else sets the URL, or when
+   * the user already configured `kroki-server-url` in `userAttributes`, to avoid
+   * sending conflicting hard/soft values for the same attribute (#1207).
+   */
+  public static defaultKrokiServerUrl(
+    documentUri: vscode.Uri | undefined,
+    userAttributes: {},
+  ): {} {
+    if (
+      'kroki-server-url' in userAttributes ||
+      'kroki-server-url@' in userAttributes
+    ) {
+      return {}
+    }
+    const value = vscode.workspace
+      .getConfiguration('asciidoc.extensions', documentUri ?? null)
+      .get<string>('kroki.serverUrl')
+    const trimmed = value?.trim()
+    return trimmed ? { 'kroki-server-url@': trimmed } : {}
   }
 
   /**
