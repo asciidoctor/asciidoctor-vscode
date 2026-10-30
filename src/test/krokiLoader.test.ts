@@ -154,4 +154,72 @@ plantuml::missing.puml[]
     assert.ok(html.includes('diagram.svg'), `expected the image in:\n${html}`)
     assert.ok(await exists(vscode.Uri.joinPath(directory, 'diagram.svg')))
   })
+
+  const renderPreview = async (uri: vscode.Uri) => {
+    const engine = new AsciidocEngine(
+      contributionProvider,
+      new AsciidoctorConfig(),
+      newExtensions(),
+    )
+    return engine.convertFromUri(uri, extensionContext, resourceProvider)
+  }
+
+  test('the preview embeds the diagrams without writing images when data-uri is set in the document', async () => {
+    const uri = await createFile(
+      krokiDocument().replace('= Doc\n', '= Doc\n:data-uri:\n'),
+      'kroki-loader',
+      'preview-data-uri.adoc',
+    )
+    const { html } = await renderPreview(uri)
+    assert.ok(requests > 0, 'the preview should fetch the diagram')
+    assert.ok(
+      html.includes('src="data:image/svg+xml;base64,'),
+      `expected a data URI in:\n${html}`,
+    )
+    assert.equal(
+      await exists(vscode.Uri.joinPath(directory, 'diagram.svg')),
+      false,
+    )
+  })
+
+  test('the preview embeds the diagrams without writing images when data-uri is set in the settings', async () => {
+    const uri = await createFile(
+      krokiDocument(),
+      'kroki-loader',
+      'preview-data-uri-setting.adoc',
+    )
+    const previewConfiguration = vscode.workspace.getConfiguration(
+      'asciidoc.preview',
+      null,
+    )
+    await previewConfiguration.update('asciidoctorAttributes', {
+      'data-uri': '',
+    })
+    try {
+      const { html } = await renderPreview(uri)
+      assert.ok(
+        html.includes('src="data:image/svg+xml;base64,'),
+        `expected a data URI in:\n${html}`,
+      )
+      assert.equal(
+        await exists(vscode.Uri.joinPath(directory, 'diagram.svg')),
+        false,
+      )
+    } finally {
+      await previewConfiguration.update('asciidoctorAttributes', undefined)
+    }
+  })
+
+  test('the preview writes the images when kroki-data-uri is unset in the document', async () => {
+    const uri = await createFile(
+      krokiDocument().replace(
+        '= Doc\n',
+        '= Doc\n:data-uri:\n:!kroki-data-uri:\n',
+      ),
+      'kroki-loader',
+      'preview-data-uri-opt-out.adoc',
+    )
+    await renderPreview(uri)
+    assert.ok(await exists(vscode.Uri.joinPath(directory, 'diagram.svg')))
+  })
 })

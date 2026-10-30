@@ -59,6 +59,17 @@ Lowering the preview security level (`AsciiDoc: Change Preview Security Settings
 
 On the desktop (Node) extension there is no such restriction: an HTTP Kroki server, local or remote, works regardless of the server URL.
 
+== Fetch the diagrams
+
+With the `kroki-fetch-diagram` attribute, diagrams are downloaded when the document is converted instead of being loaded from the Kroki server when it is displayed.
+On the desktop, the preview and the exports save each diagram as an image file in the images output directory, which defaults to the directory of the document.
+
+To prevent the preview from writing these files into your workspace, set the `data-uri` attribute (or `kroki-data-uri`, which only applies to diagrams): the diagrams are then embedded in the preview as data URIs.
+In the web extension, diagrams are always embedded, since there is no disk to write to.
+
+On the desktop, downloaded diagrams are also kept in a persistent cache, by default in `~/.cache/kroki`, including the ones embedded as data URIs.
+Set `kroki-cache` to `false` to disable the cache, or `kroki-cache-dir` to use another directory.
+
 == Privacy
 
 [WARNING]
