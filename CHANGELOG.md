@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+### Features
+
+* Render [Lini](https://lini.rs) diagrams through Kroki (requires Kroki 0.34.0 or later), by upgrading `asciidoctor-kroki` to 2.0.0 (#1208)
+
+### Improvements
+
+* Support `:kroki-fetch-diagram:` in VS Code for the Web, where fetched diagrams are embedded as data URIs instead of being replaced by an error block, by upgrading `asciidoctor-kroki` to 2.0.0 (#1208)
+* Keep downloaded diagrams in a persistent cache (`~/.cache/kroki` by default), so that unchanged diagrams with `:kroki-fetch-diagram:` are no longer downloaded again. Set `:kroki-cache: false` to disable it, or `:kroki-cache-dir:` to move it (#1208)
+
 ### Bug fixes
 
 * Stop running asciidoctor-kroki during the diagnostics and language-features parse, which sent each diagram to the Kroki server on every edit and, with `kroki-fetch-diagram`, wrote images into the workspace even with the preview closed. Diagram errors no longer appear in the Problems panel, but remain visible in the preview (#1221)

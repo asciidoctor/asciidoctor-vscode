@@ -58,6 +58,7 @@ describe('Kroki in the load parse', () => {
   const krokiDocument = () =>
     `= Doc
 :kroki-fetch-diagram: true
+:kroki-cache: false
 :kroki-server-url: http://localhost:${(server.address() as AddressInfo).port}
 
 [plantuml, target=diagram, format=svg]

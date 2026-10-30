@@ -13,6 +13,7 @@ describe('containsKrokiDiagram', () => {
       '[plantuml, diagram, svg]\n....\na -> b\n....\n',
     ],
     ['another diagram type', '[graphviz]\n----\ndigraph {}\n----\n'],
+    ['a Lini diagram', '[lini]\n----\nbox\n----\n'],
     ['a short diagram name', '[d2]\n----\nx -> y\n----\n'],
     ['a diagram with an id', '[erd#my-erd]\n----\n----\n'],
     ['a block macro form', 'plantuml::diagram.puml[]\n'],

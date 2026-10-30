@@ -1,5 +1,5 @@
 import { Registry } from '@asciidoctor/core'
-import kroki from 'asciidoctor-kroki'
+import { register as registerKroki } from 'asciidoctor-kroki'
 import * as vscode from 'vscode'
 import { findFiles } from '../../core/findFiles.js'
 import { requireFresh } from '../../core/requireExtension.js'
@@ -39,7 +39,7 @@ export class AsciidoctorExtensions {
     // send each diagram to the server and, with `kroki-fetch-diagram`, write the
     // images into the workspace.
     if (enableKroki && context?.mode !== 'load') {
-      kroki.register(registry)
+      registerKroki(registry)
     }
     registry.block('mermaid', mermaidJSProcessor())
     if (context !== undefined) {
