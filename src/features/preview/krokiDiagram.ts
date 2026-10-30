@@ -23,6 +23,7 @@ export const KROKI_DIAGRAM_NAMES = [
   'excalidraw',
   'goat',
   'graphviz',
+  'lini',
   'nomnoml',
   'nwdiag',
   'packetdiag',

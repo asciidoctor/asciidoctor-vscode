@@ -867,7 +867,7 @@
     "@antora/content-classifier": "3.1.15",
     "@asciidoctor/core": "~4.0",
     "@orcid/bibtex-parse-js": "0.0.25",
-    "asciidoctor-kroki": "~1.0",
+    "asciidoctor-kroki": "~2.0",
     "html-entities": "^2.4.0",
     "js-yaml": "^5.2.0",
     "morphdom": "^2.7.8",
