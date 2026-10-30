@@ -19,6 +19,7 @@ import { AsciidocPreviewSecurityLevel } from '../security.js'
 import { buildCustomStyleSheetLinks } from './customStyles.js'
 import { renderMathJax } from './mathjax.js'
 import { mermaidClientRenderScript } from './mermaid.js'
+import { generateNonce } from './nonce.js'
 import {
   AsciidocPreviewConfiguration,
   type AsciidocPreviewDefaultStyle,
@@ -303,7 +304,7 @@ export class AsciidoctorWebViewConverter {
     const nodeName = transform || node.getNodeName()
     if (nodeName === 'document') {
       // Content Security Policy
-      const nonce = new Date().getTime() + '' + new Date().getMilliseconds()
+      const nonce = generateNonce()
       const webviewResourceProvider = this.webviewResourceProvider
       const csp = getCspForResource(
         webviewResourceProvider,

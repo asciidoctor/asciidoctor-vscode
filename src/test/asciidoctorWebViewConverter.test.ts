@@ -19,6 +19,7 @@ import {
   AsciidocPreviewConfigurationManager,
   type AsciidocPreviewDefaultStyle,
 } from '../features/preview/previewConfig.js'
+import { AsciidocPreviewSecurityLevel } from '../features/security.js'
 import { createDirectory, createFile, removeFiles } from './workspaceHelper.js'
 
 class TestWebviewResourceProvider implements WebviewResourceProvider {
@@ -551,6 +552,7 @@ See xref:my-table[xrefstyle=short] for more reference.
     fragment: string | undefined,
     defaultStyle?: AsciidocPreviewDefaultStyle,
     antoraDocumentContext?: AntoraDocumentContext,
+    securityLevel = AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent,
   ): Promise<string> {
     const file = await vscode.workspace.openTextDocument(
       vscode.Uri.joinPath(workspaceUri, 'asciidoctorWebViewConverterTest.adoc'),
@@ -570,7 +572,7 @@ See xref:my-table[xrefstyle=short] for more reference.
     const converter = new AsciidoctorWebViewConverter(
       file,
       new TestWebviewResourceProvider(),
-      2,
+      securityLevel,
       false,
       new TestAsciidocContributions(),
       config,
@@ -908,15 +910,38 @@ See xref:my-table[xrefstyle=short] for more reference.
   test('Should keep the shell fingerprint stable across renders of an identical document', async () => {
     const input = '= Title\n:stem:\n\nstem:[x^2]'
     const first = await convertStandaloneWithFragment(input, undefined)
-    // The CSP nonce is derived from the clock: wait so the second render gets a
-    // different nonce, proving the fingerprint does not depend on it.
-    await new Promise((resolve) => setTimeout(resolve, 5))
+    // The CSP nonce is regenerated on each render, which proves the fingerprint
+    // does not depend on it.
     const second = await convertStandaloneWithFragment(input, undefined)
     assert.strictEqual(
       readShellFingerprint(first),
       readShellFingerprint(second),
       'an identical document must produce the same shell fingerprint',
     )
+  })
+
+  test('Should use a new random nonce on each render, shared by the CSP and the scripts', async () => {
+    const readNonce = (html: string): string => {
+      const scriptMatch = /<script [^>]*nonce="([^"]*)"/.exec(html)
+      assert.ok(scriptMatch, `expected a script nonce in:\n${html}`)
+      assert.ok(
+        html.includes(`'nonce-${scriptMatch[1]}'`),
+        'the CSP should allow the nonce set on the scripts',
+      )
+      return scriptMatch[1]
+    }
+    const render = () =>
+      convertStandaloneWithFragment(
+        'text',
+        undefined,
+        undefined,
+        undefined,
+        AsciidocPreviewSecurityLevel.Strict,
+      )
+    const first = readNonce(await render())
+    const second = readNonce(await render())
+    assert.match(first, /^[0-9a-f]{32}$/)
+    assert.notStrictEqual(first, second)
   })
 
   test('Should change the shell fingerprint when `stem` is toggled', async () => {
