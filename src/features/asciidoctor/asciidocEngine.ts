@@ -333,6 +333,12 @@ export class AsciidocEngine {
       themeKind === vscode.ColorThemeKind.HighContrast
     const options: { [key: string]: any } = {
       attributes: {
+        // `data-uri` is unset below, so asciidoctor-kroki would write the diagrams
+        // fetched with `kroki-fetch-diagram` into the workspace, only for the
+        // converter to read them back. Ask it to return a `data:` URI instead,
+        // which the converter leaves untouched. Soft (`@`), so that the settings
+        // and the document can still unset it.
+        ...(dataUriEnabled && { 'kroki-data-uri@': '' }),
         ...attributes,
         ...antoraAttributes,
         // Highlight.js is the only source highlighter available in the preview:
