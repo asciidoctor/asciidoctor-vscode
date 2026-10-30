@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict'
-import { describe, test } from 'node:test'
+import { afterEach, describe, test } from 'node:test'
 import * as vscode from 'vscode'
 import { toggleInlineFormatting } from '../commands/toggleFormatting.js'
 
@@ -25,6 +25,12 @@ function lineSelection(line: number, start: number, end: number) {
 }
 
 describe('asciidoc.toggleInlineFormatting', () => {
+  afterEach(async () => {
+    await vscode.commands.executeCommand(
+      'workbench.action.revertAndCloseActiveEditor',
+    )
+  })
+
   test('wraps the selected text with the marker', async () => {
     const editor = await withEditor('foo bar baz', lineSelection(0, 4, 7))
     await toggleInlineFormatting('*')
@@ -81,40 +87,38 @@ describe('asciidoc.toggleInlineFormatting', () => {
   })
 
   // The toggles are restricted to AsciiDoc documents (#1199). The guard is a
-  // language check rather than an extension check, so it is exercised against a
-  // few of the languages a user may have focused when pressing Ctrl+B, and with
-  // each of the three markers.
+  // language check that returns before the marker is read, so a single marker is
+  // enough for each language.
 
-  for (const language of [
-    'markdown',
-    'plaintext',
-    'json',
-    'yaml',
-    'latex',
-    'typescript',
-  ]) {
-    for (const [name, marker] of [
-      ['bold', '*'],
-      ['italic', '_'],
-      ['monospace', '`'],
-    ]) {
-      test(`leaves a ${language} document untouched when toggling ${name}`, async () => {
-        const editor = await withEditor(
-          'foo bar baz',
-          lineSelection(0, 4, 7),
-          language,
-        )
-        await toggleInlineFormatting(marker)
-        assert.strictEqual(editor.document.getText(), 'foo bar baz')
-      })
-    }
+  for (const language of ['markdown', 'plaintext', 'yaml', 'latex']) {
+    test(`leaves a ${language} document untouched`, async () => {
+      const editor = await withEditor(
+        'foo bar baz',
+        lineSelection(0, 4, 7),
+        language,
+      )
+      assert.strictEqual(editor.document.languageId, language)
+      await toggleInlineFormatting('*')
+      assert.strictEqual(editor.document.getText(), 'foo bar baz')
+    })
   }
 
-  for (const command of [
-    'asciidoc.toggleBold',
-    'asciidoc.toggleItalic',
-    'asciidoc.toggleMonospace',
+  for (const { command, marker } of [
+    { command: 'asciidoc.toggleBold', marker: '*' },
+    { command: 'asciidoc.toggleItalic', marker: '_' },
+    { command: 'asciidoc.toggleMonospace', marker: '`' },
   ]) {
+    test(`${command} wraps the selection with ${marker} in an AsciiDoc document`, async () => {
+      const editor = await withEditor('foo bar baz', lineSelection(0, 4, 7))
+      await vscode.commands.executeCommand(command)
+      assert.strictEqual(
+        editor.document.getText(),
+        `foo ${marker}bar${marker} baz`,
+      )
+    })
+
+    // The guard covers the paths that are not filtered by a `when` clause, such
+    // as `executeCommand` or a user keybinding without a `when` clause.
     test(`${command} leaves a non-AsciiDoc document untouched`, async () => {
       const editor = await withEditor(
         'foo bar baz',
@@ -124,11 +128,22 @@ describe('asciidoc.toggleInlineFormatting', () => {
       await vscode.commands.executeCommand(command)
       assert.strictEqual(editor.document.getText(), 'foo bar baz')
     })
-  }
 
-  test('asciidoc.toggleBold still wraps the selection in an AsciiDoc document', async () => {
-    const editor = await withEditor('foo bar baz', lineSelection(0, 4, 7))
-    await vscode.commands.executeCommand('asciidoc.toggleBold')
-    assert.strictEqual(editor.document.getText(), 'foo *bar* baz')
-  })
+    test(`${command} is only offered in AsciiDoc documents`, () => {
+      const { contributes } = vscode.extensions.getExtension(
+        'asciidoctor.asciidoctor-vscode',
+      )?.packageJSON
+      const paletteEntry = contributes.menus.commandPalette.find(
+        (entry: { command: string }) => entry.command === command,
+      )
+      const keybinding = contributes.keybindings.find(
+        (entry: { command: string }) => entry.command === command,
+      )
+      assert.strictEqual(paletteEntry.when, 'editorLangId == asciidoc')
+      assert.strictEqual(
+        keybinding.when,
+        'editorTextFocus && editorLangId == asciidoc',
+      )
+    })
+  }
 })
