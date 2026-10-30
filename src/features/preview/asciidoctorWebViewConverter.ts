@@ -22,6 +22,10 @@ import { renderMathJax } from './mathjax.js'
 import { mermaidClientRenderScript } from './mermaid.js'
 import { generateNonce } from './nonce.js'
 import {
+  plantUmlClientRenderScript,
+  plantUmlEngineLoaderScript,
+} from './plantuml.js'
+import {
   AsciidocPreviewConfiguration,
   type AsciidocPreviewDefaultStyle,
 } from './previewConfig.js'
@@ -176,6 +180,10 @@ function getCspForResource(
       rule,
       'https:',
       `'nonce-${nonce}'`,
+      // @plantuml/core lays out diagrams with Graphviz compiled to WebAssembly.
+      // `wasm-unsafe-eval` permits compiling it without opening the broader
+      // JavaScript `unsafe-eval` surface.
+      "'wasm-unsafe-eval'",
       'https://*.vscode-cdn.net/',
     ],
     'style-src': ["'self'", rule, 'https:', "'unsafe-inline'", 'data:'],
@@ -406,6 +414,7 @@ export class AsciidoctorWebViewConverter {
         ${syntaxHighlighterFooterContent}
         ${mathJaxMarkup}
         ${this.generateMermaid(webviewResourceProvider, nonce)}
+        ${this.generatePlantUml(webviewResourceProvider, nonce)}
         ${footerDocinfo}
       </body>
       </html>`
@@ -777,6 +786,42 @@ ${footnoteItems.join('\n')}
       await renderMermaidImages(nodes && nodes.length ? nodes : [document.body]);
     };
     await window.__asciidocRenderMermaid();
+  </script>`
+  }
+
+  private generatePlantUml(
+    webviewResourceProvider: WebviewResourceProvider,
+    nonce: string,
+  ) {
+    const vizSrc = webviewResourceProvider.asMediaWebViewSrc(
+      'media',
+      '@plantuml',
+      'core',
+      'viz-global.js',
+    )
+    const plantumlSrc = webviewResourceProvider.asMediaWebViewSrc(
+      'media',
+      '@plantuml',
+      'core',
+      'plantuml.js',
+    )
+    return `<!--suppress JSAnnotator -->
+<script type="module" nonce="${nonce}">
+    ${plantUmlEngineLoaderScript(vizSrc, plantumlSrc)}
+    ${plantUmlClientRenderScript()}
+    // Expose a re-render hook so incremental preview updates can render only the
+    // PlantUML diagrams that were added or changed. The engine is only loaded
+    // once a diagram is found, here or in a later update.
+    window.__asciidocRenderPlantUml = (nodes) => {
+      // The 'vscode' and 'github' preview styles track the active VS Code color
+      // theme (see asciidoctor-github-colors.css); 'asciidoctor' and 'antora'
+      // are always light, independent of the editor's theme.
+      const previewStyle = document.body.dataset.previewStyle;
+      const dark = (previewStyle === 'vscode' || previewStyle === 'github')
+        && (document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast'));
+      return renderPlantUmlImages(nodes && nodes.length ? nodes : [document.body], dark ? { dark: true } : undefined);
+    };
+    window.__asciidocRenderPlantUml();
   </script>`
   }
 
