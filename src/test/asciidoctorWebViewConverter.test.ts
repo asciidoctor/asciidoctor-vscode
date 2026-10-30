@@ -990,6 +990,22 @@ See xref:my-table[xrefstyle=short] for more reference.
     )
   })
 
+  test('Should flag the <body> only when the document has docinfo content (#1205)', async () => {
+    const hasFlag = (html: string) =>
+      /<body\b[^>]*\bdata-has-docinfo\b/.test(html)
+    assert.ok(
+      hasFlag(
+        await convertStandaloneWithFragment(
+          ':docinfo: shared\n\nSome content',
+          undefined,
+        ),
+      ),
+    )
+    assert.ok(
+      !hasFlag(await convertStandaloneWithFragment('Some content', undefined)),
+    )
+  })
+
   test('Should declare <base href> before any injected docinfo content (#1195)', async () => {
     // A relative `src`/`href` inside docinfo.html is resolved by the browser
     // against whatever base is in effect when the parser reaches it. If

@@ -590,6 +590,11 @@ export class AsciidocPreview
       this.needsFullReload = true
       this.lastShellFingerprint = shellFingerprint
     }
+    // A docinfo can hold scripts that transform the content when the page loads.
+    // The morph would not run them again, and would put the raw content back.
+    if (/<body\b[^>]*\bdata-has-docinfo\b/.test(html)) {
+      this.needsFullReload = true
+    }
     if (this.needsFullReload) {
       // Full reload: rebuild the entire webview (shell + content).
       this.editor.webview.html = html

@@ -330,6 +330,9 @@ export class AsciidoctorWebViewConverter {
       const headerDocinfo = await node.getDocinfo('header')
       const footerDocinfo = await node.getDocinfo('footer')
       const docinfo = await node.getDocinfo()
+      const hasDocinfo = [docinfo, headerDocinfo, footerDocinfo].some(
+        (part) => part.trim().length > 0,
+      )
       const content = await node.getContent()
       // Context consumed by the `webview/context` menu contribution (see
       // package.json) and by the export commands to target the previewed
@@ -391,7 +394,7 @@ export class AsciidoctorWebViewConverter {
         ${syntaxHighlighterHeadContent}
         ${docinfo}
       </head>
-      <body${node.getId() ? ` id="${node.getId()}"` : ''} class="${bodyCssClasses}" data-shell="${shellFingerprint}" data-vscode-context="${vscodeContext}" data-preview-style="${effectiveStyle}">
+      <body${node.getId() ? ` id="${node.getId()}"` : ''} class="${bodyCssClasses}" data-shell="${shellFingerprint}"${hasDocinfo ? ' data-has-docinfo' : ''} data-vscode-context="${vscodeContext}" data-preview-style="${effectiveStyle}">
         <div id="preview-root">
         ${headerDocinfo}
         ${await this.getDocumentHeader(node)}
