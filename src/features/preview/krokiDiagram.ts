@@ -71,3 +71,25 @@ const DIAGRAM_BLOCK_MACRO = new RegExp(`^(?:${alternation})::\\S*\\[`, 'm')
 export function containsKrokiDiagram(text: string): boolean {
   return DIAGRAM_BLOCK_STYLE.test(text) || DIAGRAM_BLOCK_MACRO.test(text)
 }
+
+// `URL` accepts characters such as `;` and `"` in a host, which would still
+// break out of a CSP source expression.
+const CSP_SOURCE_HOST = /^(?:[a-z0-9._-]+|\[[0-9a-f:.]+\])(?::\d+)?$/i
+
+/**
+ * The CSP source expression that allows a Kroki server, or `undefined` if the
+ * URL is not a valid `http:` or `https:` URL. The URL can be set from the
+ * document, so it must not reach the policy as is: it could add directives.
+ */
+export function krokiServerCspSource(
+  serverUrl: string | undefined,
+): string | undefined {
+  if (!serverUrl || !URL.canParse(serverUrl)) {
+    return undefined
+  }
+  const { protocol, host, origin } = new URL(serverUrl)
+  return (protocol === 'http:' || protocol === 'https:') &&
+    CSP_SOURCE_HOST.test(host)
+    ? origin
+    : undefined
+}
