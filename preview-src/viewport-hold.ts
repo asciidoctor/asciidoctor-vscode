@@ -2,6 +2,7 @@ import {
   MERMAID_ERROR_ATTRIBUTE,
   MERMAID_SOURCE_DATA_URI_PREFIX,
 } from '../src/features/preview/mermaid.js'
+import { PLANTUML_SOURCE_DATA_URI_PREFIX } from '../src/features/preview/plantuml.js'
 
 declare const MathJax: any
 
@@ -31,7 +32,7 @@ export interface ViewportHold {
 
 /**
  * Keep the viewport where `reposition` puts it while a freshly loaded page is
- * still laying out (images, MathJax, Mermaid...), and call `onRelease` once the
+ * still laying out (images, MathJax, Mermaid, PlantUML...), and call `onRelease` once the
  * page has settled, or as soon as the user takes over the scrolling.
  */
 export function holdViewport(
@@ -103,11 +104,12 @@ export function previewEnvironment(): ViewportHoldEnvironment {
     isLoading: () =>
       document.readyState !== 'complete' ||
       mathJaxLoading ||
-      // Mermaid swaps these images for the rendered diagrams, except the ones it
-      // failed to render, which would otherwise hold the page until the timeout.
+      // Mermaid and PlantUML swap these images for the rendered diagrams, except
+      // the ones Mermaid failed to render, which would otherwise hold the page until
+      // the timeout.
       Array.from(
         document.querySelectorAll(
-          `img[src^="${MERMAID_SOURCE_DATA_URI_PREFIX}"]`,
+          `img[src^="${MERMAID_SOURCE_DATA_URI_PREFIX}"], img[src^="${PLANTUML_SOURCE_DATA_URI_PREFIX}"]`,
         ),
       ).some((image) => !image.hasAttribute(MERMAID_ERROR_ATTRIBUTE)),
     onLayoutChange(listener) {

@@ -42,10 +42,20 @@ export const KROKI_DIAGRAM_NAMES = [
   'wireviz',
 ]
 
+// `[plantuml]` blocks are rendered by the extension without Kroki. A PlantUML
+// block macro still needs Kroki: it references a diagram file instead of carrying
+// the source in its body.
+const LOCALLY_RENDERED_BLOCK_STYLES = new Set(['plantuml'])
+
 // Longest names first so the alternation matches e.g. `vegalite` before `vega`
 // (otherwise `[vegalite]` would be tested against `vega` first and, although it
 // backtracks, keeping the order explicit is clearer).
-const alternation = [...KROKI_DIAGRAM_NAMES]
+const blockMacroAlternation = [...KROKI_DIAGRAM_NAMES]
+  .sort((a, b) => b.length - a.length)
+  .join('|')
+const blockStyleAlternation = KROKI_DIAGRAM_NAMES.filter(
+  (name) => !LOCALLY_RENDERED_BLOCK_STYLES.has(name),
+)
   .sort((a, b) => b.length - a.length)
   .join('|')
 
@@ -58,19 +68,37 @@ const alternation = [...KROKI_DIAGRAM_NAMES]
 // class after the name in the block-style form guards against matching a longer
 // word that merely starts with a diagram name (e.g. `[plantumlish]`).
 const DIAGRAM_BLOCK_STYLE = new RegExp(
-  `^\\[(?:${alternation})(?:[,#.\\]])`,
+  `^\\[(?:${blockStyleAlternation})(?:[,#.\\]])`,
   'm',
 )
-const DIAGRAM_BLOCK_MACRO = new RegExp(`^(?:${alternation})::\\S*\\[`, 'm')
+const DIAGRAM_BLOCK_MACRO = new RegExp(
+  `^(?:${blockMacroAlternation})::\\S*\\[`,
+  'm',
+)
+// A `[plantuml]` block, up to its delimiter (block attribute and title lines may
+// come first), then its body.
+const PLANTUML_BLOCK =
+  /^\[plantuml(?:[,#.][^\]\n]*)?\]\r?\n(?:[.[][^\n]*\r?\n)*?(-{4,}|\.{4,})[ \t]*\r?\n([\s\S]*?)^\1[ \t]*\r?$/gm
+// What the local rendering of PlantUML does not support: `!include` and its
+// variants, and the OpenIconic and emoji icons (`<&heart>`, `<:smile:>`,
+// `<#red:smile:>`).
+const PLANTUML_NEEDS_KROKI = /^\s*!include|<&[\w-]|<(?:#\w+)?:[\w-]+:>/m
 
 /**
- * Whether the AsciiDoc source contains at least one diagram block that Kroki
- * can render (Mermaid excluded, since it is always rendered). Deliberately a
+ * Whether the AsciiDoc source contains at least one diagram block that needs
+ * Kroki (Mermaid and most `[plantuml]` blocks excluded, since the extension renders
+ * them itself). Deliberately a
  * cheap textual scan: it may occasionally match a diagram-looking line inside a
  * verbatim block, which is acceptable for a one-time discovery hint.
  */
 export function containsKrokiDiagram(text: string): boolean {
-  return DIAGRAM_BLOCK_STYLE.test(text) || DIAGRAM_BLOCK_MACRO.test(text)
+  return (
+    DIAGRAM_BLOCK_STYLE.test(text) ||
+    DIAGRAM_BLOCK_MACRO.test(text) ||
+    Array.from(text.matchAll(PLANTUML_BLOCK)).some(([, , body]) =>
+      PLANTUML_NEEDS_KROKI.test(body),
+    )
+  )
 }
 
 // `URL` accepts characters such as `;` and `"` in a host, which would still

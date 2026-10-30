@@ -20,6 +20,7 @@ import {
   WEBVIEW_OUTFILESUFFIX,
 } from '../preview/asciidoctorWebViewConverter.js'
 import { register } from '../preview/highlightjs-adapter.js'
+import { plantUmlStrings } from '../preview/plantumlStrings.js'
 import { AsciidocPreviewConfigurationManager } from '../preview/previewConfig.js'
 import { ExtensionContentSecurityPolicyArbiter } from '../security.js'
 import { AsciidocTextDocument } from './asciidocTextDocument.js'
@@ -31,6 +32,7 @@ import { hashBlockSource } from './blockSignature.js'
 import { registerBrowserIncludeProcessor } from './browserIncludeSupport.js'
 import { ResolverIncludeProcessor } from './includeProcessor.js'
 import { addMermaidToHtmlExport } from './mermaidExport.js'
+import { addPlantUmlToHtmlExport } from './plantumlExport.js'
 import { resolveBlockSourceLines } from './sourceLineMapping.js'
 import { getTemplateDirs } from './templateDirs.js'
 
@@ -112,7 +114,10 @@ export class AsciidocEngine {
     const convertedOutput = String(await document.convert(options))
     const output =
       backend === 'html5'
-        ? addMermaidToHtmlExport(convertedOutput)
+        ? addPlantUmlToHtmlExport(
+            addMermaidToHtmlExport(convertedOutput),
+            plantUmlStrings(),
+          )
         : convertedOutput
     return {
       output,

@@ -16,6 +16,7 @@ import { getWorkspaceFolder } from '../core/workspace.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
 import { AsciidocTextDocument } from '../features/asciidoctor/asciidocTextDocument.js'
 import { getAsciidoctorConfigContent } from '../features/asciidoctor/asciidoctorConfig.js'
+import { PLANTUML_AS_LISTING_ATTRIBUTE } from '../features/preview/plantuml.js'
 import { AsciidocPreviewManager } from '../features/preview/previewManager.js'
 import {
   resolveAsciidocDocument,
@@ -231,7 +232,9 @@ ${text}`
       const { output: html, document } = await this.engine.export(
         doc,
         'html5',
-        { 'data-uri@': '' },
+        // wkhtmltopdf cannot run the PlantUML renderer: its old engine does not
+        // support JavaScript modules.
+        { 'data-uri@': '', [PLANTUML_AS_LISTING_ATTRIBUTE]: '' },
       )
       const footerCenter = document?.getAttribute('footer-center')
       if (footerCenter) {

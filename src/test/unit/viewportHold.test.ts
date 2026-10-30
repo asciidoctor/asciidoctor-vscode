@@ -10,6 +10,7 @@ import {
   MERMAID_ERROR_ATTRIBUTE,
   mermaidClientRenderScript,
 } from '../../features/preview/mermaid.js'
+import { PLANTUML_SOURCE_DATA_URI_PREFIX } from '../../features/preview/plantuml.js'
 
 function fakeEnvironment(loading = false) {
   const state = {
@@ -235,5 +236,19 @@ describe('previewEnvironment', () => {
     image.removeAttribute(MERMAID_ERROR_ATTRIBUTE)
 
     assert.equal(previewEnvironment().isLoading(), true)
+  })
+
+  test('should be loading while a PlantUML diagram waits for its render', () => {
+    const images = [{ hasAttribute: () => false }]
+    ;(globalThis as any).document = {
+      readyState: 'complete',
+      querySelectorAll: (selector: string) =>
+        selector.includes(`img[src^="${PLANTUML_SOURCE_DATA_URI_PREFIX}"]`)
+          ? images
+          : [],
+    }
+    assert.equal(previewEnvironment().isLoading(), true)
+    images.length = 0
+    assert.equal(previewEnvironment().isLoading(), false)
   })
 })

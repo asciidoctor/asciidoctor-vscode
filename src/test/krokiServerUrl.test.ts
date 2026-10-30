@@ -356,4 +356,14 @@ describe('asciidoc.extensions.kroki.serverUrl', () => {
     assert.ok(csp.includes('http://kroki-path:9000;'), csp)
     assert.ok(!csp.includes('/kroki/'), csp)
   })
+
+  test('allows WebAssembly compilation for the local PlantUML renderer', async () => {
+    const document = await createFile('= Doc\n\ndiagram', 'plantuml-csp.adoc')
+    createdFiles.push(document)
+    const csp = await renderCsp(document)
+    assert.ok(
+      csp.includes("'wasm-unsafe-eval'"),
+      'the CSP should allow @plantuml/core to compile its WebAssembly runtime',
+    )
+  })
 })

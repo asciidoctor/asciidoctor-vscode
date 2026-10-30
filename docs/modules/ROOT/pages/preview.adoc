@@ -221,7 +221,7 @@ Sticky scroll overlays the ancestor headings on top of the editor viewport, hidi
 
 == Troubleshooting the preview
 
-The preview updates incrementally: when you edit, only the blocks that changed are re-rendered (re-running MathJax, Mermaid and syntax highlighting just for them), and the scroll position is kept stable.
+The preview updates incrementally: when you edit, only the blocks that changed are re-rendered (re-running MathJax, Mermaid, PlantUML and syntax highlighting just for them), and the scroll position is kept stable.
 
 If the preview seems slow to update, gets out of sync, or a block is not re-rendered, enable verbose tracing and inspect the preview console:
 
