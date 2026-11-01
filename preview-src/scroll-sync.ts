@@ -44,6 +44,11 @@ export function suppressScrollEcho(durationMs: number) {
   )
 }
 
+/** The user is scrolling: their scrolls must reach the editor right away. */
+export function clearScrollEchoSuppression() {
+  scrollEchoSuppressedUntil = 0
+}
+
 export function beginAsyncRender() {
   pendingAsyncRenders++
 }
@@ -209,12 +214,18 @@ export function scrollToRevealSourceLine(line: number) {
  * asynchronous layout shifts (MathJax, images, diagrams), so editing does not
  * make the preview jump.
  */
-export function scrollToLine(line: number) {
-  // `line` comes from `getEditorLineNumberForPageOffset`, i.e. it is already a
-  // 1-based source line (a `data-line-N` value), so map it back with the same
-  // convention (`sourceLine: true`) — otherwise the +1 for editor lines targets
-  // the next anchor and this "keep position" re-pin jumps by one source line.
-  const scrollTo = scrollTopForLine(codeAnchors(), window.scrollY, line, true)
+export function scrollToLine(line: number, sourceLine = true) {
+  // By default, `line` comes from `getEditorLineNumberForPageOffset`, i.e. it is
+  // already a 1-based source line (a `data-line-N` value), so map it back with
+  // the same convention (`sourceLine: true`) — otherwise the +1 for editor lines
+  // targets the next anchor and this "keep position" re-pin jumps by one source
+  // line. Pass `false` for a 0-based editor line.
+  const scrollTo = scrollTopForLine(
+    codeAnchors(),
+    window.scrollY,
+    line,
+    sourceLine,
+  )
   if (scrollTo !== undefined) {
     suppressScrollEcho(250)
     window.scroll(0, Math.max(0, scrollTo))
