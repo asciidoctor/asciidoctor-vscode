@@ -3,20 +3,30 @@ import { updatePreviewContent } from './content-update.js'
 import { onceDocumentLoaded } from './events.js'
 import { createPosterForVsCode } from './messaging.js'
 import {
+  beginAsyncRender,
+  clearScrollEchoSuppression,
+  endAsyncRender,
   getEditorLineNumberForPageOffset,
   getLastSourceLine,
   getSourceLineForElement,
   isProgrammaticScroll,
+  scrollToLine,
   scrollToRevealSourceLine,
   suppressScrollEcho,
 } from './scroll-sync.js'
 import { getData, getSettings } from './settings.js'
+import {
+  holdViewport,
+  previewEnvironment,
+  type ViewportHold,
+} from './viewport-hold.js'
 
 import throttle = require('lodash.throttle')
 
 declare let acquireVsCodeApi: any
 
 let scrollDisabled = true
+let viewportHold: ViewportHold | undefined
 const marker = new ActiveLineMarker()
 const settings = getSettings()
 
@@ -40,6 +50,30 @@ window.styleLoadingMonitor.setPoster(messaging)
 
 window.onload = () => {
   updateImageSizes()
+}
+
+/**
+ * Restore the scroll position of a freshly loaded page and keep it there until
+ * the page has settled. Images, MathJax and Mermaid change the height of the
+ * page as they load: the resulting scroll events do not reflect a move of the
+ * user, so they must neither reach the editor nor overwrite the saved position.
+ */
+function restoreScrollPosition(reposition: () => void) {
+  beginAsyncRender()
+  viewportHold = holdViewport(
+    reposition,
+    previewEnvironment(),
+    (byUser: boolean) => {
+      viewportHold = undefined
+      endAsyncRender()
+      // The scrolls of the hold were ignored, so none of them consumed the flag:
+      // it would swallow the next scroll of the user.
+      scrollDisabled = false
+      if (byUser) {
+        clearScrollEchoSuppression()
+      }
+    },
+  )
 }
 
 onceDocumentLoaded(() => {
@@ -70,9 +104,7 @@ onceDocumentLoaded(() => {
     setTimeout(() => {
       const target = document.getElementById(fragment)
       if (target) {
-        scrollDisabled = true
-        suppressScrollEcho(250)
-        target.scrollIntoView()
+        restoreScrollPosition(() => target.scrollIntoView())
         const targetLine = getSourceLineForElement(target)
         if (
           typeof targetLine === 'number' &&
@@ -88,8 +120,7 @@ onceDocumentLoaded(() => {
     setTimeout(() => {
       const initialLine = vscode.getState().line
       if (!isNaN(initialLine)) {
-        scrollDisabled = true
-        scrollToRevealSourceLine(initialLine)
+        restoreScrollPosition(() => scrollToLine(initialLine, false))
       }
     }, 0)
   } else if (windowNeedsRestoration) {
@@ -99,12 +130,16 @@ onceDocumentLoaded(() => {
       left: scrollX,
       behavior: 'auto' as ScrollBehavior,
     }
-    window.scrollTo(scrollOptions)
+    restoreScrollPosition(() => window.scrollTo(scrollOptions))
   }
 })
 
 const onUpdateView = (() => {
   const doScroll = throttle((line: number) => {
+    if (viewportHold && settings.scrollPreviewWithEditor) {
+      viewportHold.retarget(() => scrollToLine(line, false))
+      return
+    }
     scrollDisabled = true
     scrollToRevealSourceLine(line)
   }, 50)
