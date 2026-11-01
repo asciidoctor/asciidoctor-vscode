@@ -14,6 +14,7 @@
 
 ### Bug fixes
 
+* Keep the errors and warnings of a document in the Problems panel when it is parsed at the same time as another one, for instance when opening several documents, instead of silently dropping them (#1229)
 * Stop reloading the whole preview on every edit of a document that has a title, which made diagrams disappear until they were loaded again and moved the page. The preview now updates only the blocks that changed (#1225)
 * Do not write the diagrams fetched with `:kroki-fetch-diagram:` into the workspace when `data-uri` is set: the preview now embeds them directly (#1208)
 * Stop running asciidoctor-kroki during the diagnostics and language-features parse, which sent each diagram to the Kroki server on every edit and, with `kroki-fetch-diagram`, wrote images into the workspace even with the preview closed. Diagram errors no longer appear in the Problems panel, but remain visible in the preview (#1221)

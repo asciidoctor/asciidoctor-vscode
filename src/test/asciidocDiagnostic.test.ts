@@ -61,6 +61,32 @@ describe('asciidoc.AsciidocLoader diagnostics', () => {
     )
   })
 
+  // Asciidoctor's global logger is shared by every parse in the extension host
+  // (diagnostics of other documents, preview, language features): a parse that
+  // overlaps this one must not capture its messages.
+  test('reportDiagnostics() keeps the errors of overlapping parses', async () => {
+    const uris = [
+      vscode.Uri.file('loader-report-overlapping-1.adoc'),
+      vscode.Uri.file('loader-report-overlapping-2.adoc'),
+    ]
+    const loader = createLoader()
+    await Promise.all(
+      uris.map((uri) =>
+        loader.reportDiagnostics(new InMemoryDocument(uri, documentWithError)),
+      ),
+    )
+    for (const uri of uris) {
+      assert.ok(
+        vscode.languages
+          .getDiagnostics(uri)
+          .some((diagnostic) =>
+            diagnostic.message.includes('level 0 sections'),
+          ),
+        `expected a "level 0 sections" diagnostic for ${uri.path}`,
+      )
+    }
+  })
+
   // Defensive: an extension can log a message whose `getText()` does not return
   // a string (asciidoctor-kroki historically logged an object payload when a
   // diagram failed to render). A non-string `Diagnostic.message` makes VS Code
