@@ -83,10 +83,12 @@ export class AsciidocLoader {
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes(
       textDocument.uri,
     )
-    await load(
-      textDocument.getText(),
-      this.getOptions(attributes, registry, asciidocDocument),
-    )
+    // Scope the logger to this parse: the global one set in prepare() can be
+    // replaced by any overlapping parse, which would capture our messages.
+    await load(textDocument.getText(), {
+      ...this.getOptions(attributes, registry, asciidocDocument),
+      logger: memoryLogger,
+    })
     this.asciidoctorDiagnosticProvider.reportErrors(memoryLogger, textDocument)
   }
 
