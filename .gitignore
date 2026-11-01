@@ -16,3 +16,4 @@ media/mermaid/**
 media/fonts/**
 coverage/
 build/
+.claude/
