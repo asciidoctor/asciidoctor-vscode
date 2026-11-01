@@ -18,7 +18,8 @@
       "examples/**/*.css",
       "!media/highlight.css",
       "!media/highlightjs/**",
-      "!media/font-awesome/**"
+      "!media/font-awesome/**",
+      "!!.claude/**"
     ]
   },
   "formatter": {
