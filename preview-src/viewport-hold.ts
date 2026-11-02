@@ -1,4 +1,7 @@
-import { MERMAID_SOURCE_DATA_URI_PREFIX } from '../src/features/preview/mermaid.js'
+import {
+  MERMAID_ERROR_ATTRIBUTE,
+  MERMAID_SOURCE_DATA_URI_PREFIX,
+} from '../src/features/preview/mermaid.js'
 
 declare const MathJax: any
 
@@ -100,10 +103,13 @@ export function previewEnvironment(): ViewportHoldEnvironment {
     isLoading: () =>
       document.readyState !== 'complete' ||
       mathJaxLoading ||
-      // Mermaid swaps these images for the rendered diagrams.
-      document.querySelector(
-        `img[src^="${MERMAID_SOURCE_DATA_URI_PREFIX}"]`,
-      ) !== null,
+      // Mermaid swaps these images for the rendered diagrams, except the ones it
+      // failed to render, which would otherwise hold the page until the timeout.
+      Array.from(
+        document.querySelectorAll(
+          `img[src^="${MERMAID_SOURCE_DATA_URI_PREFIX}"]`,
+        ),
+      ).some((image) => !image.hasAttribute(MERMAID_ERROR_ATTRIBUTE)),
     onLayoutChange(listener) {
       // Resize observers run after the layout and before the paint, so the page
       // is repositioned before the shift can be seen.

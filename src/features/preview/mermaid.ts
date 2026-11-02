@@ -5,6 +5,10 @@ import type {
 } from '@asciidoctor/core'
 
 export const MERMAID_SOURCE_DATA_URI_PREFIX = 'data:text/vnd.mermaid;base64,'
+// Set on a source image that Mermaid failed to render: the image stays in the
+// page, but nothing is pending anymore. A morph removes it along with the image's
+// other stale attributes, as the converter never produces it.
+export const MERMAID_ERROR_ATTRIBUTE = 'data-mermaid-error'
 
 // `Buffer` is a Node global, unavailable in the VS Code for the Web extension
 // host — fall back to `TextEncoder`/`btoa` there, like `encodeBase64` does in
@@ -55,6 +59,7 @@ export function mermaidClientRenderScript(): string {
         try {
           await renderMermaidImage(img);
         } catch (e) {
+          img.setAttribute(${JSON.stringify(MERMAID_ERROR_ATTRIBUTE)}, '');
           console.error('Mermaid rendering failed', e);
         }
       }

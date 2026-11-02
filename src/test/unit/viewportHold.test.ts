@@ -2,8 +2,14 @@ import assert from 'node:assert/strict'
 import { afterEach, beforeEach, describe, mock, test } from 'node:test'
 import {
   holdViewport,
+  previewEnvironment,
   type ViewportHoldEnvironment,
 } from '../../../preview-src/viewport-hold.js'
+import {
+  encodeMermaidSource,
+  MERMAID_ERROR_ATTRIBUTE,
+  mermaidClientRenderScript,
+} from '../../features/preview/mermaid.js'
 
 function fakeEnvironment(loading = false) {
   const state = {
@@ -146,5 +152,88 @@ describe('holdViewport', () => {
     hold.retarget(next)
 
     assert.equal(next.mock.callCount(), 0)
+  })
+})
+
+describe('previewEnvironment', () => {
+  const originalDocument = (globalThis as any).document
+
+  // A Mermaid source image, along with the document that contains it.
+  function fakeMermaidPage() {
+    const attributes = new Map([
+      ['src', encodeMermaidSource('graph TD\n  A --> B')],
+    ])
+    const image = {
+      getAttribute: (name: string) => attributes.get(name) ?? null,
+      setAttribute: (name: string, value: string) =>
+        attributes.set(name, value),
+      removeAttribute: (name: string) => attributes.delete(name),
+      hasAttribute: (name: string) => attributes.has(name),
+      replaceWith: () => images.splice(images.indexOf(image), 1),
+      matches: () => true,
+    }
+    const images = [image]
+    ;(globalThis as any).document = {
+      readyState: 'complete',
+      createElement: () => ({}),
+      querySelectorAll: () => images,
+    }
+    return image
+  }
+
+  // Run the script that the preview really inlines, with the given `mermaid`.
+  async function renderMermaid(image: unknown, render: () => Promise<unknown>) {
+    const renderMermaidImages = new Function(
+      'mermaid',
+      `${mermaidClientRenderScript()}; return renderMermaidImages;`,
+    )({ render })
+    await renderMermaidImages([image])
+  }
+
+  beforeEach(() => {
+    mock.method(console, 'error', () => {
+      // The render failures are expected: keep them out of the test output.
+    })
+  })
+
+  afterEach(() => {
+    mock.restoreAll()
+    ;(globalThis as any).document = originalDocument
+  })
+
+  test('should be loading while a Mermaid diagram is pending', () => {
+    fakeMermaidPage()
+
+    assert.equal(previewEnvironment().isLoading(), true)
+  })
+
+  test('should stop loading once a Mermaid diagram is rendered', async () => {
+    const image = fakeMermaidPage()
+
+    await renderMermaid(image, async () => ({ svg: '<svg></svg>' }))
+
+    assert.equal(previewEnvironment().isLoading(), false)
+  })
+
+  test('should stop loading when a Mermaid diagram fails to render', async () => {
+    const image = fakeMermaidPage()
+
+    await renderMermaid(image, async () => {
+      throw new Error('Parse error')
+    })
+
+    assert.equal(image.hasAttribute(MERMAID_ERROR_ATTRIBUTE), true)
+    assert.equal(previewEnvironment().isLoading(), false)
+  })
+
+  test('should be loading again when a morph updates a failed Mermaid diagram', async () => {
+    const image = fakeMermaidPage()
+
+    await renderMermaid(image, async () => {
+      throw new Error('Parse error')
+    })
+    image.removeAttribute(MERMAID_ERROR_ATTRIBUTE)
+
+    assert.equal(previewEnvironment().isLoading(), true)
   })
 })
