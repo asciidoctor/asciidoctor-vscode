@@ -537,6 +537,26 @@ See xref:my-table[xrefstyle=short] for more reference.
     )
   })
 
+  test('Should resolve the image against an absolute imagesdir', async () => {
+    createdFiles.push(await createDirectory('data-uri-absolute'))
+    createdFiles.push(
+      await createFile(svg, 'data-uri-absolute', 'absolute.svg'),
+    )
+    // Like `{asciidoctorconfigdir}/media`: a file system path, which has a drive
+    // letter on Windows. It must not be resolved against the document's directory.
+    const imagesdir = vscode.Uri.joinPath(
+      workspaceUri,
+      'data-uri-absolute',
+    ).fsPath
+    const html = await convertWithDataUri(
+      `:imagesdir: ${imagesdir}\n\nimage::absolute.svg[]`,
+    )
+    assert.ok(
+      html.includes(`<img src="${svgDataUri}"`),
+      `expected absolute imagesdir-resolved data-uri in:\n${html}`,
+    )
+  })
+
   // #705: an interdocument link with a `#fragment` is followed in the preview by
   // re-rendering the target document with that fragment, which the webview reads
   // from `data-settings` to scroll to the anchor. These tests check the fragment
