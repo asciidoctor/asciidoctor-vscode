@@ -529,6 +529,17 @@ export class AsciidoctorWebViewConverter {
         if (dataUri !== undefined) {
           node.setAttribute('target', dataUri)
         }
+      } else {
+        const webviewUri = await this.resolveAbsoluteImageUri(node, target)
+        if (webviewUri !== undefined) {
+          node.setAttribute('target', webviewUri)
+        }
+      }
+    }
+    if (nodeName === 'inline_image') {
+      const webviewUri = await this.resolveAbsoluteImageUri(node, node.target)
+      if (webviewUri !== undefined) {
+        node.target = webviewUri
       }
     }
     // Block-level passthrough content — a `[mermaid]` diagram, or the inline SVG
@@ -625,6 +636,33 @@ export class AsciidoctorWebViewConverter {
       logger.warn(`Unable to embed image "${target}" as data-uri: ${e}`)
       return undefined
     }
+  }
+
+  /**
+   * Resolve the image URI the way the HTML converter would (`imagesdir` + target) and,
+   * when it is an absolute Windows path, turn it into a webview URI.
+   * An absolute Windows path (e.g. `c:/project/media/image.png`, typically produced by
+   * `:imagesdir: {asciidoctorconfigdir}/media`) cannot be resolved against the `<base>`
+   * element: the browser parses `c:` as a URI scheme, so the webview blocks the image.
+   * Absolute POSIX paths are left untouched: they are resolved against the `<base>`
+   * element, including on the web client.
+   */
+  private async resolveAbsoluteImageUri(
+    node: AbstractNode,
+    target: string,
+  ): Promise<string | undefined> {
+    if (typeof target !== 'string' || target.length === 0) {
+      return undefined
+    }
+    // pass 'imagesdir' explicitly: getImageUri defaults the key to null, which ignores imagesdir
+    const imageUri = await node.getImageUri(target, 'imagesdir')
+    if (!/^[a-z]:[\\/]/i.test(imageUri)) {
+      return undefined
+    }
+    // a Windows path may mix separators (e.g. `c:\project/media/image.png`)
+    return this.webviewResourceProvider
+      .asWebviewUri(vscode.Uri.file(imageUri.replace(/\\/g, '/')))
+      .toString()
   }
 
   /**
