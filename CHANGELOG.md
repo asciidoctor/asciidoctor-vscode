@@ -27,6 +27,7 @@
 * Generate the nonce of the preview's Content Security Policy from a secure random source instead of the clock, so that a document cannot guess it to run inline scripts (#1214)
 * Keep the inline formatting toggles (`asciidoc.toggleBold`, `asciidoc.toggleItalic`, `asciidoc.toggleMonospace`) strictly limited to AsciiDoc documents: they are hidden from the Command Palette in other languages and now leave the document untouched when they are invoked outside AsciiDoc (#1199)
 * Display images in the preview on Windows when `imagesdir` is an absolute path, for instance `:imagesdir: {asciidoctorconfigdir}/media` in `.asciidoctorconfig.adoc`, instead of having them blocked by the webview (#1203)
+* Embed images in the preview when the `data-uri` attribute is set and `imagesdir` is an absolute path, for instance `:imagesdir: {asciidoctorconfigdir}/media` in `.asciidoctorconfig.adoc`, instead of looking for them relative to the document (#1203)
 
 ### Documentation
 

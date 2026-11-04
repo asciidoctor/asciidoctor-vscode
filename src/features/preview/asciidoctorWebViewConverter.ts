@@ -91,6 +91,14 @@ function encodeBase64(bytes: Uint8Array): string {
 }
 
 /**
+ * Whether the path is an absolute file system path: a POSIX path (`/image.png`)
+ * or a Windows path with a drive letter (`c:\\image.png`, `c:/image.png`).
+ */
+function isAbsolutePath(path: string): boolean {
+  return path.startsWith('/') || /^[a-z]:[\\/]/i.test(path)
+}
+
+/**
  * Disallow blacklisted URL types following MarkdownIt and the VS Code Markdown extension
  * @param   {String}  href   The link address
  * @returns {boolean}        Whether the link is valid
@@ -673,14 +681,20 @@ export class AsciidoctorWebViewConverter {
    * captures the value in effect at each image's position during parsing, so
    * this stays correct when `:imagesdir:` is redefined in the document body
    * (`document.getAttribute('imagesdir')` would only report the header value).
+   *
+   * The absolute path check applies to the joined path, so that an absolute
+   * `imagesdir` (e.g. `:imagesdir: {asciidoctorconfigdir}/media`) is not
+   * resolved against the document's directory.
    */
   private resolveImageUri(node: AbstractNode, target: string): vscode.Uri {
-    if (target.startsWith('/') || /^[a-z]:[\\/]/i.test(target)) {
-      return vscode.Uri.file(target)
+    const imagesdir = isAbsolutePath(target)
+      ? ''
+      : node.getAttribute('imagesdir', '') || ''
+    const path = imagesdir ? `${imagesdir}/${target}` : target
+    if (isAbsolutePath(path)) {
+      return vscode.Uri.file(path)
     }
-    const imagesdir = node.getAttribute('imagesdir', '') || ''
-    const relativePath = imagesdir ? `${imagesdir}/${target}` : target
-    const segments = relativePath.split('/').filter((s) => s.length > 0)
+    const segments = path.split('/').filter((s) => s.length > 0)
     return vscode.Uri.joinPath(
       uri.Utils.dirname(this.textDocument.uri),
       ...segments,
