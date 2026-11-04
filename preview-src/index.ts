@@ -15,6 +15,7 @@ import {
   suppressScrollEcho,
 } from './scroll-sync.js'
 import { getData, getSettings } from './settings.js'
+import { getInitialPreviewState } from './state.js'
 import {
   holdViewport,
   previewEnvironment,
@@ -32,13 +33,11 @@ const settings = getSettings()
 
 const vscode = acquireVsCodeApi()
 
-const originalState = vscode.getState()
-
-const state = {
-  ...settings,
-  ...(typeof originalState === 'object' ? originalState : {}),
-  ...getData<any>('data-state'),
-}
+const state = getInitialPreviewState(
+  settings,
+  vscode.getState(),
+  getData<any>('data-state'),
+)
 
 // Make sure to sync VS Code state here
 vscode.setState(state)
@@ -123,14 +122,20 @@ onceDocumentLoaded(() => {
         restoreScrollPosition(() => scrollToLine(initialLine, false))
       }
     }, 0)
-  } else if (windowNeedsRestoration) {
-    const { scrollX, scrollY } = vscode.getState()
-    const scrollOptions = {
-      top: scrollY,
-      left: scrollX,
-      behavior: 'auto' as ScrollBehavior,
+  } else {
+    const { scrollX, scrollY, line } = vscode.getState()
+    if (windowNeedsRestoration && typeof scrollY === 'number') {
+      const scrollOptions = {
+        top: scrollY,
+        left: scrollX,
+        behavior: 'auto' as ScrollBehavior,
+      }
+      restoreScrollPosition(() => window.scrollTo(scrollOptions))
+    } else if (typeof line === 'number' && !isNaN(line)) {
+      // First display of this document in the panel: restore the position
+      // remembered by the extension, if any.
+      restoreScrollPosition(() => scrollToLine(line, false))
     }
-    restoreScrollPosition(() => window.scrollTo(scrollOptions))
   }
 })
 
@@ -305,7 +310,14 @@ window.addEventListener(
     const line = getEditorLineForPageOffset(window.scrollY)
     vscode.setState({ ...vscode.getState(), line })
 
-    if (settings.scrollEditorWithPreview) {
+    if (!settings.scrollEditorWithPreview) {
+      // Let the extension know the position of the preview, so it can be
+      // restored when the preview switches back to this document.
+      const topLine = window.scrollY === 0 ? 0 : line
+      if (typeof topLine === 'number' && !isNaN(topLine)) {
+        messaging.postMessage('didScroll', { line: topLine })
+      }
+    } else {
       if (scrollDisabled) {
         scrollDisabled = false
       } else {
