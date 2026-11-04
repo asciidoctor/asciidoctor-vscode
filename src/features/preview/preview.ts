@@ -39,6 +39,9 @@ export class AsciidocPreview
   private readonly editor: vscode.WebviewPanel
   private throttleTimer: any
   private line: number | undefined = undefined
+  // Position of the preview for each document it has displayed, so it can be
+  // restored when the preview switches back to a document.
+  private readonly lines = new Map<string, number>()
   // Anchor to scroll to once the next (full) render of the preview has loaded.
   // Set when following an interdocument link with a fragment so the freshly
   // opened document lands on the referenced anchor instead of its top.
@@ -227,6 +230,10 @@ export class AsciidocPreview
             this.onDidScrollPreview(e.body.line, e.body.atBottom)
             break
 
+          case 'didScroll':
+            this.line = e.body.line
+            break
+
           case 'clickLink':
             this.onDidClickPreviewLink(e.body.href)
             break
@@ -268,6 +275,9 @@ export class AsciidocPreview
       (event) => {
         if (this.isPreviewOf(event.resource)) {
           this.updateForView(event.resource, event.line)
+        } else if (this.scrollPreviewWithEditor) {
+          // The preview will follow this editor when switching to its document.
+          this.lines.set(event.resource.toString(), event.line)
         }
       },
       null,
@@ -359,11 +369,6 @@ export class AsciidocPreview
 
   // This method is invoked evrytime there is a document update
   public update(resource: vscode.Uri) {
-    const editor = vscode.window.activeTextEditor
-    if (editor && editor.document.uri.fsPath === resource.fsPath) {
-      this.line = getVisibleLine(editor)
-    }
-
     // If we have changed resources, cancel any pending updates
     const isResourceChange = resource.fsPath !== this._resource.fsPath
     if (isResourceChange) {
@@ -371,6 +376,26 @@ export class AsciidocPreview
       this.throttleTimer = undefined
       // A different document means a different shell: force a full reload.
       this.needsFullReload = true
+      if (typeof this.line === 'number') {
+        this.lines.set(this._resource.toString(), this.line)
+      }
+    }
+
+    const rememberedLine = isResourceChange
+      ? this.lines.get(resource.toString())
+      : undefined
+    const editor = vscode.window.activeTextEditor
+    if (typeof rememberedLine === 'number') {
+      this.line = rememberedLine
+    } else if (
+      editor &&
+      editor.document.uri.fsPath === resource.fsPath &&
+      this.scrollPreviewWithEditor
+    ) {
+      this.line = getVisibleLine(editor)
+    } else if (isResourceChange) {
+      // Do not apply the position of the previous document.
+      this.line = undefined
     }
 
     this._resource = resource
@@ -486,6 +511,10 @@ export class AsciidocPreview
       light: vscode.Uri.joinPath(root, 'preview-light.svg'),
       dark: vscode.Uri.joinPath(root, 'preview-dark.svg'),
     }
+  }
+
+  private get scrollPreviewWithEditor(): boolean {
+    return this.config.get<boolean>('preview.scrollPreviewWithEditor', true)
   }
 
   private isPreviewOf(resource: vscode.Uri): boolean {
