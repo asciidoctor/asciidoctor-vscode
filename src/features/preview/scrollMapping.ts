@@ -139,3 +139,13 @@ export function sourceLineAtViewportTop(
   }
   return previous.line
 }
+
+/**
+ * 0-based editor line for a (fractional) 1-based source line, such as the
+ * output of {@link sourceLineAtViewportTop}: `data-line-N` is editor line
+ * `N - 1`. Never negative, so a position above the first anchor maps to the
+ * first editor line.
+ */
+export function editorLineForSourceLine(sourceLine: number): number {
+  return Math.max(0, sourceLine - 1)
+}
