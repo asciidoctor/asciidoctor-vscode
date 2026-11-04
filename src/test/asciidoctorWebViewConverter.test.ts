@@ -229,6 +229,46 @@ I want to link to xref:docB.adoc#other_anchor[]`,
 </div>`,
     },
     {
+      title:
+        'Should resolve block image with an absolute Windows imagesdir as a webview URI',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: `:imagesdir: c:\\project/media
+
+image::diagram.png[]`,
+      antoraDocumentContext: undefined,
+      expected: `<div class="imageblock">
+<div class="content">
+<img src="${vscode.Uri.file('c:/project/media/diagram.png').toString()}" alt="diagram">
+</div>
+</div>`,
+    },
+    {
+      title:
+        'Should resolve inline image with an absolute Windows imagesdir as a webview URI',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: `:imagesdir: c:/project/media
+
+Look at image:icon.png[].`,
+      antoraDocumentContext: undefined,
+      expected: `<div class="paragraph">
+<p>Look at <span class="image"><img src="${vscode.Uri.file('c:/project/media/icon.png').toString()}" alt="icon"></span>.</p>
+</div>`,
+    },
+    {
+      title:
+        'Should keep block image with an absolute POSIX imagesdir (resolved against the base element)',
+      filePath: ['asciidoctorWebViewConverterTest.adoc'],
+      input: `:imagesdir: /project/media
+
+image::diagram.png[]`,
+      antoraDocumentContext: undefined,
+      expected: `<div class="imageblock">
+<div class="content">
+<img src="/project/media/diagram.png" alt="diagram">
+</div>
+</div>`,
+    },
+    {
       title: 'Should resolve macro link',
       filePath: ['asciidoctorWebViewConverterTest.adoc'],
       input: 'link:full.adoc[]',
