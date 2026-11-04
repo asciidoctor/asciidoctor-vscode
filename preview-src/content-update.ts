@@ -3,7 +3,7 @@ import { deferImageUpdate } from './deferred-image.js'
 import {
   beginAsyncRender,
   endAsyncRender,
-  getEditorLineNumberForPageOffset,
+  getSourceLineForPageOffset,
   resetCodeLineElements,
   scrollToLine,
   suppressScrollEcho,
@@ -234,7 +234,7 @@ function scheduleMathDrain(anchorLine: number | undefined) {
  * it so that a scroll made in the meantime is not undone.
  */
 function keepViewport(mutate: () => void) {
-  const line = getEditorLineNumberForPageOffset(window.scrollY)
+  const line = getSourceLineForPageOffset(window.scrollY)
   mutate()
   resetCodeLineElements()
   if (line !== null) {
@@ -277,8 +277,7 @@ export function updatePreviewContent(html: string): boolean {
 
   // Remember the source line at the top of the viewport so the update does not
   // make the preview jump, even as block heights change.
-  const anchorLine =
-    getEditorLineNumberForPageOffset(window.scrollY) ?? undefined
+  const anchorLine = getSourceLineForPageOffset(window.scrollY) ?? undefined
 
   const changedBlocks = new Set<Element>()
   const record = (node: Node | null) => {

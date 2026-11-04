@@ -1,5 +1,6 @@
 import {
   anchorIndicesForLine,
+  editorLineForSourceLine,
   type LineTop,
   scrollTopForLine,
   sourceLineAtViewportTop,
@@ -215,7 +216,7 @@ export function scrollToRevealSourceLine(line: number) {
  * make the preview jump.
  */
 export function scrollToLine(line: number, sourceLine = true) {
-  // By default, `line` comes from `getEditorLineNumberForPageOffset`, i.e. it is
+  // By default, `line` comes from `getSourceLineForPageOffset`, i.e. it is
   // already a 1-based source line (a `data-line-N` value), so map it back with
   // the same convention (`sourceLine: true`) — otherwise the +1 for editor lines
   // targets the next anchor and this "keep position" re-pin jumps by one source
@@ -233,7 +234,9 @@ export function scrollToLine(line: number, sourceLine = true) {
 }
 
 /**
- * Map a preview pixel offset to a fractional editor source line.
+ * Map a preview pixel offset to a fractional 1-based source line (a
+ * `data-line-N` value), to pass to {@link scrollToLine}. Use
+ * {@link getEditorLineForPageOffset} for a 0-based editor line.
  *
  * The viewport top is interpolated linearly between the two consecutive source
  * anchors that surround it: its progress through the *preview pixels* from one
@@ -242,9 +245,19 @@ export function scrollToLine(line: number, sourceLine = true) {
  * anchor's line and then snapping to the next anchor (e.g. 42 → 62) when a tall
  * block or a run of non-rendering source lines sits between two anchors.
  */
-export function getEditorLineNumberForPageOffset(offset: number) {
+export function getSourceLineForPageOffset(offset: number) {
   // `offset` is the page scrollY, so the top of the viewport is at client y = 0.
   const viewportTop = offset - window.scrollY
   const line = sourceLineAtViewportTop(codeAnchors(), viewportTop)
   return line === null ? null : clampLine(line)
+}
+
+/**
+ * Map a preview pixel offset to a fractional 0-based editor line, as expected
+ * by the `revealLine` message and by `state.line`.
+ */
+export function getEditorLineForPageOffset(offset: number) {
+  const viewportTop = offset - window.scrollY
+  const line = sourceLineAtViewportTop(codeAnchors(), viewportTop)
+  return line === null ? null : clampLine(editorLineForSourceLine(line))
 }

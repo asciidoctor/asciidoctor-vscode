@@ -6,7 +6,7 @@ import {
   beginAsyncRender,
   clearScrollEchoSuppression,
   endAsyncRender,
-  getEditorLineNumberForPageOffset,
+  getEditorLineForPageOffset,
   getLastSourceLine,
   getSourceLineForElement,
   isProgrammaticScroll,
@@ -300,7 +300,9 @@ window.addEventListener(
     if (isProgrammaticScroll()) {
       return
     }
-    const line = getEditorLineNumberForPageOffset(window.scrollY)
+    // A 0-based editor line: it is persisted as `state.line` (restored as an
+    // editor line) and sent as the `revealLine` target (#1231).
+    const line = getEditorLineForPageOffset(window.scrollY)
     vscode.setState({ ...vscode.getState(), line })
 
     if (settings.scrollEditorWithPreview) {

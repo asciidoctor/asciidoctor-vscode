@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import { describe, test } from 'node:test'
 import {
   anchorIndicesForLine,
+  editorLineForSourceLine,
   type LineTop,
   scrollTopForLine,
   sourceLineAtViewportTop,
@@ -115,5 +116,34 @@ describe('scrollTopForLine — 1-based source line ↔ pixel offset round-trip',
 
   test('returns undefined when there are no anchors', () => {
     assert.equal(scrollTopForLine([], 0, 5, true), undefined)
+  })
+})
+
+describe('editorLineForSourceLine — 1-based source line → 0-based editor line', () => {
+  test('maps data-line-N to editor line N - 1', () => {
+    // A preview positioned on `data-line-201` reveals editor line 200 (#1231).
+    assert.equal(editorLineForSourceLine(201), 200)
+  })
+
+  test('keeps the fractional part', () => {
+    assert.equal(editorLineForSourceLine(15.5), 14.5)
+  })
+
+  test('never returns a negative line', () => {
+    assert.equal(editorLineForSourceLine(0), 0)
+    assert.equal(editorLineForSourceLine(1), 0)
+  })
+
+  test('round-trips with an editor line passed to scrollTopForLine', () => {
+    const anchors: LineTop[] = [
+      { line: 200, top: -70 },
+      { line: 201, top: 0 },
+      { line: 202, top: 30 },
+    ]
+    const sourceLine = sourceLineAtViewportTop(anchors, 0)
+    assert.equal(sourceLine, 201)
+    const editorLine = editorLineForSourceLine(sourceLine as number)
+    // Restoring that editor line brings data-line-201 back to the top.
+    assert.equal(scrollTopForLine(anchors, 500, editorLine, false), 500)
   })
 })
