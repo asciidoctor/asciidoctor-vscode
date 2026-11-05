@@ -26,12 +26,13 @@ export class InMemoryDocument implements vscode.TextDocument {
   }
 
   lineAt(line: any): vscode.TextLine {
+    const text = this._lines[line]
     return {
       lineNumber: line,
-      text: this._lines[line],
-      range: new vscode.Range(0, 0, 0, 0),
+      text,
+      range: new vscode.Range(line, 0, line, text.length),
       firstNonWhitespaceCharacterIndex: 0,
-      rangeIncludingLineBreak: new vscode.Range(0, 0, 0, 0),
+      rangeIncludingLineBreak: new vscode.Range(line, 0, line + 1, 0),
       isEmptyOrWhitespace: false,
     }
   }

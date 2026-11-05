@@ -87,33 +87,37 @@ describe('asciidoc.AsciidocLoader diagnostics', () => {
     }
   })
 
-  // Defensive: an extension can log a message whose `getText()` does not return
-  // a string (asciidoctor-kroki historically logged an object payload when a
-  // diagram failed to render). A non-string `Diagnostic.message` makes VS Code
-  // throw "message.replace is not a function" while rendering the marker, so
-  // the reported message must always be coerced to a string.
-  test('reportErrors() always publishes a string diagnostic message', () => {
-    const uri = vscode.Uri.file('loader-non-string-message-diagnostic.adoc')
+  // A message from an included file is anchored to its `include::` directive,
+  // with the message itself as related information.
+  test('reportErrors() anchors a message from an included file to its include directive', () => {
+    const uri = vscode.Uri.file('/loader-included-file-diagnostic.adoc')
     const diagnosticProvider = new AsciidoctorDiagnostic(
-      'test-non-string-message-diagnostics',
+      'test-included-file-diagnostics',
     )
-    const fakeMemoryLogger = {
-      getMessages: () => [
+    diagnosticProvider.reportErrors(
+      [
         {
-          message: { some: 'object' },
-          getSeverity: () => 'ERROR',
-          getText: () => ({ some: 'object' }), // not a string
-          getSourceLocation: (): undefined => undefined,
+          severity: 'WARN',
+          text: 'list item index: expected 2, got 3',
+          location: {
+            file: '/partials/list.adoc',
+            path: 'partials/list.adoc',
+            lineNumber: 2,
+          },
         },
       ],
-    }
-    diagnosticProvider.reportErrors(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      fakeMemoryLogger as any,
-      new InMemoryDocument(uri, '= Title\n'),
+      new InMemoryDocument(uri, '= Title\n\ninclude::partials/list.adoc[]\n'),
     )
     const diagnostics = vscode.languages.getDiagnostics(uri)
     assert.equal(diagnostics.length, 1)
-    assert.equal(typeof diagnostics[0].message, 'string')
+    assert.equal(diagnostics[0].range.start.line, 2)
+    assert.equal(
+      diagnostics[0].message,
+      'There was an error in an included file',
+    )
+    assert.equal(
+      diagnostics[0].relatedInformation?.[0].message,
+      'list item index: expected 2, got 3',
+    )
   })
 })

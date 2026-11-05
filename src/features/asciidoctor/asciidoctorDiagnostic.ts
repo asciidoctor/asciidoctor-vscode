@@ -1,8 +1,8 @@
-import { Cursor, MemoryLogger } from '@asciidoctor/core'
 import * as vscode from 'vscode'
 import { DiagnosticCollection } from 'vscode'
 import { SkinnyTextDocument } from '../../core/document.js'
 import { logger } from '../../core/logger.js'
+import { ConversionMessage } from './conversion.js'
 
 // Map an Asciidoctor log severity to a VS Code diagnostic severity. Asciidoctor
 // also logs DEBUG and INFO messages (e.g. "possible invalid reference"), but
@@ -24,33 +24,19 @@ function toDiagnosticSeverity(
   }
 }
 
-// Coerce an Asciidoctor log message to a string.
-// `MemoryLogger.getMessages()` is typed `any[]` upstream, so the message is too.
-//
-// Almost always `getText()` already returns a string. But an extension can log
-// a non-string payload (asciidoctor-kroki historically logged an object when a
-// diagram failed to render), and feeding a non-string straight into a
-// `vscode.Diagnostic.message` makes VS Code throw "message.replace is not a
-// function" when it renders the marker. Guarantee a string so a misbehaving
-// message can never crash the editor.
-function messageText(message: any): string {
-  const text = message.getText()
-  return typeof text === 'string' ? text : String(text ?? '')
-}
-
 // Mirror an Asciidoctor log message to the extension's "Asciidoctor" output
 // channel, preserving its severity. This happens for every message — including
 // the DEBUG/INFO ones kept out of the Problems panel — so the full Asciidoctor
 // log stays available for troubleshooting (visible through "Developer: Show
 // Logs…", filtered by the channel's log level).
-function logAsciidoctorMessage(message: any): void {
-  const location = message.getSourceLocation()
+function logAsciidoctorMessage(message: ConversionMessage): void {
+  const location = message.location
   const where = location
-    ? `${location.getFile() ?? '<stdin>'}:${location.getLineNumber()}`
+    ? `${location.file ?? '<stdin>'}:${location.lineNumber}`
     : undefined
-  const text = messageText(message)
+  const text = message.text
   const line = where ? `${where}: ${text}` : text
-  switch (message.getSeverity()) {
+  switch (message.severity) {
     case 'DEBUG':
       logger.debug(line)
       break
@@ -75,7 +61,7 @@ export interface AsciidoctorDiagnosticProvider {
   clearAll(): void
 
   reportErrors(
-    memoryLogger: MemoryLogger,
+    messages: readonly ConversionMessage[],
     textDocument: SkinnyTextDocument,
   ): void
 }
@@ -96,10 +82,9 @@ export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
   }
 
   public reportErrors(
-    memoryLogger: MemoryLogger,
+    messages: readonly ConversionMessage[],
     textDocument: SkinnyTextDocument,
   ) {
-    const messages = memoryLogger.getMessages()
     // Always mirror Asciidoctor's log to the output channel for troubleshooting,
     // independently of whether diagnostics are surfaced in the Problems panel.
     messages.forEach(logAsciidoctorMessage)
@@ -111,19 +96,19 @@ export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
     if (asciidocDebugConfig.get('enableErrorDiagnostics')) {
       const diagnostics: vscode.Diagnostic[] = []
       messages.forEach((error) => {
-        const severity = toDiagnosticSeverity(error.getSeverity())
+        const severity = toDiagnosticSeverity(error.severity)
         if (severity === undefined) {
           // DEBUG/INFO (and any unknown lower level): non-actionable log
           // output, never surfaced as a diagnostic
           return
         }
-        let errorMessage = messageText(error)
+        let errorMessage = error.text
         let sourceLine = 0
-        let relatedFile: Cursor | null = null
+        let relatedFile: ConversionMessage['location'] | null = null
         const diagnosticSource = 'asciidoctor.js'
         // allocate to line 0 in the absence of information
         let sourceRange = textDocument.lineAt(0).range
-        const location = error.getSourceLocation()
+        const location = error.location
         if (location) {
           //There is a source location
           // The error is in the file we are parsing when its source file is
@@ -131,10 +116,10 @@ export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
           // document's own path. Comparing the file is robust whether or not
           // `docfile` is set, unlike testing the path against `<stdin>` which
           // only held when `docfile` was absent.
-          const errorFile = location.getFile()
+          const errorFile = location.file
           if (!errorFile || errorFile === textDocument.uri.fsPath) {
             //error is within the file we are parsing
-            sourceLine = location.getLineNumber() - 1
+            sourceLine = (location.lineNumber ?? 1) - 1
             // ensure errors are always associated with a valid line
             sourceLine =
               sourceLine >= textDocument.lineCount
@@ -143,13 +128,15 @@ export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
             sourceRange = textDocument.lineAt(sourceLine).range
           } else {
             //error is coming from an included file
-            relatedFile = error.getSourceLocation() ?? null
+            relatedFile = location
             // try to find the 'include' directive responsible from the info provided by Asciidoctor.js
             const relatedFilePath = relatedFile?.path
             const lines = textDocument.getText().split('\n')
             const includeLine = lines.find(
               (str) =>
-                str.startsWith('include') && str.includes(relatedFilePath),
+                str.startsWith('include') &&
+                relatedFilePath !== undefined &&
+                str.includes(relatedFilePath),
             )
             sourceLine =
               includeLine === undefined ? -1 : lines.indexOf(includeLine)
@@ -162,7 +149,7 @@ export class AsciidoctorDiagnostic implements AsciidoctorDiagnosticProvider {
         // coderay, or a failed Kroki fetch) keeps `errorMessage` as extracted
         // above and is anchored to line 0.
         let diagnosticRelated = null
-        if (relatedFile) {
+        if (relatedFile?.file) {
           diagnosticRelated = [
             new vscode.DiagnosticRelatedInformation(
               new vscode.Location(

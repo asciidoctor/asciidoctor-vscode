@@ -2,7 +2,6 @@ import {
   Document as AsciidoctorDocument,
   Extensions,
   LoggerManager,
-  load,
   MemoryLogger,
   Registry,
 } from '@asciidoctor/core'
@@ -25,6 +24,7 @@ import {
   IncludeItems,
 } from './asciidoctorIncludeItems.js'
 import { registerBrowserIncludeProcessor } from './browserIncludeSupport.js'
+import { buildParseOptions, parse } from './conversion.js'
 import { ResolverIncludeProcessor } from './includeProcessor.js'
 
 export class AsciidocLoader {
@@ -61,11 +61,11 @@ export class AsciidocLoader {
     )
     timing.phase('setup')
     const text = textDocument.getText()
-    const document = await load(
+    const { document } = await parse(
       text,
       this.getOptions(attributes, registry, asciidocDocument),
+      { timing },
     )
-    timing.phase('load')
     logger.debug(timing.format('Parsed', textDocument.uri.toString(), text))
     return document
   }
@@ -79,8 +79,10 @@ export class AsciidocLoader {
     textDocument: SkinnyTextDocument,
   ): Promise<void> {
     const timing = new ConversionTiming()
-    const { memoryLogger, registry, antoraDocumentContext } =
-      await this.prepare(textDocument, true)
+    const { registry, antoraDocumentContext } = await this.prepare(
+      textDocument,
+      true,
+    )
     if (antoraDocumentContext === undefined) {
       await registerBrowserIncludeProcessor(
         registry,
@@ -92,16 +94,17 @@ export class AsciidocLoader {
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes(
       textDocument.uri,
     )
-    // Scope the logger to this parse: the global one set in prepare() can be
-    // replaced by any overlapping parse, which would capture our messages.
+    // `parse` scopes the logger to this parse: the global one set in prepare()
+    // can be replaced by any overlapping parse, which would capture our
+    // messages.
     timing.phase('setup')
     const text = textDocument.getText()
-    await load(text, {
-      ...this.getOptions(attributes, registry, asciidocDocument),
-      logger: memoryLogger,
-    })
-    timing.phase('load')
-    this.asciidoctorDiagnosticProvider.reportErrors(memoryLogger, textDocument)
+    const { messages } = await parse(
+      text,
+      this.getOptions(attributes, registry, asciidocDocument),
+      { timing },
+    )
+    this.asciidoctorDiagnosticProvider.reportErrors(messages, textDocument)
     logger.debug(
       timing.format(
         'Parsed for the diagnostics',
@@ -116,46 +119,20 @@ export class AsciidocLoader {
     registry: Registry,
     asciidocDocument: AsciidocTextDocument,
   ) {
-    return {
-      attributes: {
-        ...attributes,
-        // Intrinsic attributes are not set automatically when the input is a
-        // string (Asciidoctor.js only derives them when the input is a file),
-        // so we provide them here for the API — this is allowed since the safe
-        // mode is 'unsafe'. docdir/docfile anchor relative includes and images
-        // to the document's own directory; docname/docfilesuffix make
-        // {docname} resolvable in attribute-reference completion (#82), like the
-        // preview already does. We deliberately do NOT set base_dir (Asciidoctor
-        // derives it from docdir) unless the user opted into
-        // useWorkspaceRootAsBaseDirectory (see #926).
-        // https://docs.asciidoctor.org/asciidoc/latest/attributes/document-attributes-ref/#intrinsic-attributes
-        ...(asciidocDocument.dirName && { docdir: asciidocDocument.dirName }),
-        ...(asciidocDocument.filePath && {
-          docfile: asciidocDocument.filePath,
-        }),
-        // docname is the root name of the source document (no leading path or
-        // file extension), see https://github.com/asciidoctor/asciidoctor-vscode/issues/82
-        ...(asciidocDocument.fileName && {
-          docname: asciidocDocument.fileName,
-        }),
-        docfilesuffix: asciidocDocument.extensionName,
-      },
-      extension_registry: registry,
-      sourcemap: true,
-      safe: 'unsafe',
-      parse: true,
-      ...(asciidocDocument.baseDirOverride && {
-        base_dir: asciidocDocument.baseDirOverride,
-      }),
-    }
+    return buildParseOptions({
+      attributes,
+      location: asciidocDocument,
+      registry,
+    })
   }
 
   protected async prepare(
     textDocument: SkinnyTextDocument,
     manageDiagnostics = true,
   ) {
-    const memoryLogger = MemoryLogger.create()
-    LoggerManager.setLogger(memoryLogger)
+    // Keep Asciidoctor log messages out of the console; each parse captures
+    // its own messages (see `parse`).
+    LoggerManager.setLogger(MemoryLogger.create())
 
     const registry = Extensions.create()
     const textDocumentUri = textDocument.uri
@@ -188,7 +165,6 @@ export class AsciidocLoader {
       this.asciidoctorDiagnosticProvider.delete(textDocumentUri)
     }
     return {
-      memoryLogger,
       registry,
       antoraDocumentContext,
     }
@@ -233,8 +209,9 @@ export class AsciidocIncludeItemsLoader extends AsciidocLoader {
     this.asciidoctorIncludeItemsProvider.reset()
     timing.phase('setup')
     const text = textDocument.getText()
-    await load(text, this.getOptions(attributes, registry, asciidocDocument))
-    timing.phase('load')
+    await parse(text, this.getOptions(attributes, registry, asciidocDocument), {
+      timing,
+    })
     logger.debug(
       timing.format(
         'Parsed for the include directives',
