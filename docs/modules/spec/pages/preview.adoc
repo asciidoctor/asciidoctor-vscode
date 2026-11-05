@@ -8,8 +8,58 @@ An editor MUST support opening the preview in a side-by-side panel alongside the
 An editor SHOULD support opening the preview as a full tab.
 
 The preview MUST automatically update when the document is saved.
-An editor SHOULD support configurable auto-refresh on edit (e.g., after a debounce interval).
+An editor SHOULD support configurable auto-refresh on edit, scheduled as described in <<refresh-scheduling>>.
 An editor SHOULD provide a manual "refresh preview" action.
+
+[#refresh-scheduling]
+== Refresh Scheduling
+
+Converting a document is expensive, and a conversion started while the author is still typing renders a version that is already outdated.
+An editor SHOULD schedule the renders triggered by edits so that the preview stays responsive without running more conversions than needed:
+
+* The first edit after a quiet period SHOULD be rendered immediately.
+A pure debounce (render only once the author stops typing) SHOULD NOT be used: an author who keeps typing would never see the preview update.
+* An editor MUST NOT run two renders of the same preview at the same time.
+The edits made during a render MUST be coalesced into a single render of the latest version of the document, read when that render starts, not when it was scheduled.
+* The next render SHOULD start after a delay measured from the *end* of the previous render, and that delay SHOULD grow with the duration of the last render, so that a document that is slow to convert is rendered less often.
+* The last edit MUST eventually be rendered.
+* A result rendered from an outdated version SHOULD NOT be displayed, as the next render replaces it.
+
+The following pseudocode describes this practice:
+
+[source]
+----
+onChange:
+  dirty = true
+  if (rendering) return                    // only one render at a time
+  if (timer) return                        // a render is already scheduled
+  idle = now - lastRenderEnd > idleThreshold
+  timer = setTimeout(render, idle ? 0 : delay())
+
+render:
+  rendering = true; dirty = false
+  version = document.version               // read when rendering, not when scheduling
+  html = await convert(document)
+  if (document.version === version || !dirty) post(html)   // otherwise outdated, the next render replaces it
+  rendering = false; lastRenderEnd = now
+  if (dirty) timer = setTimeout(render, delay())
+
+delay() = clamp(k × lastRenderDuration, minDelay, maxDelay)
+----
+
+Where:
+
+`minDelay`:: The minimum time between two renders while typing, typically configurable (a few hundred milliseconds).
+`k`:: The ratio between the time left to the editor and the duration of a render.
+For instance, with `k = 2`, the conversion uses at most about a third of the time while the author types.
+`maxDelay`:: An upper bound, so that a very slow document is still refreshed regularly.
+`idleThreshold`:: The time without render after which an edit is rendered immediately, typically `minDelay`.
+
+An editor SHOULD NOT render a preview that is not visible, and SHOULD render it when it is shown again.
+
+An editor SHOULD run the conversion outside the thread that handles the user interface and the other editor services (e.g., in a worker thread), so that converting a large document does not freeze the display, the typing or the other features of the editor.
+An editor SHOULD be able to cancel a conversion in progress when it becomes outdated, instead of waiting for its result to discard it.
+When the conversion cannot be cancelled, the rules above limit the number of outdated conversions.
 
 == Rendering Engine
 
