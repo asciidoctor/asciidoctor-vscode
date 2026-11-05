@@ -23,7 +23,9 @@ A pure debounce (render only once the author stops typing) SHOULD NOT be used: a
 The edits made during a render MUST be coalesced into a single render of the latest version of the document, read when that render starts, not when it was scheduled.
 * The next render SHOULD start after a delay measured from the *end* of the previous render, and that delay SHOULD grow with the duration of the last render, so that a document that is slow to convert is rendered less often.
 * The last edit MUST eventually be rendered.
-* A result rendered from an outdated version SHOULD NOT be displayed, as the next render replaces it.
+* A result MUST NOT be displayed if it is older than the content already displayed, or if it belongs to another document than the one the preview now displays (e.g., the preview switched to another document during the conversion).
+* A result SHOULD be displayed even when newer edits were made during the conversion: it is still more recent than the content displayed.
+Discarding it would freeze the preview for as long as the author keeps typing.
 
 The following pseudocode describes this practice:
 
@@ -38,9 +40,9 @@ onChange:
 
 render:
   rendering = true; dirty = false
-  version = document.version               // read when rendering, not when scheduling
-  html = await convert(document)
-  if (document.version === version || !dirty) post(html)   // otherwise outdated, the next render replaces it
+  source = displayedDocument               // the latest version, read when rendering, not when scheduling
+  html = await convert(source)
+  if (source === displayedDocument) post(html)   // even if dirty: renders end in order, so it is newer than what is displayed
   rendering = false; lastRenderEnd = now
   if (dirty) timer = setTimeout(render, delay())
 
@@ -58,7 +60,8 @@ For instance, with `k = 2`, the conversion uses at most about a third of the tim
 An editor SHOULD NOT render a preview that is not visible, and SHOULD render it when it is shown again.
 
 An editor SHOULD run the conversion outside the thread that handles the user interface and the other editor services (e.g., in a worker thread), so that converting a large document does not freeze the display, the typing or the other features of the editor.
-An editor SHOULD be able to cancel a conversion in progress when it becomes outdated, instead of waiting for its result to discard it.
+An editor SHOULD be able to cancel a conversion in progress when it belongs to a document that the preview no longer displays.
+An editor MAY also cancel a conversion that becomes outdated because of a newer edit, to start a conversion of the latest version, provided the preview is still updated regularly while the author keeps typing (e.g., by not cancelling a conversion when the preview has not been updated for `maxDelay`).
 When the conversion cannot be cancelled, the rules above limit the number of outdated conversions.
 
 == Rendering Engine
