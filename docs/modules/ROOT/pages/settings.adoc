@@ -16,8 +16,8 @@ You can edit them from the VS Code Settings UI or directly in `settings.json`.
 |`{}`
 
 |`asciidoc.preview.refreshInterval`
-|Interval in milliseconds between two consecutive preview updates. The value `0` updates the preview only on save.
-|`2000`
+|Minimum time in milliseconds between two consecutive preview updates while typing. The value `0` updates the preview only on save.
+|`500`
 
 |`asciidoc.preview.defaultStyle`
 |Built-in stylesheet used when `asciidoc.preview.style` is empty and the document does not set `stylesheet`/`stylesdir`. Possible values: `` (Automatic — follows `asciidoc.preview.useEditorStyle`, and switches to `antora` when Antora support is active), `vscode`, `asciidoctor`, `antora`, `github` (matches light or dark to the active VS Code color theme).

@@ -418,7 +418,7 @@
           },
           "asciidoc.preview.refreshInterval": {
             "type": "number",
-            "default": 2000,
+            "default": 500,
             "markdownDescription": "%asciidoc.preview.refreshInterval.desc%",
             "order": 2,
             "scope": "resource"
