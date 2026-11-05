@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 4.3.0 (2026-11-05) - @ggrossetie
+
 ### Features
 
 * Render [Lini](https://lini.rs) diagrams through Kroki (requires Kroki 0.34.0 or later), by upgrading `asciidoctor-kroki` to 2.0.0 (#1208)
