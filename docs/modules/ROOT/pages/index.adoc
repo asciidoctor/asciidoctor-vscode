@@ -15,7 +15,7 @@ Besides VS Code's basic editing, a number of AsciiDoc-specific features will hel
 
 * A xref:preview.adoc[live preview] that updates as you type.
 * xref:export-pdf.adoc[Export to PDF], xref:save-html.adoc[HTML], and xref:save-docbook.adoc[DocBook].
-* xref:diagram.adoc[Diagram integration] through Kroki.
+* xref:diagram.adoc[Diagram integration] through Kroki, and local rendering of PlantUML diagrams.
 * xref:snippets.adoc[Snippets], xref:paste-image.adoc[image pasting], and more.
 
 [TIP]

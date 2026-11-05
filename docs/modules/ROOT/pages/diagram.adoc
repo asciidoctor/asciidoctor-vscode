@@ -13,6 +13,7 @@ Set the `asciidoc.extensions.enableKroki` setting to `true` to enable it.
 The first time you preview a document that contains a diagram only Kroki can render while the extension is disabled, a one-time notification points it out and offers to enable Kroki (or to open this page).
 The notification is shown at most once; enabling Kroki always remains an explicit choice.
 
+[#render-plantuml-without-kroki]
 == Render PlantUML without Kroki
 
 While Kroki is disabled, `[plantuml]` blocks are rendered locally, in the preview and without any server, by https://www.npmjs.com/package/@plantuml/core[@plantuml/core].
