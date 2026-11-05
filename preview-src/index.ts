@@ -215,7 +215,9 @@ window.addEventListener(
 
       case 'updateContent': {
         // Morph the new content in place instead of reloading the webview.
+        marker.clear()
         const applied = updatePreviewContent(event.data.html)
+        marker.refresh()
         if (applied) {
           updateImageSizes()
         }
