@@ -30,6 +30,7 @@ import { AsciidoctorExtensionsProvider } from './asciidoctorExtensions.js'
 import { AsciidoctorProcessor } from './asciidoctorProcessor.js'
 import { hashBlockSource } from './blockSignature.js'
 import { registerBrowserIncludeProcessor } from './browserIncludeSupport.js'
+import { parseHeaderOnly } from './headerParse.js'
 import { ResolverIncludeProcessor } from './includeProcessor.js'
 import { addMermaidToHtmlExport } from './mermaidExport.js'
 import { addPlantUmlToHtmlExport } from './plantumlExport.js'
@@ -175,10 +176,9 @@ export class AsciidocEngine {
       headerOnlyRegistry,
       textDocument.uri,
     )
-    const document = await load(text, {
+    const document = await parseHeaderOnly(text, {
       attributes,
       extension_registry: headerOnlyRegistry,
-      header_only: true,
     })
     const krokiServerUrl =
       document.getAttribute('kroki-server-url') || 'https://kroki.io'

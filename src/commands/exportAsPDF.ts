@@ -2,7 +2,7 @@ import { exec, SpawnOptions, spawn } from 'node:child_process'
 import * as fs from 'node:fs'
 import * as os from 'node:os'
 import * as path from 'node:path'
-import { Document as AsciidoctorDocument, load } from '@asciidoctor/core'
+import { Document as AsciidoctorDocument } from '@asciidoctor/core'
 import { v4 as uuidv4 } from 'uuid'
 import * as vscode from 'vscode'
 import { Command } from '../core/commandManager.js'
@@ -16,6 +16,7 @@ import { getWorkspaceFolder } from '../core/workspace.js'
 import { AsciidocEngine } from '../features/asciidoctor/asciidocEngine.js'
 import { AsciidocTextDocument } from '../features/asciidoctor/asciidocTextDocument.js'
 import { getAsciidoctorConfigContent } from '../features/asciidoctor/asciidoctorConfig.js'
+import { parseHeaderOnly } from '../features/asciidoctor/headerParse.js'
 import { PLANTUML_AS_LISTING_ATTRIBUTE } from '../features/preview/plantuml.js'
 import { AsciidocPreviewManager } from '../features/preview/previewManager.js'
 import {
@@ -154,7 +155,7 @@ ${text}`
       // Since the document is piped through stdin and the process runs from the
       // workspace root, asciidoctor-pdf would otherwise resolve the theme file
       // relative to the current working directory rather than the document (#979).
-      const headerDocument = await load(text, { header_only: true })
+      const headerDocument = await parseHeaderOnly(text)
       const pdfThemeArgs = _resolvePdfThemesArgs(
         headerDocument.getAttribute('pdf-theme'),
         headerDocument.getAttribute('pdf-themesdir'),
