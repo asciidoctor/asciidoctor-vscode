@@ -58,7 +58,7 @@
   "asciidoc.preview.openLinksToAsciidocFiles.inPreview": "Try to open links in the preview",
   "asciidoc.preview.preservePreviewWhenHidden.desc": "Whether to keep the AsciiDoc preview in memory even when it's hidden (such as when switching tabs). If enabled, the preview will reload more quickly when restored from the background at the expense of increased memory usage. This setting only affects a hidden/background AsciiDoc preview; closing the preview will always discard it entirely, regardless of this setting.",
   "asciidoc.preview.refresh.title": "Refresh Preview",
-  "asciidoc.preview.refreshInterval.desc": "Interval in milliseconds between two consecutive updates of the preview. The value 0 means it will only update the preview on save.",
+  "asciidoc.preview.refreshInterval.desc": "Minimum time in milliseconds between two consecutive updates of the preview while typing. The first change after a pause is displayed immediately. The value 0 means it will only update the preview on save.",
   "asciidoc.preview.scrollEditorWithPreview.desc": "When the preview is scrolled, updates the view of the editor.",
   "asciidoc.preview.scrollPreviewWithEditor.desc": "When the editor is scrolled, updates the view of the preview.",
   "asciidoc.preview.defaultStyle.desc": "Controls which built-in stylesheet is used when `#asciidoc.preview.style#` is empty and the document does not set `stylesheet`/`stylesdir`.",

@@ -17,10 +17,14 @@ import {
   AsciidocPreviewConfigurationManager,
 } from './previewConfig.js'
 import { AsciidocContentProvider } from './previewContentProvider.js'
+import { RenderScheduler } from './renderScheduler.js'
 import {
   AsciidocFileTopmostLineMonitor,
   getVisibleLine,
 } from './topmostLineMonitor.js'
+
+// Default of `asciidoc.preview.refreshInterval`, in milliseconds.
+const DEFAULT_REFRESH_INTERVAL = 500
 
 export class AsciidocPreview
   extends Disposable
@@ -37,7 +41,10 @@ export class AsciidocPreview
   private _locked: boolean
 
   private readonly editor: vscode.WebviewPanel
-  private throttleTimer: any
+  private readonly scheduler: RenderScheduler
+  // A render was skipped because the preview was hidden: run it when the
+  // preview is shown again.
+  private renderWhenVisible = false
   private line: number | undefined = undefined
   // Position of the preview for each document it has displayed, so it can be
   // restored when the preview switches back to a document.
@@ -179,8 +186,14 @@ export class AsciidocPreview
     this.config = vscode.workspace.getConfiguration('asciidoc', this.resource)
     this.refreshInterval = this.config.get<number>(
       'preview.refreshInterval',
-      2000,
+      DEFAULT_REFRESH_INTERVAL,
     )
+    this.scheduler = new RenderScheduler({
+      render: () => this.doUpdate(),
+      minDelay: () => this.refreshInterval,
+      onError: (error) =>
+        this._logger.error(`Unable to update the preview: ${error}`),
+    })
 
     this.editor.onDidDispose(
       () => {
@@ -200,15 +213,17 @@ export class AsciidocPreview
         const preservePreviewWhenHidden = vscode.workspace
           .getConfiguration('asciidoc', null)
           .get<boolean>('preview.preservePreviewWhenHidden', false)
-        if (
-          e.webviewPanel.visible &&
-          !preservePreviewWhenHidden &&
-          this.webviewHtmlIsStale
-        ) {
+        if (!e.webviewPanel.visible) {
+          return
+        }
+        if (!preservePreviewWhenHidden && this.webviewHtmlIsStale) {
           // `refresh(true)` forces a full reload, which is what we need here:
           // VS Code reloaded the webview from the last full HTML and dropped any
           // morphed updates.
           this.refresh(true)
+        } else if (this.renderWhenVisible) {
+          // The document changed while the preview was hidden.
+          this.scheduler.renderNow()
         }
       },
       null,
@@ -363,8 +378,7 @@ export class AsciidocPreview
 
     disposeAll(this.disposables)
 
-    clearTimeout(this.throttleTimer)
-    this.throttleTimer = undefined
+    this.scheduler.dispose()
   }
 
   // This method is invoked evrytime there is a document update
@@ -372,8 +386,7 @@ export class AsciidocPreview
     // If we have changed resources, cancel any pending updates
     const isResourceChange = resource.fsPath !== this._resource.fsPath
     if (isResourceChange) {
-      clearTimeout(this.throttleTimer)
-      this.throttleTimer = undefined
+      this.scheduler.cancel()
       // A different document means a different shell: force a full reload.
       this.needsFullReload = true
       if (typeof this.line === 'number') {
@@ -400,18 +413,12 @@ export class AsciidocPreview
 
     this._resource = resource
 
-    // Schedule update if none is pending
-    if (!this.throttleTimer) {
-      if (isResourceChange || this.firstUpdate || this.forceUpdate) {
-        this.doUpdate()
-      } else {
-        if (this.refreshInterval > 0) {
-          this.throttleTimer = setTimeout(
-            () => this.doUpdate(),
-            this.refreshInterval,
-          )
-        }
-      }
+    if (isResourceChange || this.firstUpdate || this.forceUpdate) {
+      this.scheduler.renderNow()
+    } else if (this.refreshInterval > 0) {
+      // An edit: `refreshInterval` is the minimum time between two renders,
+      // and 0 means that edits do not update the preview (only saves do).
+      this.scheduler.schedule()
     }
 
     this.firstUpdate = false
@@ -451,7 +458,7 @@ export class AsciidocPreview
       this.config = vscode.workspace.getConfiguration('asciidoc', this.resource)
       this.refreshInterval = this.config.get<number>(
         'preview.refreshInterval',
-        2000,
+        DEFAULT_REFRESH_INTERVAL,
       )
       // The document text is unchanged, so this must be a *forced* refresh:
       // otherwise `doUpdate()` throttles it and then skips it on the
@@ -558,15 +565,21 @@ export class AsciidocPreview
   // Do the preview content update
   private async doUpdate(): Promise<void> {
     this._logger.debug('Updating the preview content')
+    const start = Date.now()
 
     const resource = this._resource
-
-    clearTimeout(this.throttleTimer)
-    this.throttleTimer = undefined
 
     if (this._disposed) {
       return
     }
+    // Rendering a hidden preview is wasted work: VS Code may even drop the
+    // result. Render when it is shown again, keeping the pending flags
+    // (`forceUpdate`, `needsFullReload`).
+    if (!this.editor.visible) {
+      this.renderWhenVisible = true
+      return
+    }
+    this.renderWhenVisible = false
 
     const document = await vscode.workspace.openTextDocument(resource)
     if (
@@ -609,6 +622,13 @@ export class AsciidocPreview
       this.line,
       this.pendingScrollToFragment,
     )
+    // The preview switched to another document during the conversion: drop
+    // this result, a render of the new document follows. Checked before the
+    // one-shot state below is consumed (the anchor and the full reload belong
+    // to the new document).
+    if (this._disposed || resource.fsPath !== this._resource.fsPath) {
+      return
+    }
     // One-shot: consume the anchor so later refreshes of the same document do
     // not keep jumping back to it.
     this.pendingScrollToFragment = undefined
@@ -639,6 +659,7 @@ export class AsciidocPreview
       })
       this.webviewHtmlIsStale = true
     }
+    this._logger.debug(`Preview content updated in ${Date.now() - start} ms`)
   }
 
   private static getWebviewOptions(

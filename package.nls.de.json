@@ -58,7 +58,7 @@
   "asciidoc.preview.openLinksToAsciidocFiles.inPreview": "Versuche Links in der Vorschau zu öffnen.",
   "asciidoc.preview.preservePreviewWhenHidden.desc": "AsciiDoc-Vorschau im Speicher vorhalten, auch wenn sie nicht sichtbar ist (z.B. beim Wechseln von Tabs). Falls eingeschaltet, aktualisiert die Vorschau schneller beim erneuten Zugriff; belegt aber mehr Arbeitsspeicher. Diese Einstellung betrifft nur eine unsichtbare/versteckte Vorschau. Das Schließen der Vorschau verwirft diese aus dem Speicher, ungeachtet dieser Einstellung.",
   "asciidoc.preview.refresh.title": "Vorschau aktualisieren",
-  "asciidoc.preview.refreshInterval.desc": "Intervall in Millisekunden zwischen zwei aufeinanderfolgenden Aktualisierungen der Vorschau. Ein Wert von 0 bedeutet, dass die Vorschau nur beim Speichern aktualisiert wird.",
+  "asciidoc.preview.refreshInterval.desc": "Mindestzeit in Millisekunden zwischen zwei aufeinanderfolgenden Aktualisierungen der Vorschau während der Eingabe. Die erste Änderung nach einer Pause wird sofort angezeigt. Ein Wert von 0 bedeutet, dass die Vorschau nur beim Speichern aktualisiert wird.",
   "asciidoc.preview.scrollEditorWithPreview.desc": "Scrollen in der Vorschau aktualisiert die Zeigerposition im Editor.",
   "asciidoc.preview.scrollPreviewWithEditor.desc": "Scrollen im Editor aktualisiert die Zeilenposition in der Vorschau.",
   "asciidoc.preview.defaultStyle.desc": "Steuert, welches integrierte Stylesheet verwendet wird, wenn `#asciidoc.preview.style#` leer ist und das Dokument keine `stylesheet`/`stylesdir`-Attribute setzt.",

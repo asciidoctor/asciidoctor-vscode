@@ -15,7 +15,11 @@ You can also force a refresh with the *AsciiDoc: Refresh Preview* command.
 
 == Control when the preview updates
 
-By default the preview re-renders as you type, throttled by the `asciidoc.preview.refreshInterval` setting (in milliseconds, `2000` by default).
+By default the preview re-renders as you type.
+The first change after a pause is displayed immediately.
+While you keep typing, the preview waits at least `asciidoc.preview.refreshInterval` milliseconds (`500` by default) after the end of an update before starting the next one, and always displays your last change.
+On a document that is slow to convert, the preview waits longer between two updates, so that VS Code stays responsive.
+A hidden preview is updated when it is shown again.
 
 Set the interval to `0` to turn off live updates entirely:
 

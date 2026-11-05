@@ -58,7 +58,7 @@
   "asciidoc.preview.openLinksToAsciidocFiles.inPreview": "リンク先をプレビューで開きます。",
   "asciidoc.preview.preservePreviewWhenHidden.desc": "AsciiDocプレビューが非表示のとき（タブを切り替えたときなど）でも、メモリ内に保持するかどうかを指定します。有効にすると、バックグラウンドから復元する際にプレビューがより速く再読み込みされますが、その分メモリ使用量が増加します。本設定は非表示（バックグラウンド）のAsciiDocプレビューにのみ影響します。プレビューを閉じた場合は、本設定にかかわらず常に完全に破棄されます。",
   "asciidoc.preview.refresh.title": "プレビューの更新",
-  "asciidoc.preview.refreshInterval.desc": "ドキュメント変更時にプレビューのリフレッシュ間隔(ミリ秒)を指定します。0を指定した場合は、保存時のみ更新します。",
+  "asciidoc.preview.refreshInterval.desc": "入力中のプレビューの更新間隔の最小値(ミリ秒)を指定します。入力を止めた後の最初の変更はすぐに表示されます。0を指定した場合は、保存時のみ更新します。",
   "asciidoc.preview.scrollEditorWithPreview.desc": "プレビューのスクロールに合わせて、エディターもスクロールします。",
   "asciidoc.preview.scrollPreviewWithEditor.desc": "エディターのスクロールに合わせて、プレビューもスクロールします。",
   "asciidoc.preview.defaultStyle.desc": "`#asciidoc.preview.style#` が空で、ドキュメントに `stylesheet`/`stylesdir` が設定されていない場合に使用する内蔵スタイルシートを指定します。",

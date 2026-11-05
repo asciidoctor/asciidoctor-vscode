@@ -14,8 +14,8 @@ function tick(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
-// `asciidoc.preview.refreshInterval` defaults to 2000ms.
-const REFRESH_INTERVAL = 2000
+// `asciidoc.preview.refreshInterval` defaults to 500ms.
+const REFRESH_INTERVAL = 500
 
 describe('Refresh preview command', () => {
   let fileUri: vscode.Uri
@@ -121,6 +121,61 @@ describe('Refresh preview command', () => {
       /preview 2/,
       'a forced refresh with fullReload disabled must morph, not reload (webview.html stays at the last full load)',
     )
+  })
+
+  // The first edit after a quiet period is rendered immediately, and the edits
+  // that follow a render are coalesced into a single render (#588).
+  test('renders an edit immediately and coalesces a burst of edits', async () => {
+    const editUri = await createFile('= Edit\n', 'preview-refresh-edit.adoc')
+    let renders = 0
+    const contentProvider = {
+      providePreviewHTML: async () => {
+        renders++
+        return `<html><body data-shell="A">render ${renders}</body></html>`
+      },
+    } as unknown as AsciidocContentProvider
+
+    const editPreview = AsciidocPreview.create(
+      editUri,
+      vscode.ViewColumn.One,
+      vscode.ViewColumn.Two,
+      true,
+      contentProvider,
+      new AsciidocPreviewConfigurationManager(),
+      new Logger(),
+      new AsciidocFileTopmostLineMonitor(),
+      getAsciidocExtensionContributions(extensionContext),
+    )
+    const insert = async (text: string) => {
+      const edit = new vscode.WorkspaceEdit()
+      edit.insert(editUri, new vscode.Position(1, 0), text)
+      assert.ok(await vscode.workspace.applyEdit(edit))
+    }
+    try {
+      editPreview.update(editUri)
+      await tick(REFRESH_INTERVAL + 300)
+      assert.equal(renders, 1, 'the initial update should render once')
+
+      await insert('a\n')
+      await tick(100)
+      assert.equal(renders, 2, 'the first edit is rendered immediately')
+
+      for (let i = 0; i < 5; i++) {
+        await insert('b')
+      }
+      await tick(50)
+      assert.equal(
+        renders,
+        2,
+        'the edits made right after a render wait for the refresh interval',
+      )
+      await tick(REFRESH_INTERVAL + 500)
+      assert.equal(renders, 3, 'a burst of edits is rendered once')
+    } finally {
+      editPreview.dispose()
+      await (await vscode.workspace.openTextDocument(editUri)).save()
+      await removeFiles([editUri])
+    }
   })
 
   // A docinfo script runs only when the page loads (#1205).
