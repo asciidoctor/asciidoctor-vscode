@@ -7,7 +7,9 @@ import {
 } from '@asciidoctor/core'
 import * as vscode from 'vscode'
 import { SkinnyTextDocument } from '../../core/document.js'
+import { logger } from '../../core/logger.js'
 import { WebviewResourceProvider } from '../../core/resources.js'
+import { ConversionTiming } from '../../lib/conversionTiming.js'
 import { AntoraSupportManager } from '../antora/antoraContext.js'
 import {
   getAntoraConfig,
@@ -54,6 +56,7 @@ export class AsciidocEngine {
     backend: AsciidoctorBuiltInBackends,
     asciidoctorAttributes = {},
   ): Promise<{ output: string; document: AsciidoctorDocument }> {
+    const timing = new ConversionTiming()
     const asciidoctorProcessor = AsciidoctorProcessor.getInstance()
     // Capture Asciidoctor log messages so they do not leak to the console.
     // Diagnostics are owned by AsciidocDiagnosticManager (driven by document
@@ -110,8 +113,12 @@ export class AsciidocEngine {
     if (templateDirs.length !== 0) {
       options.template_dirs = templateDirs
     }
-    const document = await load(textDocument.getText(), options)
+    timing.phase('setup')
+    const text = textDocument.getText()
+    const document = await load(text, options)
+    timing.phase('load')
     const convertedOutput = String(await document.convert(options))
+    timing.phase('convert')
     const output =
       backend === 'html5'
         ? addPlantUmlToHtmlExport(
@@ -119,6 +126,13 @@ export class AsciidocEngine {
             plantUmlStrings(),
           )
         : convertedOutput
+    logger.debug(
+      timing.format(
+        `Converted to ${backend}`,
+        textDocumentUri.toString(),
+        text,
+      ),
+    )
     return {
       output,
       document,
@@ -153,6 +167,7 @@ export class AsciidocEngine {
     line?: number,
     fragment?: string,
   ): Promise<{ html: string; document: AsciidoctorDocument }> {
+    const timing = new ConversionTiming()
     const asciidoctorProcessor = AsciidoctorProcessor.getInstance()
     // Capture Asciidoctor log messages so they do not leak to the console.
     // The preview never reports diagnostics: that is owned by
@@ -186,6 +201,7 @@ export class AsciidocEngine {
     // `data-uri` is set (see the converter), because Asciidoctor's own data-uri
     // embedding reads from disk and does not work for VS Code workspaces.
     const dataUriEnabled = document.isAttribute('data-uri')
+    timing.phase('header')
 
     // Antora Resource Identifiers resolution
     const antoraDocumentContext = await getAntoraDocumentContext(
@@ -316,8 +332,11 @@ export class AsciidocEngine {
       options.template_dirs = templateDirs
     }
 
+    timing.phase('setup')
+
     try {
       const document = await load(text, options)
+      timing.phase('load')
       const blocksWithLineNumber = document.findBy(function (b: AbstractBlock) {
         return typeof b.getLineNumber() !== 'undefined'
       })
@@ -346,7 +365,16 @@ export class AsciidocEngine {
           block.addRole('data-h-' + contentHash)
         }
       })
+      timing.phase('annotate')
       const html = await document.convert(options)
+      timing.phase('convert')
+      logger.debug(
+        timing.format(
+          'Converted for the preview',
+          textDocumentUri.toString(),
+          text,
+        ),
+      )
       return {
         html,
         document,

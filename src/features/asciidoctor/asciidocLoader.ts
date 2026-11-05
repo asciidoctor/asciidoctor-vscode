@@ -8,6 +8,8 @@ import {
 } from '@asciidoctor/core'
 import * as vscode from 'vscode'
 import { SkinnyTextDocument } from '../../core/document.js'
+import { logger } from '../../core/logger.js'
+import { ConversionTiming } from '../../lib/conversionTiming.js'
 import {
   getAntoraConfig,
   getAntoraDocumentContext,
@@ -41,6 +43,7 @@ export class AsciidocLoader {
     // owned by `AsciidocDiagnosticManager` and refreshed only when a document is
     // opened or its text changes, so that merely invoking a provider — or
     // opening/closing the preview — never recomputes or clears them.
+    const timing = new ConversionTiming()
     const { registry, antoraDocumentContext } = await this.prepare(
       textDocument,
       false,
@@ -56,10 +59,15 @@ export class AsciidocLoader {
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes(
       textDocument.uri,
     )
-    return load(
-      textDocument.getText(),
+    timing.phase('setup')
+    const text = textDocument.getText()
+    const document = await load(
+      text,
       this.getOptions(attributes, registry, asciidocDocument),
     )
+    timing.phase('load')
+    logger.debug(timing.format('Parsed', textDocument.uri.toString(), text))
+    return document
   }
 
   /**
@@ -70,6 +78,7 @@ export class AsciidocLoader {
   public async reportDiagnostics(
     textDocument: SkinnyTextDocument,
   ): Promise<void> {
+    const timing = new ConversionTiming()
     const { memoryLogger, registry, antoraDocumentContext } =
       await this.prepare(textDocument, true)
     if (antoraDocumentContext === undefined) {
@@ -85,11 +94,21 @@ export class AsciidocLoader {
     )
     // Scope the logger to this parse: the global one set in prepare() can be
     // replaced by any overlapping parse, which would capture our messages.
-    await load(textDocument.getText(), {
+    timing.phase('setup')
+    const text = textDocument.getText()
+    await load(text, {
       ...this.getOptions(attributes, registry, asciidocDocument),
       logger: memoryLogger,
     })
+    timing.phase('load')
     this.asciidoctorDiagnosticProvider.reportErrors(memoryLogger, textDocument)
+    logger.debug(
+      timing.format(
+        'Parsed for the diagnostics',
+        textDocument.uri.toString(),
+        text,
+      ),
+    )
   }
 
   protected getOptions(
@@ -204,6 +223,7 @@ export class AsciidocIncludeItemsLoader extends AsciidocLoader {
     // not touch the diagnostic collection at all — neither clearing it nor
     // publishing to it. Diagnostics come from the fully-resolved parse in
     // `AsciidocLoader.load()` and the preview conversion.
+    const timing = new ConversionTiming()
     const { registry } = await this.prepare(textDocument, false)
     this.asciidoctorIncludeItemsProvider.activate(registry)
     const asciidocDocument = AsciidocTextDocument.fromTextDocument(textDocument)
@@ -211,9 +231,16 @@ export class AsciidocIncludeItemsLoader extends AsciidocLoader {
       textDocument.uri,
     )
     this.asciidoctorIncludeItemsProvider.reset()
-    await load(
-      textDocument.getText(),
-      this.getOptions(attributes, registry, asciidocDocument),
+    timing.phase('setup')
+    const text = textDocument.getText()
+    await load(text, this.getOptions(attributes, registry, asciidocDocument))
+    timing.phase('load')
+    logger.debug(
+      timing.format(
+        'Parsed for the include directives',
+        textDocument.uri.toString(),
+        text,
+      ),
     )
     return this.asciidoctorIncludeItemsProvider.get()
   }
