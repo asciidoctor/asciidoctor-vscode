@@ -6,30 +6,22 @@ import {
   Footnote,
   Html5Converter,
 } from '@asciidoctor/core'
-import * as vscode from 'vscode'
-import * as uri from 'vscode-uri'
-import { SkinnyTextDocument } from '../../core/document.js'
-import { t as l10nT } from '../../core/l10n.js'
-import { logger } from '../../core/logger.js'
-import { WebviewResourceProvider } from '../../core/resources.js'
-import { getWorkspaceFolder } from '../../core/workspace.js'
-import { AntoraDocumentContext } from '../antora/antoraContext.js'
+import { URI, Utils } from 'vscode-uri'
 import { WEBVIEW_OUTFILESUFFIX } from '../asciidoctor/conversion.js'
-import { AsciidocContributions } from '../extensionContributions.js'
-import { AsciidocPreviewSecurityLevel } from '../security.js'
+import { AsciidocPreviewSecurityLevel } from '../securityLevel.js'
 import { buildCustomStyleSheetLinks } from './customStyles.js'
 import { krokiServerCspSource } from './krokiDiagram.js'
 import { renderMathJax } from './mathjax.js'
 import { mermaidClientRenderScript } from './mermaid.js'
 import { generateNonce } from './nonce.js'
 import {
+  type PlantUmlStrings,
   plantUmlClientRenderScript,
   plantUmlEngineLoaderScript,
 } from './plantuml.js'
-import { plantUmlStrings } from './plantumlStrings.js'
-import {
+import type {
   AsciidocPreviewConfiguration,
-  type AsciidocPreviewDefaultStyle,
+  AsciidocPreviewDefaultStyle,
 } from './previewConfig.js'
 import { resolveStyleUri } from './resolveStyleHref.js'
 
@@ -109,20 +101,87 @@ function isSchemeBlacklisted(href: string): boolean {
   return false
 }
 
+// This module, and every module it imports, MUST NOT import `vscode`, so that
+// the conversion can run in a worker thread (#1245): the caller resolves what
+// needs the VS Code API up front (settings, localized strings, workspace
+// folder...) and passes it as plain data, and the converter reads files and
+// logs through the `host`. `src/test/unit/previewConversion.test.ts` imports
+// this module in plain Node, where `vscode` cannot be resolved.
+
 /**
- * Strings used inside the asciidoc preview.
- *
- * Stored here and then injected in the preview so that they
- * can be localized using our normal localization process.
+ * Localized strings used by the preview, resolved by the caller (see
+ * `previewStrings()` in `previewEnvironment.ts`).
  */
-const previewStrings = {
-  cspAlertMessageText: l10nT('preview.securityMessage.text'),
+export interface PreviewStrings {
+  /** Injected in the preview, read by `preview-src`. */
+  readonly preview: {
+    readonly cspAlertMessageText: string
+    readonly cspAlertMessageTitle: string
+    readonly cspAlertMessageLabel: string
+    readonly staleImageTitle: string
+  }
+  readonly plantUml: PlantUmlStrings
+}
 
-  cspAlertMessageTitle: l10nT('preview.securityMessage.title'),
+/** The document being previewed. */
+export interface PreviewTextDocument {
+  readonly uri: URI
+  readonly lineCount: number
+}
 
-  cspAlertMessageLabel: l10nT('preview.securityMessage.label'),
+/**
+ * Turns the URI of a local resource into a URI that the webview can load (see
+ * `vscode.Webview.asWebviewUri`).
+ */
+export interface PreviewResourceProvider {
+  asWebviewUri(resource: URI): { toString(): string }
 
-  staleImageTitle: l10nT('preview.staleImage.title'),
+  /** The webview URI of a file of the extension, e.g. `('media', 'x.css')`. */
+  asMediaWebViewSrc(...pathSegments: string[]): string
+
+  readonly cspSource: string
+}
+
+/** What the converter needs from the Antora support. */
+export interface PreviewAntoraContext {
+  resolveAntoraResourceIds(
+    id: string,
+    defaultFamily: string,
+  ): string | undefined
+}
+
+/** The services of the thread that owns the VS Code API. */
+export interface PreviewConverterHost {
+  /** Reads a file through `vscode.workspace.fs`. */
+  readFile(uri: URI): Promise<Uint8Array>
+
+  warn(message: string): void
+}
+
+export interface AsciidoctorWebViewConverterOptions {
+  readonly textDocument: PreviewTextDocument
+  readonly resourceProvider: PreviewResourceProvider
+  readonly securityLevel: AsciidocPreviewSecurityLevel
+  readonly disableSecurityWarnings: boolean
+  readonly contributions: {
+    readonly previewScripts: ReadonlyArray<URI>
+    readonly previewStyles: ReadonlyArray<URI>
+  }
+  readonly config: AsciidocPreviewConfiguration
+  readonly antoraDocumentContext?: PreviewAntoraContext
+  /** The line to scroll to once the preview has loaded. */
+  readonly line?: number
+  readonly state?: any
+  readonly krokiServerUrl?: string
+  readonly dataUriEnabled?: boolean
+  /** The anchor to scroll to once the preview has loaded. */
+  readonly fragment?: string
+  /** The workspace folder of the document, if any. */
+  readonly workspaceFolderUri?: URI
+  readonly strings: PreviewStrings
+  /** Whether the webview logs `[asciidoc.preview]` debug messages. */
+  readonly debug: boolean
+  readonly host: PreviewConverterHost
 }
 
 /**
@@ -154,7 +213,7 @@ function hashShellParts(parts: string[], nonce: string): string {
  * @param nonce
  */
 function getCspForResource(
-  webviewResourceProvider: WebviewResourceProvider,
+  webviewResourceProvider: PreviewResourceProvider,
   securityLevel: AsciidocPreviewSecurityLevel,
   // `Array.prototype.join` renders `undefined` entries as an empty string, so
   // an unset or invalid Kroki server URL simply contributes no extra CSP source.
@@ -242,7 +301,7 @@ function getCspForResource(
     .join('; ')}">`
 }
 
-function escapeAttribute(value: string | vscode.Uri): string {
+function escapeAttribute(value: string | { toString(): string }): string {
   return value.toString().replace(/"/g, '&quot;')
 }
 
@@ -258,21 +317,27 @@ export class AsciidoctorWebViewConverter {
   config: AsciidocPreviewConfiguration
   initialData: { [key: string]: any }
   state: object
+  private readonly textDocument: PreviewTextDocument
+  private readonly webviewResourceProvider: PreviewResourceProvider
+  private readonly contributions: AsciidoctorWebViewConverterOptions['contributions']
+  private readonly antoraDocumentContext: PreviewAntoraContext | undefined
+  private readonly krokiServerUrl: string | undefined
+  private readonly dataUriEnabled: boolean
+  private readonly workspaceFolderUri: URI | undefined
+  private readonly strings: PreviewStrings
+  private readonly host: PreviewConverterHost
 
-  constructor(
-    private readonly textDocument: SkinnyTextDocument,
-    private readonly webviewResourceProvider: WebviewResourceProvider,
-    asciidocPreviewSecurityLevel: AsciidocPreviewSecurityLevel,
-    shouldDisableSecurityWarnings: boolean,
-    private readonly contributions: AsciidocContributions,
-    previewConfigurations: AsciidocPreviewConfiguration,
-    private readonly antoraDocumentContext: AntoraDocumentContext | undefined,
-    line: number | undefined = undefined,
-    state?: any,
-    private readonly krokiServerUrl?: string,
-    private readonly dataUriEnabled: boolean = false,
-    fragment: string | undefined = undefined,
-  ) {
+  constructor(options: AsciidoctorWebViewConverterOptions) {
+    const { textDocument } = options
+    this.textDocument = textDocument
+    this.webviewResourceProvider = options.resourceProvider
+    this.contributions = options.contributions
+    this.antoraDocumentContext = options.antoraDocumentContext
+    this.krokiServerUrl = options.krokiServerUrl
+    this.dataUriEnabled = options.dataUriEnabled ?? false
+    this.workspaceFolderUri = options.workspaceFolderUri
+    this.strings = options.strings
+    this.host = options.host
     const textDocumentUri = textDocument.uri
     this.basebackend = 'html'
     this.outfilesuffix = WEBVIEW_OUTFILESUFFIX
@@ -282,26 +347,26 @@ export class AsciidoctorWebViewConverter {
     // 4.0 reads a `hasSupportsTemplates()` method instead (see below), so a
     // custom converter that only sets the old property would silently disable
     // custom templates in the preview.
-    this.securityLevel = asciidocPreviewSecurityLevel
-    this.config = previewConfigurations
+    this.securityLevel = options.securityLevel
+    this.config = options.config
     this.initialData = {
       source: textDocumentUri.toString(),
-      line,
+      line: options.line,
       // Anchor id to scroll to once this render has loaded (interdocument link
       // navigation); empty for ordinary renders.
-      fragment,
+      fragment: options.fragment,
       lineCount: textDocument.lineCount,
       scrollPreviewWithEditor: this.config.scrollPreviewWithEditor,
       scrollEditorWithPreview: this.config.scrollEditorWithPreview,
       doubleClickToSwitchToEditor: this.config.doubleClickToSwitchToEditor,
       preservePreviewWhenHidden: this.config.preservePreviewWhenHidden,
-      disableSecurityWarnings: shouldDisableSecurityWarnings,
+      disableSecurityWarnings: options.disableSecurityWarnings,
       // Verbose preview-console diagnostics follow the *Asciidoctor* output
       // channel level (raised via "Developer: Set Log Level…"), not a dedicated
       // setting: at Trace, the webview logs `[asciidoc.preview]` messages.
-      debug: logger.logLevel === vscode.LogLevel.Trace,
+      debug: options.debug,
     }
-    this.state = state || {}
+    this.state = options.state || {}
   }
 
   /**
@@ -396,7 +461,7 @@ export class AsciidoctorWebViewConverter {
         ${csp}
         <meta id="vscode-asciidoc-preview-data"
           data-settings="${escapeAttribute(JSON.stringify(this.initialData))}"
-          data-strings="${escapeAttribute(JSON.stringify(previewStrings))}"
+          data-strings="${escapeAttribute(JSON.stringify(this.strings.preview))}"
           data-state="${escapeAttribute(JSON.stringify(this.state))}">
         <!-- Must precede any element that can carry a relative URL (docinfo in
         particular, injected verbatim below): the webview's default document
@@ -638,12 +703,12 @@ export class AsciidoctorWebViewConverter {
           mimeTypeForTarget(target)
       } else {
         const fileUri = this.resolveImageUri(node, target)
-        bytes = await vscode.workspace.fs.readFile(fileUri)
+        bytes = await this.host.readFile(fileUri)
         mimeType = mimeTypeForTarget(target)
       }
       return `data:${mimeType};base64,${encodeBase64(bytes)}`
     } catch (e) {
-      logger.warn(`Unable to embed image "${target}" as data-uri: ${e}`)
+      this.host.warn(`Unable to embed image "${target}" as data-uri: ${e}`)
       return undefined
     }
   }
@@ -671,7 +736,7 @@ export class AsciidoctorWebViewConverter {
     }
     // a Windows path may mix separators (e.g. `c:\project/media/image.png`)
     return this.webviewResourceProvider
-      .asWebviewUri(vscode.Uri.file(imageUri.replace(/\\/g, '/')))
+      .asWebviewUri(URI.file(imageUri.replace(/\\/g, '/')))
       .toString()
   }
 
@@ -688,19 +753,16 @@ export class AsciidoctorWebViewConverter {
    * `imagesdir` (e.g. `:imagesdir: {asciidoctorconfigdir}/media`) is not
    * resolved against the document's directory.
    */
-  private resolveImageUri(node: AbstractNode, target: string): vscode.Uri {
+  private resolveImageUri(node: AbstractNode, target: string): URI {
     const imagesdir = isAbsolutePath(target)
       ? ''
       : node.getAttribute('imagesdir', '') || ''
     const path = imagesdir ? `${imagesdir}/${target}` : target
     if (isAbsolutePath(path)) {
-      return vscode.Uri.file(path)
+      return URI.file(path)
     }
     const segments = path.split('/').filter((s) => s.length > 0)
-    return vscode.Uri.joinPath(
-      uri.Utils.dirname(this.textDocument.uri),
-      ...segments,
-    )
+    return Utils.joinPath(Utils.dirname(this.textDocument.uri), ...segments)
   }
 
   /**
@@ -735,7 +797,7 @@ export class AsciidoctorWebViewConverter {
 
   private generateMathJax(
     node: AsciidoctorDocument,
-    webviewResourceProvider: WebviewResourceProvider,
+    webviewResourceProvider: PreviewResourceProvider,
     nonce: string,
   ) {
     // `fontBase` serves the CommonHTML font from the bundled copy instead of the
@@ -779,7 +841,7 @@ ${footnoteItems.join('\n')}
   }
 
   private generateMermaid(
-    webviewResourceProvider: WebviewResourceProvider,
+    webviewResourceProvider: PreviewResourceProvider,
     nonce: string,
   ) {
     const mermaidSrc = webviewResourceProvider.asMediaWebViewSrc(
@@ -844,7 +906,7 @@ ${footnoteItems.join('\n')}
   }
 
   private generatePlantUml(
-    webviewResourceProvider: WebviewResourceProvider,
+    webviewResourceProvider: PreviewResourceProvider,
     nonce: string,
   ) {
     const vizSrc = webviewResourceProvider.asMediaWebViewSrc(
@@ -859,7 +921,7 @@ ${footnoteItems.join('\n')}
       'core',
       'plantuml.js',
     )
-    const strings = plantUmlStrings()
+    const strings = this.strings.plantUml
     return `<!--suppress JSAnnotator -->
 <script type="module" nonce="${nonce}">
     ${plantUmlEngineLoaderScript(vizSrc, plantumlSrc, strings)}
@@ -1103,8 +1165,8 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
 
   private getStyles(
     node: AsciidoctorDocument,
-    webviewResourceProvider: WebviewResourceProvider,
-    textDocumentUri: vscode.Uri,
+    webviewResourceProvider: PreviewResourceProvider,
+    textDocumentUri: URI,
     config: AsciidocPreviewConfiguration,
     effectiveStyle: AsciidocPreviewDefaultStyle,
     state?: any,
@@ -1186,13 +1248,13 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
     // the absolute path to a webview URI.
     const baseDir = node.getBaseDir()
     const baseUri = baseDir
-      ? vscode.Uri.file(baseDir)
-      : uri.Utils.dirname(this.textDocument.uri)
-    return uri.Utils.joinPath(baseUri, combined).fsPath
+      ? URI.file(baseDir)
+      : Utils.dirname(this.textDocument.uri)
+    return Utils.joinPath(baseUri, combined).fsPath
   }
 
   private getScripts(
-    webviewResourceProvider: WebviewResourceProvider,
+    webviewResourceProvider: PreviewResourceProvider,
     nonce: string,
   ): string {
     const out: string[] = []
@@ -1205,8 +1267,8 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
   }
 
   private computeCustomStyleSheetIncludes(
-    webviewResourceProvider: WebviewResourceProvider,
-    textDocumentUri: vscode.Uri,
+    webviewResourceProvider: PreviewResourceProvider,
+    textDocumentUri: URI,
     replacementStyle: string,
     additionalStyles: readonly string[],
   ): string {
@@ -1247,8 +1309,8 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
   }
 
   private fixHref(
-    webviewResourceProvider: WebviewResourceProvider,
-    textDocumentUri: vscode.Uri,
+    webviewResourceProvider: PreviewResourceProvider,
+    textDocumentUri: URI,
     href: string,
   ): string {
     // QUESTION: should we use `stylesdir` attribute in here?
@@ -1260,14 +1322,14 @@ ${node.hasAttribute('manpurpose') ? this.generateManNameSection(node) : ''}`
     // result into the final webview href.
     const resolved = resolveStyleUri(
       href,
-      getWorkspaceFolder(textDocumentUri)?.uri,
+      this.workspaceFolderUri,
       textDocumentUri,
     )
     if (resolved.kind === 'url') {
       return resolved.href
     }
     return webviewResourceProvider
-      .asWebviewUri(vscode.Uri.from(resolved.uri))
+      .asWebviewUri(URI.from(resolved.uri))
       .toString()
   }
 }

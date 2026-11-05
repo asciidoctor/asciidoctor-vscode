@@ -1,16 +1,35 @@
 import { Registry } from '@asciidoctor/core'
-import { register as registerKroki } from 'asciidoctor-kroki'
 import * as vscode from 'vscode'
 import { findFiles } from '../../core/findFiles.js'
-import { requireFresh } from '../../core/requireExtension.js'
-import { mermaidJSProcessor } from '../preview/mermaid.js'
-import { plantumlJSProcessor } from '../preview/plantuml.js'
 import { plantUmlStrings } from '../preview/plantumlStrings.js'
 import { AsciidoctorExtensionsSecurityPolicyArbiter } from '../security.js'
 import {
   type AsciidoctorExtensionContext,
+  contributesAsciidoctorExtensions,
   registerContributedAsciidoctorExtensions,
 } from './asciidoctorExtensionContributions.js'
+import {
+  registerBuiltInExtensions,
+  registerWorkspaceExtensions,
+} from './registryExtensions.js'
+
+/**
+ * The Asciidoctor extensions to register, resolved from the settings and the
+ * workspace, as plain data (see `registryExtensions.ts`).
+ */
+export interface ResolvedAsciidoctorExtensions {
+  /** The `asciidoc.extensions.enableKroki` setting. */
+  readonly enableKroki: boolean
+  /** The localized alternative text of the PlantUML diagrams. */
+  readonly plantUmlAlt: string
+  /** The paths of the trusted workspace extensions (`.asciidoctor/lib`). */
+  readonly workspaceExtensionFiles: string[]
+  /**
+   * Whether another VS Code extension contributes Asciidoctor extensions: they
+   * are registered by that extension, in the extension host.
+   */
+  readonly hasContributedExtensions: boolean
+}
 
 export interface AsciidoctorExtensionsProvider {
   activate(
@@ -19,7 +38,24 @@ export interface AsciidoctorExtensionsProvider {
   ): Promise<void>
 }
 
-export class AsciidoctorExtensions {
+/**
+ * Resolves the extensions as plain data, so that the registry can be built
+ * elsewhere, e.g. in the preview's worker thread.
+ */
+export interface AsciidoctorExtensionsResolver
+  extends AsciidoctorExtensionsProvider {
+  resolve(): Promise<ResolvedAsciidoctorExtensions>
+
+  registerContributedExtensions(
+    registry: Registry,
+    context: AsciidoctorExtensionContext,
+  ): Promise<void>
+
+  /** Shows the workspace extensions that failed to load. */
+  reportFailures(failures: readonly { file: string; error: string }[]): void
+}
+
+export class AsciidoctorExtensions implements AsciidoctorExtensionsResolver {
   private asciidoctorExtensionsSecurityPolicy: AsciidoctorExtensionsSecurityPolicyArbiter
 
   constructor(
@@ -33,25 +69,48 @@ export class AsciidoctorExtensions {
     registry: Registry,
     context?: AsciidoctorExtensionContext,
   ) {
-    const enableKroki = vscode.workspace
-      .getConfiguration('asciidoc.extensions', null)
-      .get('enableKroki')
-    // The `load` parse backs diagnostics and language features: its output is
-    // never rendered, yet it runs on every edit. With Kroki registered, it would
-    // send each diagram to the server and, with `kroki-fetch-diagram`, write the
-    // images into the workspace.
-    if (enableKroki) {
-      if (context?.mode !== 'load') {
-        registerKroki(registry)
-      }
-    } else {
-      registry.block('plantuml', plantumlJSProcessor(plantUmlStrings().alt))
-    }
-    registry.block('mermaid', mermaidJSProcessor())
+    const resolved = await this.resolve()
+    registerBuiltInExtensions(registry, {
+      enableKroki: resolved.enableKroki,
+      mode: context?.mode,
+      plantUmlAlt: resolved.plantUmlAlt,
+    })
     if (context !== undefined) {
-      await this.registerExtensionsFromContributingExtensions(registry, context)
+      await this.registerContributedExtensions(registry, context)
     }
-    await this.registerExtensionsInWorkspace(registry)
+    this.reportFailures(
+      registerWorkspaceExtensions(registry, resolved.workspaceExtensionFiles),
+    )
+  }
+
+  public async resolve(): Promise<ResolvedAsciidoctorExtensions> {
+    const enableKroki = Boolean(
+      vscode.workspace
+        .getConfiguration('asciidoc.extensions', null)
+        .get('enableKroki'),
+    )
+    const extensionsTrusted = await this.confirmAsciidoctorExtensionsTrusted()
+    const workspaceExtensionFiles = extensionsTrusted
+      ? (await this.getExtensionFilesInWorkspace()).map(
+          (extfile) => extfile.fsPath,
+        )
+      : []
+    return {
+      enableKroki,
+      plantUmlAlt: plantUmlStrings().alt,
+      workspaceExtensionFiles,
+      hasContributedExtensions: vscode.extensions.all.some(
+        contributesAsciidoctorExtensions,
+      ),
+    }
+  }
+
+  public reportFailures(
+    failures: readonly { file: string; error: string }[],
+  ): void {
+    for (const { file, error } of failures) {
+      vscode.window.showErrorMessage(file + ': ' + error)
+    }
   }
 
   /**
@@ -61,7 +120,7 @@ export class AsciidoctorExtensions {
    * those are activated, mirroring the `markdownItPlugins` mechanism of the
    * built-in Markdown extension.
    */
-  private async registerExtensionsFromContributingExtensions(
+  public async registerContributedExtensions(
     registry: Registry,
     context: AsciidoctorExtensionContext,
   ): Promise<void> {
@@ -99,24 +158,5 @@ export class AsciidoctorExtensions {
     return vscode.workspace
       .getConfiguration('asciidoc.extensions', null)
       .get('registerWorkspaceExtensions', false)
-  }
-
-  private async registerExtensionsInWorkspace(registry: Registry) {
-    const extensionsTrusted = await this.confirmAsciidoctorExtensionsTrusted()
-    if (!extensionsTrusted) {
-      return
-    }
-    const extfiles = await this.getExtensionFilesInWorkspace()
-    for (const extfile of extfiles) {
-      const extPath = extfile.fsPath
-      try {
-        const extjs = requireFresh(extPath) as {
-          register(registry: Registry): void
-        }
-        extjs.register(registry)
-      } catch (e) {
-        vscode.window.showErrorMessage(extPath + ': ' + String(e))
-      }
-    }
   }
 }

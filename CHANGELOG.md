@@ -39,6 +39,7 @@
 
 * Parse only the header of the document before converting it for the preview, instead of the whole document, which made each preview update take about twice as long as needed. The PDF export also parses only the header to find the PDF theme (#1249)
 * Parse each version of a document once for the outline, the folding ranges, the completion, the hover, the document links and the diagnostics, instead of once for each of them: after an edit, the extension now parses the document 3 times instead of about 7, which halves the time it spends on each edit of a large document. The parse is done again when a file is saved in VS Code; when an included file changes outside VS Code, run the new *AsciiDoc: Clear Cache* command to take it into account (#1251)
+* Convert the documents for the preview in a worker thread on the desktop, so that previewing a large document no longer blocks the extension host, shared with the other extensions, while the document is converted. Antora documents, and documents previewed while another installed extension contributes Asciidoctor.js extensions, are still converted in the extension host. Asciidoctor.js extensions from `.asciidoctor/lib` now run in this worker thread, where the VS Code API is not available (#1245)
 
 ### Documentation
 

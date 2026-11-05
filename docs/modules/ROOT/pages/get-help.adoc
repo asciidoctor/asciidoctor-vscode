@@ -52,7 +52,10 @@ For example:
 
 ----
 Converted for the preview file:///home/user/docs/index.adoc (2302 lines, 33.6 K chars) in 181 ms (header: 70 ms, setup: 29 ms, load: 39 ms, annotate: 1 ms, convert: 42 ms)
+Rendered the preview in a worker thread file:///home/user/docs/index.adoc (2302 lines, 33.6 K chars) in 197 ms (prepare: 12 ms, worker: 184 ms, resolve: 1 ms)
 ----
+
+On the desktop, the preview converts the document in a worker thread, so that the conversion does not block the other extensions: the first line describes the conversion itself, and the second one the whole update of the preview, including the time spent preparing the conversion in the extension host.
 
 Include these lines when you report that the preview or the editor is slow.
 

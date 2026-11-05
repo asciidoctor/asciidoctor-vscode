@@ -13,12 +13,19 @@ import { WebviewResourceProvider } from '../core/resources.js'
 import { getDefaultWorkspaceFolderUri } from '../core/workspace.js'
 import { AntoraDocumentContext } from '../features/antora/antoraContext.js'
 import { AsciidocContributions } from '../features/extensionContributions.js'
-import { AsciidoctorWebViewConverter } from '../features/preview/asciidoctorWebViewConverter.js'
+import {
+  AsciidoctorWebViewConverter,
+  type AsciidoctorWebViewConverterOptions,
+} from '../features/preview/asciidoctorWebViewConverter.js'
 import { mermaidJSProcessor } from '../features/preview/mermaid.js'
 import {
   AsciidocPreviewConfigurationManager,
   type AsciidocPreviewDefaultStyle,
 } from '../features/preview/previewConfig.js'
+import {
+  previewHost,
+  previewStrings,
+} from '../features/preview/previewEnvironment.js'
 import { AsciidocPreviewSecurityLevel } from '../features/security.js'
 import { createDirectory, createFile, removeFiles } from './workspaceHelper.js'
 
@@ -38,6 +45,26 @@ class TestAsciidocContributions implements AsciidocContributions {
   readonly previewResourceRoots: ReadonlyArray<vscode.Uri> = []
   readonly previewScripts: ReadonlyArray<vscode.Uri> = []
   readonly previewStyles: ReadonlyArray<vscode.Uri> = []
+}
+
+function newConverter(
+  file: vscode.TextDocument,
+  options: Partial<AsciidoctorWebViewConverterOptions> = {},
+): AsciidoctorWebViewConverter {
+  return new AsciidoctorWebViewConverter({
+    textDocument: file,
+    resourceProvider: new TestWebviewResourceProvider(),
+    securityLevel: AsciidocPreviewSecurityLevel.AllowScriptsAndAllContent,
+    disableSecurityWarnings: false,
+    contributions: new TestAsciidocContributions(),
+    config: new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(
+      file.uri,
+    ),
+    strings: previewStrings(),
+    debug: false,
+    host: previewHost,
+    ...options,
+  })
 }
 
 function createAntoraDocumentContextStub(resourcePath: string | undefined) {
@@ -80,18 +107,9 @@ async function testAsciidoctorWebViewConverter(
   const file = await vscode.workspace.openTextDocument(
     vscode.Uri.joinPath(root, ...pathSegments),
   )
-  const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter(
-    file,
-    new TestWebviewResourceProvider(),
-    2,
-    false,
-    new TestAsciidocContributions(),
-    new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(
-      file.uri,
-    ),
+  const asciidoctorWebViewConverter = newConverter(file, {
     antoraDocumentContext,
-    undefined,
-  )
+  })
 
   const html = await asciidoctorConvert(
     input,
@@ -110,18 +128,9 @@ async function testAsciidoctorWebViewConverterStandalone(
   const file = await vscode.workspace.openTextDocument(
     vscode.Uri.joinPath(root, ...pathSegments),
   )
-  const asciidoctorWebViewConverter = new AsciidoctorWebViewConverter(
-    file,
-    new TestWebviewResourceProvider(),
-    2,
-    false,
-    new TestAsciidocContributions(),
-    new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(
-      file.uri,
-    ),
+  const asciidoctorWebViewConverter = newConverter(file, {
     antoraDocumentContext,
-    undefined,
-  )
+  })
   const html = await asciidoctorConvert(input, {
     ...createConverterOptions(asciidoctorWebViewConverter, file.fileName),
     standalone: true,
@@ -529,21 +538,7 @@ See xref:my-table[xrefstyle=short] for more reference.
     const file = await vscode.workspace.openTextDocument(
       vscode.Uri.joinPath(workspaceUri, 'asciidoctorWebViewConverterTest.adoc'),
     )
-    const converter = new AsciidoctorWebViewConverter(
-      file,
-      new TestWebviewResourceProvider(),
-      2,
-      false,
-      new TestAsciidocContributions(),
-      new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(
-        file.uri,
-      ),
-      undefined,
-      undefined,
-      null,
-      undefined,
-      true, // dataUriEnabled
-    )
+    const converter = newConverter(file, { dataUriEnabled: true })
     return (await asciidoctorConvert(
       input,
       createConverterOptions(converter, file.fileName),
@@ -629,20 +624,12 @@ See xref:my-table[xrefstyle=short] for more reference.
       testConfig.defaultStyle = defaultStyle
       testConfig.defaultStyleExplicit = true
     }
-    const converter = new AsciidoctorWebViewConverter(
-      file,
-      new TestWebviewResourceProvider(),
+    const converter = newConverter(file, {
       securityLevel,
-      false,
-      new TestAsciidocContributions(),
       config,
       antoraDocumentContext,
-      undefined, // line
-      null, // state
-      undefined, // krokiServerUrl
-      false, // dataUriEnabled
       fragment,
-    )
+    })
     return (await asciidoctorConvert(input, {
       ...createConverterOptions(converter, file.fileName),
       standalone: true,
@@ -676,18 +663,7 @@ See xref:my-table[xrefstyle=short] for more reference.
     const file = await vscode.workspace.openTextDocument(
       vscode.Uri.joinPath(workspaceUri, 'asciidoctorWebViewConverterTest.adoc'),
     )
-    const converter = new AsciidoctorWebViewConverter(
-      file,
-      new TestWebviewResourceProvider(),
-      2,
-      false,
-      new TestAsciidocContributions(),
-      new AsciidocPreviewConfigurationManager().loadAndCacheConfiguration(
-        file.uri,
-      ),
-      undefined,
-      undefined,
-    )
+    const converter = newConverter(file)
     const registry = Extensions.create()
     registry.block('mermaid', mermaidJSProcessor())
     // Typed loosely, like the engine does (asciidocEngine.ts), because the

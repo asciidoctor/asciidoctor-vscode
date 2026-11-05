@@ -188,9 +188,12 @@ File extension: {docfilesuffix}`
         new TestWebviewResourceProvider(),
       )
       // docfilesuffix includes the leading period, like Asciidoctor does when loading a file
-      assert.strictEqual(result.document.getAttribute('docfilesuffix'), '.adoc')
       assert.strictEqual(
-        result.document.getAttribute('docname'),
+        result.document?.getAttribute('docfilesuffix'),
+        '.adoc',
+      )
+      assert.strictEqual(
+        result.document?.getAttribute('docname'),
         'intrinsic-attributes',
       )
       assert.match(result.html, /File extension: \.adoc</)
