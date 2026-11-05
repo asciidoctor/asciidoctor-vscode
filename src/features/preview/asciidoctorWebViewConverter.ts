@@ -14,6 +14,7 @@ import { logger } from '../../core/logger.js'
 import { WebviewResourceProvider } from '../../core/resources.js'
 import { getWorkspaceFolder } from '../../core/workspace.js'
 import { AntoraDocumentContext } from '../antora/antoraContext.js'
+import { WEBVIEW_OUTFILESUFFIX } from '../asciidoctor/conversion.js'
 import { AsciidocContributions } from '../extensionContributions.js'
 import { AsciidocPreviewSecurityLevel } from '../security.js'
 import { buildCustomStyleSheetLinks } from './customStyles.js'
@@ -31,15 +32,6 @@ import {
   type AsciidocPreviewDefaultStyle,
 } from './previewConfig.js'
 import { resolveStyleUri } from './resolveStyleHref.js'
-
-// The webview converter always emits HTML, so its output-file suffix is fixed.
-// Exposed as a constant because Asciidoctor.js 4.0 rewrites the converter
-// instance's `outfilesuffix` property into a backend-traits accessor *function*
-// once it normalises a registered converter (see @asciidoctor/core
-// normalizeConverter/applyBackendTraits). Reading it back off the instance
-// therefore can't be relied on to be a string — derive `filetype` from this
-// constant instead.
-export const WEBVIEW_OUTFILESUFFIX = '.html'
 
 const BAD_PROTO_RE = /^(vbscript|javascript|data):/i
 const GOOD_DATA_RE = /^data:image\/(gif|png|jpeg|webp);/i
