@@ -15,6 +15,7 @@
 ### Bug fixes
 
 * Reveal the line displayed at the top of the preview when scrolling it, instead of the line below it in the editor (#1231)
+* Include the leading period in the `docfilesuffix` attribute in the preview (`.adoc` instead of `adoc`), as Asciidoctor does when converting a file, so that the preview no longer differs from the generated HTML (#1235)
 * Keep the errors and warnings of a document in the Problems panel when it is parsed at the same time as another one, for instance when opening several documents, instead of silently dropping them (#1229)
 * Keep the editor and the preview at the same position while the preview reloads: images, math and diagrams no longer scroll the editor as they load, and no longer push the displayed line out of the preview. Scrolling the preview during the loading takes over immediately (#1230)
 * Stop reloading the whole preview on every edit of a document that has a title, which made diagrams disappear until they were loaded again and moved the page. The preview now updates only the blocks that changed (#1225)

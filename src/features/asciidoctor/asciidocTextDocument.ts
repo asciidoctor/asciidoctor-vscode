@@ -62,13 +62,13 @@ export class AsciidocTextDocument {
   }
 
   /**
-   * Return the extension name of the file without the '.'.
+   * Return the extension name of the file, including the leading '.' (e.g. '.adoc'),
+   * or an empty string if the file has no extension.
    * @param uri
    * @private
    */
   private static getExtensionName(uri: Uri): string {
-    const textDocumentExt = path.extname(uri.path)
-    return textDocumentExt.startsWith('.') ? textDocumentExt.substring(1) : ''
+    return path.extname(uri.path)
   }
 
   /**
