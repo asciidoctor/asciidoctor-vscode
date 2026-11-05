@@ -67,8 +67,10 @@ describe('PreviewWorkerClient', () => {
     const client = new PreviewWorkerClient(workerUrl)
     try {
       const { host } = fakeHost()
+      // `reproducible` drops the time of the conversion from the footer, which
+      // differs between both conversions when they straddle a second.
       const request = previewRequest(
-        '= Title\n:source-highlighter: highlight.js\n\n== Section\n\n[source,ruby]\n----\nputs 1\n----\n\nimage::diagram.png[]',
+        '= Title\n:reproducible:\n:source-highlighter: highlight.js\n\n== Section\n\n[source,ruby]\n----\nputs 1\n----\n\nimage::diagram.png[]',
       )
       const inWorker = await client.convert(request, host)
       const inProcess = await convertForPreview(request, host)
