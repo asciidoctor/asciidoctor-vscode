@@ -26,6 +26,10 @@ import {
 import { registerBrowserIncludeProcessor } from './browserIncludeSupport.js'
 import { buildParseOptions, parse } from './conversion.js'
 import { ResolverIncludeProcessor } from './includeProcessor.js'
+import { ParseCache } from './parseCache.js'
+
+/** The result of a parse, shared by the language features and the diagnostics. */
+export type ParseResult = Awaited<ReturnType<typeof parse>>
 
 export class AsciidocLoader {
   constructor(
@@ -33,6 +37,8 @@ export class AsciidocLoader {
     readonly asciidoctorExtensionsProvider: AsciidoctorExtensionsProvider,
     readonly asciidoctorDiagnosticProvider: AsciidoctorDiagnosticProvider,
     readonly context: vscode.ExtensionContext,
+    // Shared with the other loaders of the extension, see `extension.ts`.
+    readonly parseCache = new ParseCache<ParseResult>(),
   ) {}
 
   public async load(
@@ -43,30 +49,7 @@ export class AsciidocLoader {
     // owned by `AsciidocDiagnosticManager` and refreshed only when a document is
     // opened or its text changes, so that merely invoking a provider — or
     // opening/closing the preview — never recomputes or clears them.
-    const timing = new ConversionTiming()
-    const { registry, antoraDocumentContext } = await this.prepare(
-      textDocument,
-      false,
-    )
-    if (antoraDocumentContext === undefined) {
-      await registerBrowserIncludeProcessor(
-        registry,
-        textDocument.uri,
-        textDocument.getText(),
-      )
-    }
-    const asciidocDocument = AsciidocTextDocument.fromTextDocument(textDocument)
-    const attributes = AsciidoctorAttributesConfig.getPreviewAttributes(
-      textDocument.uri,
-    )
-    timing.phase('setup')
-    const text = textDocument.getText()
-    const { document } = await parse(
-      text,
-      this.getOptions(attributes, registry, asciidocDocument),
-      { timing },
-    )
-    logger.debug(timing.format('Parsed', textDocument.uri.toString(), text))
+    const { document } = await this.parseShared(textDocument)
     return document
   }
 
@@ -78,40 +61,59 @@ export class AsciidocLoader {
   public async reportDiagnostics(
     textDocument: SkinnyTextDocument,
   ): Promise<void> {
-    const timing = new ConversionTiming()
-    const { registry, antoraDocumentContext } = await this.prepare(
-      textDocument,
-      true,
-    )
-    if (antoraDocumentContext === undefined) {
-      await registerBrowserIncludeProcessor(
-        registry,
-        textDocument.uri,
-        textDocument.getText(),
-      )
-    }
+    this.asciidoctorDiagnosticProvider.delete(textDocument.uri)
+    const { messages } = await this.parseShared(textDocument)
+    this.asciidoctorDiagnosticProvider.reportErrors(messages, textDocument)
+  }
+
+  /**
+   * Parse the document, or reuse the parse of the same text: the language
+   * features and the diagnostics all parse the document after an edit (#1251).
+   * The parse is the same for all of them, since they must not depend on the
+   * caller: the parse captures its own log messages (see `parse`), and the
+   * diagnostics are published from them.
+   *
+   * The parse is also reused only with the same attributes and base directory
+   * from the settings, so that a change of these settings is taken into
+   * account even before `registerParseCacheInvalidation` clears the cache.
+   */
+  private parseShared(textDocument: SkinnyTextDocument): Promise<ParseResult> {
+    const text = textDocument.getText()
     const asciidocDocument = AsciidocTextDocument.fromTextDocument(textDocument)
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes(
       textDocument.uri,
     )
-    // `parse` scopes the logger to this parse: the global one set in prepare()
-    // can be replaced by any overlapping parse, which would capture our
-    // messages.
+    const options = JSON.stringify({
+      attributes,
+      baseDirOverride: asciidocDocument.baseDirOverride,
+    })
+    return this.parseCache.get(
+      textDocument.uri.toString(),
+      { text, options },
+      () =>
+        this.parseDocument(textDocument, text, attributes, asciidocDocument),
+    )
+  }
+
+  private async parseDocument(
+    textDocument: SkinnyTextDocument,
+    text: string,
+    attributes: {},
+    asciidocDocument: AsciidocTextDocument,
+  ): Promise<ParseResult> {
+    const timing = new ConversionTiming()
+    const { registry, antoraDocumentContext } = await this.prepare(textDocument)
+    if (antoraDocumentContext === undefined) {
+      await registerBrowserIncludeProcessor(registry, textDocument.uri, text)
+    }
     timing.phase('setup')
-    const text = textDocument.getText()
-    const { messages } = await parse(
+    const result = await parse(
       text,
       this.getOptions(attributes, registry, asciidocDocument),
       { timing },
     )
-    this.asciidoctorDiagnosticProvider.reportErrors(messages, textDocument)
-    logger.debug(
-      timing.format(
-        'Parsed for the diagnostics',
-        textDocument.uri.toString(),
-        text,
-      ),
-    )
+    logger.debug(timing.format('Parsed', textDocument.uri.toString(), text))
+    return result
   }
 
   protected getOptions(
@@ -126,10 +128,7 @@ export class AsciidocLoader {
     })
   }
 
-  protected async prepare(
-    textDocument: SkinnyTextDocument,
-    manageDiagnostics = true,
-  ) {
+  protected async prepare(textDocument: SkinnyTextDocument) {
     // Keep Asciidoctor log messages out of the console; each parse captures
     // its own messages (see `parse`).
     LoggerManager.setLogger(MemoryLogger.create())
@@ -161,9 +160,6 @@ export class AsciidocLoader {
         ),
       )
     }
-    if (manageDiagnostics) {
-      this.asciidoctorDiagnosticProvider.delete(textDocumentUri)
-    }
     return {
       registry,
       antoraDocumentContext,
@@ -178,12 +174,14 @@ export class AsciidocIncludeItemsLoader extends AsciidocLoader {
     readonly asciidoctorExtensionsProvider: AsciidoctorExtensionsProvider,
     readonly asciidoctorDiagnosticProvider: AsciidoctorDiagnosticProvider,
     readonly context: vscode.ExtensionContext,
+    readonly parseCache = new ParseCache<ParseResult>(),
   ) {
     super(
       asciidoctorConfigProvider,
       asciidoctorExtensionsProvider,
       asciidoctorDiagnosticProvider,
       context,
+      parseCache,
     )
   }
 
@@ -197,10 +195,11 @@ export class AsciidocIncludeItemsLoader extends AsciidocLoader {
     // file). Reporting diagnostics from this parse would surface false
     // positives such as "no callout found for <1>" (#971), so this path must
     // not touch the diagnostic collection at all — neither clearing it nor
-    // publishing to it. Diagnostics come from the fully-resolved parse in
-    // `AsciidocLoader.load()` and the preview conversion.
+    // publishing to it. Diagnostics come from the fully-resolved parse shared
+    // by `AsciidocLoader.load()` and `reportDiagnostics()`.
+    // For the same reason, this degraded parse never goes into the parse cache.
     const timing = new ConversionTiming()
-    const { registry } = await this.prepare(textDocument, false)
+    const { registry } = await this.prepare(textDocument)
     this.asciidoctorIncludeItemsProvider.activate(registry)
     const asciidocDocument = AsciidocTextDocument.fromTextDocument(textDocument)
     const attributes = AsciidoctorAttributesConfig.getPreviewAttributes(
@@ -221,4 +220,28 @@ export class AsciidocIncludeItemsLoader extends AsciidocLoader {
     )
     return this.asciidoctorIncludeItemsProvider.get()
   }
+}
+
+/**
+ * Drops the cached parses when they may no longer match what a new parse would
+ * give for the same text:
+ * - when a document is closed, to release its parse;
+ * - when any document is saved, since the parse reads the included files, the
+ *   `.asciidoctorconfig` files and the Antora files from disk (a change made
+ *   outside VS Code shows up at the next edit of the document);
+ * - when the configuration changes (attributes, base directory, extensions...);
+ * - when the workspace becomes trusted, which allows the Asciidoctor extensions
+ *   of the workspace.
+ */
+export function registerParseCacheInvalidation(
+  parseCache: ParseCache<ParseResult>,
+): vscode.Disposable {
+  return vscode.Disposable.from(
+    vscode.workspace.onDidCloseTextDocument((document) =>
+      parseCache.delete(document.uri.toString()),
+    ),
+    vscode.workspace.onDidSaveTextDocument(() => parseCache.clear()),
+    vscode.workspace.onDidChangeConfiguration(() => parseCache.clear()),
+    vscode.workspace.onDidGrantWorkspaceTrust(() => parseCache.clear()),
+  )
 }
