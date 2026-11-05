@@ -14,11 +14,14 @@ import { AsciidocEngine } from './features/asciidoctor/asciidocEngine.js'
 import {
   AsciidocIncludeItemsLoader,
   AsciidocLoader,
+  ParseResult,
+  registerParseCacheInvalidation,
 } from './features/asciidoctor/asciidocLoader.js'
 import { AsciidoctorConfig } from './features/asciidoctor/asciidoctorConfig.js'
 import { AsciidoctorDiagnostic } from './features/asciidoctor/asciidoctorDiagnostic.js'
 import { AsciidoctorExtensions } from './features/asciidoctor/asciidoctorExtensions.js'
 import { AsciidoctorIncludeItems } from './features/asciidoctor/asciidoctorIncludeItems.js'
+import { ParseCache } from './features/asciidoctor/parseCache.js'
 import { AttributeReferenceHoverProvider } from './features/attributeReferenceHoverProvider.js'
 import { AsciidocCompletionProviders } from './features/completion/completionProviders.js'
 import LinkProvider from './features/documentLinkProvider.js'
@@ -75,11 +78,16 @@ export async function activate(context: vscode.ExtensionContext) {
   // include-items loader never reports diagnostics, so it shares the same
   // collection (it is only required by the AsciidocLoader base constructor).
   const asciidocDiagnostic = new AsciidoctorDiagnostic('asciidoc')
+  // A single parse of each document version, shared by the language features
+  // and the diagnostics of both loaders (#1251).
+  const parseCache = new ParseCache<ParseResult>()
+  context.subscriptions.push(registerParseCacheInvalidation(parseCache))
   const asciidocLoader = new AsciidocLoader(
     new AsciidoctorConfig(),
     new AsciidoctorExtensions(asciidoctorExtensionsSecurityPolicy),
     asciidocDiagnostic,
     context,
+    parseCache,
   )
   const asciidocIncludeItemsLoader = new AsciidocIncludeItemsLoader(
     new AsciidoctorIncludeItems(),
@@ -87,6 +95,7 @@ export async function activate(context: vscode.ExtensionContext) {
     new AsciidoctorExtensions(asciidoctorExtensionsSecurityPolicy),
     asciidocDiagnostic,
     context,
+    parseCache,
   )
   // Diagnostics are computed from a single fully-resolved parse and refreshed
   // only on document open/change (and cleared on close), decoupled from the
