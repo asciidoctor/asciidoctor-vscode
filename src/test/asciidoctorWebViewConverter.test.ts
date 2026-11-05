@@ -55,7 +55,7 @@ function createConverterOptions(
   const intrinsicAttr = {
     docdir: path.dirname(fileName),
     docfile: fileName,
-    docfilesuffix: path.extname(fileName).substring(1),
+    docfilesuffix: path.extname(fileName),
     docname: path.basename(fileName, path.extname(fileName)),
     filetype: converter.outfilesuffix.substring(1),
   }
