@@ -34,6 +34,10 @@
 * Display images in the preview on Windows when `imagesdir` is an absolute path, for instance `:imagesdir: {asciidoctorconfigdir}/media` in `.asciidoctorconfig.adoc`, instead of having them blocked by the webview (#1203)
 * Embed images in the preview when the `data-uri` attribute is set and `imagesdir` is an absolute path, for instance `:imagesdir: {asciidoctorconfigdir}/media` in `.asciidoctorconfig.adoc`, instead of looking for them relative to the document (#1203)
 
+### Performance
+
+* Parse only the header of the document before converting it for the preview, instead of the whole document, which made each preview update take about twice as long as needed. The PDF export also parses only the header to find the PDF theme (#1249)
+
 ### Documentation
 
 * Clarify that `asciidoc.preview.asciidoctorAttributes` does not configure the source highlighter of exports, and disable highlighting by unsetting the attribute rather than with an empty value (#1218)
