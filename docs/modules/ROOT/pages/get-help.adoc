@@ -24,6 +24,13 @@ If a problem appeared right after an update, you can roll back to a previous ver
 See xref:install.adoc#update[Update].
 ====
 
+[TIP]
+====
+If the outline, the folding ranges, the diagnostics or the preview do not reflect the content of your files, run the *AsciiDoc: Clear Cache* command from the Command Palette: it parses the open documents again.
+If the problem goes away, mention it in the issue.
+See xref:edit.adoc#included-files[Changes to included files].
+====
+
 [#logs]
 == Logs
 

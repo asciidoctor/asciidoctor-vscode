@@ -125,6 +125,11 @@
         "category": "AsciiDoc"
       },
       {
+        "command": "asciidoc.clearCache",
+        "title": "%asciidoc.clearCache.title%",
+        "category": "AsciiDoc"
+      },
+      {
         "command": "asciidoc.preview.toggleLock",
         "title": "%asciidoc.preview.toggleLock.title%",
         "category": "AsciiDoc"
