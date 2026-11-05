@@ -70,6 +70,19 @@ No hover is shown at all when the reference sits inside a verbatim block (for ex
 
 Attribute names are case-insensitive, so `+{Version}+` and `+{version}+` resolve to the same value.
 
+[#included-files]
+== Changes to included files
+
+The outline, the folding ranges, the completion, the hover, the document links and the diagnostics all work on the parsed document.
+To keep the editor responsive, the document is parsed once after each change and this parse is shared by all of them.
+
+Included files (`include::[]`) are read *from disk* during the parse.
+The parse is done again when you edit the document, and when you save any file in VS Code, so saving an included file updates the document that includes it.
+
+When an included file changes *outside* VS Code, for instance after a `git checkout` or when another program generates it, VS Code is not notified: the outline, the folding ranges and the diagnostics of the document that includes it keep showing the previous content until its next change.
+To take such a change into account right away, run the *AsciiDoc: Clear Cache* command from the Command Palette.
+It parses the open documents again and refreshes the outline, the folding ranges, the diagnostics and the preview.
+
 [#customize-highlighting]
 == Customize syntax highlighting colors
 

@@ -1,4 +1,5 @@
 export { DisableAntoraSupport, EnableAntoraSupport } from './antoraSupport.js'
+export { ClearCacheCommand } from './clearCache.js'
 export { ExportAsPDF } from './exportAsPDF.js'
 export { MoveCursorToPositionCommand } from './moveCursorToPosition.js'
 export { OpenDocumentLinkCommand } from './openDocumentLink.js'

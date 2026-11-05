@@ -6,6 +6,7 @@
   "asciidoc.antora.title": "Antora",
   "asciidoc.asciidoctorpdf_command.deprecationMessage": "Ce paramètre a été remplacé par `#asciidoc.pdf.asciidoctorPdfCommandPath#` + `#asciidoc.pdf.asciidoctorPdfCommandArgs#` et n'a plus aucun effet.",
   "asciidoc.asciidoctorpdf_command.desc": "**Obsolète** : Chemin complet vers le binaire/exécutable `asciidoctor-pdf`.",
+  "asciidoc.clearCache.title": "Vider le cache",
   "asciidoc.common.title": "Général",
   "asciidoc.debug.enableErrorDiagnostics.desc": "Active les diagnostics d'erreurs.",
   "asciidoc.debug.title": "Débogage",

@@ -47,6 +47,16 @@ export class AsciidocDiagnosticManager {
     })
   }
 
+  /**
+   * Computes the diagnostics of every open document again, for instance after
+   * clearing the parse cache.
+   */
+  public refreshAll(): void {
+    for (const document of vscode.workspace.textDocuments) {
+      this.schedule(document, 0)
+    }
+  }
+
   private schedule(document: vscode.TextDocument, delay: number) {
     if (document.languageId !== ASCIIDOC_LANGUAGE_ID) {
       return

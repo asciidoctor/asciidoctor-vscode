@@ -32,6 +32,11 @@ The *Web* column tells you whether an action is available in {url-vscode-web}[VS
 |kbd:[Ctrl+Alt+V]
 |kbd:[Option+Cmd+V]
 |⛔
+
+|xref:edit.adoc#included-files[AsciiDoc: Clear Cache]
+|--
+|--
+|✔️
 |===
 
 [NOTE]

@@ -12,7 +12,22 @@ const conditionalEndRx = /^(\\)?(endif)::(\S*?(?:([,+])\S*?)?)\[(#{CC_ANY}+)?/
 export default class AsciidocFoldingRangeProvider
   implements vscode.FoldingRangeProvider
 {
+  private readonly onDidChangeFoldingRangesEmitter =
+    new vscode.EventEmitter<void>()
+
+  /** Fires when the folding ranges must be computed again, see `refresh`. */
+  public readonly onDidChangeFoldingRanges =
+    this.onDidChangeFoldingRangesEmitter.event
+
   constructor(private readonly asciidocLoader: AsciidocLoader) {}
+
+  /**
+   * Makes VS Code ask for the folding ranges again, although the documents did
+   * not change, for instance after clearing the parse cache.
+   */
+  public refresh(): void {
+    this.onDidChangeFoldingRangesEmitter.fire()
+  }
 
   public async provideFoldingRanges(
     document: vscode.TextDocument,

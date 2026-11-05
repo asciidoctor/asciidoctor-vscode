@@ -149,15 +149,15 @@ export async function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push({
     dispose: () => symbolProviderRegistration.dispose(),
   })
+  const refreshDocumentSymbols = () => {
+    symbolProviderRegistration.dispose()
+    symbolProviderRegistration =
+      vscode.languages.registerDocumentSymbolProvider(selector, symbolProvider)
+  }
   context.subscriptions.push(
     vscode.workspace.onDidSaveTextDocument((document) => {
       if (isAsciidocFile(document)) {
-        symbolProviderRegistration.dispose()
-        symbolProviderRegistration =
-          vscode.languages.registerDocumentSymbolProvider(
-            selector,
-            symbolProvider,
-          )
+        refreshDocumentSymbols()
       }
     }),
   )
@@ -178,10 +178,11 @@ export async function activate(context: vscode.ExtensionContext) {
       new AsciidocWorkspaceSymbolProvider(symbolProvider),
     ),
   )
+  const foldingRangeProvider = new AsciidocFoldingRangeProvider(asciidocLoader)
   context.subscriptions.push(
     vscode.languages.registerFoldingRangeProvider(
       selector,
-      new AsciidocFoldingRangeProvider(asciidocLoader),
+      foldingRangeProvider,
     ),
   )
   context.subscriptions.push(
@@ -211,6 +212,17 @@ export async function activate(context: vscode.ExtensionContext) {
   )
   commandManager.register(new commands.ShowSourceCommand(previewManager))
   commandManager.register(new commands.RefreshPreviewCommand(previewManager))
+  commandManager.register(
+    new commands.ClearCacheCommand(() => {
+      parseCache.clear()
+      diagnosticManager.refreshAll()
+      refreshDocumentSymbols()
+      foldingRangeProvider.refresh()
+      // Keep the scroll position, as when a document is saved.
+      previewManager.refresh(true, false)
+      logger.info('Cleared the parse cache')
+    }),
+  )
   commandManager.register(new commands.MoveCursorToPositionCommand())
   commandManager.register(
     new commands.ShowPreviewSecuritySelectorCommand(

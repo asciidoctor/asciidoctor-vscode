@@ -6,6 +6,7 @@
   "asciidoc.antora.title": "Antora",
   "asciidoc.asciidoctorpdf_command.deprecationMessage": "本設定は、`#asciidoc.pdf.asciidoctorPdfCommandPath#` + `#asciidoc.pdf.asciidoctorPdfCommandArgs#`に置き換えられ、動作しません。",
   "asciidoc.asciidoctorpdf_command.desc": "**非推奨:** Asciidoctor PDFの実行バイナリのフルパスを指定します。",
+  "asciidoc.clearCache.title": "キャッシュをクリア",
   "asciidoc.common.title": "一般",
   "asciidoc.debug.enableErrorDiagnostics.desc": "AsciiDocの誤り診断を有効にします。",
   "asciidoc.debug.title": "デバッグ",
