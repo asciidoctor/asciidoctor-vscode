@@ -6,7 +6,12 @@ import * as esbuild from 'esbuild'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 await esbuild.build({
-  entryPoints: { 'src/extension': './src/extension.ts' },
+  entryPoints: {
+    'src/extension': './src/extension.ts',
+    // Loaded by the extension as `new URL('./previewWorker.mjs', import.meta.url)`,
+    // so it must stay next to `src/extension.mjs` (see src/extension.ts).
+    'src/previewWorker': './src/features/preview/previewWorker.ts',
+  },
   bundle: true,
   platform: 'node',
   format: 'esm',

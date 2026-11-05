@@ -32,6 +32,12 @@ Do not enable it unless you fully trust the authors of the Asciidoctor.js extens
 You can update the trust mode at any time with the *Manage Asciidoctor.js Extensions Trust Mode* command.
 ====
 
+[NOTE]
+====
+On the desktop, the preview runs your extensions in a worker thread, separate from the other extensions, so they cannot use the VS Code API (`require('vscode')`).
+They can still use the Node.js API, for instance to read files.
+====
+
 == Example: asciidoctor-emoji
 
 You can write your own extension, or reuse an existing one.

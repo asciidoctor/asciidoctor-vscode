@@ -3,6 +3,7 @@ import { antoraSupportEnabledContextKey } from './commands/antoraSupport.js'
 import * as commands from './commands/index.js'
 import { CommandManager } from './core/commandManager.js'
 import { asciidocDocumentSelector } from './core/document.js'
+import { isBrowserEnvironment } from './core/environment.js'
 import { isAsciidocFile } from './core/file.js'
 import { logger } from './core/logger.js'
 import { AntoraSupportManager } from './features/antora/antoraContext.js'
@@ -38,6 +39,7 @@ import {
 } from './features/pasteImageIntoEditor.js'
 import { AsciidocContentProvider } from './features/preview/previewContentProvider.js'
 import { AsciidocPreviewManager } from './features/preview/previewManager.js'
+import { PreviewWorkerClient } from './features/preview/previewWorkerClient.js'
 import {
   AsciidoctorExtensionsSecurityPolicyArbiter,
   AsciidoctorExtensionsTrustModeSelector,
@@ -69,10 +71,19 @@ export async function activate(context: vscode.ExtensionContext) {
   const asciidoctorTemplatesTrustModeSelector =
     new AsciidoctorTemplatesTrustModeSelector()
 
+  // Convert the preview off the extension host thread on the desktop (#1245).
+  // `previewWorker.mjs` is bundled next to this file (see tasks/build-ext.mjs).
+  const previewWorker = isBrowserEnvironment()
+    ? undefined
+    : new PreviewWorkerClient(new URL('./previewWorker.mjs', import.meta.url))
+  if (previewWorker !== undefined) {
+    context.subscriptions.push(previewWorker)
+  }
   const asciidocEngine = new AsciidocEngine(
     contributionProvider,
     new AsciidoctorConfig(),
     new AsciidoctorExtensions(asciidoctorExtensionsSecurityPolicy),
+    previewWorker,
   )
   // Single diagnostics collection, owned by AsciidocDiagnosticManager. The
   // include-items loader never reports diagnostics, so it shares the same

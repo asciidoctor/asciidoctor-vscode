@@ -31,6 +31,8 @@ const emptyModulePlugin = {
       'node:child_process',
       'node:child_process',
       'node:module',
+      // The preview's worker thread is only used on the desktop.
+      'node:worker_threads',
     ]
     const escapedModules = modules.map((m) => m.replace(/[/]/g, '\\/'))
     const filter = new RegExp(`^(${escapedModules.join('|')})$`)
@@ -66,6 +68,9 @@ await esbuild.build({
     worker_threads: 'worker-thread',
   },
   define: {
+    // Only read by desktop-only code (the preview's worker thread, the
+    // workspace extensions loader). The CJS output has no `import.meta`.
+    'import.meta.url': 'undefined',
     __L10N_BUNDLE__: await fs
       .readFile(path.join(__dirname, '..', 'l10n', 'bundle.l10n.json'), 'utf8')
       .then((content) => content.trim()),

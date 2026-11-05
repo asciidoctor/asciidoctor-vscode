@@ -2,13 +2,9 @@ import * as vscode from 'vscode'
 import { t as l10nT } from '../core/l10n.js'
 import { getWorkspaceFolder, getWorkspaceFolders } from '../core/workspace.js'
 import { AsciidocPreviewManager } from './preview/previewManager.js'
+import { AsciidocPreviewSecurityLevel } from './securityLevel.js'
 
-export const enum AsciidocPreviewSecurityLevel {
-  Strict = 0,
-  AllowInsecureContent = 1,
-  AllowScriptsAndAllContent = 2,
-  AllowInsecureLocalContent = 3,
-}
+export { AsciidocPreviewSecurityLevel } from './securityLevel.js'
 
 export interface ContentSecurityPolicyArbiter {
   getSecurityLevelForResource(

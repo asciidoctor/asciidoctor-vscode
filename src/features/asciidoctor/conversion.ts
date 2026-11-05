@@ -1,5 +1,5 @@
 // The AsciiDoc conversion and parse, isolated from the VS Code API so that they
-// can later run in a worker thread (see #1245).
+// can run in a worker thread (see #1245).
 //
 // This module, and every module it imports, MUST NOT import `vscode`: the
 // caller resolves everything that needs the VS Code API (settings, workspace
@@ -7,13 +7,9 @@
 // `src/test/unit/conversion.test.ts` imports this module in plain Node, where
 // `vscode` cannot be resolved, so a `vscode` import breaks the unit tests.
 //
-// Two inputs are not plain data yet, and must be addressed before the
-// conversion moves to a worker:
-// - the extension registry (`extension_registry` option), built by the caller
-//   from the user's extensions, `.asciidoctorconfig` and the include processors
-//   (Antora, VS Code for the Web), which read files through the VS Code API;
-// - the converter of the preview, registered by the caller under the
-//   `webview-html5` backend, which builds the webview URIs and the CSP.
+// The extension registry (`extension_registry` option) is built by the caller:
+// the preview builds it from plain data (see `previewConversion.ts`), so that
+// it can be built in the preview's worker thread.
 import {
   AbstractBlock,
   Document as AsciidoctorDocument,

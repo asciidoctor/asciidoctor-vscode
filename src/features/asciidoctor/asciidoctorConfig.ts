@@ -1,12 +1,7 @@
-import {
-  Document,
-  Extensions,
-  Preprocessor,
-  PreprocessorReader,
-  Registry,
-} from '@asciidoctor/core'
+import { Registry } from '@asciidoctor/core'
 import * as vscode from 'vscode'
 import { dir, exists } from '../../core/file.js'
+import { registerAsciidoctorConfig } from './registryExtensions.js'
 
 const MAX_DEPTH_SEARCH_ASCIIDOCCONFIG = 100
 
@@ -14,57 +9,24 @@ export interface AsciidoctorConfigProvider {
   activate(registry: Registry, documentUri: vscode.Uri): Promise<void>
 }
 
-/** State stored on the preprocessor extension instance between renders. */
-interface PrependConfigPreprocessorState {
-  asciidoctorConfigContent: string
+export interface AsciidoctorConfigResolver extends AsciidoctorConfigProvider {
+  /**
+   * The content of the `.asciidoctorconfig` files that apply to the document,
+   * or an empty string.
+   */
+  getContent(documentUri: vscode.Uri): Promise<string>
 }
 
 /**
  * .asciidoctorconfig support.
  */
-export class AsciidoctorConfig implements AsciidoctorConfigProvider {
-  private readonly prependExtension: Preprocessor
-
-  constructor() {
-    this.prependExtension = Extensions.newPreprocessor(
-      'PrependConfigPreprocessorExtension',
-      {
-        postConstruct: function (this: PrependConfigPreprocessorState) {
-          this.asciidoctorConfigContent = ''
-        },
-        process: function (
-          this: PrependConfigPreprocessorState,
-          _doc: Document,
-          reader: PreprocessorReader,
-        ) {
-          if (this.asciidoctorConfigContent.length > 0) {
-            // otherwise an empty line at the beginning breaks level 0 detection
-            reader.pushInclude(
-              this.asciidoctorConfigContent,
-              undefined,
-              undefined,
-              1,
-              {},
-            )
-          }
-        },
-      },
-    )
-  }
-
+export class AsciidoctorConfig implements AsciidoctorConfigResolver {
   public async activate(registry: Registry, documentUri: vscode.Uri) {
-    await this.configureAsciidoctorConfigPrependExtension(documentUri)
-    registry.preprocessor(this.prependExtension)
+    registerAsciidoctorConfig(registry, await this.getContent(documentUri))
   }
 
-  private async configureAsciidoctorConfigPrependExtension(
-    documentUri: vscode.Uri,
-  ) {
-    const asciidoctorConfigContent =
-      await getAsciidoctorConfigContent(documentUri)
-    const state = this
-      .prependExtension as unknown as PrependConfigPreprocessorState
-    state.asciidoctorConfigContent = asciidoctorConfigContent ?? ''
+  public async getContent(documentUri: vscode.Uri): Promise<string> {
+    return (await getAsciidoctorConfigContent(documentUri)) ?? ''
   }
 }
 

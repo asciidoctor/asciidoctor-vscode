@@ -1,18 +1,7 @@
+// This module MUST NOT import `vscode`: it is used by the preview conversion,
+// which can run in a worker thread (#1245).
 import { SyntaxHighlighter, SyntaxHighlighterBase } from '@asciidoctor/core'
-import * as vscode from 'vscode'
-import { WebviewResourceProvider } from '../../core/resources.js'
-
-function getDefaultHighlightJsTheme(): string {
-  const themeKind = vscode.window.activeColorTheme.kind
-  // ColorThemeKind: Light = 1, Dark = 2, HighContrast = 3, HighContrastLight = 4
-  if (
-    themeKind === vscode.ColorThemeKind.Dark ||
-    themeKind === vscode.ColorThemeKind.HighContrast
-  ) {
-    return 'github-dark'
-  }
-  return 'github'
-}
+import type { PreviewResourceProvider } from './asciidoctorWebViewConverter.js'
 
 // Languages (and their aliases) shipped in the "common" Highlight.js bundle
 // (media/highlightjs/highlight.min.js). They are already registered, so we must
@@ -143,9 +132,13 @@ function collectUsedLanguages(doc: any): string[] {
 
 export function register(
   highlightjsBuiltInSyntaxHighlighter: any,
-  context: vscode.ExtensionContext,
-  webviewPanel: WebviewResourceProvider,
+  webviewPanel: PreviewResourceProvider,
+  options: {
+    /** Whether the active color theme is dark (or high contrast). */
+    darkTheme: boolean
+  },
 ) {
+  const defaultTheme = options.darkTheme ? 'github-dark' : 'github'
   const BaseClass: any =
     typeof highlightjsBuiltInSyntaxHighlighter === 'function'
       ? highlightjsBuiltInSyntaxHighlighter
@@ -158,18 +151,14 @@ export function register(
 
     docinfo(location: string, doc: any, _opts: any) {
       if (location === 'head') {
-        const theme = doc.getAttribute(
-          'highlightjs-theme',
-          getDefaultHighlightJsTheme(),
-        )
-        const themeStyleSheetResource = vscode.Uri.joinPath(
-          context.extensionUri,
+        const theme = doc.getAttribute('highlightjs-theme', defaultTheme)
+        const themeStyleSheetSrc = webviewPanel.asMediaWebViewSrc(
           'media',
           'highlightjs',
           'styles',
           `${theme}.min.css`,
         )
-        return `<link rel="stylesheet" href="${webviewPanel.asWebviewUri(themeStyleSheetResource)}">`
+        return `<link rel="stylesheet" href="${themeStyleSheetSrc}">`
       }
       // footer
       // Languages the user requested explicitly through `:highlightjs-languages:`
@@ -190,30 +179,27 @@ export function register(
       ].filter(Boolean)
       const languageScripts = languages
         .map((lang) => {
-          const languageScriptResource = vscode.Uri.joinPath(
-            context.extensionUri,
+          const languageScriptSrc = webviewPanel.asMediaWebViewSrc(
             'media',
             'highlightjs',
             'languages',
             `${lang}.min.js`,
           )
-          return `<script src="${webviewPanel.asWebviewUri(languageScriptResource)}"></script>`
+          return `<script src="${languageScriptSrc}"></script>`
         })
         .join('\n')
-      const highlightjsScriptResource = vscode.Uri.joinPath(
-        context.extensionUri,
+      const highlightjsScriptSrc = webviewPanel.asMediaWebViewSrc(
         'media',
         'highlightjs',
         'highlight.min.js',
       )
-      const highlightjsInitResource = vscode.Uri.joinPath(
-        context.extensionUri,
+      const highlightjsInitSrc = webviewPanel.asMediaWebViewSrc(
         'dist',
         'highlightjs-init.js',
       )
-      return `<script src="${webviewPanel.asWebviewUri(highlightjsScriptResource)}"></script>
+      return `<script src="${highlightjsScriptSrc}"></script>
 ${languageScripts}
-<script src="${webviewPanel.asWebviewUri(highlightjsInitResource)}"></script>`
+<script src="${highlightjsInitSrc}"></script>`
     }
   }
 
