@@ -9,6 +9,7 @@
 
 ### Improvements
 
+* Log how long each conversion and each parse of a document takes, split into phases, along with the size of the document, in the *Asciidoctor* output channel at the *Debug* log level, to find out which documents are slow to preview (#1245)
 * Display the first change after a pause in the preview immediately, instead of waiting for `asciidoc.preview.refreshInterval`, now 500 ms by default instead of 2 s. While typing, the preview no longer starts a new update before the previous one ends, waits longer between updates on documents that are slow to convert, and no longer updates while it is hidden (#588)
 * Keep displaying a diagram or an image in the preview until its new version is loaded, instead of moving the page when it fails to load, for instance on a syntax error while typing a Kroki diagram. If the new version cannot be loaded, the previous one stays dimmed (#1225)
 * Support `:kroki-fetch-diagram:` in VS Code for the Web, where fetched diagrams are embedded as data URIs instead of being replaced by an error block, by upgrading `asciidoctor-kroki` to 2.0.0 (#1208)
