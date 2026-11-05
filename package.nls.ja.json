@@ -25,7 +25,7 @@
   "asciidoc.enableErrorDiagnostics.deprecationMessage": "本設定は、`#asciidoc.debug.enableErrorDiagnostics#`に置き換えられ、動作しません。",
   "asciidoc.enableErrorDiagnostics.desc": "**非推奨:** AsciiDocのエラー検証を行います。(asciidoctor jsのみ有効です。)",
   "asciidoc.exportAsPDF.title": "PDFへエクスポート",
-  "asciidoc.extensions.enableKroki.desc": "ダイアグラム生成のKrokiを有効にします。無効の場合でも、`[plantuml]` ブロックはサーバーを使わずに、プレビューとエクスポートされたHTMLでローカルに描画されます。",
+  "asciidoc.extensions.enableKroki.desc": "ダイアグラム生成のKrokiを有効にします。`[mermaid]` ブロックはこの設定に関係なく常に、`[plantuml]` ブロックはこの設定が無効の場合に、サーバーを使わずにプレビューとエクスポートされたHTMLでローカルに描画されます。",
   "asciidoc.extensions.kroki.serverUrl.desc": "ダイアグラムのレンダリングに使用するKrokiサーバーのURL（自己ホスト型インスタンスの場合は`http://localhost:8000`など）。空欄の場合は公開サーバー`https://kroki.io`を使用します。ドキュメントヘッダー、`.asciidoctorconfig`ファイル、またはプレビューの場合は`#asciidoc.preview.asciidoctorAttributes#`で設定された`kroki-server-url`属性は、この設定より優先されます。",
   "asciidoc.extensions.registerWorkspaceExtensions.desc": "ワークスペースディレクトリ`.asciidoctor/lib`に格納されたAsciidoctor.js拡張の登録機能を有効にします。",
   "asciidoc.extensions.title": "Asciidoctor拡張",

@@ -1,5 +1,5 @@
 = Diagram integration
-:description: Render diagrams in the preview through Kroki and asciidoctor-kroki, or PlantUML locally.
+:description: Render diagrams in the preview through Kroki and asciidoctor-kroki, or Mermaid and PlantUML locally.
 
 The extension supports a wide range of diagrams -- from BPMN to Graphviz, PlantUML, and Vega -- through {url-kroki}[Kroki] and {url-asciidoctor-kroki}[asciidoctor-kroki].
 
@@ -7,7 +7,8 @@ You can see the full range of supported diagram types on the https://kroki.io/#s
 
 == Enable diagrams
 
-Diagram rendering is disabled by default (see <<Privacy>>).
+`[mermaid]` blocks are always rendered locally, without any server, and so are `[plantuml]` blocks while Kroki is disabled (see <<render-plantuml-without-kroki>>).
+The other diagrams are rendered by Kroki, which is disabled by default (see <<Privacy>>).
 Set the `asciidoc.extensions.enableKroki` setting to `true` to enable it.
 
 The first time you preview a document that contains a diagram only Kroki can render while the extension is disabled, a one-time notification points it out and offers to enable Kroki (or to open this page).
@@ -95,7 +96,8 @@ Set `kroki-cache` to `false` to disable the cache, or `kroki-cache-dir` to use a
 
 [WARNING]
 ====
-By default, diagram source is sent to {url-kroki} to be rendered.
+When Kroki is enabled, the diagram source is sent to {url-kroki} by default to be rendered.
+The diagrams rendered locally (Mermaid, and PlantUML while Kroki is disabled) are not sent anywhere.
 
 If this is a concern, you can run your own Kroki instance and point the extension to it (see <<Use your own Kroki server>>).
 See also the {url-asciidoctor-kroki}#using-your-own-kroki[asciidoctor-kroki instructions] for details.

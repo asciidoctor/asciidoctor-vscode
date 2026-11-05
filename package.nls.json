@@ -25,7 +25,7 @@
   "asciidoc.enableErrorDiagnostics.deprecationMessage": "This setting has been replaced by `#asciidoc.debug.enableErrorDiagnostics#` and no longer has any effect.",
   "asciidoc.enableErrorDiagnostics.desc": "**Deprecated**: Provides error diagnostics.",
   "asciidoc.exportAsPDF.title": "Export Document as PDF",
-  "asciidoc.extensions.enableKroki.desc": "Enables the Kroki extension to generate diagrams. When disabled, `[plantuml]` blocks are still rendered locally, without any server, in the preview and in exported HTML.",
+  "asciidoc.extensions.enableKroki.desc": "Enables the Kroki extension to generate diagrams. `[mermaid]` blocks are always rendered locally, without any server, whatever the value of this setting, and so are `[plantuml]` blocks when it is disabled, in the preview and in exported HTML.",
   "asciidoc.extensions.kroki.serverUrl.desc": "URL of the Kroki server used to render diagrams (e.g. `http://localhost:8000` for a self-hosted instance). Leave empty to use the public `https://kroki.io` server. A `kroki-server-url` attribute set in the document header, in an `.asciidoctorconfig` file or, for the preview, in `#asciidoc.preview.asciidoctorAttributes#` takes precedence over this setting.",
   "asciidoc.extensions.registerWorkspaceExtensions.desc": "Enables Asciidoctor.js extensions registration from the workspace directory `.asciidoctor/lib`.",
   "asciidoc.extensions.title": "Extensions",
